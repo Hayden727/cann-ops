@@ -9,7 +9,6 @@ Huawei Technologies Co., Ltd. All Rights Reserved © 2020
 
 import sys
 import os
-import stat
 import re
 import const_var
 

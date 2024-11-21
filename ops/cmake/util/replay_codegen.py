@@ -6,7 +6,6 @@ Copyright (c) Huawei Technologies Co., Ltd. 2020-2021. All rights reserved.
 """
 
 import os
-import stat
 import collections
 import kernel_entry as keb
 from tiling_data_def_build import gen_tiling
@@ -80,8 +79,8 @@ class ReplayCodeGen:
             temp = temp.replace('__KERNEL_ARGS__', ', '.join(kargs))
             temp = temp.replace('__KERNEL_FUN__', self.entry)
             core_type_infer = 'core_type'
-            code_channel = code_channel_infer.infer_code_channel(code_channel_infer.InfoCodeChanelParams(self.impl,\
-                self.tiling_data_file, self.kernel, self.outdir, ops_product, None))
+            code_channel = code_channel_infer.infer_code_channel(code_channel_infer.InfoCodeChanelParams(self.impl, \
+                                                                                                         self.tiling_data_file, self.kernel, self.outdir, ops_product, None))
             if code_channel == code_channel_infer.CODE_VEC:
                 core_type_infer = '0'
             elif code_channel == code_channel_infer.CODE_CUBE:

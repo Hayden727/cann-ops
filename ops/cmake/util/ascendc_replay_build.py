@@ -39,7 +39,7 @@ class ReplayBuilder(opdesc_parser.OpDesc):
             implf = os.path.join(impl_path, dyn_path, self.op_file + '.cpp')
             tiling_file = os.path.join(impl_path, "../../op_tiling", self.op_file + '_tiling.h')
         rep_conf = replay_codegen.ReplayCodeGen(ReplayCodeGenParams(self.op_type, implf, tiling_file, self.op_file, \
-            self.op_intf, argn, self.op_replay_batch, self.max_block_dim, self.max_shape_size))
+                                                                    self.op_intf, argn, self.op_replay_batch, self.max_block_dim, self.max_shape_size))
         rep_conf.set_batch(self.op_replay_batch)
         rep_conf.set_outdir(out_path)
         rep_conf.gen_replay(ops_product)

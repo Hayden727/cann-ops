@@ -154,6 +154,7 @@ endfunction()
 function(add_npu_support_target)
   cmake_parse_arguments(NPUSUP "" "TARGET;OPS_INFO_DIR;OUT_DIR;INSTALL_DIR" "" ${ARGN})
   get_filename_component(npu_sup_file_path "${NPUSUP_OUT_DIR}" DIRECTORY)
+
   add_custom_command(OUTPUT ${NPUSUP_OUT_DIR}/npu_supported_ops.json
     COMMAND mkdir -p ${NPUSUP_OUT_DIR}
     COMMAND ${CMAKE_SOURCE_DIR}/cmake/util/gen_ops_filter.sh

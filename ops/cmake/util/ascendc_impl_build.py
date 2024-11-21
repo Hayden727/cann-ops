@@ -8,7 +8,6 @@ Copyright (c) Huawei Technologies Co., Ltd. 2020-2021. All rights reserved.
 import sys
 import os
 import re
-import stat
 import opdesc_parser
 import const_var
 
@@ -426,7 +425,7 @@ def write_scripts(cfgfile: str, cfgs: dict, dirs: dict, ops: list = None, op_com
     batch_lists = cfgs.get(const_var.REPLAY_BATCH).split(';')
     iterator_lists = cfgs.get(const_var.REPLAY_ITERATE).split(';')
     file_map = {}
-    op_descs = opdesc_parser.get_op_desc(cfgfile, batch_lists, iterator_lists, AdpBuilder,\
+    op_descs = opdesc_parser.get_op_desc(cfgfile, batch_lists, iterator_lists, AdpBuilder, \
                                          ops, dirs.get(const_var.AUTO_GEN_DIR))
     for op_desc in op_descs:
         op_desc.write_adapt(dirs.get(const_var.CFG_IMPL_DIR), dirs.get(const_var.CFG_OUT_DIR), op_compile_option)
