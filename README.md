@@ -21,5 +21,7 @@
 若您对昇腾社区的使用有任何建议和疑问，欢迎发送邮件到ascend@huawei.com。
 
  :globe_with_meridians: 网站：https://www.hiascend.com
+
  :mailbox_with_mail: 邮箱：ascend@huawei.com
+
  :speech_balloon: 论坛：https://www.hiascend.com/forum/
