@@ -15,6 +15,11 @@
 
 以下这些公司或软件正在使用我们的软件，了解更多[昇腾生态伙伴介绍](https://www.hiascend.com/ecosystem/ascendpartner)
 
+## 👫 共建伙伴
+
+如果希望参与到开发中，请遵从我们的贡献指南。
+
+![输入图片说明](.gitee/%E8%B4%A1%E7%8C%AE%E8%80%85%E4%BC%99%E4%BC%B4.png)
 
 ## 📌 社区交流
 
