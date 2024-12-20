@@ -26,6 +26,7 @@ set(_op_host_aclnn_link
         $<BUILD_INTERFACE:intf_pub>
         exe_graph
         register
+        tiling_api
         c_sec
 )
 
@@ -55,6 +56,13 @@ target_compile_options(op_host_aclnnExc PRIVATE
 
 # op api
 add_library(opapi SHARED)
+        add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/opapi_stub.cpp
+                COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/opapi_stub.cpp
+        )
+
+        target_sources(opapi PRIVATE
+                ${CMAKE_CURRENT_BINARY_DIR}/opapi_stub.cpp
+        )
 target_compile_options(opapi PRIVATE
         $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z>
 )
@@ -91,6 +99,12 @@ install(TARGETS opapi
 
 # op proto
 add_library(opsproto SHARED)
+file(GLOB PROTO_AUTO_FILES
+       ${ASCEND_AUTOGEN_DIR}/*_proto.cpp
+    )
+target_sources(opsproto PRIVATE
+       ${PROTO_AUTO_FILES}
+)
 target_compile_options(opsproto PRIVATE
         $<$<COMPILE_LANGUAGE:CXX>:-std=c++11>
         -fvisibility=hidden
@@ -98,6 +112,7 @@ target_compile_options(opsproto PRIVATE
 target_compile_definitions(opsproto PRIVATE
         LOG_CPP
         PROCESS_LOG
+        OP_PROTO_LIB
 )
 target_link_libraries(opsproto PRIVATE
         $<BUILD_INTERFACE:intf_pub>
@@ -135,6 +150,7 @@ target_compile_options(optiling PRIVATE
 target_compile_definitions(optiling PRIVATE
         LOG_CPP
         PROCESS_LOG
+        OP_TILING_LIB
 )
 target_link_libraries(optiling PRIVATE
         $<BUILD_INTERFACE:intf_pub>
@@ -494,7 +510,7 @@ if (ENABLE_OPS_KERNEL)
                 COMPUTE_UNIT
                 ${compute_unit}
                 OP_INFO
-                ${OP_DIR_LIST}/op_kernel
+                ${OP_DIR_LIST}
         )
     endforeach ()
 endif ()

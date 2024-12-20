@@ -8,19 +8,19 @@
 # ======================================================================================================================
 
 add_ops_compile_options(
-        OP_NAME FlashAttentionScore
+        OP_NAME AddCustom
         OPTIONS --cce-auto-sync=off
                 -Wno-deprecated-declarations
                 -Werror
 )
 
-target_sources(op_host_aclnnInner PRIVATE
+target_sources(op_host_aclnn PRIVATE
 op_host/add_custom.cpp
 )
 
-target_sources(opapi PRIVATE
-        op_host/add_custom.cpp
-)
+# target_sources(opapi PRIVATE
+#         op_host/add_custom.cpp
+# )
 
 target_sources(optiling PRIVATE
         op_host/add_custom.cpp

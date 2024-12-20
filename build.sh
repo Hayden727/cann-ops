@@ -108,7 +108,9 @@ function cmake_config()
 {
     local extra_option="$1"
     log "Info: cmake config ${CUSTOM_OPTION} ${extra_option} ."
-    cmake ..  ${CUSTOM_OPTION} ${extra_option}
+    opts=$(python3 $CURRENT_DIR/cmake/util/preset_parse.py $CURRENT_DIR/CMakePresets.json)
+    echo $opts
+    cmake .. $opts ${CUSTOM_OPTION} ${extra_option}
 }
 
 function build()
