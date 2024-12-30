@@ -4,13 +4,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_add)
+project(acl_execute_sqrt)
 
 # Compile options
 add_compile_options(-std=c++11)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "../output")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../output")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./")
 
 set(INC_PATH $ENV{DDK_PATH})
 
@@ -22,7 +21,6 @@ else ()
 endif()
 
 set(CUST_PKG_PATH "${INC_PATH}/opp/vendors/customize/op_api")
-set(BUILT_PKG_PATH "${INC_PATH}/opp/built-in/op_impl/ai_core/tbe/op_api")
 
 set(LIB_PATH $ENV{NPU_HOST_LIB})
 
@@ -39,9 +37,7 @@ endif()
 include_directories(
     ${INC_PATH}/runtime/include
     ${INC_PATH}/atc/include
-    ../inc
     ${CUST_PKG_PATH}/include
-    ${BUILT_PKG_PATH}/include/aclnnop
 )
 
 # add host lib path
@@ -49,23 +45,19 @@ link_directories(
     ${LIB_PATH}
     ${LIB_PATH1}
     ${CUST_PKG_PATH}/lib
-    ${BUILT_PKG_PATH}/x86_64/lib
 )
 
 add_executable(execute_op
-    operator_desc.cpp
-    op_runner.cpp
     main.cpp
-    common.cpp
 )
 
 target_link_libraries(execute_op
     ascendcl
     cust_opapi
-    opapi
     acl_op_compiler
     nnopbase
     stdc++
 )
 
 install(TARGETS execute_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+

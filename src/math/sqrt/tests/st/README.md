@@ -32,7 +32,7 @@
   - 部署算子包
 
     ```bash
-    ./build_out/./CANN-custom_ops-<cann_version>-linux.<arch>.run
+    ./build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
 ### 2.&nbsp;生成测试用例
 
