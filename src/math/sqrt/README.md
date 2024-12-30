@@ -26,8 +26,10 @@
 ## 目录结构介绍
 ```
 ├── examples    // 调用示例
-├── op_host    // host侧实现文件
-└── op_kernel  // kernel侧实现文件
+├── framework   // 第三方框架适配目录
+├── op_host     // host侧实现文件
+├── op_kernel   // kernel侧实现文件
+└── tests       // 测试用例
 ```
 
 ## 环境要求
