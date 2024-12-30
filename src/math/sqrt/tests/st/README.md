@@ -49,6 +49,13 @@
     ```
 ### 3.&nbsp;执行测试用例
 
+  - 配置环境变量
+
+    ```bash
+    export DDK_PATH=${INSTALL_DIR}
+    export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/devlib
+    ```
+
   - 进入到测试用例目录
 
     ```bash
