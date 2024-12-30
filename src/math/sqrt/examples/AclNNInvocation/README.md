@@ -29,7 +29,23 @@
 
 ## 运行样例算子
 ### 1.&nbsp;编译算子工程
-运行此样例前，请参考[编译算子工程](../README.md#operatorcompile)完成前期准备。
+运行此样例前，请完成算子包编译部署。
+  - 进入到仓库目录
+
+    ```bash
+    cd ${git_clone_path}
+    ```
+  - 执行编译
+
+    ```bash
+    ./build.sh
+    ```
+
+  - 部署算子包
+
+    ```bash
+    ./build_out/CANN-custom_ops--linux.aarch64.run
+    ```
 ### 2.&nbsp;aclnn调用样例运行
 
   - 进入到样例目录
