@@ -90,7 +90,7 @@ REG_OP(Sqrt)
   如果通过PyTorch单算子方式调用该算子，则需要参考PyTorch算子[torch_npu.npu_ffn](https://hiascend.com/document/redirect/PyTorchAPI)；如果用户定制了该算子，则需要参考《Ascend C算子开发》手册[适配PyTorch框架](https://hiascend.com/document/redirect/CannCommunityAscendCInvorkOnNetwork)。
 - aclnn单算子调用方式
 
-  通过aclnn单算子调用示例代码如下，仅供参考，具体编译和执行过程请参考[编译与运行样例](common/编译与运行样例.md)。
+  通过aclnn单算子调用示例代码如下，仅供参考，具体编译和执行过程请参考[编译与运行样例](../examples/AclNNInvocationNaive/README.md)。
 
   ```c++
   #include <iostream>
