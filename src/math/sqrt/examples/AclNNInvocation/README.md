@@ -44,7 +44,7 @@
   - 部署算子包
 
     ```bash
-    ./build_out/CANN-custom_ops--linux.aarch64.run
+    ./build_out/./CANN-custom_ops-<cann_version>-linux.<arch>.run --disable-check-compatible
     ```
 ### 2.&nbsp;aclnn调用样例运行
 
