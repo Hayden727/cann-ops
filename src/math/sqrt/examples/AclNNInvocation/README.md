@@ -51,7 +51,7 @@
   - 进入到样例目录
 
     ```bash
-    cd ${git_clone_path}/src/math/sqrt/AclNNInvocation
+    cd ${git_clone_path}/src/math/sqrt/examples/AclNNInvocation
     ```
   - 样例执行    
 
