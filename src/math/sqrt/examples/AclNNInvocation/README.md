@@ -38,13 +38,13 @@
   - 执行编译
 
     ```bash
-    ./build.sh
+    ./build.sh --disable-check-compatible
     ```
 
   - 部署算子包
 
     ```bash
-    ./build_out/./CANN-custom_ops-<cann_version>-linux.<arch>.run --disable-check-compatible
+    ./build_out/./CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
 ### 2.&nbsp;aclnn调用样例运行
 
