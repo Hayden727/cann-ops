@@ -159,7 +159,7 @@ int main(int argc, char **argv)
     aclTensor *inputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize_1=inputXShape[0] * inputXShape[1];
-    size_t outputXShapeSize_1=inputXShape[0] * inputXShape[1];
+    size_t outputYShapeSize_1=inputXShape[0] * inputXShape[1];
     size_t dataType=2;
     std::vector<aclFloat16> inputXHostData(inputXShape[0] * inputXShape[1]);
     std::vector<aclFloat16> outputYHostData(outputYShape[0] * outputYShape[1]);
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void ** output1=(void **)(&resultData);
     //写出数据
-    WriteFile("../output/output_y.bin", *output1, outputXShapeSize_1*dataType);
+    WriteFile("../output/output_y.bin", *output1, outputYShapeSize_1*dataType);
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
@@ -223,6 +223,3 @@ int main(int argc, char **argv)
 
     return SUCCESS;
 }
-
-
-

@@ -9,7 +9,6 @@ def verify_result(real_result, golden):
     dtype = np.float16
     real_result = np.fromfile(real_result, dtype=dtype) # 从bin文件读取实际运算结果
     golden = np.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
-    print("=" * 50, real_result[:5], golden[:5], "=" * 50, sep='\n', end='\n', file=sys.stderr)
     result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
     deno = np.maximum(np.abs(real_result), np.abs(golden))  # 获取最大值并组成新数组
     result_atol = np.less_equal(result, loss) # 计算绝对误差
