@@ -5,8 +5,9 @@ def sqrt_test(x):
     """Compute the Swish activation function."""
     tensor = tf.convert_to_tensor(x)
     ori_dtype = tensor.dtype
-    tensor = tensor.astype(tf.float32)
-    result = tf.math.sqrt(tensor).astype(ori_type)
+    compute_dtype = tf.float32
+    tensor = tf.cast(tensor, compute_dtype)
+    result = tf.cast(tf.math.sqrt(tensor), ori_dtype)
     return result.numpy()
 
 def calc_expect_func(x, y):
