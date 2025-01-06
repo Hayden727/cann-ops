@@ -34,6 +34,5 @@ target_sources(opsproto PRIVATE
          op_host/add_custom.cpp
 )
 
-# install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/aclnn_flash_attention_score.h
-#         DESTINATION ${ACLNN_INC_INSTALL_DIR} OPTIONAL
-# )
+install(FILES op_kernel/add_custom.cpp
+        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
