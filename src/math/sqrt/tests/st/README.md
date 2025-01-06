@@ -16,24 +16,8 @@
 
 ## 执行测试用例
 ### 1.&nbsp;编译算子工程
-运行测试用例前，请完成算子包编译部署。
-  - 进入到仓库目录
+运行测试用例前，请完成算子包编译部署，请参考[算子包编译部署](../../README.md#算子包编译部署)。
 
-    ```bash
-    cd ${git_clone_path}
-    ```
-
-  - 执行编译
-
-    ```bash
-    ./build.sh --disable-check-compatible
-    ```
-
-  - 部署算子包
-
-    ```bash
-    ./build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
-    ```
 ### 2.&nbsp;生成测试用例
 
   - 进入到测试用例目录
@@ -72,3 +56,4 @@
 | 时间 | 更新事项 |
 |----|------|
 | 2024/12/30 | 新增本readme |
+| 2025/01/06 | 更新本readme |
