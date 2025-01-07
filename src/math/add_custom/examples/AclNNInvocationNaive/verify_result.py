@@ -3,7 +3,6 @@
 # Copyright 2025 Huawei Technologies Co., Ltd
 import os
 import sys
-import logging
 import numpy as np
 
 LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
@@ -20,9 +19,9 @@ def verify_result(real_result, golden):
     if not result_rtol.all() and not result_atol.all():
         if np.sum(result_rtol == False) > real_result.size * LOSS and \
            np.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
-            logging.error("[ERROR] result error")
+            print("[ERROR] result error")
             return False
-    logging.info("test pass")
+    print("test pass")
     return True
 
 if __name__ == '__main__':

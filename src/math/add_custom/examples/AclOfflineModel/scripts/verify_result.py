@@ -3,7 +3,6 @@
 # Copyright 2025 Huawei Technologies Co., Ltd
 
 import sys
-import logging
 import numpy as np
 
 # for float16
@@ -25,13 +24,13 @@ def verify_result(output, golden):
         real_index = different_element_indexes[index]
         golden_data = golden[real_index]
         output_data = output[real_index]
-        logging.info(
-            "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f",
-            real_index, golden_data, output_data, abs(output_data - golden_data) / golden_data)
+        print(
+            "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f" %
+            (real_index, golden_data, output_data, abs(output_data - golden_data) / golden_data))
         if index == 100:
             break
     error_ratio = float(different_element_indexes.size) / golden.size
-    logging.info("error ratio: %.4f, tolrence: %.4f", error_ratio, ERROR_TOL)
+    print("error ratio: %.4f, tolrence: %.4f" % (error_ratio, ERROR_TOL))
     return error_ratio <= ERROR_TOL
 
 
@@ -41,7 +40,7 @@ if __name__ == '__main__':
         if not res:
             raise ValueError("[ERROR] result error")
         else:
-            logging.info("test pass")
+            print("test pass")
     except Exception as e:
-        logging.error(e)
+        print(e)
         sys.exit(1)
