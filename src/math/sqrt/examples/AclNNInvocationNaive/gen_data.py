@@ -19,3 +19,4 @@ def gen_golden_data_simple():
 
 if __name__ == "__main__":
     gen_golden_data_simple()
+
