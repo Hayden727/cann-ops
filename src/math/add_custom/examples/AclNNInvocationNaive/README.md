@@ -7,8 +7,10 @@
 ```
 ├── AclNNInvocationNaive
 │   ├── CMakeLists.txt      // 编译规则文件
+│   ├── gen_data.py         // 算子期望数据生成脚本
 │   ├── main.cpp            // 单算子调用应用的入口
-│   └── run.sh              // 编译运行算子的脚本
+│   ├── run.sh              // 编译运行算子的脚本
+│   └── verify_result.py    // 计算结果精度比对脚本
 ```
 
 ## 代码实现介绍
@@ -19,7 +21,7 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnAddCustomGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const alcTensor *out, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnAddCustomGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor);
 // 执行算子
 aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
 ```

@@ -6,9 +6,9 @@ import sys
 import numpy as np
 
 # for float16
-relative_tol = 1e-3
-absolute_tol = 1e-5
-error_tol = 1e-3
+RELATIVE_TOL = 1e-3
+ABSOLUTE_TOL = 1e-5
+ERROR_TOL = 1e-3
 
 
 def verify_result(output, golden):
@@ -16,8 +16,8 @@ def verify_result(output, golden):
     golden = np.fromfile(golden, dtype=np.float16).reshape(-1)
     different_element_results = np.isclose(output,
                                            golden,
-                                           rtol=relative_tol,
-                                           atol=absolute_tol,
+                                           rtol=RELATIVE_TOL,
+                                           atol=ABSOLUTE_TOL,
                                            equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
     for index in range(len(different_element_indexes)):
@@ -26,13 +26,12 @@ def verify_result(output, golden):
         output_data = output[real_index]
         print(
             "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f" %
-            (real_index, golden_data, output_data,
-             abs(output_data - golden_data) / golden_data))
+            (real_index, golden_data, output_data, abs(output_data - golden_data) / golden_data))
         if index == 100:
             break
     error_ratio = float(different_element_indexes.size) / golden.size
-    print("error ratio: %.4f, tolrence: %.4f" % (error_ratio, error_tol))
-    return error_ratio <= error_tol
+    print("error ratio: %.4f, tolrence: %.4f" % (error_ratio, ERROR_TOL))
+    return error_ratio <= ERROR_TOL
 
 
 if __name__ == '__main__':

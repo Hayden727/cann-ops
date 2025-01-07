@@ -51,13 +51,13 @@
   - 执行编译
 
     ```bash
-    ./build.sh
+    bash build.sh
     ```
 
   - 部署算子包
 
     ```bash
-    ./build_out/./CANN-custom_ops-<cann_version>-linux.<arch>.run
+    bash build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
 ### 算子调用
 <table>
