@@ -56,7 +56,7 @@ ops-contribution仓关键目录如下所示：
 我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。<br>
 [![](resouce/%E5%BC%A0%E5%BF%97%E4%BC%9F-CIRCLE.png)](https://gitee.com/Nicet)
 
-- **贡献算子列表**
+**贡献算子列表**
 <table>
 <tr><td width="15%"><b>算子分类</b></td><td width="15%"><b>算子</b></td><td width="40%"><b>简介</b></td><td width="30%"><b>贡献者</b></td></tr>
 <tr><td>Sqrt</td><td>Sqrt</td><td>Sqrt原生自定义算子，实现了对输入数据计算开方，获取输出数据的功能。</td><td> <a href="https://gitee.com/Nicet">Nice_try</a><br>西北工业大学-智能感知交互实验室</td></tr>
