@@ -1,0 +1,30 @@
+name: Question|问题咨询
+description: 如果您需要咨询或者讨论问题，请使用此模板。
+title: "[Question|问题咨询]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to ask questions and discuss with other members.
+  - type: textarea
+    attributes:
+      label: 问题描述
+      description: 请描述下您的问题
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 所属算子
+      description: 该问题来自于哪个算子？如无法确定或为公共问题，请选择“其他”。
+      options:
+        - FA
+        - FAG
+        - IFA
+        - PFA
+        - FIA
+        - FFN
+        - 其他
+    validations:
+      required: true
