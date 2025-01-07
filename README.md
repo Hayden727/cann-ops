@@ -50,7 +50,7 @@ ops-contribution仓关键目录如下所示：
  :speech_balloon: 论坛：https://www.hiascend.com/forum/forum-0106101385921175004-1.html <br>
 
 ## 🤝 共建伙伴
-[![输入图片说明](resouce/%E5%85%B1%E5%BB%BA%E4%BC%99%E4%BC%B4-4%E4%B8%AA.png)](http://https://gitee.com/Nicet)
+![输入图片说明](resouce/%E5%85%B1%E5%BB%BA%E4%BC%99%E4%BC%B4-4%E4%B8%AA.png)
 
 ## ⭐️ 贡献者
 我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。<br>
