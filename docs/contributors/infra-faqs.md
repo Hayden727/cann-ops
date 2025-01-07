@@ -1,12 +1,11 @@
 
 #### 1.  **请问提交PR后出现ascend-cla/no红色标签，如何处理？**
 
-
-出现该标签表示该PR中所包含的commit中，有部分贡献者没有签署Ascend社区的贡献者协议CLA。[签署地址](https://clasign.osinfra.cn/sign/gitee_ascend-1720446461942705242)可以在PR评论区找到。如果是个人贡献者请选择“签署个人CLA”，如果是作为企业管理员参与贡献请选择“企业管理员”签署CLA。CLA检查是使用commit信息中的commit邮箱作为检查凭证的。该邮箱可以通过git log --pretty=fuller查询到。
-		
+出现该标签表示该PR中所包含的commit中，有部分贡献者没有签署Ascend社区的贡献者协议(CLA)。[签署地址](https://clasign.osinfra.cn/sign/gitee_ascend-1720446461942705242)可以在PR评论区找到。如果是个人贡献者请选择“签署个人CLA”，如果是作为企业管理员参与贡献请选择“企业管理员”签署CLA。CLA检查是使用commit信息进行验证的。
 
 <table>
-<tbody><tr>
+<tbody>
+<tr>
 <th>场景</th>
 <th>选择</th>
 <th>处理方案</th>
