@@ -11,10 +11,6 @@ target_sources(op_host_aclnn PRIVATE
 op_host/add_custom.cpp
 )
 
-# target_sources(opapi PRIVATE
-#         op_host/add_custom.cpp
-# )
-
 target_sources(optiling PRIVATE
         op_host/add_custom.cpp
 )
