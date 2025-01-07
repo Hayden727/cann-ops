@@ -39,17 +39,20 @@ git config --global user.name "your Gitee Name"
 配置您的git邮箱
 
 ```
-git config --global user.mail "email@your_Gitee_email"
+git config --global user.email "email@your_email.com"
 ```
 
 3）**完成SSH公钥注册（如果您没有完成此注册，每次都要重新输入账户和密码）**
 
-- ① 生成ssh公钥
+- ① 生成SSH公钥
 
-  ```
-  ssh-keygen -t rsa -C "email@your_Gitee_email"
+  ```sh
+  ssh-keygen -t rsa -C "your_email@example.com"
   cat ~/.ssh/id_rsa.pub
   ```
+
+- ② 登录您个人的远程仓库网站Gitee账户并添加您的SSH公钥
+
 
 - ② 登录您个人的远程仓库网站Gitee账户并添加您的ssh公钥
 
@@ -57,13 +60,13 @@ git config --global user.mail "email@your_Gitee_email"
 
   ![gitee-ssh](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/images/gitee-ssh.png)
 
-  在个人电脑上完成gitee在SSH上的登记
+  在个人电脑上完成gitee在SSH上的注册
 
   ```
   ssh -T git@gitee.com
   ```
 
-  如果获得如下“成功”提示，则表示 ssh 公钥已经生效：  
+  如果获得如下“成功”提示，则表示 SSH 公钥已经生效：  
   `Hi $user_name! You've successfully authenticated, but GITEE.COM does not provide shell access.`
 
 4）**复制远程仓库到本地**
@@ -83,12 +86,12 @@ git config --global user.mail "email@your_Gitee_email"
   - 在本地电脑执行如下命令：
 
     ```
-    #下载远程仓库到本地
+    # 下载远程仓库到本地
     git clone git@gitee.com:$user_name/$repository_name.git
-    
-    # 设置本地工作目录的upstream源（被fork的上游仓库）
+
+    # 设置本地工作目录的上游源（原始仓库）
     git remote add upstream git@gitee.com:ascend/$repository_name.git
-    
+
     ```
 
 
@@ -152,14 +155,14 @@ git push -f origin myfeature
 ```
 
 
-
 ### 7. 在Gitee上创建一个 pull request
 
-1) 访问你在 `https://gitee.com/$user/$repository_name`的页面，单击`+新建Pull Request`。
+1. 访问你在 `https://gitee.com/$user/$repository_name` 的页面，单击 `+Pull Request`。
 
-2) 在创建新PR的界面，确认源分支和目标分支，选择创建。
+2. 在创建新 PR 的界面，确认源分支和目标分支，选择创建。
 
-   提交PR是对项目上的Master的一次合入，为保证合入的质量，请谨慎操作。
+   提交 PR 是对项目主分支的一次合并，为保证合并的质量，请谨慎操作。
+
 
 
 
