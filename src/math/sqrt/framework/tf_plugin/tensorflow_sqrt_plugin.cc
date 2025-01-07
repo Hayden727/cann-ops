@@ -1,5 +1,4 @@
-/* Copyright (C) 2020-2021. Huawei Technologies Co., Ltd. All
-rights reserved.
+/* Copyright (C) 2025. Huawei Technologies Co., Ltd. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the Apache License Version 2.0.

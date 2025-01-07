@@ -15,23 +15,7 @@
 ](https://www.hiascend.com/document/detail/zh/mindstudio/70RC3/ODtools/Operatordevelopmenttools/msopdev_16_0087.html)章节。
 
 ## 执行测试用例
-### 1.&nbsp;编译算子工程
-运行测试用例前，请完成算子包编译部署，请参考[算子包编译部署](../../README.md#算子包编译部署)。
-
-### 2.&nbsp;生成测试用例
-
-  - 进入到测试用例目录
-
-    ```bash
-    cd ${git_clone_path}/src/math/sqrt/tests/st
-    ```
-
-  - 生成测试用例
-
-    ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst create -i ../../op_host/sqrt.cpp -out ./
-    ```
-### 3.&nbsp;执行测试用例
+  **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
 
   - 配置环境变量
 
@@ -43,17 +27,25 @@
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/src/math/sqrt/tests/st
+    cd ${git_clone_path}/ops-contribution/src/math/sqrt/tests/st
     ```
+
+  - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH
+
+  - 查看Soc Version
+
+    ```bash
+    npu-smi info
+    ```
+    打印的表格中Name列即为Soc Version
 
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_timestamp.json -soc {Soc Version} -out ./output
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_timestamp.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2024/12/30 | 新增本readme |
-| 2025/01/06 | 更新本readme |
+| 2025/01/07 | 新增本readme |
