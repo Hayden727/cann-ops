@@ -1,11 +1,12 @@
-/**
- * @file main.cpp
- *
- * Copyright (C) 2025. Huawei Technologies Co., Ltd. All rights reserved.
- *
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file main.cpp
  */
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -19,17 +20,21 @@
 #include "op_runner.h"
 
 bool g_isDevice = false;
-int deviceId = 0;
-int isDynamic = 0;
-int length = 0;
+int g_isDynamic = 0;
+int g_length = 0;
+const int DYNAMIC_OP_ARGS_COUNT = 3;
+const int STATIC_OP_ARGS_COUNT = 1;
+const int IS_DYN_IDX = 1;
+const int LENGTH_IDX = 2;
+const int DEVICE_ID = 0;
 
 OperatorDesc CreateOpDesc()
 {
     // define operator
     std::vector<int64_t> shape{8, 2048};
     std::string opType = "AddCustom";
-    if (isDynamic) {
-        shape = {8, length};
+    if (g_isDynamic) {
+        shape = {8, g_length};
     }
     aclDataType dataType = ACL_FLOAT16;
     aclFormat format = ACL_FORMAT_ND;
@@ -93,8 +98,8 @@ bool RunOp()
 void DestroyResource()
 {
     bool flag = false;
-    if (aclrtResetDevice(deviceId) != ACL_SUCCESS) {
-        ERROR_LOG("Reset device %d failed", deviceId);
+    if (aclrtResetDevice(DEVICE_ID) != ACL_SUCCESS) {
+        ERROR_LOG("Reset device %d failed", DEVICE_ID);
         flag = true;
     }
     INFO_LOG("Reset Device success");
@@ -128,12 +133,12 @@ bool InitResource()
         return false;
     }
 
-    if (aclrtSetDevice(deviceId) != ACL_SUCCESS) {
-        ERROR_LOG("Set device failed. deviceId is %d", deviceId);
+    if (aclrtSetDevice(DEVICE_ID) != ACL_SUCCESS) {
+        ERROR_LOG("Set device failed. DEVICE_ID is %d", DEVICE_ID);
         (void)aclFinalize();
         return false;
     }
-    INFO_LOG("Set device[%d] success", deviceId);
+    INFO_LOG("Set device[%d] success", DEVICE_ID);
 
     // runMode is ACL_HOST which represents app is running in host
     // runMode is ACL_DEVICE which represents app is running in device
@@ -159,10 +164,10 @@ bool InitResource()
 
 int main(int argc, char **argv)
 {
-    if (argc == 3) {
+    if (argc == ARGC_NUM) {
         INFO_LOG("dynamic op will be called");
-        isDynamic = atoi(argv[1]);
-        length = atoi(argv[2]);
+        g_isDynamic = atoi(argv[IS_DYN_IDX]);
+        g_length = atoi(argv[LENGTH_IDX]);
     } else if (argc == 1) {
         INFO_LOG("static op will be called");
     } else {
