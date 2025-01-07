@@ -1,5 +1,3 @@
-# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-
 # CMake lowest version requirement
 cmake_minimum_required(VERSION 3.5.1)
 
@@ -60,4 +58,3 @@ target_link_libraries(execute_sqrt_op
 )
 
 install(TARGETS execute_sqrt_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-

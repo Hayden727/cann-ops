@@ -1,5 +1,3 @@
-# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-
 add_ops_compile_options(
         OP_NAME Sqrt
         OPTIONS --cce-auto-sync=on
