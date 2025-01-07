@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-# Copyright 2022-2023 Huawei Technologies Co., Ltd
-import numpy as np
+# Copyright 2025 Huawei Technologies Co., Ltd
 import os
 import torch
+import numpy as np
 
 def gen_golden_data_simple():
     dtype = np.float16
