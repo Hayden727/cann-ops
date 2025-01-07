@@ -46,7 +46,6 @@ public:
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_Y));
         pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
     }
     __aicore__ inline void Process()
     {
@@ -100,7 +99,7 @@ private:
     AscendC::TPipe pipe;
     AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> inQueueX;
     AscendC::TQue<AscendC::QuePosition::VECOUT, BUFFER_NUM> outQueueY;
-    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1, tmp2;
+    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1;
     AscendC::GlobalTensor<TYPE_X> xGm;
     AscendC::GlobalTensor<TYPE_Y> yGm;
     uint32_t coreDataNum;
