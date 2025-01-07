@@ -1,32 +1,33 @@
 ![输入图片说明](https://foruda.gitee.com/images/1732709982038009684/f1bee069_9519913.jpeg "首页banner.jpg")
-## 🎯 组织介绍
 
-昇腾社区是基于昇腾全栈 AI 软硬件平台打造的社区，该社区面向开发者提供基于华为昇腾AI处理器的CANN开放平台，让开发者可以便捷高效的编写在特定硬件设备上运行的人工智能应用程序。如进一步学习，请至[昇腾社区](https://www.hiascend.com/)了解更多详细信息。
+## 🎯 项目介绍
+ops-contribution是昇腾与生态伙伴共建的开放仓库，欢迎开发者体验基于昇腾平台提供的系列算子代码样例。
 
-昇腾社区包含多个项目，主要项目简介如下，您可以根据实际场景，在对应的项目中拉取代码修改、编译，提交issue和PR等：
-| 公开项目                | 应用场景                                              |
-|---------------------|---------------------------------------------------|
-| [ascendc-api-adv ](https://gitee.com/ascend/ascendc-api-adv)    | 昇腾硬件上面向算子开发场景的编程语言Ascend C的高阶类库。                  |
-| [cann-ops-adv](https://gitee.com/ascend/cann-ops-adv)           | 基于昇腾硬件的融合算子库。                                     |
-| [cann-hccl ](https://gitee.com/ascend/cann-hccl)          | 基于昇腾AI处理器的高性能集合通信库，提供单机多卡以及多机多卡间的数据并行、模型并行集合通信方案。 |
-| [Ascend CANN Samples](https://gitee.com/ascend/samples) | 您准备使用昇腾提供的CANN系列Samples，或贡献Samples。               |
+## 🤝 共建伙伴
+![输入图片说明](resouce/%E5%85%B1%E5%BB%BA%E4%BC%99%E4%BC%B4.png)
 
-## 🤝 合作伙伴
+## ⭐️ 贡献者
 
-以下这些公司或软件正在使用我们的软件，了解更多[昇腾生态伙伴介绍](https://www.hiascend.com/ecosystem/ascendpartner)
-
-## 👫 共建伙伴
-
-如果希望参与到开发中，请遵从我们的贡献指南。
-
-![输入图片说明](.gitee/%E8%B5%84%E6%BA%90%204-8.png)
+我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。
+<table>
+<tr><td width="10%"><b>算子分类</b></td><td width="10%"><b>算子</b></td><td width="30%"><b>适用场景</b></td><td width="25%"><b>支持的产品型号</b></td><td width="25%"><b>贡献者</b></td></tr>
+<tr><td>Sqrt</td><td>Sqrt</td><td>Sqrt原生自定义算子，实现了对输入数据计算开方，获取输出数据的功能。</td><td> · Atlas A2训练系列产品<br> · Atlas 200/500 A2推理产品</td><td>西北工业大学-智能感知交互实验室<br>Nice_try</td></tr>
+</table>
 
 ## 📌 社区交流
 
-若您对昇腾社区的使用有任何建议和疑问，欢迎发送邮件到ascend@huawei.com。
+#### **🔥 系列直播 | 深度开放特辑**
+- **直播平台**：【昇腾CANN】视频号、[B站【昇腾AI开发者】](https://space.bilibili.com/1190614918?spm_id_from=333.337.search-card.all.click)、[昇腾社区同步直播](https://www.hiascend.com/developer/cann20242?tab=live)<br>
+- **回放地址**：https://www.bilibili.com/video/BV1ouBMYpEJC/?spm_id_from=333.999.0.0 <br>
+- **直播预告**：<br>
+![输入图片说明](resouce/%E7%9B%B4%E6%92%AD%E9%A2%84%E5%91%8A-2%E6%9C%88.png)
 
- :globe_with_meridians: 网站：https://www.hiascend.com
+#### **🏅️ 项目发放**
+`传送门`：**项目发放列表**<br>
+ _*项目发放持续更新中，敬请期待_ 
 
- :mailbox_with_mail: 邮箱：ascend@huawei.com
-
- :speech_balloon: 论坛：https://www.hiascend.com/forum/
+#### **💌 联系我们**
+若您对开放仓库的使用有任何建议和疑问，欢迎发送邮件到cann@huawei.com。<br>
+ :globe_with_meridians: 网站：https://www.hiascend.com/software/cann <br>
+ :mailbox_with_mail: 邮箱：cann@huawei.com <br>
+ :speech_balloon: 论坛：https://www.hiascend.com/forum/forum-0106101385921175004-1.html <br>
