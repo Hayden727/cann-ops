@@ -1,11 +1,12 @@
-/**
- * @file add_custom.cpp
- *
- * Copyright (C) 2025. Huawei Technologies Co., Ltd. All rights reserved.
+/* Copyright (C) 2025. Huawei Technologies Co., Ltd. All rights reserved.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file add_custom.cpp
  */
 #include "add_custom_tiling.h"
 #include "register/op_def_registry.h"
