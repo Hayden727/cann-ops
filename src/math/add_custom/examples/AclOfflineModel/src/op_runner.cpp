@@ -19,6 +19,8 @@
 using namespace std;
 
 extern bool g_isDevice;
+const size_t WIDTH = 10;
+const size_t PRECISION = 4;
 
 OpRunner::OpRunner(OperatorDesc *opDesc) : opDesc_(opDesc)
 {
@@ -271,7 +273,7 @@ template <typename T> void DoPrintData(const T *data, size_t count, size_t eleme
 {
     assert(elementsPerRow != 0);
     for (size_t i = 0; i < count; ++i) {
-        std::cout << std::setw(10) << data[i];
+        std::cout << std::setw(WIDTH) << data[i];
         if (i % elementsPerRow == elementsPerRow - 1) {
             std::cout << std::endl;
         }
@@ -282,7 +284,7 @@ void DoPrintFp16Data(const aclFloat16 *data, size_t count, size_t elementsPerRow
 {
     assert(elementsPerRow != 0);
     for (size_t i = 0; i < count; ++i) {
-        std::cout << std::setw(10) << std::setprecision(4) << aclFloat16ToFloat(data[i]);
+        std::cout << std::setw(WIDTH) << std::setprecision(PRECISION) << aclFloat16ToFloat(data[i]);
         if (i % elementsPerRow == elementsPerRow - 1) {
             std::cout << std::endl;
         }
