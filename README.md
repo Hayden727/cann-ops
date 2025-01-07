@@ -19,7 +19,7 @@ ops-contribution仓关键目录如下所示：
 ```
 ## ⚡️ 快速上手
 <table>
-<tr><td width="20%"><b>样例名称</b></td><td width="60%"><b>样例介绍</b></td><td width="20%"><b>开发语言</b></td></tr>
+<tr><td width="15%"><b>样例名称</b></td><td width="70%"><b>样例介绍</b></td><td width="15%"><b>开发语言</b></td></tr>
 <tr><td><a>add_custom</a></td><td>参考算子，基于Ascend C的vector加法算子</td><td>Ascend C</td></tr>
 </table>
 
