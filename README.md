@@ -20,7 +20,7 @@ ops-contribution仓关键目录如下所示：
 ## ⚡️ 快速上手
 <table>
 <tr><td width="15%"><b>样例名称</b></td><td width="70%"><b>样例介绍</b></td><td width="15%"><b>开发语言</b></td></tr>
-<tr><td><a>add_custom</a></td><td>参考算子，基于Ascend C的vector加法算子</td><td>Ascend C</td></tr>
+<tr><td>[add_custom](./src/math/add_custom)</td><td>参考算子，基于Ascend C的vector加法算子</td><td>Ascend C</td></tr>
 </table>
 
 ## 📝 版本配套说明
@@ -63,7 +63,7 @@ ops-contribution仓关键目录如下所示：
 </table>
 
 ## 📌 贡献指南
-ops-contribution仓欢迎广大开发者体验并参与贡献，在参与社区贡献之前。请参见[Contributing](.docs/Contributing.md)了解行为准则，进行CLA协议签署，以及参与源码仓贡献的详细流程。<br>
+ops-contribution仓欢迎广大开发者体验并参与贡献，在参与社区贡献之前。请参见[Contributing](docs/Contributing.md)了解行为准则，进行CLA协议签署，以及参与源码仓贡献的详细流程。<br>
 
 **针对ops-contribution仓，开发者准备本地代码与提交PR时需要重点关注如下几点**：<br>
 
