@@ -43,14 +43,14 @@ ops-contribution仓关键目录如下所示：
 - **众智任务**：[请参考](https://www.hiascend.com/ecosystem/all-wisdom)
 
 #### **💌 联系我们**
-若您对开放仓库的使用有任何建议和疑问，欢迎发送邮件到cann@huawei.com。<br>
+若您对仓库的使用有任何建议和疑问，欢迎发送邮件到cann@huawei.com。<br>
 
  :globe_with_meridians: 网站：https://www.hiascend.com/software/cann <br>
  :mailbox_with_mail: 邮箱：cann@huawei.com <br>
  :speech_balloon: 论坛：https://www.hiascend.com/forum/forum-0106101385921175004-1.html <br>
 
 ## 🤝 共建伙伴
-目前ops-contribution开放仓库持续建设中，欢迎各生态伙伴积极参与社区共建，若您有意请发送邮件到cann@huawei.com
+目前ops-contribution开放仓库正在积极建设中，欢迎各社区伙伴积极参与社区共建，若您有意，请发送邮件至cann@huawei.com
 
 ## ⭐️ 贡献者
 我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。<br>
