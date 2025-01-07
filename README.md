@@ -18,10 +18,10 @@ ops-contribution仓关键目录如下所示：
 └── build.sh // 算子编译脚本
 ```
 ## ⚡️ 快速上手
-|  **样例名称**  |  **样例介绍**  |  **开发语言**  |
-|---|---|---|
-| [sampleResnetQuickStart](https://gitee.com/ascend/samples/tree/master/inference/modelInference/sampleResnetQuickStart) | :+1:推理应用入门样例，基于Resnet50模型实现的图像分类应用 | C++/Python |
-| [sampleYOLOV7MultiInput](https://gitee.com/ascend/samples/tree/master/inference/modelInference/sampleYOLOV7MultiInput)  | :+1:多路输入综合样例，基于YoloV7模型实现的物体检测应用，支持多路RTSP流/视频输入、支持多卡并行 |  C++ |
+<table>
+<tr><td width="15%"><b>样例名称</b></td><td width="15%"><b>样例介绍</b></td><td width="40%"><b>开发语言</b></td></tr>
+<tr><td><a>add_custom</a></td><td>参考算子，基于Ascend C的vector加法算子</td><td>Ascend C</td></tr>
+</table>
 
 ## 📝 版本配套说明
 - 请参考[CANN社区版文档](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/softwareinst/instg/instg_0001.html)相关章节，对昇腾硬件、CANN软件及相应深度学习框架进行安装准备。
@@ -61,3 +61,11 @@ ops-contribution仓关键目录如下所示：
 <tr><td width="15%"><b>算子分类</b></td><td width="15%"><b>算子</b></td><td width="40%"><b>简介</b></td><td width="30%"><b>贡献者</b></td></tr>
 <tr><td>Sqrt</td><td>Sqrt</td><td>Sqrt原生自定义算子，实现了对输入数据计算开方，获取输出数据的功能。</td><td> <a href="https://gitee.com/Nicet">Nice_try</a><br>西北工业大学-智能感知交互实验室</td></tr>
 </table>
+
+## 📝 贡献指南
+ops-contribution仓欢迎广大开发者体验并参与贡献，在参与社区贡献之前。请参见<a> **Contributing** </a>了解行为准则，进行CLA协议签署，以及参与源码仓贡献的详细流程。<br>
+
+**针对ops-contribution仓，开发者准备本地代码与提交PR时需要重点关注如下几点**：<br>
+
+1.提交PR时，请按照PR模板仔细填写本次PR的业务背景、目的、方案等信息。<br>
+2.若您的修改不是简单的bug修复，而是涉及到新增特性、新增接口、新增配置参数或者修改代码流程等，请务必先通过Issue进行方案讨论，以避免您的代码被拒绝合入。若您不确定本次修改是否可被归为“简单的bug修复”，亦可通过提交Issue进行方案讨论。
