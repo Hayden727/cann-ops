@@ -94,7 +94,6 @@ class Sqrt : public OpDef {
 public:
     explicit Sqrt(const char* name) : OpDef(name)
     {
-        
         this->Input("x")
             .ParamType(REQUIRED)
             .DataType({ge::DT_FLOAT16, ge::DT_FLOAT, ge::DT_BF16})
