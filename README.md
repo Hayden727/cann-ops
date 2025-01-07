@@ -10,18 +10,18 @@ ops-contribution仓关键目录如下所示：
 ├── src // 算子源码目录
 │ ├── common // 公共目录
 │ ├── math // 数学库算子目录
-│ │ ├── add_custom // AddCustom算子目录
+│ │ └── add_custom // AddCustom算子目录
 │ └── CMakeLists.txt
 ├── CMakeLists.txt
 ├── CMakePresets.json // 配置文件
+├── LICENSE
 ├── README.md
 └── build.sh // 算子编译脚本
 ```
 ## ⚡️ 快速上手
-<table>
-<tr><td width="15%"><b>样例名称</b></td><td width="70%"><b>样例介绍</b></td><td width="15%"><b>开发语言</b></td></tr>
-<tr><td>[add_custom](./src/math/add_custom)</td><td>参考算子，基于Ascend C的vector加法算子</td><td>Ascend C</td></tr>
-</table>
+| 样例名称  | 样例介绍  | 开发语言  |
+|---|---|---|
+| [add_custom](./src/math/add_custom)  | 参考算子，基于Ascend C的vector加法算子  |  Ascend C |
 
 ## 📝 版本配套说明
 请参考[CANN社区版文档](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/softwareinst/instg/instg_0001.html)相关章节，对昇腾硬件、CANN软件及相应深度学习框架进行安装准备。
