@@ -37,7 +37,7 @@ ops-contribution仓关键目录如下所示：
 - **直播平台**：【昇腾CANN】视频号、[B站【昇腾AI开发者】](https://space.bilibili.com/1190614918?spm_id_from=333.337.search-card.all.click)、[昇腾社区同步直播](https://www.hiascend.com/developer/cann20242?tab=live)<br>
 - **回放地址**：https://www.bilibili.com/video/BV1ouBMYpEJC/?spm_id_from=333.999.0.0 <br>
 - **直播预告**：<br>
-![直播预告](resouce/advance-2.jpg)
+![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/resouce/advance-2.jpg)
 
 #### **🏅️ 项目发放**
 - **众智任务**：[请参考](https://www.hiascend.com/ecosystem/all-wisdom)
@@ -54,7 +54,7 @@ ops-contribution仓关键目录如下所示：
 
 ## ⭐️ 贡献者
 我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。<br>
-[![](resouce/%E5%BC%A0%E5%BF%97%E4%BC%9F-CIRCLE.png)](https://gitee.com/Nicet)
+[![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/resouce/%E5%BC%A0%E5%BF%97%E4%BC%9F-CIRCLE.png)](https://gitee.com/Nicet)
 
 **贡献算子列表**
 <table>
