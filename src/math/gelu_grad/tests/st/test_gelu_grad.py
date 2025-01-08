@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# coding=utf-8
+# Copyright 2025 Huawei Technologies Co., Ltd
 import tensorflow as tf
 import numpy as np
 
