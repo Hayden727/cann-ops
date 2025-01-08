@@ -1,4 +1,13 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file addcdiv.cpp
+ */
 #include "addcdiv_tiling.h"
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
@@ -11,8 +20,8 @@ const uint32_t BUFFER_NUM = 2;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
 
-  AddcdivTilingData tiling;
-     uint64_t ubSize;
+    AddcdivTilingData tiling;
+    uint64_t ubSize;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     auto coreNum = ascendcPlatform.GetCoreNum();
