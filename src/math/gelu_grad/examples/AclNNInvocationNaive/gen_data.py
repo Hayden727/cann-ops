@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-# Copyright 2022-2023 Huawei Technologies Co., Ltd
+# Copyright 2025 Huawei Technologies Co., Ltd
 import numpy as np
 import os
 import torch
