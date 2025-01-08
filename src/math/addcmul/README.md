@@ -40,7 +40,34 @@ y = (input_data + (x1 * x2) * value)
 ## 环境要求
 编译运行此样例前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
+### 算子包编译部署
+  - 进入到仓库目录
+
+    ```bash
+    cd ${git_clone_path}/ops-contribution
+    ```
+
+  - 执行编译
+
+    ```bash
+    bash build.sh
+    ```
+
+  - 部署算子包
+
+    ```bash
+    bash build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
+    ```
+
+### 算子调用
+<table>
+    <th>目录</th><th>描述</th>
+    <tr>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Addcmul算子。</td>
+    </tr>
+</table>
+
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2024/12/30 | 新增本readme |
+| 2025/01/07 | 新增本readme |
