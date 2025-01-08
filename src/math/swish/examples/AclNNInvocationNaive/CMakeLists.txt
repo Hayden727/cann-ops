@@ -1,5 +1,3 @@
-# Copyright (c) Huawei Technologies Co., Ltd. 2020. All rights reserved.
-
 # CMake lowest version requirement
 cmake_minimum_required(VERSION 3.5.1)
 
@@ -60,4 +58,3 @@ target_link_libraries(execute_op
 )
 
 install(TARGETS execute_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
