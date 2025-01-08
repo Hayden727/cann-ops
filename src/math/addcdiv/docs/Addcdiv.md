@@ -5,7 +5,7 @@
 ## 支持的产品型号
 
 Atlas A2 训练系列产品
-Atlas 200/500 A2推理产品
+Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -80,189 +80,24 @@ Atlas 200/500 A2推理产品
 
 ## 算子原型
 
-```c++
-REG_OP(Addcdiv)
-    .INPUT(self, TensorType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .INPUT(tensor1, TensorType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .INPUT(tensor2, TensorType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .INPUT(value, ScalarType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .OUTPUT(out, TensorType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .OP_END_FACTORY_REG(Addcdiv)
-```
+<table>
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Addcdiv</th></tr> 
+<tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
+<tr><td rowspan="5" align="center">算子输入</td>
+<tr><td align="center">intput_data</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
+
+<tr><td align="center">x1</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr> 
+
+<tr><td align="center">x2</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr> 
+
+<tr><td align="center">value</td><td align="center">scalar</td><td align="center">float32,float16,bfloat16</td><td align="center">-</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td>
+<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcdiv</td></tr>  
+</table>
 
 参数解释请参见**算子执行接口**。
 
 ## 调用示例
 
-该算子接口有两种调用方式：
-
-- PyTorch框架调用
-
-  如果通过PyTorch单算子方式调用该算子，则需要参考PyTorch算子[torch_npu.npu_ffn](https://hiascend.com/document/redirect/PyTorchAPI)；如果用户定制了该算子，则需要参考《Ascend C算子开发》手册[适配PyTorch框架](https://hiascend.com/document/redirect/CannCommunityAscendCInvorkOnNetwork)。
-- aclnn单算子调用方式
-
-  通过aclnn单算子调用示例代码如下，仅供参考，具体编译和执行过程请参考[编译与运行样例](../examples/AclNNInvocationNaive/README.md)。
-
-  ```c++
-  #include <iostream>
-  #include <vector>
-  #include "acl/acl.h"
-  #include "aclnnop/aclnn_addcdiv.h"
-
-  #define CHECK_RET(cond, return_expr) \
-    do {                               \
-      if (!(cond)) {                   \
-        return_expr;                   \
-      }                                \
-    } while (0)
-
-  #define LOG_PRINT(message, ...)     \
-    do {                              \
-      printf(message, ##__VA_ARGS__); \
-    } while (0)
-
-  int64_t GetShapeSize(const std::vector<int64_t>& shape) {
-    int64_t shapeSize = 1;
-    for (auto i : shape) {
-      shapeSize *= i;
-    }
-    return shapeSize;
-  }
-
-  int Init(int32_t deviceId, aclrtStream* stream) {
-    // 固定写法，AscendCL初始化
-    auto ret = aclInit(nullptr);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclInit failed. ERROR: %d\n", ret); return ret);
-    ret = aclrtSetDevice(deviceId);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetDevice failed. ERROR: %d\n", ret); return ret);
-    ret = aclrtCreateStream(stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtCreateStream failed. ERROR: %d\n", ret); return ret);
-    return 0;
-  }
-
-  template <typename T>
-  int CreateAclTensor(const std::vector<T>& hostData, const std::vector<int64_t>& shape, void** deviceAddr,
-                      aclDataType dataType, aclTensor** tensor) {
-    auto size = GetShapeSize(shape) * sizeof(T);
-    // 调用aclrtMalloc申请device侧内存
-    auto ret = aclrtMalloc(deviceAddr, size, ACL_MEM_MALLOC_HUGE_FIRST);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtMalloc failed. ERROR: %d\n", ret); return ret);
-
-    // 调用aclrtMemcpy将host侧数据拷贝到device侧内存上
-    ret = aclrtMemcpy(*deviceAddr, size, hostData.data(), size, ACL_MEMCPY_HOST_TO_DEVICE);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtMemcpy failed. ERROR: %d\n", ret); return ret);
-
-    // 计算连续tensor的strides
-    std::vector<int64_t> strides(shape.size(), 1);
-    for (int64_t i = shape.size() - 2; i >= 0; i--) {
-      strides[i] = shape[i + 1] * strides[i + 1];
-    }
-
-    // 调用aclCreateTensor接口创建aclTensor
-    *tensor = aclCreateTensor(shape.data(), shape.size(), dataType, strides.data(), 0, aclFormat::ACL_FORMAT_ND,
-                              shape.data(), shape.size(), *deviceAddr);
-    return 0;
-  }
-
-  int main() {
-    // 1. （固定写法）device/stream初始化，参考AscendCL对外接口列表
-    // 根据自己的实际device填写deviceId
-    int32_t deviceId = 0;
-    aclrtStream stream;
-    auto ret = Init(deviceId, &stream);
-    // check根据自己的需要处理
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
-
-    // 2. 构造输入与输出，需要根据API的接口自定义构造
-    std::vector<int64_t> selfShape = {4, 2};
-    std::vector<int64_t> tensor1Shape = {4, 2};
-    std::vector<int64_t> tensor2Shape = {4, 2};
-    std::vector<int64_t> outShape = {4, 2};
-    void* selfDeviceAddr = nullptr;
-    void* tensor1DeviceAddr = nullptr;
-    void* tensor2DeviceAddr = nullptr;
-    void* outDeviceAddr = nullptr;
-    aclTensor* self = nullptr;
-    aclTensor* tensor1 = nullptr;
-    aclTensor* tensor2 = nullptr;
-    aclScalar* value = nullptr;
-    aclTensor* out = nullptr;
-    std::vector<float> selfHostData = {0, 1, 2, 3, 4, 5, 6, 7};
-    std::vector<float> tensor1HostData = {2, 2, 2, 2, 2, 2, 2, 2};
-    std::vector<float> tensor2HostData = {2, 2, 2, 2, 2, 2, 2, 2};
-    std::vector<float> outHostData = {0, 0, 0, 0, 0, 0, 0, 0};
-    float scalarValue = 1.2f;
-    // 创建self aclTensor
-    ret = CreateAclTensor(selfHostData, selfShape, &selfDeviceAddr, aclDataType::ACL_FLOAT, &self);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-    // 创建tensor1 aclTensor
-    ret = CreateAclTensor(tensor1HostData, tensor1Shape, &tensor1DeviceAddr, aclDataType::ACL_FLOAT, &tensor1);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-    // 创建tensor2 aclTensor
-    ret = CreateAclTensor(tensor2HostData, tensor2Shape, &tensor2DeviceAddr, aclDataType::ACL_FLOAT, &tensor2);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-    // 创建value aclScalar
-    value = aclCreateScalar(&scalarValue, aclDataType::ACL_FLOAT);
-    CHECK_RET(value != nullptr, return ret);
-    // 创建out aclTensor
-    ret = CreateAclTensor(outHostData, outShape, &outDeviceAddr, aclDataType::ACL_FLOAT, &out);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-
-    uint64_t workspaceSize = 0;
-    aclOpExecutor* executor;
-
-    // aclnnAddcdiv接口调用示例
-    LOG_PRINT("test aclnnAddcdiv\n");
-
-    // 3. 调用CANN算子库API，需要修改为具体的Api名称
-    // 调用aclnnAddcdiv第一段接口
-    ret = aclnnAddcdivGetWorkspaceSize(self, tensor1, tensor2, value, out, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddcdivGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
-    // 根据第一段接口计算出的workspaceSize申请device内存
-    void* workspaceAddr = nullptr;
-    if (workspaceSize > 0) {
-    ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret);
-    }
-    // 调用aclnnAddcdiv第二段接口
-    ret = aclnnAddcdiv(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddcdiv failed. ERROR: %d\n", ret); return ret);
-
-    // 4. （固定写法）同步等待任务执行结束
-    ret = aclrtSynchronizeStream(stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
-
-    // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
-    auto size = GetShapeSize(outShape);
-    std::vector<float> resultData(size, 0);
-    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outDeviceAddr,
-                      size * sizeof(resultData[0]), ACL_MEMCPY_DEVICE_TO_HOST);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return ret);
-    for (int64_t i = 0; i < size; i++) {
-      LOG_PRINT("result[%ld] is: %f\n", i, resultData[i]);
-    }
-
-    // 6. 释放aclTensor，需要根据具体API的接口定义修改
-    aclDestroyTensor(self);
-    aclDestroyTensor(tensor1);
-    aclDestroyTensor(tensor2);
-    aclDestroyTensor(out);
-    aclDestroyScalar(value);
-
-    // 7. 释放device资源
-    aclrtFree(selfDeviceAddr);
-    aclrtFree(tensor1DeviceAddr);
-    aclrtFree(tensor2DeviceAddr);
-    aclrtFree(outDeviceAddr);
-    if (workspaceSize > 0) {
-      aclrtFree(workspaceAddr);
-    }
-    aclrtDestroyStream(stream);
-    aclrtResetDevice(deviceId);
-    aclFinalize();
-
-    return 0;
-  }
-
-  
-  ```
+详见[Addcdiv自定义算子样例说明算子调用章节](../README.md#算子调用)
