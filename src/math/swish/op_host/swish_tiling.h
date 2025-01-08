@@ -1,4 +1,16 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file swish_tiling.h
+ */
+
+#ifndef SWISH_TILING_H
+#define SWISH_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -16,3 +28,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(Swish, SwishTilingData)
 }
+#endif // SWISH_TILING_H
