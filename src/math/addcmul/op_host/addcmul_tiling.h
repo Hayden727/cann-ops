@@ -1,3 +1,13 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file addcmul_tiling.h
+ */
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -14,3 +24,5 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(Addcmul, AddcmulTilingData)
 }
+// namespace optiling
+#endif // SQRT_TILING_H
