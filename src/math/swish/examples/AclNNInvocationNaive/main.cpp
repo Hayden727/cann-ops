@@ -1,11 +1,12 @@
-/**
- * @file main.cpp
- *
- * Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
- *
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file main.cpp
  */
 #include <algorithm>
 #include <cstdint>
@@ -17,17 +18,15 @@
 #include <fstream>
 #include <fcntl.h>
 
+#include "acl/acl.h"
+#include "aclnn_swish.h"
+
 #define SUCCESS 0
 #define FAILED 1
 
 #define INFO_LOG(fmt, args...) fprintf(stdout, "[INFO]  " fmt "\n", ##args)
 #define WARN_LOG(fmt, args...) fprintf(stdout, "[WARN]  " fmt "\n", ##args)
 #define ERROR_LOG(fmt, args...) fprintf(stderr, "[ERROR]  " fmt "\n", ##args)
-
-
-#include "acl/acl.h"
-#include "aclnn_swish.h"
-
 
 #define CHECK_RET(cond, return_expr) \
     do {                             \
@@ -223,6 +222,3 @@ int main(int argc, char **argv)
 
     return SUCCESS;
 }
-
-
-
