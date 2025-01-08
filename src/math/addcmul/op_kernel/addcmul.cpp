@@ -189,13 +189,13 @@ private:
         LocalTensor<TYPE_X> x2Local = inQueueX2.AllocTensor<TYPE_X>();
         LocalTensor<TYPE_X> valueLocal = inQueueVALUE.AllocTensor<TYPE_X>();
         DataCopy(x1Local, x1Gm[progress * this->tileDataNum], this->processDataNum);
-         DataCopy(x2Local, x2Gm[progress * this->tileDataNum], this->processDataNum);
-         DataCopy(input_dataLocal, input_dataGm[progress * this->tileDataNum], this->processDataNum);
-         DataCopy(valueLocal, valueGm[progress * this->tileDataNum], this->processDataNum);
+        DataCopy(x2Local, x2Gm[progress * this->tileDataNum], this->processDataNum);
+        DataCopy(input_dataLocal, input_dataGm[progress * this->tileDataNum], this->processDataNum);
+        DataCopy(valueLocal, valueGm[progress * this->tileDataNum], this->processDataNum);
         inQueueX1.EnQue(x1Local);
-         inQueueX2.EnQue(x2Local);
-         inQueueINPUT_DATA.EnQue(input_dataLocal);
-         inQueueVALUE.EnQue(valueLocal);
+        inQueueX2.EnQue(x2Local);
+        inQueueINPUT_DATA.EnQue(input_dataLocal);
+        inQueueVALUE.EnQue(valueLocal);
     }
     __aicore__ inline void Compute(int32_t progress)
     {
@@ -214,20 +214,20 @@ private:
             Cast(p2, valueLocal, RoundMode::CAST_NONE, this->processDataNum);
             Mul(p1, p1, p2, this->processDataNum);
             Cast(p2, input_dataLocal, RoundMode::CAST_NONE, this->processDataNum);
-           Add(p2, p1, p2, this->processDataNum);
+            Add(p2, p1, p2, this->processDataNum);
             Cast(yLocal, p2, RoundMode::CAST_RINT, this->processDataNum);
         }
         else
         {
-           Mul(x1Local, x1Local, x2Local, this->processDataNum);
-           Mul(x1Local, x1Local, valueLocal, this->processDataNum);
-           Add(yLocal, x1Local, input_dataLocal, this->processDataNum);
+            Mul(x1Local, x1Local, x2Local, this->processDataNum);
+            Mul(x1Local, x1Local, valueLocal, this->processDataNum);
+            Add(yLocal, x1Local, input_dataLocal, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX1.FreeTensor(x1Local);
-         inQueueX2.FreeTensor(x2Local);
-         inQueueVALUE.FreeTensor(valueLocal);
-         inQueueINPUT_DATA.FreeTensor(input_dataLocal);
+        inQueueX2.FreeTensor(x2Local);
+        inQueueVALUE.FreeTensor(valueLocal);
+        inQueueINPUT_DATA.FreeTensor(input_dataLocal);
     }
     __aicore__ inline void CopyOut(int32_t progress)
     {
