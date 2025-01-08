@@ -1,4 +1,13 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file addcmul.cpp
+ */
 #include "addcmul_tiling.h"
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
