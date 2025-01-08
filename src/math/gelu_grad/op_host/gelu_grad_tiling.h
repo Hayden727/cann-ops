@@ -6,7 +6,7 @@
  */
 
 /**
- * @file sqrt_tiling.h
+ * @file gelu_grad_tiling.h
  */
 #include "register/tilingdata_base.h"
 
