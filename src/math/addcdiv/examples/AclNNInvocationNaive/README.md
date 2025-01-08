@@ -23,7 +23,7 @@
   - 进入样例代码所在路径
   
     ```bash
-    cd ${git_clone_path}/ops-contribution/src/math/sqrt/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/ops-contribution/src/math/addcdiv/examples/AclNNInvocationNaive
     ```
   
   - 环境变量配置
@@ -42,7 +42,7 @@
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_sqrt_op
+    ./execute_addcdiv_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。
