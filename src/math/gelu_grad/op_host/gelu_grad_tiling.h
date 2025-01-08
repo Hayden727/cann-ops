@@ -1,4 +1,13 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file sqrt_tiling.h
+ */
 #include "register/tilingdata_base.h"
 
 namespace optiling {
