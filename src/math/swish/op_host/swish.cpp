@@ -1,9 +1,17 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file swish.cpp
+ */
 #include "swish_tiling.h"
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 32;
@@ -53,21 +61,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum; 
     
     tiling.set_smallCoreDataNum(smallCoreDataNum);
-    //一个小核数据个数
     tiling.set_bigCoreDataNum(bigCoreDataNum);
-    //一个大核数据个数
     tiling.set_tileDataNum(tileDataNum);
-    //一次搬运的数据个数
     tiling.set_smallTailDataNum(smallTailDataNum);
-    //小核尾块数据个数
     tiling.set_bigTailDataNum(bigTailDataNum);
-    //大核尾块数据个数
     tiling.set_finalSmallTileNum(finalSmallTileNum);
-    //小核搬运次数
     tiling.set_finalBigTileNum(finalBigTileNum);
-    //大核搬运次数
     tiling.set_tailBlockNum(tailBlockNum);
-    //大核数
 
     const gert::RuntimeAttrs *attrs = context->GetAttrs();
     const float *scale = attrs->GetAttrPointer<float>(0);
