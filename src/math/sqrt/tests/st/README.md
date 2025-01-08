@@ -42,7 +42,7 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_timestamp.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明
