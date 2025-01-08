@@ -1,3 +1,13 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file addcdiv.cpp
+ */
 #include "kernel_operator.h"
 using namespace AscendC;
 constexpr int32_t BUFFER_NUM = 2;
@@ -214,20 +224,20 @@ private:
             Cast(p2, valueLocal, RoundMode::CAST_NONE, this->processDataNum);
             Mul(p1, p1, p2, this->processDataNum);
             Cast(p2, input_dataLocal, RoundMode::CAST_NONE, this->processDataNum);
-           Add(p2, p1, p2, this->processDataNum);
+            Add(p2, p1, p2, this->processDataNum);
             Cast(yLocal, p2, RoundMode::CAST_RINT, this->processDataNum);
         }
         else
         {
-           Div(x1Local, x1Local, x2Local, this->processDataNum);
-           Mul(x1Local, x1Local, valueLocal, this->processDataNum);
-           Add(yLocal, x1Local, input_dataLocal, this->processDataNum);
+            Div(x1Local, x1Local, x2Local, this->processDataNum);
+            Mul(x1Local, x1Local, valueLocal, this->processDataNum);
+            Add(yLocal, x1Local, input_dataLocal, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX1.FreeTensor(x1Local);
-         inQueueX2.FreeTensor(x2Local);
-         inQueueVALUE.FreeTensor(valueLocal);
-         inQueueINPUT_DATA.FreeTensor(input_dataLocal);
+        inQueueX2.FreeTensor(x2Local);
+        inQueueVALUE.FreeTensor(valueLocal);
+        inQueueINPUT_DATA.FreeTensor(input_dataLocal);
     }
     __aicore__ inline void CopyOut(int32_t progress)
     {
