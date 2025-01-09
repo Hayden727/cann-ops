@@ -1,5 +1,3 @@
-# Copyright (c) Huawei Technologies Co., Ltd. 2020. All rights reserved.
-
 # CMake lowest version requirement
 cmake_minimum_required(VERSION 3.5.1)
 
@@ -47,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_op
+add_executable(execute_addcdiv_op
     main.cpp
 )
 
-target_link_libraries(execute_op
+target_link_libraries(execute_addcdiv_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -59,5 +57,4 @@ target_link_libraries(execute_op
     stdc++
 )
 
-install(TARGETS execute_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
+install(TARGETS execute_addcdiv_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
