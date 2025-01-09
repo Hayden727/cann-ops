@@ -6,7 +6,6 @@ import numpy as np
 
 
 def sqrt_test(x):
-    """Compute the Swish activation function."""
     tensor = tf.convert_to_tensor(x)
     sqrt_tensor = tf.math.sqrt(tensor)
     re = sqrt_tensor.numpy()
