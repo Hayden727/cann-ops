@@ -58,4 +58,3 @@ target_link_libraries(execute_op
 )
 
 install(TARGETS execute_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
