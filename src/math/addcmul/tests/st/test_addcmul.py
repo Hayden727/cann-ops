@@ -24,6 +24,7 @@ def addcmul_test(input_data, x1, x2, value):
     result = tf.cast(res, ori_dtype)
     return result.numpy()
 
+
 def calc_expect_func(input_data, x1, x2, value, y):
     """
     calc_expect_func
