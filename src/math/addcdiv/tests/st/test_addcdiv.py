@@ -4,13 +4,12 @@
 import tensorflow as tf
 import numpy as np
 
+
 def addcdiv_test(input_data, x1, x2, value):
-    """Compute the Swish activation function."""
     input_data_tensor = tf.convert_to_tensor(input_data)
     x1_tensor = tf.convert_to_tensor(x1)
     x2_tensor = tf.convert_to_tensor(x2)
     value_tensor = tf.convert_to_tensor(value)
-
     ori_dtype = input_data_tensor.dtype
     if ori_dtype == tf.int32:
         compute_dtype = tf.int32
@@ -23,6 +22,7 @@ def addcdiv_test(input_data, x1, x2, value):
     res = input_data + x1_tensor / x2_tensor * value_tensor
     result = tf.cast(res, ori_dtype)
     return result.numpy()
+
 
 def calc_expect_func(input_data, x1, x2, value, y):
     """
