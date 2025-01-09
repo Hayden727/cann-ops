@@ -32,9 +32,13 @@ y = (input_data + (x1 * x2) * value)
 
 ## 目录结构介绍
 ```
-├── examples    // 调用示例
-├── op_host    // host侧实现文件
-└── op_kernel  // kernel侧实现文件
+├── docs                        // 算子文档目录
+├── example                     // 调用示例目录
+├── framework                   // 第三方框架适配目录
+├── op_host                     // host目录
+├── op_kernel                   // kernel目录
+├── opp_kernel_aicpu            // aicpu目录
+└── tests                       // 测试用例目录
 ```
 
 ## 环境要求
