@@ -8,6 +8,8 @@
 /**
  * @file addcdiv_tiling.h
  */
+#ifndef ADDCDIV_TILING_H
+#define ADDCDIV_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -24,4 +26,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(Addcdiv, AddcdivTilingData)
 } // namespace optiling
-#endif // SQRT_TILING_H
+#endif // ADDCDIV_TILING_H
