@@ -5,7 +5,6 @@ import tensorflow as tf
 import numpy as np
 
 def gelu_grad_test(dy_np, x_np, soc='910b'):
-    """Compute the Swish activation function."""
     dy = tf.convert_to_tensor(dy_np)
     x = tf.convert_to_tensor(x_np)
 
