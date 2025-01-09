@@ -1,4 +1,3 @@
-
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} plugin_srcs)
 add_library(cust_tf_parsers SHARED ${plugin_srcs})
 target_compile_definitions(cust_tf_parsers PRIVATE google=ascend_private)
