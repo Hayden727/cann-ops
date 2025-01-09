@@ -4,8 +4,8 @@
 import tensorflow as tf
 import numpy as np
 
+
 def addcmul_test(input_data, x1, x2, value):
-    """Compute the Swish activation function."""
     input_data_tensor = tf.convert_to_tensor(input_data)
     x1_tensor = tf.convert_to_tensor(x1)
     x2_tensor = tf.convert_to_tensor(x2)
