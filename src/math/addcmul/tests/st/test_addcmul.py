@@ -10,7 +10,6 @@ def addcmul_test(input_data, x1, x2, value):
     x1_tensor = tf.convert_to_tensor(x1)
     x2_tensor = tf.convert_to_tensor(x2)
     value_tensor = tf.convert_to_tensor(value)
-
     ori_dtype = input_data_tensor.dtype
     if ori_dtype == tf.int32:
         compute_dtype = tf.int32
