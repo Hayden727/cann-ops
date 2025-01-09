@@ -27,7 +27,7 @@
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution/src/math/sqrt/tests/st
+    cd ${git_clone_path}/ops-contribution/src/math/addcmul/tests/st
     ```
 
   - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH
@@ -42,7 +42,7 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_timestamp.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Addcmul_case_timestamp.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明
