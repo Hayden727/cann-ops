@@ -6,7 +6,6 @@ import numpy as np
 
 
 def swish_test(x, scale):
-    """Compute the Swish activation function."""
     tensor = tf.convert_to_tensor(x)
     ori_dtype = tensor.dtype
     compute_dtype = tf.float32
