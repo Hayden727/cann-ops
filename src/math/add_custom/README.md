@@ -71,6 +71,12 @@
     <tr>
         <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用AddCustom算子。</td>
     </tr>
+    <tr>
+        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用AddCustom算子。</td>
+    </tr>
+    <tr>
+        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用AddCustom算子。</td>
+    </tr>
 </table>
 
 ### 更新说明
