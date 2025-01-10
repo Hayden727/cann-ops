@@ -15,7 +15,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 - 计算公式：
 
   $$
-  out = input_data+value×x1×x2
+  out = input_ data+value×x1×x2
   $$
 
 ## 实现原理
