@@ -5,8 +5,10 @@ import os
 import torch
 import numpy as np
 
-def swish(x,beta=1.2):
-    return x*torch.nn.Sigmoid()(x*beta)
+
+def swish(x, beta=1.2):
+    return x * torch.nn.Sigmoid()(x * beta)
+
 
 def gen_golden_data_simple():
     dtype = np.float16
