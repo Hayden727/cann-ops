@@ -7,11 +7,7 @@ import numpy as np
 
 def swish_test(x, scale):
     tensor = tf.convert_to_tensor(x)
-    ori_dtype = tensor.dtype
-    compute_dtype = tf.float32
-    tensor = tf.cast(tensor, compute_dtype)
     swish_result = tensor * tf.sigmoid(tensor * scale)
-    swish_result = tf.cast(swish_result, ori_dtype)
     return swish_result.numpy()
 
 
