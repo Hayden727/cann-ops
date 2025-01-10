@@ -66,7 +66,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**
 
-  返回aclnnStatus状态码。
+  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
 
 ## 约束与限制
 
@@ -89,8 +89,6 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcdiv</td></tr>  
 </table>
-
-参数解释请参见**算子执行接口**。
 
 ## 调用示例
 
