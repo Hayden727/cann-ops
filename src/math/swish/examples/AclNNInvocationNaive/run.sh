@@ -32,7 +32,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_op
+    ./execute_swish_op
 )
 ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
 echo $ret
