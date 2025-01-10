@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Copyright 2025 Huawei Technologies Co., Ltd
-import numpy
 import os
+import numpy as np
 
 
 def gen_golden_data_simple():
