@@ -37,7 +37,7 @@ Swish算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Exp`、`Adds`�
 
   - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - scale（float\*, 算子属性）：可选参数，Host侧的float，公式中的参数s，$Sigmoid$函数比例系数，支持数据类型为float，默认数值为1.0。
-  - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 
@@ -68,7 +68,7 @@ Swish算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Exp`、`Adds`�
 
 ## 约束与限制
 
-- x与out的shape、type需要一致，且数据格式只支持ND。
+- x，out的数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式只支持ND
 
 ## 算子原型
 
