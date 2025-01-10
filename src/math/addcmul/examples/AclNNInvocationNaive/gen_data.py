@@ -6,13 +6,13 @@ import numpy as np
 
 
 def gen_golden_data_simple():
-    dtype = numpy.float16
+    dtype = np.float16
     output_shape = [100, 100]
-    input_data = numpy.random.uniform(1, 4, output_shape).astype(dtype)
-    input_x1 = numpy.random.uniform(1, 4, output_shape).astype(dtype)
-    input_x2 = numpy.random.uniform(1, 4, output_shape).astype(dtype)
-    input_value = numpy.random.uniform(1, 4, [1]).astype(dtype)
-    if dtype == numpy.int32:
+    input_data = np.random.uniform(1, 4, output_shape).astype(dtype)
+    input_x1 = np.random.uniform(1, 4, output_shape).astype(dtype)
+    input_x2 = np.random.uniform(1, 4, output_shape).astype(dtype)
+    input_value = np.random.uniform(1, 4, [1]).astype(dtype)
+    if dtype == np.int32:
         input_value[0] = 2
     else:
         input_value[0] = 1.2
