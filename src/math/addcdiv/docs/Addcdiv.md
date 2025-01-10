@@ -40,8 +40,8 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 - **参数说明：**
 
   - inputData（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入input_data，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
-  - tensor1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入tensor1，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
-  - tensor2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入tensor2，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
+  - x1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x1，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
+  - x2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x2，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - value（aclScalar\*，计算输入）：必选参数，Host侧的aclScalar，公式中的输入value，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
@@ -70,7 +70,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 约束与限制
 
-- inputData、x1、x2和out的数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式只支持ND
+- inputData，x1，x2，out的数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式只支持ND
 
 ## 算子原型
 
