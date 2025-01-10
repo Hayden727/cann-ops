@@ -68,7 +68,7 @@ Swish算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Exp`、`Adds`�
 
 ## 约束与限制
 
-- x与y的shape、type需要一致，且数据格式只支持ND。
+- x与out的shape、type需要一致，且数据格式只支持ND。
 
 ## 算子原型
 
