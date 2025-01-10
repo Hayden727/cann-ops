@@ -48,7 +48,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
 
-  返回aclnnStatus状态码。
+ 返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
 
   ```
   第一段接口完成入参校验，出现如下场景时报错：
