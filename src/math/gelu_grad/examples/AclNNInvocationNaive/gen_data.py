@@ -9,9 +9,8 @@ import torch.nn.functional as F
 def gen_golden_data_simple():
 
     dtype = np.float16
-    soc = '310b'
+    soc = '910b'
     input_shape = [1024, 1024]
-    output_shape = [1024, 1024]
 
     dy = np.random.uniform(-1, 1, input_shape).astype(dtype).astype(np.float32)
     y = np.random.uniform(-1, 1, input_shape).astype(dtype).astype(np.float32)
@@ -69,4 +68,3 @@ def gen_golden_data_simple():
 
 if __name__ == "__main__":
     gen_golden_data_simple()
-
