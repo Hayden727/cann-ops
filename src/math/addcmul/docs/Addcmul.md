@@ -52,14 +52,8 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
   ```
   第一段接口完成入参校验，出现如下场景时报错：
-  返回161001（ACLNN_ERR_PARAM_NULLPTR）：1. 传入的inputData、x1、x2、value或out是空指针。
-  返回161002（ACLNN_ERR_PARAM_INVALID）：1. inputData和x1、x2的数据类型和数据格式不在支持的范围之内。
-                                      2. inputData和x1、x2不满足数据类型推导规则。
-                                      3. inputData和x1、x2推导后的数据类型不在支持的范围之内。
-                                      4. inputData与x1、x2推导后的数据类型无法转换为指定输出out的类型。
-                                      5. inputData、x1或x2的shape超过8维。
-                                      6. inputData和x1、x2的shape不满足broadcast关系。
-                                      7. out的shape与inputData、x1、x2做broadcast后的shape不一致。
+  返回161001（ACLNN_ERR_PARAM_NULLPTR）：传入的inputData、x1、x2、value或out是空指针。
+  返回161002（ACLNN_ERR_PARAM_INVALID）：inputData和x1、x2的数据类型和数据格式不在支持的范围之内。                                              
   ```
 
 ### aclnnAddcmul
