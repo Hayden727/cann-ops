@@ -23,7 +23,7 @@ Swish算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Exp`、`Adds`�
 
 每个算子分为两段式接口，必须先调用“aclnnSwishGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnSwish”接口执行计算。
 
-* `aclnnStatus aclnnSwishGetWorkspaceSize(const aclTensor* x, float scale, const aclTensor* y, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnSwishGetWorkspaceSize(const aclTensor* x, float scale, const aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 * `aclnnStatus aclnnSwish(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
 
 **说明**：
