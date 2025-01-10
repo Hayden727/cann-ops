@@ -70,7 +70,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 约束与限制
 
-- inputData、x1、x2和out的数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT32，数据格式只支持ND
+- inputData，x1，x2，out的数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT32，数据格式只支持ND
 
 ## 算子原型
 
