@@ -4,10 +4,11 @@
 import tensorflow as tf
 import numpy as np
 
+
 def gelu_grad_test(dy_np, x_np, soc='910b'):
     dy = tf.convert_to_tensor(dy_np)
     x = tf.convert_to_tensor(x_np)
-    compute_dtype=x.dtype
+    compute_dtype = x.dtype
     if soc == '910b':
         x_square = tf.math.square(x)
         px = tf.math.multiply(x_square, -0.0713548162726002527220)
@@ -42,21 +43,22 @@ def gelu_grad_test(dy_np, x_np, soc='910b'):
         const_one = tf.ones(x.shape, dtype=compute_dtype)
         px = tf.math.divide(const_one, px)
 
-        res=tf.math.add(px, -1.0)
-        res= tf.math.multiply(res, x)
+        res = tf.math.add(px, -1.0)
+        res = tf.math.multiply(res, x)
 
-        g2=tf.math.multiply(x_square, -0.21406444881780074632901625683959062)
-        g2=tf.math.add(g2, -1.5957691216057307117597842397375274738)
+        g2 = tf.math.multiply(x_square, -0.21406444881780074632901625683959062)
+        g2 = tf.math.add(g2, -1.5957691216057307117597842397375274738)
 
         res = tf.math.multiply(res, g2)
-        res= tf.math.add(res, 1.0)
+        res = tf.math.add(res, 1.0)
         res = tf.math.multiply(res, px)
         golden = tf.math.multiply(dy, res)
     return golden.numpy()
+
 
 def calc_expect_func(dy, x, y, z):
     """
     calc_expect_func
     """
-    res = gelu_grad_test(dy["value"],x['value'], soc='910b')
+    res = gelu_grad_test(dy["value"], x['value'], soc='910b')
     return [res]
