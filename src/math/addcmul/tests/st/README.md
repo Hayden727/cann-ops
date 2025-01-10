@@ -1,6 +1,6 @@
 ## 目录结构介绍
 ```
-├── msopst.ini                  // st测试配置文件 
+├── msopst.ini                    // st测试配置文件 
 ├── Addcmul_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
 └── test_addcmul.py               // 算子期望数据生成脚本
 ```
