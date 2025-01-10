@@ -57,7 +57,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 每个算子分为两段式接口，必须先调用“aclnnGeluGradGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnGeluGrad”接口执行计算。
 
-* `aclnnStatus aclnnGeluGradGetWorkspaceSize(const aclTensor* dy,const aclTensor* x, const aclTensor* y,const aclTensor* z, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnGeluGradGetWorkspaceSize(const aclTensor* dy, const aclTensor* x, const aclTensor* y,const aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 * `aclnnStatus aclnnGeluGrad(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
 
 **说明**：
@@ -72,7 +72,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
   - dy（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入dy，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - y（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
-  - z（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出z，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出z，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -82,7 +82,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：dy、x、y的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：dy、x、y、out的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnGeluGrad
@@ -100,7 +100,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 约束与限制
 
-- dy、x与y的shape、type需要一致。
+- dy、x、y与out的shape、type需要一致。
 
 ## 算子原型
 
