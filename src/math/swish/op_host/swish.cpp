@@ -20,8 +20,8 @@ const uint32_t BUFFER_NUM = 2;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
 
-  SwishTilingData tiling;
-  uint64_t ubSize;
+    SwishTilingData tiling;
+    uint64_t ubSize;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     auto coreNum = ascendcPlatform.GetCoreNum();
