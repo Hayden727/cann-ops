@@ -10,12 +10,12 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 功能描述
 
-- 算子功能：执行 tensor1 除以 tensor2 的元素除法，将结果乘以标量 value 并将其添加到 self 。
+- 算子功能：执行 x1 除以 x2 的元素除法，将结果乘以标量 value 并将其添加到 input_data 。
 
 - 计算公式：
 
   $$
-  out =self+tensor1/tensor2×value
+  out =input\_data+x1/x2×value
   $$
 
 ## 实现原理
@@ -27,7 +27,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 每个算子分为两段式接口，必须先调用“aclnnAddcdivGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAddcdiv”接口执行计算。
 
-* `aclnnStatus aclnnAddcdivGetWorkspaceSize(const aclTensor* self, const aclTensor* tensor1, const aclTensor* tensor2, const aclScalar* value, aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnAddcdivGetWorkspaceSize(const aclTensor* inputData, const aclTensor* x1, const aclTensor* x2, const aclScalar* value, aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 * `aclnnStatus aclnnAddcdiv(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
 
 **说明**：
@@ -39,11 +39,11 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 - **参数说明：**
 
-  - self（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入self，数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT64、DOUBLE，数据格式支持ND。
-  - tensor1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入tensor1，数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT64、DOUBLE，数据格式支持ND。
-  - tensor2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入tensor2，数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT64、DOUBLE，数据格式支持ND。
-  - value（aclScalar\*，计算输入）：必选参数，Host侧的aclScalar，公式中的输入value，数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT64、DOUBLE，数据格式支持ND。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32、INT32、DOUBLE，数据格式支持ND，输出维度与与self、tensor1、tensor2 broadcast之后的shape一致。
+  - inputData（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入input_data，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
+  - tensor1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入tensor1，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
+  - tensor2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入tensor2，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
+  - value（aclScalar\*，计算输入）：必选参数，Host侧的aclScalar，公式中的输入value，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -52,13 +52,8 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
   ```
   第一段接口完成入参校验，出现如下场景时报错：
-  返回161001（ACLNN_ERR_PARAM_NULLPTR）：1. 传入的self、tensor1、tensor2、value、out是空指针。
-  返回161002（ACLNN_ERR_PARAM_INVALID）：1. self和tensor1、tensor2的数据类型和数据格式不在支持的范围之内。
-                                      2. self和tensor1、tensor2无法做数据类型推导。
-                                      3. 推导出的数据类型无法转换为指定输出out的类型。
-                                      4. self或tensor1、tensor2的shape超过8维。
-                                      5. self和tensor1、tensor2的shape不满足broadcast推导关系。
-                                      6. out的shape与self和tensor1、tensor2做broadcast后的shape不一致。
+  返回161001（ACLNN_ERR_PARAM_NULLPTR）：传入的self、tensor1、tensor2、value、out是空指针。
+  返回161002（ACLNN_ERR_PARAM_INVALID）：inputData和x1、x2的数据类型和数据格式不在支持的范围之内。
   ```
 
 ### aclnnAddcdiv
@@ -75,7 +70,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 约束与限制
 
-- self、tensor1、tensor2和out的shape、type需要一致。
+- inputData、x1、x2和out的数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式只支持ND
 
 ## 算子原型
 
