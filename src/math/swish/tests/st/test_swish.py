@@ -10,8 +10,5 @@ def swish_test(x, scale):
     return swish_result.numpy()
 
 def calc_expect_func(x, y, scale=1.0):
-    """
-    calc_expect_func
-    """
     res = swish_test(x["value"], scale)
     return [res]
