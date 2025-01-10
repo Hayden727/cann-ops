@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Copyright 2025 Huawei Technologies Co., Ltd
-import numpy as np
 import os
+import numpy as np
 import torch
 
 def swish(x,beta=1.2):
