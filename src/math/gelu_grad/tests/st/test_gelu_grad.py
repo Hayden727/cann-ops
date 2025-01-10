@@ -7,11 +7,7 @@ import numpy as np
 def gelu_grad_test(dy_np, x_np, soc='910b'):
     dy = tf.convert_to_tensor(dy_np)
     x = tf.convert_to_tensor(x_np)
-
-    ori_dtype = dy.dtype
-    compute_dtype = tf.float32
-    dy = tf.cast(dy, compute_dtype)
-    x = tf.cast(x, compute_dtype)
+    compute_dtype=x.dtype
     if soc == '910b':
         x_square = tf.math.square(x)
         px = tf.math.multiply(x_square, -0.0713548162726002527220)
@@ -36,7 +32,6 @@ def gelu_grad_test(dy_np, x_np, soc='910b'):
         resp = tf.math.add(resp, t)
 
         golden = tf.math.multiply(dy, resp)
-        golden = tf.cast(golden, ori_dtype).numpy()
     else:
         x_square = tf.math.square(x)
         px = tf.math.multiply(x_square, -0.0713548162726002527220)
@@ -57,12 +52,11 @@ def gelu_grad_test(dy_np, x_np, soc='910b'):
         res= tf.math.add(res, 1.0)
         res = tf.math.multiply(res, px)
         golden = tf.math.multiply(dy, res)
-        golden = tf.cast(golden, ori_dtype).numpy()
-    return golden
+    return golden.numpy()
 
 def calc_expect_func(dy, x, y, z):
     """
     calc_expect_func
     """
-    res = gelu_grad_test(dy["value"], x['value'], soc='910b')
+    res = gelu_grad_test(dy["value"],x['value'], soc='910b')
     return [res]
