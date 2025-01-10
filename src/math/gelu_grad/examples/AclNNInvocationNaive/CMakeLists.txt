@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_op
+add_executable(execute_gelu_grad_op
     main.cpp
 )
 
-target_link_libraries(execute_op
+target_link_libraries(execute_gelu_grad_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,4 +57,4 @@ target_link_libraries(execute_op
     stdc++
 )
 
-install(TARGETS execute_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_gelu_grad_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
