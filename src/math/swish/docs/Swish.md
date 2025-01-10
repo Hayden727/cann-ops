@@ -44,13 +44,13 @@ Swish算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Exp`、`Adds`�
 
 
 - **返回值：**
-
-  返回aclnnStatus状态码。
-
+  
+  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
+  
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y、out的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnSwish
