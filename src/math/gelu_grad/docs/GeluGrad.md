@@ -100,7 +100,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 约束与限制
 
-- dy、x、y与out的shape、type需要一致。
+- dy，x，y，out的数据类型支持BFLOAT16，FLOAT16，FLOAT32，数据格式只支持ND
 
 ## 算子原型
 
