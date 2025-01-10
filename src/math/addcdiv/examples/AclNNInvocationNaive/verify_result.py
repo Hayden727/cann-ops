@@ -8,6 +8,7 @@ import numpy as np
 LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
 MINIMUM = 10e-10
 
+
 def verify_result(real_result, golden):
     real_result = np.fromfile(real_result, dtype=np.float16) # 从bin文件读取实际运算结果
     golden = np.fromfile(golden, dtype=np.float16) # 从bin文件读取预期运算结果
