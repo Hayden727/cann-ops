@@ -2,7 +2,7 @@
 本样例通过`Ascend C`编程语言实现了`Addcdiv`算子。
 
 ## 算子描述
-`Addcdiv`Addcdiv算子实现了向量x1除以向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。
+`Addcdiv`算子实现了向量x1除以向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。
 
 对应的数学表达式为：
 
