@@ -22,7 +22,6 @@ public:
                                 uint32_t smallTailDataNum, uint32_t bigTailDataNum,
                                 uint32_t tailBlockNum, float scale)
     {
-
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
