@@ -52,8 +52,8 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
   ```
   第一段接口完成入参校验，出现如下场景时报错：
-  返回161001（ACLNN_ERR_PARAM_NULLPTR）：传入的self、tensor1、tensor2、value、out是空指针。
-  返回161002（ACLNN_ERR_PARAM_INVALID）：inputData和x1、x2的数据类型和数据格式不在支持的范围之内。
+  返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
+  返回161002（ACLNN_ERR_PARAM_INVALID）：inputData、x1、x2、out的数据类型和数据格式不在支持的范围之内。
   ```
 
 ### aclnnAddcdiv
