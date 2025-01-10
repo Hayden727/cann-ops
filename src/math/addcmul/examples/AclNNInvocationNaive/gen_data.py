@@ -3,6 +3,8 @@
 # Copyright 2025 Huawei Technologies Co., Ltd
 import numpy
 import os
+
+
 def gen_golden_data_simple():
     dtype = numpy.float16
     output_shape = [100, 100]
@@ -14,7 +16,6 @@ def gen_golden_data_simple():
         input_value[0] = 2
     else:
         input_value[0] = 1.2
-
     golden = (input_data + input_x1*input_x2*input_value).astype(dtype)
     os.system("mkdir -p input")
     os.system("mkdir -p output")
