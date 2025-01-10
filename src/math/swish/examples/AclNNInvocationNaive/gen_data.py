@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Copyright 2025 Huawei Technologies Co., Ltd
 import os
-import numpy as np
 import torch
+import numpy as np
 
 def swish(x,beta=1.2):
     return x*torch.nn.Sigmoid()(x*beta)
