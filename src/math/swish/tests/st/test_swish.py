@@ -4,12 +4,10 @@
 import tensorflow as tf
 import numpy as np
 
-
 def swish_test(x, scale):
     tensor = tf.convert_to_tensor(x)
     swish_result = tensor * tf.sigmoid(tensor * scale)
     return swish_result.numpy()
-
 
 def calc_expect_func(x, y, scale=1.0):
     """
