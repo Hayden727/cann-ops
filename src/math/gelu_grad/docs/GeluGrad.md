@@ -57,7 +57,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 每个算子分为两段式接口，必须先调用“aclnnGeluGradGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnGeluGrad”接口执行计算。
 
-* `aclnnStatus aclnnGeluGradGetWorkspaceSize(const aclTensor* dy, const aclTensor* x, const aclTensor* y,const aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnGeluGradGetWorkspaceSize(const aclTensor* dy, const aclTensor* x, const aclTensor* y, const aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 * `aclnnStatus aclnnGeluGrad(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
 
 **说明**：
