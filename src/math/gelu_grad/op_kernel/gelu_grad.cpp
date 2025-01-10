@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -8,6 +8,7 @@
 /**
  * @file gelu_grad.cpp
  */
+
 #include "kernel_operator.h"
 using namespace AscendC;
 constexpr int32_t BUFFER_NUM = 2;
