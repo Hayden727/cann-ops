@@ -32,7 +32,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_op
+    ./execute_gelu_grad_op
 )
 ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
 echo $ret
