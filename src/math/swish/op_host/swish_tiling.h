@@ -8,7 +8,6 @@
 /**
  * @file swish_tiling.h
  */
-
 #ifndef SWISH_TILING_H
 #define SWISH_TILING_H
 #include "register/tilingdata_base.h"
