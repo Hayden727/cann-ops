@@ -201,7 +201,7 @@ int main(int argc, char **argv)
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputYDeviceAddr,
                       size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void** output1=(void**)(&resultData);
+    void** output1 = (void**)(&resultData);
     //写出数据
     WriteFile("../output/output_y.bin", *output1, outputYShapeSize_1*dataType);
     INFO_LOG("Write output success");
