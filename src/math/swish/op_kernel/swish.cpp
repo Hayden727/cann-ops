@@ -104,7 +104,8 @@ private:
     TPipe pipe;
     TQue<QuePosition::VECIN, BUFFER_NUM> inQueueX;
     TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueY;
-    TBuf<QuePosition::VECCALC> calcBuf1, calcBuf2;
+    TBuf<QuePosition::VECCALC> calcBuf1;
+    TBuf<QuePosition::VECCALC> calcBuf2;
     GlobalTensor<DTYPE_X> xGm;
     GlobalTensor<DTYPE_X> yGm;
     uint32_t coreDataNum;
