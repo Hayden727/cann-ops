@@ -101,6 +101,7 @@ bool WriteFile(const std::string &filePath, const void *buffer, size_t size)
 
     return true;
 }
+
 int64_t GetShapeSize(const std::vector<int64_t> &shape)
 {
     int64_t shapeSize = 1;
