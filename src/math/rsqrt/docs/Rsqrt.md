@@ -4,8 +4,7 @@
 
 ## 支持的产品型号
 
-Atlas A2 训练系列产品
-Atlas 200/500 A2推理产品
+Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -28,8 +27,8 @@ Atlas 200/500 A2推理产品
 
 每个算子分为两段式接口，必须先调用“aclnnRsqrtGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnRsqrt”接口执行计算。
 
-* `aclnnStatus aclnnRsqrtGetWorkspaceSize(const aclTensor* x, const aclTensor* y, uint64_t* workspaceSize, aclOpExecutor** executor)`
-* `aclnnStatus aclnnRsqrt(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
+* `aclnnStatus aclnnAddCustomGetWorkspaceSize(const aclTensor *x, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
 
@@ -41,12 +40,12 @@ Atlas 200/500 A2推理产品
 - **参数说明：**
 
   - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
-  - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
 
-  返回aclnnStatus状态码。
+  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
 
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
@@ -64,20 +63,26 @@ Atlas 200/500 A2推理产品
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**
 
-  返回aclnnStatus状态码。
+  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
 
 ## 约束与限制
 
-- x与y的shape、type需要一致。
+- x，out的数据类型只支持FLOAT16，数据格式只支持ND
 
 ## 算子原型
 
-```c++
-REG_OP(Rsqrt)
-    .INPUT(x, TensorType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .OUTPUT(y, TensorType({DT_FLOAT, DT_FLOAT16, DT_BF16}))
-    .OP_END_FACTORY_REG(Rsqrt)
-```
+<table>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddCustom</td></tr>
+</tr>
+<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+</tr>
+</tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+</tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+</table>
 
 参数解释请参见**算子执行接口**。
 
