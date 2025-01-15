@@ -1,4 +1,15 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file rsqrt_tiling.h
+ */
+#ifndef RSQRT_TILING_H
+#define RSQRT_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -14,4 +25,5 @@ BEGIN_TILING_DATA_DEF(RsqrtTilingData)
 END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(Rsqrt, RsqrtTilingData)
-}
+} // namespace optiling
+#endif // RSQRT_TILING_H
