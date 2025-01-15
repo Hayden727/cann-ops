@@ -80,7 +80,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">sqrt</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">rsqrt</td></tr>  
 </table>
 
 参数解释请参见**算子执行接口**。
