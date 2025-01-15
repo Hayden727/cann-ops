@@ -1,4 +1,13 @@
+/* 
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
+/**
+ * @file rsqrt.cpp
+ */
 #include "rsqrt_tiling.h"
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
@@ -10,7 +19,6 @@ const uint32_t BUFFER_NUM = 2;
 
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
     RsqrtTilingData tiling;
     uint64_t ubSize;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
@@ -18,41 +26,32 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto coreNum = ascendcPlatform.GetCoreNum();
     auto socVersion = ascendcPlatform.GetSocVersion();
 
-    //Circumvention of hardware that does not support bfloat16
     if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
     return ge::GRAPH_FAILED;
     }
 
-    // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
     uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t typeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
     uint32_t inputLength = inputNum * typeLength;
     uint32_t inputBytes = inputLength / inputNum;
 
-    // There are a total of 3 shared UB spaces in the input and output. If it's float16、bfloat16, there are 2 more TBUFs
     uint32_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT) ? 3 : 5;
-    // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here 
     uint32_t tileBlockNum = (ubSize / BLOCK_SIZE / BUFFER_NUM) / ubDataNumber;
     uint32_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
 
-    // Input data for 32B alignment
     uint32_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
-    // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
     coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
     coreNum = (coreNum >= 1) ? coreNum : 1;
     uint32_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
     uint32_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
-    
-    // Small chunks are calculated and sliced several times using the number of data on each core
+
     uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
     uint32_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
     uint32_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
-    // Tail block calculation for small chunks of data
     uint32_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
     smallTailDataNum = smallTailDataNum == 0 ? tileDataNum : smallTailDataNum;
-    
-    // The total length of a large block of data is 32B larger than that of a small block of data
+
     everyCoreInputBlockNum += 1;
     uint32_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
     uint32_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
@@ -61,21 +60,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum; 
     
     tiling.set_smallCoreDataNum(smallCoreDataNum);
-    //一个小核数据个数
     tiling.set_bigCoreDataNum(bigCoreDataNum);
-    //一个大核数据个数
     tiling.set_tileDataNum(tileDataNum);
-    //一次搬运的数据个数
     tiling.set_smallTailDataNum(smallTailDataNum);
-    //小核尾块数据个数
     tiling.set_bigTailDataNum(bigTailDataNum);
-    //大核尾块数据个数
     tiling.set_finalSmallTileNum(finalSmallTileNum);
-    //小核搬运次数
     tiling.set_finalBigTileNum(finalBigTileNum);
-    //大核搬运次数
     tiling.set_tailBlockNum(tailBlockNum);
-    //大核数
     
     context->SetBlockDim(coreNum);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
@@ -103,7 +94,6 @@ class Rsqrt : public OpDef {
 public:
     explicit Rsqrt(const char* name) : OpDef(name)
     {
-        
         this->Input("x")
             .ParamType(REQUIRED)
             .DataType({ge::DT_FLOAT16, ge::DT_FLOAT, ge::DT_BF16})
@@ -121,7 +111,6 @@ public:
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b")
                     .AddConfig("ascend310b");
-
     }
 };
 
