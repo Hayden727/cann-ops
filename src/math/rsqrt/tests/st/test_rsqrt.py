@@ -3,10 +3,7 @@ import numpy as np
 
 def rsqrt_test(x):
     tensor = tf.convert_to_tensor(x)
-    ori_dtype = tensor.dtype
-    compute_dtype = tf.float32
-    tensor = tf.cast(tensor, compute_dtype)
-    result = tf.cast(tf.math.rsqrt(tensor), ori_dtype)
+    result = tf.math.rsqrt(tensor)
     return result.numpy()
 
 def calc_expect_func(x, y):
