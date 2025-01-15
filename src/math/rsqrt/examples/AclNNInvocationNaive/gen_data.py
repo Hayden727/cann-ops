@@ -4,9 +4,11 @@
 import os
 import numpy as np
 
+
 def gen_golden_data_simple():
     dtype = np.float16
     output_shape = [100, 100]
+
     input_x = np.random.uniform(1, 4, output_shape).astype(dtype)
 
     golden = (1.0 / np.sqrt(input_x)).astype(dtype)
