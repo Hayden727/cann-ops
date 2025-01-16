@@ -176,9 +176,9 @@ int main(int argc, char **argv)
     std::vector<aclFloat16> outputZHostData(outputZShape[0] * outputZShape[1]);
 
     size_t fileSize = 0;
-    void ** input1=(void **)(&inputDyHostData);
-    void ** input2=(void **)(&inputXHostData);
-    void ** input3=(void **)(&inputYHostData);
+    void** input1=(void**)(&inputDyHostData);
+    void** input2=(void**)(&inputXHostData);
+    void** input3=(void**)(&inputYHostData);
     //读取数据
     ReadFile("../input/input_dy.bin", fileSize, *input1, inputXShapeSize_1*dataType);
     ReadFile("../input/input_x.bin", fileSize, *input2, inputXShapeSize_1*dataType);
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputZDeviceAddr,
                       size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void ** output1=(void **)(&resultData);
+    void** output1=(void**)(&resultData);
     //写出数据
     WriteFile("../output/output_z.bin", *output1, outputZShapeSize_1*dataType);
     INFO_LOG("Write output success");
@@ -244,8 +244,5 @@ int main(int argc, char **argv)
     aclrtResetDevice(deviceId);
     aclFinalize();
 
-    return SUCCESS;
+return SUCCESS;
 }
-
-
-
