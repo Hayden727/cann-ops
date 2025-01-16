@@ -6,7 +6,7 @@
  */
 
 /**
- * @file sqrt.cpp
+ * @file gelu_grad.cpp
  */
 #include "gelu_grad_tiling.h"
 #include "register/op_def_registry.h"
