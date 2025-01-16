@@ -18,17 +18,15 @@
 #include <fstream>
 #include <fcntl.h>
 
+#include "acl/acl.h"
+#include "aclnn_addcmul.h"
+
 #define SUCCESS 0
 #define FAILED 1
 
 #define INFO_LOG(fmt, args...) fprintf(stdout, "[INFO]  " fmt "\n", ##args)
 #define WARN_LOG(fmt, args...) fprintf(stdout, "[WARN]  " fmt "\n", ##args)
 #define ERROR_LOG(fmt, args...) fprintf(stderr, "[ERROR]  " fmt "\n", ##args)
-
-
-#include "acl/acl.h"
-#include "aclnn_addcmul.h"
-
 
 #define CHECK_RET(cond, return_expr) \
     do {                             \
