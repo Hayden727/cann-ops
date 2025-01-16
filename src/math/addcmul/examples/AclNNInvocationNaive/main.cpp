@@ -41,6 +41,7 @@
     do {                                \
         printf(message, ##__VA_ARGS__); \
     } while (0)
+    
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
     struct stat sBuf;
