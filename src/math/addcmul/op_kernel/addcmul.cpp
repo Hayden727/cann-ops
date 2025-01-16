@@ -283,6 +283,5 @@ extern "C" __global__ __aicore__ void addcmul(GM_ADDR input_data, GM_ADDR x1, GM
                 tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
                 tiling_data.tailBlockNum);
         op.Process();
-    }
-    
+    }  
 }
