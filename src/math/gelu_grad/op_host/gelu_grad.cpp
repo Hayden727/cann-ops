@@ -24,7 +24,6 @@ namespace optiling
         uint64_t ubSize;
         auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
         ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
-        ubSize -= 8 * 1024;
         auto coreNum = ascendcPlatform.GetCoreNum();
         auto socVersion = ascendcPlatform.GetSocVersion();
         if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16)
