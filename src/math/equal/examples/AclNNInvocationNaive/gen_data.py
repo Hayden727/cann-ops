@@ -4,6 +4,7 @@
 import os
 import numpy as np
 
+
 def gen_golden_data_simple():
     dtype = np.float16
     output_shape = [100, 100]
