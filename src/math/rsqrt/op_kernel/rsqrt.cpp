@@ -126,5 +126,4 @@ extern "C" __global__ __aicore__ void rsqrt(GM_ADDR x, GM_ADDR y, GM_ADDR worksp
         tiling_data.smallTailDataNum, tiling_data.bigTailDataNum, 
         tiling_data.tailBlockNum);  
     op.Process();
-
 }
