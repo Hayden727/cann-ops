@@ -91,11 +91,11 @@ private:
         LocalTensor<float> tmp = tmpBuffer.Get<float>();
         if (this->versionNum == 0)
         {
-            float COEFF0 = -0.0713548162726002527220;
-            float COEFF1 = -1.595769121605730711759;
-            float COEFF2 = 0.2140644488178007;
-            float COEFF3 = 1.595769121605730711759;
-            float COEFF4 = 1.0;
+            const float COEFF0 = -0.0713548162726002527220f;
+            const float COEFF1 = -1.595769121605730711759f;
+            const float COEFF2 = 0.2140644488178007f;
+            const float COEFF3 = 1.595769121605730711759f;
+            const float COEFF4 = 1.0f;
             if constexpr (!std::is_same_v<T, float32_t>)
             {
                 LocalTensor<float> p1 = tmp1.Get<float>(); // xlocal
@@ -158,12 +158,12 @@ private:
         }
         else
         {
-            float COEFF0 = -0.0713548162726002527220;
-            float COEFF1 = -1.5957691216057308;
-            float COEFF2 = -0.21406444881780074632901625683959062;
-            float COEFF3 = -1.5957691216057307117597842397375274738;
-            float COEFF4 = 1.0;
-            float COEFF5 = -1.0;
+            const float COEFF0 = -0.0713548162726002527220f;
+            const float COEFF1 = -1.5957691216057308f;
+            const float COEFF2 = -0.21406444881780074632901625683959062f;
+            const float COEFF3 = -1.5957691216057307117597842397375274738f;
+            const float COEFF4 = 1.0f;
+            const float COEFF5 = -1.0f;
 
             if constexpr (!std::is_same_v<T, float32_t>)
             {
