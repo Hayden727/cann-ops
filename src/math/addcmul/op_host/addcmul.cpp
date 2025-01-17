@@ -19,7 +19,6 @@ namespace optiling
     const uint32_t BUFFER_NUM = 2;
     static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
-
         AddcmulTilingData tiling;
         uint64_t ubSize;
         auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
