@@ -289,8 +289,8 @@ private:
   TQue<QuePosition::VECOUT, BUFFER_NUM> y_outque;
   GlobalTensor<DTYPE_X1> x1_gm, x2_gm;
   GlobalTensor<int8_t> y_gm;
-  uint32_t total_length, block_length, block_offset, tile_num, tile_cache,
-      tile_length, tile_length_end;
+  uint32_t total_length, block_length, block_offset, tile_num;
+  uint32_t tile_cache, tile_length, tile_length_end;
 };
 
 extern "C" __global__ __aicore__ void equal(GM_ADDR x1, GM_ADDR x2,
