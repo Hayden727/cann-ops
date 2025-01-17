@@ -143,7 +143,6 @@ private:
   {
     if constexpr (std::is_same_v<DTYPE_X1, half>||std::is_same_v<DTYPE_X1, bfloat16_t>)
     {
-
       LocalTensor<half> x1_local = x1_inque.DeQue<half>();
       LocalTensor<half> x2_local = x2_inque.DeQue<half>();
       LocalTensor<int8_t> y_local = y_outque.AllocTensor<int8_t>();
@@ -262,7 +261,6 @@ private:
       // float->half
       Cast(y_fp16, y_fp32, RoundMode::CAST_NONE, this->tile_cache);
       Cast(y_local, y_fp16, RoundMode::CAST_NONE, this->tile_cache);
-
 
       y_outque.EnQue<int8_t>(y_local);
       x1_inque.FreeTensor(x1_local);
