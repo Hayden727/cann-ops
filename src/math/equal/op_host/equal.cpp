@@ -221,13 +221,10 @@ public:
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
 
         this->SetInferShape(ge::InferShape);
-
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b").AddConfig("ascend310b");
-
     }
 };
-
 OP_ADD(Equal);
 }
