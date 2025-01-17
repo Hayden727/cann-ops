@@ -34,6 +34,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t typeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
     uint32_t inputLength = inputNum * typeLength;
+
+    if (inputNum == 0) {
+    return;
+    }
     uint32_t inputBytes = inputLength / inputNum;
 
     uint32_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT) ? 3 : 5;
