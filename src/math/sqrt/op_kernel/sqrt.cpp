@@ -121,3 +121,12 @@ extern "C" __global__ __aicore__ void sqrt(GM_ADDR x, GM_ADDR y, GM_ADDR workspa
         tiling_data.tailBlockNum);  
     op.Process();
 }
+
+#ifndef ASCENDC_CPU_DEBUG
+// call of kernel function
+void sqrt_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *y,
+                   uint8_t *workspace, uint8_t *tiling)
+{
+    sqrt<<<blockDim, l2ctrl, stream>>>(x, y, workspace, tiling);
+}
+#endif
