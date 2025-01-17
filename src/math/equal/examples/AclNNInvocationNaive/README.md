@@ -1,4 +1,7 @@
 ## 目录结构介绍
+通过aclnn调用的方式调用Equal算子。
+
+## 目录结构介绍
 ``` 
 ├── AclNNInvocationNaive
 │   ├── CMakeLists.txt      // 编译规则文件
