@@ -27,7 +27,6 @@ namespace optiling
         ubSize -= 8 * 1024;
         auto coreNum = ascendcPlatform.GetCoreNum();
         auto socVersion = ascendcPlatform.GetSocVersion();
-
         if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16)
         {
             return ge::GRAPH_FAILED;
