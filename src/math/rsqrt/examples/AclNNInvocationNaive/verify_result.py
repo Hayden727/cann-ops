@@ -26,4 +26,4 @@ def verify_result(real_result, golden):
     return True
 
 if __name__ == '__main__':
-    verify_result(sys.argv[1],sys.argv[2])
+    verify_result(sys.argv[1], sys.argv[2])
