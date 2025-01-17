@@ -18,17 +18,15 @@
 #include <fstream>
 #include <fcntl.h>
 
+#include "acl/acl.h"
+#include "aclnn_equal.h"
+
 #define SUCCESS 0
 #define FAILED 1
 
 #define INFO_LOG(fmt, args...) fprintf(stdout, "[INFO]  " fmt "\n", ##args)
 #define WARN_LOG(fmt, args...) fprintf(stdout, "[WARN]  " fmt "\n", ##args)
 #define ERROR_LOG(fmt, args...) fprintf(stderr, "[ERROR]  " fmt "\n", ##args)
-
-
-#include "acl/acl.h"
-#include "aclnn_equal.h"
-
 
 #define CHECK_RET(cond, return_expr) \
     do {                             \
@@ -41,7 +39,8 @@
     do {                                \
         printf(message, ##__VA_ARGS__); \
     } while (0)
-uint8_t ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
+
+bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
     struct stat sBuf;
     int fileStatus = stat(filePath.data(), &sBuf);
@@ -80,7 +79,7 @@ uint8_t ReadFile(const std::string &filePath, size_t fileSize, void *buffer, siz
     return true;
 }
 
-uint8_t WriteFile(const std::string &filePath, const void *buffer, size_t size)
+bool WriteFile(const std::string &filePath, const void *buffer, size_t size)
 {
     if (buffer == nullptr) {
         ERROR_LOG("Write file failed. buffer is nullptr");
@@ -102,6 +101,7 @@ uint8_t WriteFile(const std::string &filePath, const void *buffer, size_t size)
 
     return true;
 }
+
 int64_t GetShapeSize(const std::vector<int64_t> &shape)
 {
     int64_t shapeSize = 1;
@@ -170,7 +170,6 @@ int main(int argc, char **argv)
     std::vector<aclFloat16> inputX1HostData(inputX1Shape[0] * inputX1Shape[1]);
     std::vector<aclFloat16> inputX2HostData(inputX2Shape[0] * inputX2Shape[1]);
     std::vector<uint8_t> outputYHostData(outputYShape[0] * outputYShape[1]);
-
     size_t fileSize = 0;
     void ** input1=(void **)(&inputX1HostData);
     void ** input2=(void **)(&inputX2HostData);
@@ -191,7 +190,6 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    
     ret = aclnnEqualGetWorkspaceSize(inputX1, inputX2, outputY, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnEqualGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
@@ -233,9 +231,5 @@ int main(int argc, char **argv)
     aclrtDestroyStream(stream);
     aclrtResetDevice(deviceId);
     aclFinalize();
-
     return SUCCESS;
 }
-
-
-
