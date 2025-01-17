@@ -27,17 +27,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto socVersion = ascendcPlatform.GetSocVersion();
 
     if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
-    return ge::GRAPH_FAILED;
+        return ge::GRAPH_FAILED;
     }
 
     uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t typeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
     uint32_t inputLength = inputNum * typeLength;
-
-    if (inputNum == 0) {
-    return;
-    }
     uint32_t inputBytes = inputLength / inputNum;
 
     uint32_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT) ? 3 : 5;
@@ -47,11 +43,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
     coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
     coreNum = (coreNum >= 1) ? coreNum : 1;
-
-    if (coreNum == 0) {
-    return;
-    }
-    
     uint32_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
     uint32_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
 
