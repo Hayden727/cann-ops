@@ -285,3 +285,13 @@ extern "C" __global__ __aicore__ void addcmul(GM_ADDR input_data, GM_ADDR x1, GM
         op.Process();
     }  
 }
+
+#ifndef ASCENDC_CPU_DEBUG
+// call of kernel function
+void addcmul_do(uint32_t blockDim, void *l2ctrl, void *stream,
+                   uint8_t *input_data, uint8_t *x1, uint8_t *x2, uint8_t *value, uint8_t *y,
+                   uint8_t *workspace, uint8_t *tiling)
+{
+    addcmul<<<blockDim, l2ctrl, stream>>>(input_data, x1, x2, value, y, workspace, tiling);
+}
+#endif
