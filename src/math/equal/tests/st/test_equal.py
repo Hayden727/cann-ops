@@ -4,11 +4,13 @@
 import tensorflow as tf
 import numpy as np
 
+
 def equal_test(x, y):
     x = tf.convert_to_tensor(x)
     y = tf.convert_to_tensor(y)
     res = tf.equal(x, y)
     return res.numpy().astype(np.bool_)
+
 
 def calc_expect_func(x1, x2, y):
     """
