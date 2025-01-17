@@ -1,3 +1,7 @@
+## 概述
+
+通过aclnn调用的方式调用Swish算子。
+
 ## 目录结构介绍
 ``` 
 ├── AclNNInvocationNaive
