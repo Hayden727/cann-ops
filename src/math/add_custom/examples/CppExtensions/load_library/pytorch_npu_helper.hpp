@@ -1,11 +1,12 @@
-/**
- * @file pytorch_npu_helper.hpp
- *
- * Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
- *
+/*
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file pytorch_npu_helper.hpp
  */
 #ifndef PYTORCH_NPU_HELPER_HPP_
 #define PYTORCH_NPU_HELPER_HPP_
@@ -50,17 +51,17 @@ typedef aclFloatArray *(*_aclCreateFloatArray)(const float *value, uint64_t size
 typedef aclBoolArray *(*_aclCreateBoolArray)(const bool *value, uint64_t size);
 typedef aclTensorList *(*_aclCreateTensorList)(const aclTensor *const *value, uint64_t size);
 
-typedef int (*_aclDestroyTensor)(const aclTensor *tensor);
-typedef int (*_aclDestroyScalar)(const aclScalar *scalar);
-typedef int (*_aclDestroyIntArray)(const aclIntArray *array);
-typedef int (*_aclDestroyFloatArray)(const aclFloatArray *array);
-typedef int (*_aclDestroyBoolArray)(const aclBoolArray *array);
-typedef int (*_aclDestroyTensorList)(const aclTensorList *array);
+typedef int32_t (*_aclDestroyTensor)(const aclTensor *tensor);
+typedef int32_t (*_aclDestroyScalar)(const aclScalar *scalar);
+typedef int32_t (*_aclDestroyIntArray)(const aclIntArray *array);
+typedef int32_t (*_aclDestroyFloatArray)(const aclFloatArray *array);
+typedef int32_t (*_aclDestroyBoolArray)(const aclBoolArray *array);
+typedef int32_t (*_aclDestroyTensorList)(const aclTensorList *array);
 
-constexpr int kHashBufSize = 8192;
-constexpr int kHashBufMaxSize = kHashBufSize + 1024;
+constexpr int32_t kHashBufSize = 8192;
+constexpr int32_t kHashBufMaxSize = kHashBufSize + 1024;
 extern thread_local char g_hashBuf[kHashBufSize];
-extern thread_local int g_hashOffset;
+extern thread_local int32_t g_hashOffset;
 
 #define AT_ALL_SCALAR_TYPE_AND_ACL_DATATYPE_PAIR(_)  \
     _(at::ScalarType::Byte, ACL_UINT8)               \
@@ -162,7 +163,7 @@ inline c10::Scalar ConvertTensorToScalar(const at::Tensor &tensor)
         c10::Scalar scalar(value);
         expScalar = scalar;
     } else if (aclInput->scalar_type() == at::ScalarType::Int) {
-        int value = *(int *)aclInput->data_ptr();
+        int32_t value = *(int32_t *)aclInput->data_ptr();
         c10::Scalar scalar(value);
         expScalar = scalar;
     } else if (aclInput->scalar_type() == at::ScalarType::Half) {
@@ -192,7 +193,7 @@ inline c10::Scalar ConvertTensorToScalar(const at::Tensor &tensor)
 inline at::Tensor CopyTensorHostToDevice(const at::Tensor &cpu_tensor)
 {
     at::Tensor cpuPinMemTensor = cpu_tensor.pin_memory();
-    int deviceIndex = 0;
+    int32_t deviceIndex = 0;
     return cpuPinMemTensor.to(c10::Device(torch_npu::utils::get_npu_device_type(), deviceIndex),
                               cpuPinMemTensor.scalar_type(), true, true);
 }
@@ -382,7 +383,7 @@ template <typename T> T ConvertType(T value)
 template <typename Tuple, size_t... I>
 auto ConvertToOpApiFunc(const Tuple &params, void *opApiAddr, std::index_sequence<I...>)
 {
-    typedef int (*OpApiFunc)(typename std::decay<decltype(std::get<I>(params))>::type...);
+    typedef int32_t (*OpApiFunc)(typename std::decay<decltype(std::get<I>(params))>::type...);
     auto func = reinterpret_cast<OpApiFunc>(opApiAddr);
     return func;
 }
@@ -448,7 +449,7 @@ template <typename T> void Release(T value)
 
 template <typename Tuple, size_t... I> void CallRelease(Tuple t, std::index_sequence<I...>)
 {
-    (void)std::initializer_list<int>{(Release(std::get<I>(t)), 0)...};
+    (void)std::initializer_list<int32_t>{(Release(std::get<I>(t)), 0)...};
 }
 
 template <typename Tuple> void ReleaseConvertTypes(Tuple &t)
@@ -502,7 +503,7 @@ template <typename T, typename... Args> void AddParamToBuf(const T &arg, Args &.
 }
 
 uint64_t CalcHashId();
-typedef int (*InitHugeMemThreadLocal)(void *, bool);
+typedef int32_t (*InitHugeMemThreadLocal)(void *, bool);
 typedef void (*UnInitHugeMemThreadLocal)(void *, bool);
 typedef void (*ReleaseHugeMem)(void *, bool);
 
@@ -536,8 +537,8 @@ typedef void (*ReleaseHugeMem)(void *, bool);
             auto workspace_tensor = at::empty({workspace_size}, options.dtype(kByte));                        \
             workspace_addr = const_cast<void *>(workspace_tensor.storage().data());                           \
         }                                                                                                     \
-        auto acl_call = [converted_params, workspace_addr, workspace_size, acl_stream, executor]() -> int {   \
-            typedef int (*OpApiFunc)(void *, uint64_t, aclOpExecutor *, const aclrtStream);                   \
+        auto acl_call = [converted_params, workspace_addr, workspace_size, acl_stream, executor]() -> int32_t {   \
+            typedef int32_t (*OpApiFunc)(void *, uint64_t, aclOpExecutor *, const aclrtStream);                   \
             OpApiFunc opApiFunc = reinterpret_cast<OpApiFunc>(opApiFuncAddr);                                 \
             auto api_ret = opApiFunc(workspace_addr, workspace_size, executor, acl_stream);                   \
             TORCH_CHECK(api_ret == 0, "call " #aclnn_api " failed, detail:", aclGetRecentErrMsg());           \

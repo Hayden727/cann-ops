@@ -1,11 +1,12 @@
-/**
- * @file AddCustomKernelNpuApi.cpp
- *
- * Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
- *
+/*
+ * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @file AddCustomKernelNpuApi.cpp
  */
 #include "op_plugin/AclOpsInterface.h"
 #include "op_plugin/OpApiInterface.h"
