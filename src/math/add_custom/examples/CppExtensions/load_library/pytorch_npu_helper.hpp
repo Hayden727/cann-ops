@@ -309,7 +309,8 @@ inline aclIntArray *ConvertType(const at::IntArrayRef &at_array)
     return array;
 }
 
-template <std::size_t N> inline aclBoolArray *ConvertType(const std::array<bool, N> &value)
+template <std::size_t N>
+inline aclBoolArray *ConvertType(const std::array<bool, N> &value)
 {
     static const auto aclCreateBoolArray = GET_OP_API_FUNC(aclCreateBoolArray);
     if (aclCreateBoolArray == nullptr) {
@@ -375,7 +376,8 @@ inline aclDataType ConvertType(const at::ScalarType scalarType)
     return kATenScalarTypeToAclDataTypeTable[static_cast<int64_t>(scalarType)];
 }
 
-template <typename T> T ConvertType(T value)
+template <typename T>
+T ConvertType(T value)
 {
     return value;
 }
@@ -388,7 +390,8 @@ auto ConvertToOpApiFunc(const Tuple &params, void *opApiAddr, std::index_sequenc
     return func;
 }
 
-template <typename Tuple> auto ConvertToOpApiFunc(const Tuple &params, void *opApiAddr)
+template <typename Tuple>
+auto ConvertToOpApiFunc(const Tuple &params, void *opApiAddr)
 {
     static constexpr auto size = std::tuple_size<Tuple>::value;
     return ConvertToOpApiFunc(params, opApiAddr, std::make_index_sequence<size>{});
@@ -442,44 +445,52 @@ inline void Release(aclTensorList *p)
     aclDestroyTensorList(p);
 }
 
-template <typename T> void Release(T value)
+template <typename T>
+void Release(T value)
 {
     (void)value;
 }
 
-template <typename Tuple, size_t... I> void CallRelease(Tuple t, std::index_sequence<I...>)
+template <typename Tuple, size_t... I>
+void CallRelease(Tuple t, std::index_sequence<I...>)
 {
     (void)std::initializer_list<int32_t>{(Release(std::get<I>(t)), 0)...};
 }
 
-template <typename Tuple> void ReleaseConvertTypes(Tuple &t)
+template <typename Tuple>
+void ReleaseConvertTypes(Tuple &t)
 {
     static constexpr auto size = std::tuple_size<Tuple>::value;
     CallRelease(t, std::make_index_sequence<size>{});
 }
 
-template <typename... Ts> constexpr auto ConvertTypes(Ts &...args)
+template <typename... Ts>
+constexpr auto ConvertTypes(Ts &...args)
 {
     return std::make_tuple(ConvertType(args)...);
 }
 
-template <typename Function, typename Tuple, size_t... I> auto call(Function f, Tuple t, std::index_sequence<I...>)
+template <typename Function, typename Tuple, size_t... I>
+auto call(Function f, Tuple t, std::index_sequence<I...>)
 {
     return f(std::get<I>(t)...);
 }
 
-template <typename Function, typename Tuple> auto call(Function f, Tuple t)
+template <typename Function, typename Tuple>
+auto call(Function f, Tuple t)
 {
     static constexpr auto size = std::tuple_size<Tuple>::value;
     return call(f, t, std::make_index_sequence<size>{});
 }
 
-template <std::size_t N> void AddParamToBuf(const std::array<bool, N> &value)
+template <std::size_t N>
+void AddParamToBuf(const std::array<bool, N> &value)
 {
     MEMCPY_TO_BUF(value.data(), value.size() * sizeof(bool));
 }
 
-template <typename T> void AddParamToBuf(const T &value)
+template <typename T>
+void AddParamToBuf(const T &value)
 {
     MEMCPY_TO_BUF(&value, sizeof(T));
 }
@@ -496,7 +507,8 @@ void AddParamToBuf(const at::ScalarType);
 void AddParamToBuf(const string &);
 void AddParamToBuf();
 
-template <typename T, typename... Args> void AddParamToBuf(const T &arg, Args &...args)
+template <typename T, typename... Args>
+void AddParamToBuf(const T &arg, Args &...args)
 {
     AddParamToBuf(arg);
     AddParamToBuf(args...);
