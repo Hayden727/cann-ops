@@ -27,8 +27,8 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 每个算子分为两段式接口，必须先调用“aclnnRsqrtGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnRsqrt”接口执行计算。
 
-* `aclnnStatus aclnnAddCustomGetWorkspaceSize(const aclTensor *x, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
-* `aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
+* `aclnnStatus aclnnRsqrtGetWorkspaceSize(const aclTensor *x, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnRsqrt(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
 
