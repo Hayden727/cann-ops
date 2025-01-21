@@ -4,7 +4,8 @@
 
 ## 支持的产品型号
 
-Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
+- Atlas A2 训练系列产品
+- Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
