@@ -25,7 +25,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 每个算子分为两段式接口，必须先调用“aclnnSqrtGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnSqrt”接口执行计算。
 
-* `aclnnStatus aclnnSqrtGetWorkspaceSize(const aclTensor* x, const aclTensor* y, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnSqrtGetWorkspaceSize(const aclTensor* x, const aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 * `aclnnStatus aclnnSqrt(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
 
 **说明**：
@@ -38,7 +38,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 - **参数说明：**
 
   - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND。
-  - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -48,7 +48,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、out的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnSqrt
@@ -66,7 +66,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 
 ## 约束与限制
 
-- x与y的shape、type需要一致，且数据格式只支持ND。
+- x，out的数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据格式只支持ND
 
 ## 算子原型
 
