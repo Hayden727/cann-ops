@@ -77,6 +77,9 @@
     <tr>
         <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用AddCustom算子。</td>
     </tr>
+    <tr>
+        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用AddCustom算子。</td>
+    </tr>
 </table>
 
 ### 更新说明

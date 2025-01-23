@@ -6,10 +6,9 @@ import tensorflow as tf  # 导入TensorFlow开源库，本样例基于tf1.15编�
 from npu_bridge.estimator import npu_ops  # 导入TensorFlow开源库中的npu_ops模块
 import numpy as np  # 导入Python的数学基础库
 #np.allclose比较函数的相对公差参数
-atol = 0.001
+ABSOLUTE_TOL = 0.001
 #np.allclose比较函数的绝对公差参数
-rtol = 0.001
-
+RELATIVE_TOL = 0.001
 
 def config(execute_type):
     if execute_type == 'ai_core':
@@ -52,7 +51,7 @@ def main(unused_argv):
     np.array(result_cpu).astype(dtype_params)
     print('====================================')
     # 通过np.allclose比较昇腾AI处理器上运行的实际结果和cpu上运行的期望结果，其中atol和rtol为np.allclose比较函数的相对公差参数和绝对公差参数，请见步骤3设置。
-    cmp_result = np.allclose(result_ai_core, result_cpu, atol, rtol)
+    cmp_result = np.allclose(result_ai_core, result_cpu, ABSOLUTE_TOL, RELATIVE_TOL)
     print(cmp_result)
     print('====================================')
 

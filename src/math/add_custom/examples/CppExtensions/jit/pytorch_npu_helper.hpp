@@ -212,7 +212,7 @@ inline aclTensor *ConvertType(const at::Tensor &at_tensor)
     aclDataType acl_data_type = kATenScalarTypeToAclDataTypeTable[static_cast<int64_t>(scalar_data_type)];
     TORCH_CHECK(acl_data_type != ACL_DT_UNDEFINED,
                 std::string(c10::toString(scalar_data_type)) + " has not been supported")
-    c10::SmallVector<int64_t, 5> storageDims;
+    c10::SmallVector<int64_t, 5> storageDims;   // 设置SmallVector的静态容量为5
     // if acl_data_type is ACL_STRING, storageDims is empty.
     auto itemsize = at_tensor.itemsize();
     if (itemsize == 0) {
@@ -226,13 +226,13 @@ inline aclTensor *ConvertType(const at::Tensor &at_tensor)
     const auto dimNum = at_tensor.sizes().size();
     aclFormat format = ACL_FORMAT_ND;
     switch (dimNum) {
-        case 3:
+        case 3:     // 3表示NCL
             format = ACL_FORMAT_NCL;
             break;
-        case 4:
+        case 4:     // 4表示NCHW
             format = ACL_FORMAT_NCHW;
             break;
-        case 5:
+        case 5:     // 5表示NCDHW
             format = ACL_FORMAT_NCDHW;
             break;
         default:

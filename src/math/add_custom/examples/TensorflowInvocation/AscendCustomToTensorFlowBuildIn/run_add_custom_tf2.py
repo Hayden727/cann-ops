@@ -17,8 +17,8 @@ npu_device.compat.enable_v1()
 tf.compat.v1.disable_v2_behavior()
 tf.compat.v1.flags.DEFINE_string("local_log_dir", "output/train_logs.txt", "Log file path")
 FLAGS = tf.compat.v1.flags.FLAGS
-atol = 0.001
-rtol = 0.001
+ABSOLUTE_TOL = 0.001
+RELATIVE_TOL = 0.001
 
 
 def config(excute_type):
@@ -56,7 +56,7 @@ def main(unused_argv):
     np.array(result_cpu).astype(dtype_params)
 
     print('====================================')
-    cmp_result = np.allclose(result_ai_core, result_cpu, atol, rtol)
+    cmp_result = np.allclose(result_ai_core, result_cpu, ABSOLUTE_TOL, RELATIVE_TOL)
     print(cmp_result)
     print('====================================')
 

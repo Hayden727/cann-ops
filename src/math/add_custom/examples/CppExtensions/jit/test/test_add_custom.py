@@ -21,22 +21,22 @@ def remove_build_path():
 
 class TestCppExtensionsJIT(TestCase):
 
-    def setUp(self):
-        super().setUp()
+    def set_up(self):
+        super().set_up()
         self.old_working_dir = os.getcwd()
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-    def tearDown(self):
-        super().tearDown()
+    def tear_down(self):
+        super().tear_down()
         os.chdir(self.old_working_dir)
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def set_up_class(cls):
+        super().set_up_class()
         remove_build_path()
 
     @classmethod
-    def tearDownClass(cls):
+    def tear_down_class(cls):
         remove_build_path()
 
     def _test_jit_compile_extension_with_cpp(self):

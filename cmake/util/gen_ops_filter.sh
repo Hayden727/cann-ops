@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# Description: Generate npu_supported_ops.json
+# ==============================================================================
 
 if [[ -z "$1" ]]; then
     echo -e "[ERROR] No source dir provided"

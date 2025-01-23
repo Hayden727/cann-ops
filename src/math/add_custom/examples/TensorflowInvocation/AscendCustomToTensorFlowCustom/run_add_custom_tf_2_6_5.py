@@ -12,9 +12,9 @@ tf.compat.v1.enable_resource_variables()
 
 
 #np.allclose比较函数的相对公差参数
-atol = 0.001
+ABSOLUTE_TOL = 0.001
 #np.allclose比较函数的绝对公差参数
-rtol = 0.001
+RELATIVE_TOL = 0.001
 
 def main(unused_argv):
     custom_op_lib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so")) # 加载自定义算子库
@@ -49,7 +49,7 @@ def main(unused_argv):
     np.array(ac_golden).astype(dtype_params)
 
     # 通过np.allclose函数比较TensorFlow和Ascend C的输出是否一致
-    cmp_result = np.allclose(tf_golden, ac_golden, atol=atol, rtol=rtol)
+    cmp_result = np.allclose(tf_golden, ac_golden, atol=ABSOLUTE_TOL, rtol=RELATIVE_TOL)
     if cmp_result:
         print("The result of tf and ac is the same.")
     else:

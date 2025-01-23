@@ -27,14 +27,14 @@ REGISTER_CUSTOM_OP("AddCustom")
 
   - 样例执行(TensorFlow1.15)
 
-    样例执行过程中会自动生成随机测试数据，然后通过TensorFlow调用算子，最后对比TensorFlow原生算子和Ascend C算子运行结果。具体过程可参见run_add_custom_tf_1.15.py脚本。
+    样例执行过程中会自动生成随机测试数据，然后通过TensorFlow调用算子，最后对比TensorFlow原生算子和Ascend C算子运行结果。具体过程可参见run_add_custom_tf_1_15.py脚本。
     ```bash
-    python3 run_add_custom_tf_1.15.py
+    python3 run_add_custom_tf_1_15.py
     ```
   - 样例执行(TensorFlow2.6.5)
-    样例执行过程中会自动生成随机测试数据，然后通过TensorFlow调用算子，最后对比TensorFlow原生算子和Ascend C算子运行结果。具体过程可参见run_add_custom_tf_2.6.5.py脚本。
+    样例执行过程中会自动生成随机测试数据，然后通过TensorFlow调用算子，最后对比TensorFlow原生算子和Ascend C算子运行结果。具体过程可参见run_add_custom_tf_2_6_5.py脚本。
     ```bash
-    python3 run_add_custom_tf_2.6.5.py
+    python3 run_add_custom_tf_2_6_5.py
     ```
 
 
