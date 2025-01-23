@@ -633,3 +633,20 @@ if (BUILD_OPEN_PROJECT)
         include(${OPS_ADV_CMAKE_DIR}/func_examples.cmake)
     endif ()
 endif ()
+
+function(add_npu_support_target)
+    cmake_parse_arguments(NPUSUP "" "TARGET;OPS_INFO_DIR;OUT_DIR;INSTALL_DIR" "" ${ARGN})
+    get_filename_component(npu_sup_file_path "${NPUSUP_OUT_DIR}" DIRECTORY)
+    add_custom_command(OUTPUT ${NPUSUP_OUT_DIR}/npu_supported_ops.json
+        COMMAND mkdir -p ${NPUSUP_OUT_DIR}
+        COMMAND ${CMAKE_SOURCE_DIR}/cmake/util/gen_ops_filter.sh
+                ${NPUSUP_OPS_INFO_DIR}
+                ${NPUSUP_OUT_DIR}
+    )
+    add_custom_target(npu_supported_ops ALL
+        DEPENDS ${NPUSUP_OUT_DIR}/npu_supported_ops.json
+    )
+    install(FILES ${NPUSUP_OUT_DIR}/npu_supported_ops.json
+        DESTINATION ${NPUSUP_INSTALL_DIR}
+    )
+endfunction()

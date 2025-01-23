@@ -11,6 +11,6 @@ namespace domi {
 // register op info to GE
 REGISTER_CUSTOM_OP("AddCustom")
     .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
-    .OriginOpType("Add")      // name in tf module
+    .OriginOpType("AddCustom")      // name in tf module
     .ParseParamsByOperatorFn(AutoMappingByOpFn);
 }  // namespace domi
