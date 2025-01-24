@@ -43,15 +43,6 @@ class TestCppExtensionsJIT(TestCase):
         super().tear_down()
         os.chdir(self.old_working_dir)
 
-    @classmethod
-    def set_up_class(cls):
-        super().set_up_class()
-        remove_build_path()
-
-    @classmethod
-    def tear_down_class(cls):
-        remove_build_path()
-
     def _test_jit_compile_extension_with_cpp(self):
         extra_ldflags = []
         extra_ldflags.append("-ltorch_npu")
@@ -76,6 +67,15 @@ class TestCppExtensionsJIT(TestCase):
 
     def test_jit_compile_extension_with_cpp(self):
         self._test_jit_compile_extension_with_cpp()
+
+    @classmethod
+    def set_up_class(cls):
+        super().set_up_class()
+        remove_build_path()
+
+    @classmethod
+    def tear_down_class(cls):
+        remove_build_path()
 
 
 if __name__ == '__main__':

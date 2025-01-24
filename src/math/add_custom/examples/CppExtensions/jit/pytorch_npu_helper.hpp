@@ -96,20 +96,30 @@ extern thread_local int32_t g_hashOffset;
     _(at::ScalarType::NumOptions, ACL_DT_UNDEFINED)
 
 constexpr aclDataType kATenScalarTypeToAclDataTypeTable[static_cast<int64_t>(at::ScalarType::NumOptions) + 1] = {
-#define DEFINE_ENUM(_1, n) n,
+#define DEFINE_ENUM(_1, n) (n),
     AT_ALL_SCALAR_TYPE_AND_ACL_DATATYPE_PAIR(DEFINE_ENUM)
 #undef DEFINE_ENUM
 };
 
-#define GET_OP_API_FUNC(apiName) reinterpret_cast<_##apiName>(GetOpApiFuncAddr(#apiName))
+#define GET_OP_API_FUNC_NAME(apiName) _##apiName
+#define GET_OP_API_FUNC_STR(apiName) #apiName
+#define GET_OP_API_FUNC(apiName) \
+    reinterpret_cast<GET_OP_API_FUNC_NAME(apiName)>(GetOpApiFuncAddr(GET_OP_API_FUNC_STR(apiName)))
 
-#define MEMCPY_TO_BUF(data_expression, size_expression)                 \
-    if (g_hashOffset + (size_expression) > kHashBufSize) {              \
-        g_hashOffset = kHashBufMaxSize;                                 \
-        return;                                                         \
-    }                                                                   \
-    memcpy(g_hashBuf + g_hashOffset, data_expression, size_expression); \
-    g_hashOffset += size_expression;
+inline void MemcpyToBuf(const void* data, size_t size) {
+    // 检查缓冲区是否足够
+    if (g_hashOffset + size > kHashBufSize) {
+        g_hashOffset = kHashBufMaxSize; // 标记缓冲区溢出
+        return;
+    }
+
+    // 使用 std::copy 安全拷贝数据到缓冲区
+    const char* src = static_cast<const char*>(data);
+    std::copy(src, src + size, g_hashBuf + g_hashOffset);
+
+    // 更新偏移量
+    g_hashOffset += size;
+}
 
 inline const char *GetOpApiLibName(void) { return "libopapi.so"; }
 
@@ -381,7 +391,7 @@ inline aclDataType ConvertType(const at::ScalarType scalarType)
 }
 
 template <typename T>
-T ConvertType(T value)
+auto ConvertType(T value) -> T
 {
     return value;
 }
@@ -490,13 +500,13 @@ auto call(Function f, Tuple t)
 template <std::size_t N>
 void AddParamToBuf(const std::array<bool, N> &value)
 {
-    MEMCPY_TO_BUF(value.data(), value.size() * sizeof(bool));
+    MemcpyToBuf(value.data(), value.size() * sizeof(bool));
 }
 
 template <typename T>
 void AddParamToBuf(const T &value)
 {
-    MEMCPY_TO_BUF(&value, sizeof(T));
+    MemcpyToBuf(&value, sizeof(T));
 }
 
 void AddParamToBuf(const at::Tensor &);
@@ -550,7 +560,7 @@ typedef void (*ReleaseHugeMem)(void *, bool);
         void *workspace_addr = nullptr;                                                                       \
         if (workspace_size != 0) {                                                                            \
             at::TensorOptions options = at::TensorOptions(torch_npu::utils::get_npu_device_type());           \
-            auto workspace_tensor = at::empty({workspace_size}, options.dtype(kByte));                        \
+            auto workspace_tensor = at::empty({static_cast<int64_t>(workspace_size)}, options.dtype(kByte));  \
             workspace_addr = const_cast<void *>(workspace_tensor.storage().data());                           \
         }                                                                                                     \
         auto acl_call = [converted_params, workspace_addr, workspace_size, acl_stream, executor]() -> int32_t {   \
