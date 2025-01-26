@@ -54,6 +54,7 @@ class TestTorchCompileCustomAdd(TestCase):
         x = torch.rand(length, device='npu', dtype=torch.float16)
         y = torch.rand(length, device='npu', dtype=torch.float16)
         print(x, '\n', y)
+        
         class Module(torch.nn.Module):
             def __init__(self):
                 super().__init__()
