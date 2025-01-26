@@ -16,15 +16,17 @@
 # limitations under the License.
 
 import os
-import tensorflow as tf
 import numpy as np
-from npu_bridge.npu_init import *
+import tensorflow as tf
+from npu_bridge import npu_init  # 显式导入模块
+from tensorflow.core.protobuf.rewriter_config_pb2 import RewriterConfig
 tf.enable_resource_variables()
 
 #np.allclose比较函数的相对公差参数
 ABSOLUTE_TOL = 0.001
 #np.allclose比较函数的绝对公差参数
 RELATIVE_TOL = 0.001
+
 
 def main(unused_argv):
     custom_op_lib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so")) # 加载自定义算子库
@@ -48,11 +50,11 @@ def main(unused_argv):
     config.graph_options.rewrite_options.memory_optimization = RewriterConfig.OFF
 
     with tf.Session(config=config) as sess:
-        sess.run(tf.global_variables_initializer())
+        sess.run(tf.compat.v1.global_variables_initializer())
         tf_golden = sess.run(tf_z, feed_dict={x: x_data, y: y_data})
 
     with tf.Session(config=config) as sess:
-        sess.run(tf.global_variables_initializer())
+        sess.run(tf.compat.v1.global_variables_initializer())
         ac_golden = sess.run(ac_z, feed_dict={x: x_data, y: y_data})
 
     # 通过np.allclose函数比较TensorFlow和Ascend C的输出是否一致

@@ -23,6 +23,7 @@ ABSOLUTE_TOL = 0.001
 #np.allclose比较函数的绝对公差参数
 RELATIVE_TOL = 0.001
 
+
 def config(execute_type):
     if execute_type == 'ai_core':
         session_config = tf.ConfigProto(

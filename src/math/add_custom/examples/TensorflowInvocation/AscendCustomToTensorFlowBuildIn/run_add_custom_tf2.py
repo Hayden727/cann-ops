@@ -24,7 +24,6 @@ import logging
 import tensorflow as tf
 import numpy as np
 import npu_device
-from npu_device.compat.v1.npu_init import *
 npu_device.compat.enable_v1()
 
 tf.compat.v1.disable_v2_behavior()

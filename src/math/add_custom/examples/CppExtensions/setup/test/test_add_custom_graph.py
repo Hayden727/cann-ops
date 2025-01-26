@@ -22,6 +22,7 @@ from torch_npu.testing.testcase import TestCase, run_tests
 import torchair
 from torchair import register_fx_node_ge_converter
 from torchair.ge import Tensor
+from torchair.configs.compiler_config import CompilerConfig
 import custom_ops
 
 
@@ -56,8 +57,6 @@ class TestCustomAdd(TestCase):
 
         model = PlugInAdd().npu()
 
-        import torchair
-        from torchair.configs.compiler_config import CompilerConfig
         config = CompilerConfig()
         npu_backend = torchair.get_npu_backend(compiler_config=config)
         model = torch.compile(model, backend=npu_backend, dynamic=True)
