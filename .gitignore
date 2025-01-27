@@ -1,6 +1,10 @@
 # Samples
-build/
+build
+build_out
 output
+src/math/*/tests/st/[0-9]*/
+src/math/*/examples/CppExtensions/*/test/*.json
+src/math/*/examples/PytorchInvocation/pytorch
 
 
 # Cmake files

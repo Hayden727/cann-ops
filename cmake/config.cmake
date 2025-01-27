@@ -78,6 +78,8 @@ set(ASCENDC_CMAKE_UTIL_DIR       ${ASCEND_CMAKE_DIR}/util)
 set(CUSTOM_DIR         ${CMAKE_BINARY_DIR}/custom)
 set(TILING_CUSTOM_DIR  ${CUSTOM_DIR}/op_impl/ai_core/tbe/op_tiling)
 set(TILING_CUSTOM_FILE ${TILING_CUSTOM_DIR}/liboptiling.so)
+set(ASCEND_AUTOGEN_PATH ${CMAKE_BINARY_DIR}/autogen)
+set(ASCEND_FRAMEWORK_TYPE tensorflow)
 
 # 兼容ascendc变更临时适配，待切换新版本ascendc新版本后删除
 if(EXISTS ${ASCENDC_CMAKE_UTIL_DIR}/ascendc_gen_options.py)
