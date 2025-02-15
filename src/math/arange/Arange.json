@@ -1,0 +1,51 @@
+[
+    {
+        "op": "Arange",
+        "language": "cpp",
+        "input_desc": [
+            {
+                "name": "start",
+                "param_type": "required",
+                "format": [
+                    "ND", "ND", "ND", "ND", "ND"
+                ],
+                "type": [
+                    "fp32", "fp16", "int32", "int64", "bfloat16"
+                ]
+            },
+            {
+                "name": "end",
+                "param_type": "required",
+                "format": [
+                    "ND", "ND", "ND", "ND", "ND"
+                ],
+                "type": [
+                    "fp32", "fp16", "int32", "int64", "bfloat16"
+                ]
+            },
+            {
+                "name": "step",
+                "param_type": "required",
+                "format": [
+                    "ND", "ND", "ND", "ND", "ND"
+                ],
+                "type": [
+                    "fp32", "fp16", "int32", "int64", "bfloat16"
+                ]
+            }     
+        ],
+        "output_desc": [
+            {
+                "name": "out",
+                "param_type": "required",
+                "format": [
+                    "ND", "ND", "ND", "ND", "ND"
+                ],
+                "type": [
+                    "fp32", "fp16", "int32", "int64", "bfloat16"
+                ]
+            }
+        ]
+    }
+]
+
