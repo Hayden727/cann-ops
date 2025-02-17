@@ -46,23 +46,17 @@
 
    2）CANN开放项目软件编码遵循许可协议：CANN Open Software License Agreement Version 1.0，详细的协议说明请参见每个开放项目中的LICENSE文件，如果您贡献代码到CANN开放项目的源码仓，请遵循此协议。
    
-     请在新建的源码文件（包括cpp、cc、h、py等文件）头部增加如下声明：
+     请在新建的源码文件（包括cpp、cc、h、py、sh等文件）头部增加如下声明：
    
      ```
-     /*
-      * Copyright (C) Huawei Technologies Co., Ltd. 2025. All rights reserved.
-      *
-      * Licensed under the Apache License, Version 2.0 (the "License");
-      * you may not use this file except in compliance with the License.
-      * You may obtain a copy of the License at
-      *
-      *     http://www.apache.org/licenses/LICENSE-2.0
-      *
-      * Unless required by applicable law or agreed to in writing, software
-      * distributed under the License is distributed on an "AS IS" BASIS,
-      * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-      * See the License for the specific language governing permissions and
-      * limitations under the License.
+     /**
+      * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+      * This file is a part of the CANN Open Software.
+      * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+      * Please refer to the License for details. You may not use this file except in compliance with the License.
+      * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+      * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+      * See LICENSE in the root of the software repository for the full text of the License.
       */
      ```
 
