@@ -11,6 +11,8 @@
 /**
  * @file gelu_grad_tiling.h
  */
+#ifndef GELU_GRAD_TILING_H
+#define GELU_GRAD_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -28,3 +30,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(GeluGrad, GeluGradTilingData)
 }
+#endif // GELU_GRAD_TILING_H
