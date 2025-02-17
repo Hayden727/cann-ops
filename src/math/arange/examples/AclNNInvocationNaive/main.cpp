@@ -156,9 +156,9 @@ int main() {
   std::vector<int32_t> inputDataHostData(3);
   void ** input1=(void **)(&inputDataHostData);
   ReadFile("../input/input.bin", 0, *input1, 3*sizeof(int32_t));
-  float startValue = inputDataHostData[0];
-  float endValue = inputDataHostData[1];
-  float stepValue = inputDataHostData[2];
+  int32_t startValue = inputDataHostData[0];
+  int32_t endValue = inputDataHostData[1];
+  int32_t stepValue = inputDataHostData[2];
 
   // //c++不支持half和bf16 从文件种无法解析真实值
   // int16_t startValue = 1;

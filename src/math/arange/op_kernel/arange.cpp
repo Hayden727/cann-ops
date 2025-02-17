@@ -50,9 +50,8 @@ public:
     AscendC::Mul(calc_step, calc_step, calc_temp, this->unitNum);
     AscendC::Add(calc_init, calc_init, calc_step, this->unitNum);
     AscendC::Duplicate(calc_temp, float(0.0), this->unitNum);
-    AscendC::Duplicate(calc_step, this->offset_step_base, this->unitNum);
     this->offset_step_base = this->unitNum * step;
-
+    AscendC::Duplicate(calc_step, this->offset_step_base, this->unitNum);
   }
 
   __aicore__ inline void Process()
@@ -197,8 +196,8 @@ public:
     AscendC::Mul(calc_step, calc_step, calc_temp, this->unitNum);
     AscendC::Add(calc_init, calc_init, calc_step, this->unitNum);
     AscendC::Duplicate(calc_temp, (float)0.0, this->unitNum);
-    AscendC::Duplicate(calc_step, this->offset_step_base, this->unitNum);
     this->offset_step_base = this->unitNum * float_step;
+    AscendC::Duplicate(calc_step, this->offset_step_base, this->unitNum);   
   }
 
   __aicore__ inline void Process()
@@ -265,7 +264,7 @@ private:
   float offset_step_base;
 };
 
-extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR step, GM_ADDR out, GM_ADDR workspace, GM_ADDR tiling)
+extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR step, GM_ADDR out, GM_ADDR shape_out, GM_ADDR workspace, GM_ADDR tiling)
 {
   GET_TILING_DATA(tiling_data, tiling);
 
@@ -290,6 +289,13 @@ extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR
 
     op.Process();
   }
+
+  constexpr uint32_t SHAPEOUT_SIZE = 9;
+  AscendC::GlobalTensor<uint64_t> shapeoutGlobal;
+  shapeoutGlobal.SetGlobalBuffer((__gm__ uint64_t*)shape_out, SHAPEOUT_SIZE);
+  shapeoutGlobal.SetValue(0, 1);
+  shapeoutGlobal.SetValue(1, tiling_data.totalNum);
+
 }
 
 #ifndef ASCENDC_CPU_DEBUG

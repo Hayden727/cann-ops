@@ -1,0 +1,94 @@
+[
+    {
+        "case_name": "Test_Arange_001",
+        "calc_expect_func_file": "./test_arange.py:calc_expect_func",
+        "op": "Arange",
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32",
+                    "bfloat16",
+                    "float",
+                    "float16",
+                    "int64"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "start"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32",
+                    "bfloat16",
+                    "float",
+                    "float16",
+                    "int64"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        100.1,
+                        200.0
+                    ]
+                ],
+                "name": "end"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32",
+                    "bfloat16",
+                    "float",
+                    "float16",
+                    "int64"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        1.1,
+                        5.0
+                    ]
+                ],
+                "name": "step"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32",
+                    "bfloat16",
+                    "float",
+                    "float16",
+                    "int64"
+                ],
+                "shape": [],
+                "name": "out"
+            }
+        ]
+    }
+]
