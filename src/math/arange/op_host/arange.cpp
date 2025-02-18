@@ -1,10 +1,14 @@
 
 #include "arange_tiling.h"
 #include "register/op_def_registry.h"
+#include "tiling/platform/platform_ascendc.h"
 
 namespace optiling
 {
-    const uint32_t UNIT_NUM_SIZE = 256;
+    const uint32_t BLOCK_SIZE = 32;
+    #define DIVIDE_AND_ALIGN(size, split, align) \
+                                    ((((size) / (split)) + ((align)-1)) & ~((align)-1))
+
     static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
         ArangeTilingData tiling;
@@ -12,34 +16,33 @@ namespace optiling
         ge::DataType dtype_out = context->GetOutputDesc(0)->GetDataType();
         uint32_t dtype_size = 2;
         context->SetTilingKey(0);
-        if (dtype_out == ge::DataType::DT_FLOAT16)
-        {
-            dtype_size = 2;
-        }
-        else if (dtype_out == ge::DataType::DT_BF16)
-        {
-            dtype_size = 2;
-        }
-        else if (dtype_out == ge::DataType::DT_FLOAT)
-        {
-            dtype_size = 4;
-            context->SetTilingKey(1);
-        }
-        else if (dtype_out == ge::DataType::DT_INT32)
-        {
-            dtype_size = 4;
-        }
-        else if (dtype_out == ge::DataType::DT_INT64)
-        {
-            dtype_size = 8;
-        }
-        else
-        {
-            return ge::GRAPH_FAILED;
+        switch (dtype_out) {
+            case ge::DataType::DT_FLOAT16:
+            case ge::DataType::DT_BF16:
+                dtype_size = 2;
+                break;
+            case ge::DataType::DT_FLOAT:
+                dtype_size = 4;
+                context->SetTilingKey(1);
+                break;
+            case ge::DataType::DT_INT32:
+                dtype_size = 4;
+                break;
+            case ge::DataType::DT_INT64:
+                dtype_size = 8;
+                break;
+            default:
+                dtype_size = 2; 
+                break;
         }
 
+        uint64_t ub_size;
+        auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
+        ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
+        /*单次api计算大小：将ub 10等份后并按BLOCK_SIZE对齐*/
+        uint64_t ub_unit_size = DIVIDE_AND_ALIGN(ub_size, 10, BLOCK_SIZE);
         uint32_t totalNum = totalLength;
-        uint32_t unitNum  = UNIT_NUM_SIZE / dtype_size;
+        uint32_t unitNum  = ub_unit_size / dtype_size;
         uint32_t unitLoops = totalNum / unitNum;
         uint32_t tailNum = totalNum - unitNum * unitLoops;
         if( tailNum > 0 ) unitLoops += 1;
@@ -63,13 +66,24 @@ namespace optiling
     }
 }
 
-namespace ge
+namespace ge {
+static graphStatus InferShape(gert::InferShapeContext *context)
 {
-    static ge::graphStatus InferShape(gert::InferShapeContext *context)
-    {
-        return GRAPH_SUCCESS;
-    }
+    const gert::Shape *x1_shape = context->GetInputShape(0);
+    gert::Shape *y_shape = context->GetOutputShape(0);
+    *y_shape = *x1_shape;
+    y_shape->SetDimNum(1);
+    y_shape->SetDim(0, 223);
+    return GRAPH_SUCCESS;
 }
+
+static graphStatus InferDataType(gert::InferDataTypeContext *context)
+{
+    const auto inputDataType = context->GetInputDataType(0);
+    context->SetOutputDataType(0, inputDataType);
+    return ge::GRAPH_SUCCESS;
+}
+} // namespace ge
 
 namespace ops
 {
@@ -100,10 +114,16 @@ namespace ops
                 .ParamType(REQUIRED)
                 .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_INT32, ge::DT_INT64, ge::DT_BF16})
                 .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-                .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-                .OutputShapeDependOnCompute();
+                .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
 
-            this->SetInferShape(ge::InferShape);
+            // this->Output("out")
+            //     .ParamType(REQUIRED)
+            //     .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_INT32, ge::DT_INT64, ge::DT_BF16})
+            //     .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
+            //     .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
+            //     .OutputShapeDependOnCompute();
+
+            this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 
             this->AICore()
                 .SetTiling(optiling::TilingFunc)

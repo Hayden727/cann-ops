@@ -1,7 +1,6 @@
 #include "kernel_operator.h"
 
 constexpr int32_t BUFFER_NUM = 2;
-constexpr int32_t BLOCK_SIZE = 32;
 
 #define ALIGN_UP_32B_ELEMENTS(count, T) \
     (((((count) * sizeof(T)) + 31) / 32) * (32 / sizeof(T)))
@@ -264,7 +263,8 @@ private:
   float offset_step_base;
 };
 
-extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR step, GM_ADDR out, GM_ADDR shape_out, GM_ADDR workspace, GM_ADDR tiling)
+// extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR step, GM_ADDR out, GM_ADDR shape_out, GM_ADDR workspace, GM_ADDR tiling)
+extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR step, GM_ADDR out, GM_ADDR workspace, GM_ADDR tiling)
 {
   GET_TILING_DATA(tiling_data, tiling);
 
@@ -290,11 +290,11 @@ extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR
     op.Process();
   }
 
-  constexpr uint32_t SHAPEOUT_SIZE = 9;
-  AscendC::GlobalTensor<uint64_t> shapeoutGlobal;
-  shapeoutGlobal.SetGlobalBuffer((__gm__ uint64_t*)shape_out, SHAPEOUT_SIZE);
-  shapeoutGlobal.SetValue(0, 1);
-  shapeoutGlobal.SetValue(1, tiling_data.totalNum);
+  // constexpr uint32_t SHAPEOUT_SIZE = 9;
+  // AscendC::GlobalTensor<uint64_t> shapeoutGlobal;
+  // shapeoutGlobal.SetGlobalBuffer((__gm__ uint64_t*)shape_out, SHAPEOUT_SIZE);
+  // shapeoutGlobal.SetValue(0, 1);
+  // shapeoutGlobal.SetValue(1, tiling_data.totalNum);
 
 }
 
