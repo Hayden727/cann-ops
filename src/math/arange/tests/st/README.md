@@ -1,8 +1,8 @@
 ## 目录结构介绍
 ```
-├── msopst.ini                  // st测试配置文件 
-├── Sqrt_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
-└── test_sqrt.py               // 算子期望数据生成脚本
+├── msopst.ini                 // st测试配置文件 
+├── Arange_case_alltype.json   // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
+└── test_arange.py             // 算子期望数据生成脚本
 ```
 
 ## ST测试介绍
@@ -21,13 +21,13 @@
 
     ```bash
     export DDK_PATH=${INSTALL_DIR}
-    export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/devlib
+    export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/lib64
     ```
 
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution/src/math/sqrt/tests/st
+    cd ${git_clone_path}/ops-contribution/src/math/arange/tests/st
     ```
 
   - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH
@@ -42,10 +42,13 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Arange_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
+## 注意事项
+- st测试bfloat16数据类型时提示fail，是由于tensorflow的arange算子问题，本实现的arange算子输出是正确的。
+- arange算子的输出shape依赖实际的计算，当前没有好的办法，host侧的infershape中SetDim需要根据测试样例数值修改。
 
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/07 | 新增本readme |
+| 2025/02/18 | 新增本readme |
