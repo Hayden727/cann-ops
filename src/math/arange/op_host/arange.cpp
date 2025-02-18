@@ -69,11 +69,9 @@ namespace optiling
 namespace ge {
 static graphStatus InferShape(gert::InferShapeContext *context)
 {
-    const gert::Shape *x1_shape = context->GetInputShape(0);
     gert::Shape *y_shape = context->GetOutputShape(0);
-    *y_shape = *x1_shape;
     y_shape->SetDimNum(1);
-    y_shape->SetDim(0, 223);
+    y_shape->SetDim(0, -1);
     return GRAPH_SUCCESS;
 }
 
