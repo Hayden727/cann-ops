@@ -45,7 +45,7 @@
     ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Arange_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 ## 注意事项
-- st测试bfloat16数据类型时提示fail，是由于当前环境下tensorflow bfloat16类型arange算子输出不对，本实现的arange算子输出是正确的。
+- st测试bfloat16输出的结果ExpectOut和RealOut是一致的，但实际数值看上去不太正常，是因为numpy不支持bfloat16类型导致。
 
 ## 更新说明
 | 时间 | 更新事项 |
