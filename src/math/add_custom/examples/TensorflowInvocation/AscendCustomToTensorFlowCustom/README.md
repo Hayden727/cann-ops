@@ -5,12 +5,16 @@
 ### 1.编译部署自定义算子
 参考[编译算子工程](../../README.md#编译部署自定义算子)。
 需注意插件代码适配，路径为： samples/operator/AddCustomSample/FrameworkLaunch/AddCustom/framework/tf_plugin/tensorflow_add_custom_plugin.cc
-需修改插件代码中的TensorFlow调用算子名称OriginOpType为"AddCustom"，如下所示：
+需修改插件代码src/math/add_custom/framework/tf_plugin/tensorflow_add_custom_plugin.cc中的TensorFlow调用算子名称OriginOpType为"AddCustom"，如下所示：
 ```c++
 REGISTER_CUSTOM_OP("AddCustom")
   .FrameworkType(TENSORFLOW)      // type: CAFFE, TENSORFLOW
   .OriginOpType("AddCustom")      // name in tf module
   .ParseParamsByOperatorFn(AutoMappingByOpFn);
+```
+还需要修改src/math/add_custom/CMakeLists.txt，在结尾加上一行：
+```
+add_subdirectory(framework)
 ```
 
 ### 2.TensorFlow调用的方式调用样例运行
