@@ -10,8 +10,11 @@
 # ======================================================================================================================
 
 import numpy as np
-import os
 import tensorflow as tf
+
+import os
+
+
 def gen_golden_data_simple():
     input_x = np.random.uniform(1, 10, [7, 2045]).astype(np.float16)
     clip_value_min = np.random.uniform(1, 3, [1]).astype(np.float16)
