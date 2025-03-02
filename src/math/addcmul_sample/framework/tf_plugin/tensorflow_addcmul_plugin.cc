@@ -9,8 +9,8 @@
 
 namespace domi {
 // register op info to GE
-REGISTER_CUSTOM_OP("Addcmul")
+REGISTER_CUSTOM_OP("AddcmulSample")
     .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
-    .OriginOpType("Addcmul")      // name in tf module
+    .OriginOpType("AddcmulSample")      // name in tf module
     .ParseParamsByOperatorFn(AutoMappingByOpFn);
 }  // namespace domi

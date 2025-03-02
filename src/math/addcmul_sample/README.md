@@ -1,8 +1,8 @@
-## `Addcmul`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`Addcmul`算子。
+## `AddcmulSample`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`AddcmulSample`算子。
 
 ## 算子描述
-`Addcmul`算子实现了向量x1乘向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。
+`AddcmulSample`算子实现了向量x1乘向量x2，乘向量value后的结果再加上向量input_data，返回计算结果的功能。
 
 对应的数学表达式为：
 
@@ -11,18 +11,18 @@ y = (input_data + (x1 * x2) * value)
 ## 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Addcmul</th></tr> 
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">AddcmulSample</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="5" align="center">算子输入</td>
  
-<tr><td align="center">input_data</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>  
-<tr><td align="center">x1</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr> 
-<tr><td align="center">x2</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr> 
-<tr><td align="center">value</td><td align="center">scalar</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">-</td></tr> 
+<tr><td align="center">input_data</td><td align="center">tensor</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td></tr>  
+<tr><td align="center">x1</td><td align="center">tensor</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td></tr> 
+<tr><td align="center">x2</td><td align="center">tensor</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td></tr> 
+<tr><td align="center">value</td><td align="center">tensor</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td></tr> 
 
 <tr><td rowspan="1" align="center">算子输出</td>
-<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcmul</td></tr>  
+<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcmulSample</td></tr>  
 </table>
 
 ## 支持的产品型号
@@ -67,11 +67,11 @@ y = (input_data + (x1 * x2) * value)
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Addcmul算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AddcmulSample算子。</td>
     </tr>
 </table>
 
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/07 | 新增本readme |
+| 2025/03/02 | 新增本readme |
