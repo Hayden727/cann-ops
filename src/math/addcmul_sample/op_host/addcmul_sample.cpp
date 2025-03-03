@@ -23,7 +23,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     auto aivNum = ascendcPlatform.GetCoreNum();
 
     uint32_t total_length = 0, min_length = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-    for (int i = 0; i < 3; ++i) { // 循环次数为3，表示处理3个输入形状
+    for (int32_t i = 0; i < 3; ++i) { // 循环次数为3，表示处理3个输入形状
         total_length = std::max<uint32_t>(total_length, context->GetInputShape(i)->GetStorageShape().GetShapeSize());
         min_length = std::min<uint32_t>(min_length, context->GetInputShape(i)->GetStorageShape().GetShapeSize());
     }
@@ -34,8 +34,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     uint32_t sizeofdatatype;
     if (dt == ge::DT_INT8) {
         sizeofdatatype = 1;
-        // 不同的数据类型算法不一样，所以会设成不同的值
-        NUM = 12;
+        NUM = 12; // 申请的内存块的个数（包括buffer和queue）为12
     }
     else if (dt == ge::DT_FLOAT16 || dt == ge::DT_BF16) {
         sizeofdatatype = 2; // 设置为2表示16位数据类型

@@ -13,10 +13,12 @@
 namespace {
     constexpr int32_t BUFFER_NUM = 2;  // tensor num for each queue
 }
-template<typename T> struct Map {
+template<typename T>
+struct Map {
     using type = T;
 };
-template<> struct Map<int8_t> {
+template<> 
+struct Map<int8_t> {
     using type = half;
 };
 template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> 
@@ -264,9 +266,8 @@ extern "C" __global__ __aicore__ void addcmul_sample(GM_ADDR input_data, GM_ADDR
 #ifndef ASCENDC_CPU_DEBUG
 // call of kernel function
 void addcmul_sample_do(uint32_t blockDim, void *l2ctrl, void *stream,
-                   uint8_t *input_data, uint8_t *x1, uint8_t *x2, uint8_t *value, uint8_t *y,
-                   uint8_t *workspace, uint8_t *tiling)
-{
+                       uint8_t *input_data, uint8_t *x1, uint8_t *x2, uint8_t *value, uint8_t *y,
+                       uint8_t *workspace, uint8_t *tiling) {
     addcmul_sample<<<blockDim, l2ctrl, stream>>>(input_data, x1, x2, value, y, workspace, tiling);
 }
 #endif
