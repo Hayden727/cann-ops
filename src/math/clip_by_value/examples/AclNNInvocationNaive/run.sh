@@ -42,7 +42,7 @@ cmake --build build -j
     cd build
     ./execute_clip_by_value_op
 )
-ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
+ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
 echo $ret
 if [ "x$ret" == "xtest pass" ]; then
     echo ""

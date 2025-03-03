@@ -13,6 +13,7 @@
  */
 #include "kernel_operator.h"
 #include <type_traits>
+using namespace AscendC;
 
 constexpr int32_t BUFFER_NUM = 2; // tensor num for each queue
 
@@ -27,11 +28,11 @@ public:
                                 uint32_t block_size, uint32_t core_size,
                                 uint32_t core_remain) 
     {
-        this->blockLength = core_size + (AscendC::GetBlockNum() == AscendC::GetBlockIdx() + 1 ? core_remain : 0);
+        this->blockLength = core_size + (GetBlockNum() == GetBlockIdx() + 1 ? core_remain : 0);
         this->tileLength = block_size;
         this->blockLength = this->blockLength + (this->blockLength % ALIGN_NUM ? ALIGN_NUM - this->blockLength % ALIGN_NUM : 0);
 
-        auto startPointer = core_size * AscendC::GetBlockIdx();
+        auto startPointer = core_size * GetBlockIdx();
         auto bufferlength = this->blockLength;
 
         Gm_x.SetGlobalBuffer((__gm__ TYPE_X*)x + startPointer, bufferlength);
@@ -60,31 +61,32 @@ public:
     }
 private:
     __aicore__ inline void CopyIn(int32_t progress, uint32_t length) {
-        AscendC::LocalTensor<TYPE_X> x = Q_x.AllocTensor<TYPE_X>();
-        AscendC::DataCopy(x, Gm_x[progress * this->tileLength], length);
+        LocalTensor<TYPE_X> x = Q_x.AllocTensor<TYPE_X>();
+        DataCopy(x, Gm_x[progress * this->tileLength], length);
         Q_x.EnQue(x);
     }
     __aicore__ inline void Compute(int32_t progress, uint32_t length) {
-        AscendC::LocalTensor<TYPE_X> x = Q_x.DeQue<TYPE_X>();
-        AscendC::LocalTensor<TYPE_Y> y = Q_y.AllocTensor<TYPE_Y>();
-        AscendC::Mins(x, x, this->clip_value_max, length);
-        AscendC::Maxs(y, x, this->clip_value_min, length);
+        LocalTensor<TYPE_X> x = Q_x.DeQue<TYPE_X>();
+        LocalTensor<TYPE_Y> y = Q_y.AllocTensor<TYPE_Y>();
+        Mins(x, x, this->clip_value_max, length);
+        Maxs(y, x, this->clip_value_min, length);
         Q_x.FreeTensor(x);
         Q_y.EnQue<TYPE_Y>(y);
     }
-__aicore__ inline void CopyOut(int32_t progress, uint32_t length) {
-    AscendC::LocalTensor<TYPE_Y> y = Q_y.DeQue<TYPE_Y>();
-    AscendC::DataCopy(Gm_y[progress * this->tileLength], y, length);
-    Q_y.FreeTensor(y);
-}
+    __aicore__ inline void CopyOut(int32_t progress, uint32_t length) {
+        LocalTensor<TYPE_Y> y = Q_y.DeQue<TYPE_Y>();
+        DataCopy(Gm_y[progress * this->tileLength], y, length);
+        Q_y.FreeTensor(y);
+    }
+
 private:
-    AscendC::TPipe pipe;
-    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_x;
-    AscendC::TQue<AscendC::QuePosition::VECOUT, BUFFER_NUM> Q_y;
-    AscendC::GlobalTensor<TYPE_X> Gm_x;
-    AscendC::GlobalTensor<TYPE_CLIP_VALUE_MIN> Gm_clip_value_min;
-    AscendC::GlobalTensor<TYPE_CLIP_VALUE_MAX> Gm_clip_value_max;
-    AscendC::GlobalTensor<TYPE_Y> Gm_y;
+    TPipe pipe;
+    TQue<QuePosition::VECIN, BUFFER_NUM> Q_x;
+    TQue<QuePosition::VECOUT, BUFFER_NUM> Q_y;
+    GlobalTensor<TYPE_X> Gm_x;
+    GlobalTensor<TYPE_CLIP_VALUE_MIN> Gm_clip_value_min;
+    GlobalTensor<TYPE_CLIP_VALUE_MAX> Gm_clip_value_max;
+    GlobalTensor<TYPE_Y> Gm_y;
     TYPE_CLIP_VALUE_MIN clip_value_min;
     TYPE_CLIP_VALUE_MAX clip_value_max;
     uint32_t blockLength;
@@ -102,12 +104,3 @@ extern "C" __global__ __aicore__ void clip_by_value(GM_ADDR x, GM_ADDR clip_valu
             tiling_data.core_remain);
     op.Process();
 }
-
-#ifndef ASCENDC_CPU_DEBUG
-// call of kernel function
-void clip_by_value_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *clip_value_min, uint8_t *clip_value_max, uint8_t *y,
-                   uint8_t *workspace, uint8_t *tiling)
-{
-    clip_by_value<<<blockDim, l2ctrl, stream>>>(x, clip_value_min, clip_value_max, y, workspace, tiling);
-}
-#endif
