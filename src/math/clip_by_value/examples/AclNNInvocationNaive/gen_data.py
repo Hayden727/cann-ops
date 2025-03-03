@@ -21,7 +21,7 @@ def gen_golden_data_simple():
     clip_value_max = np.random.uniform(4, 10, [1]).astype(np.float16)
     y = tf.clip_by_value(input_x, clip_value_min, clip_value_max)
 
-    golden =y.numpy()
+    golden = y.numpy()
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     input_x.tofile("./input/input_x.bin")
