@@ -11,8 +11,8 @@
 /**
  * @file clip_by_value.cpp
  */
-#include "kernel_operator.h"
 #include <type_traits>
+#include "kernel_operator.h"
 using namespace AscendC;
 
 constexpr int32_t BUFFER_NUM = 2; // tensor num for each queue

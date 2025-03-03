@@ -11,6 +11,8 @@
 /**
  * @file clip_by_value_tiling.h
  */
+#ifndef CLIP_BY_VALUE_TILING_H
+#define CLIP_BY_VALUE_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -27,3 +29,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(ClipByValue, ClipByValueTilingData)
 } // namespace optiling
+#endif // CLIP_BY_VALUE_TILING_H

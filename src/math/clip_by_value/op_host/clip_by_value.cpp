@@ -24,7 +24,7 @@ namespace optiling
     {
         ClipByValueTilingData tiling;
         constexpr int32_t NUM = 2;
-        uint32_t sizeofdatatype;
+        uint32_t sizeOfDataType;
         uint32_t totalLengthAligned;
         auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
         auto socVersion = ascendcPlatform.GetSocVersion();
@@ -35,18 +35,18 @@ namespace optiling
         uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
         auto dt = context->GetInputDesc(0)->GetDataType();
         if(dt == ge::DT_INT8){
-            sizeofdatatype = 1;
+            sizeOfDataType = 1;
         }else if(dt == ge::DT_FLOAT16 || dt == ge::DT_BF16){
-            sizeofdatatype = 2;
+            sizeOfDataType = 2;
         }
         else if (dt == ge::DT_INT32) {
-            sizeofdatatype = 4;
+            sizeOfDataType = 4;
         }
         else{
-            sizeofdatatype = 4;
+            sizeOfDataType = 4;
         }
 
-        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeofdatatype;
+        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
         uint32_t tiling_size = ((ub_size) / BLOCK_SIZE / 2) / NUM;
         tiling_size = tiling_size <= 8 ? tiling_size : tiling_size / 8 * 8;
 
