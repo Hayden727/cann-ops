@@ -1,22 +1,37 @@
-/*
-* @author: 孙明志
-* @mail: 531483935@qq.com
-* @date: 2024-05-27
-*/
-
-#include "kernel_operator.h"
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 #include <type_traits>
-constexpr int32_t BUFFER_NUM = 2;                                     // tensor num for each queue
-template<typename T> struct Map {using type = T;};
-template<> struct Map<int8_t> {using type = half;};
-template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> class KernelAddcmulSample {
+#include "kernel_operator.h"
+
+namespace {
+    constexpr int32_t BUFFER_NUM = 2;  // tensor num for each queue
+}
+template<typename T> struct Map {
+    using type = T;
+};
+template<> struct Map<int8_t> {
+    using type = half;
+};
+template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> 
+class KernelAddcmulSample {
     using T = TYPE_Y;
+
 public:
     __aicore__ inline KernelAddcmulSample() {}
     __aicore__ inline void Init(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, uint32_t totalLength, uint32_t ALIGN_NUM, uint32_t block_size, uint32_t core_size, uint32_t core_remain) {
         ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
         this->blockLength = core_size + (AscendC::GetBlockNum() == AscendC::GetBlockIdx() + 1 ? core_remain : 0);
         this->tileLength = block_size;
+        if (ALIGN_NUM == 0) {
+            ALIGN_NUM = 1;
+        }
         this->blockLength = this->blockLength + (this->blockLength % ALIGN_NUM ? ALIGN_NUM - this->blockLength % ALIGN_NUM : 0);
 
         auto startPointer = core_size * AscendC::GetBlockIdx();
@@ -97,9 +112,12 @@ private:
 
 private:
     AscendC::TPipe pipe;
-    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_input_data, Q_x1, Q_x2;
+    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_input_data;
+    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_x1;
+    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_x2;
     AscendC::TQue<AscendC::QuePosition::VECOUT, BUFFER_NUM> Q_y;
-    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1, tmp2;
+    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1;
+    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp2;
     AscendC::GlobalTensor<TYPE_INPUT_DATA> Gm_input_data;
     AscendC::GlobalTensor<TYPE_X1> Gm_x1;
     AscendC::GlobalTensor<TYPE_X2> Gm_x2;
@@ -120,6 +138,9 @@ public:
         this->x2Length = x2_length;
         this->blockLength = core_size + (AscendC::GetBlockNum() == AscendC::GetBlockIdx() + 1 ? core_remain : 0);
         this->tileLength = block_size;
+        if (ALIGN_NUM == 0) {
+            ALIGN_NUM = 1;
+        }
         this->blockLength = this->blockLength + (this->blockLength % ALIGN_NUM ? ALIGN_NUM - this->blockLength % ALIGN_NUM : 0);
         this->startPointer = core_size * AscendC::GetBlockIdx();
 
@@ -184,8 +205,8 @@ private:
             //但是torch的计算是会溢出的，100 + 28 = -128
             //这里计算的结果是用int16暂存的，如果要转回int8并且与torch一致，就需要手动模拟计算溢出
             //其实就是把int16的高8位设为符号位，一个简单快捷的实现就是：左移8位，再右移8位
-            AscendC::ShiftLeft(p1.ReinterpretCast<int16_t>(), p1.ReinterpretCast<int16_t>(), int16_t(8), length);
-            AscendC::ShiftRight(p1.ReinterpretCast<int16_t>(), p1.ReinterpretCast<int16_t>(), int16_t(8), length);
+            AscendC::ShiftLeft(p1.ReinterpretCast<int16_t>(), p1.ReinterpretCast<int16_t>(), int16_t(8), length); // 将int16的高8位设为符号位
+            AscendC::ShiftRight(p1.ReinterpretCast<int16_t>(), p1.ReinterpretCast<int16_t>(), int16_t(8), length); // 将int16的高8位设为符号位
             AscendC::Cast(p2, p1.ReinterpretCast<int16_t>(), AscendC::RoundMode::CAST_NONE, length);
             AscendC::Cast(y, p2, AscendC::RoundMode::CAST_NONE, length);
         }
@@ -207,9 +228,12 @@ private:
 
 private:
     AscendC::TPipe pipe;
-    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_input_data, Q_x1, Q_x2;
+    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_input_data;
+    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_x1;
+    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> Q_x2;
     AscendC::TQue<AscendC::QuePosition::VECOUT, BUFFER_NUM> Q_y;
-    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1, tmp2;
+    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1;
+    AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp2;
     AscendC::GlobalTensor<TYPE_INPUT_DATA> Gm_input_data;
     AscendC::GlobalTensor<TYPE_X1> Gm_x1;
     AscendC::GlobalTensor<TYPE_X2> Gm_x2;

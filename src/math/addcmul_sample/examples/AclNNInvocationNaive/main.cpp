@@ -180,10 +180,10 @@ int main(int argc, char **argv)
     std::vector<aclFloat16> outputYHostData(outputYShape[0] * outputYShape[1]);
 
     size_t fileSize = 0;
-    void ** input1=(void **)(&inputDataHostData);
-    void ** input2=(void **)(&inputX1HostData);
-    void ** input3=(void **)(&inputX2HostData);
-    void ** input4=(void **)(&inputValueHostData);
+    void** input1=(void**)(&inputDataHostData);
+    void** input2=(void**)(&inputX1HostData);
+    void** input3=(void**)(&inputX2HostData);
+    void** input4=(void**)(&inputValueHostData);
     //读取数据
     ReadFile("../input/input_data.bin", fileSize, *input1, inputDataShapeSize_1*dataType);
     ReadFile("../input/input_x1.bin", fileSize, *input2, inputX1ShapeSize_1*dataType);

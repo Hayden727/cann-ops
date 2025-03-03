@@ -1,25 +1,29 @@
-/*
-* @author: 孙明志
-* @mail: 531483935@qq.com
-* @date: 2024-05-27
-*/
-
-#include "addcmul_sample_tiling.h"
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
+#include "addcmul_sample_tiling.h"
+
 #include <algorithm>
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 32;
 static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     AddcmulSampleTilingData tiling;
-    int32_t NUM = 10; //申请的内存块的个数（包括buffer和queue）
+    int32_t NUM = 10; // 申请的内存块的个数（包括buffer和queue）
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     uint64_t ub_size; ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
     auto aivNum = ascendcPlatform.GetCoreNum();
 
     uint32_t total_length = 0, min_length = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) { // 循环次数为3，表示处理3个输入形状
         total_length = std::max<uint32_t>(total_length, context->GetInputShape(i)->GetStorageShape().GetShapeSize());
         min_length = std::min<uint32_t>(min_length, context->GetInputShape(i)->GetStorageShape().GetShapeSize());
     }
@@ -30,30 +34,39 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     uint32_t sizeofdatatype;
     if (dt == ge::DT_INT8) {
         sizeofdatatype = 1;
-        NUM = 12; //不同的数据类型算法不一样，所以会设成不同的值
+        // 不同的数据类型算法不一样，所以会设成不同的值
+        NUM = 12;
     }
     else if (dt == ge::DT_FLOAT16 || dt == ge::DT_BF16) {
-        sizeofdatatype = 2;
+        sizeofdatatype = 2; // 设置为2表示16位数据类型
     }
     else {
-        sizeofdatatype = 4;
+        sizeofdatatype = 4; // 设置为4表示32位数据类型
     }
 
-    uint32_t ALIGN_NUM = BLOCK_SIZE / sizeofdatatype;
-    uint32_t tiling_size = ((ub_size) / BLOCK_SIZE / 2) / NUM;
-    tiling_size = tiling_size <= 8 ? tiling_size : tiling_size / 8 * 8;
+    uint32_t ALIGN_NUM = BLOCK_SIZE / sizeofdatatype; // 计算对齐数
+    uint32_t tiling_size = ((ub_size) / BLOCK_SIZE / 2) / NUM; // 计算平铺大小
+    tiling_size = tiling_size <= 8 ? tiling_size : tiling_size / 8 * 8; // 如果平铺大小小于等于8，则保持不变，否则调整为8的倍数
 
-    uint32_t block_size = tiling_size * ALIGN_NUM;
+    uint32_t block_size = tiling_size * ALIGN_NUM; // 计算块大小
     if (total_length != min_length) {
-        block_size = std::min(block_size, min_length);
-        while (min_length % block_size || min_length % ALIGN_NUM) {
-            block_size -= 1;
+        block_size = std::min(block_size, min_length); // 确保块大小不超过最小长度
+        if (block_size != 0 && ALIGN_NUM != 0) { // 添加非零校验
+            while (min_length % block_size || min_length % ALIGN_NUM) {
+                block_size -= 1;
+            }
         }
     }
 
+    if (block_size == 0) {
+        block_size = 1;
+    }
     aivNum = (aivNum < total_length / block_size) ? aivNum : (total_length / block_size);
     aivNum = aivNum >= 1 ? aivNum : 1;
 
+    if (aivNum == 0) {
+        aivNum = 1;
+    }
     uint32_t core_size = (total_length / aivNum) / (ALIGN_NUM * 8) * (ALIGN_NUM * 8);
     uint32_t core_remain = total_length - aivNum * core_size;
 
@@ -72,7 +85,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     size_t *currentWorkspace = context->GetWorkspaceSizes(1);
-    currentWorkspace[0] = 0;
+    currentWorkspace[0] = static_cast<size_t>(0);
     return ge::GRAPH_SUCCESS;
 }
 }
@@ -121,14 +134,11 @@ public:
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
 
         this->SetInferShape(ge::InferShape);
-
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b")
                       .AddConfig("ascend910b");
-
     }
 };
-
 OP_ADD(AddcmulSample);
 }
