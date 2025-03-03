@@ -21,15 +21,17 @@
 #include <fstream>
 #include <fcntl.h>
 
-#include "acl/acl.h"
-#include "aclnn_clip_by_value.h"
-
 #define SUCCESS 0
 #define FAILED 1
 
 #define INFO_LOG(fmt, args...) fprintf(stdout, "[INFO]  " fmt "\n", ##args)
 #define WARN_LOG(fmt, args...) fprintf(stdout, "[WARN]  " fmt "\n", ##args)
 #define ERROR_LOG(fmt, args...) fprintf(stderr, "[ERROR]  " fmt "\n", ##args)
+
+
+#include "acl/acl.h"
+#include "aclnn_clip_by_value.h"
+
 
 #define CHECK_RET(cond, return_expr) \
     do {                             \
@@ -169,19 +171,24 @@ int main(int argc, char **argv)
     aclTensor *inputClipValueMax = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize_1=inputXShape[0] * inputXShape[1];
-    size_t inputClipValueMinShapeSize_1=inputClipValueMinShape[0];
-    size_t inputClipValueMaxShapeSize_1=inputClipValueMaxShape[0];
+    size_t inputClipValueMinShapeSize_1=inputClipValueMinShape[0] * inputClipValueMinShape[1];
+    size_t inputClipValueMaxShapeSize_1=inputClipValueMaxShape[0] * inputClipValueMaxShape[1];
     size_t outputYShapeSize_1=inputXShape[0] * inputXShape[1];
     size_t dataType=2;
     std::vector<aclFloat16> inputXHostData(inputXShape[0] * inputXShape[1]);
-    std::vector<aclFloat16> inputClipValueMinHostData(inputClipValueMinShape[0]);
-    std::vector<aclFloat16> inputClipValueMaxHostData(inputClipValueMaxShape[0]);
+    std::vector<aclFloat16> inputClipValueMinHostData(inputClipValueMinShape[0] * inputClipValueMinShape[1]);
+    std::vector<aclFloat16> inputClipValueMaxHostData(inputClipValueMaxShape[0] * inputClipValueMaxShape[1]);
     std::vector<aclFloat16> outputYHostData(outputYShape[0] * outputYShape[1]);
 
     size_t fileSize = 0;
     void** input1=(void**)(&inputXHostData);
+    void** input2=(void**)(&inputClipValueMinHostData);
+    void** input3=(void**)(&inputClipValueMaxHostData);
     //读取数据
     ReadFile("../input/input_x.bin", fileSize, *input1, inputXShapeSize_1*dataType);
+    ReadFile("../input/input_clip_value_min.bin", fileSize, *input2, inputClipValueMinShapeSize_1*dataType);
+    ReadFile("../input/input_clip_value_max.bin", fileSize, *input3, inputClipValueMaxShapeSize_1*dataType);
+
     INFO_LOG("Set input success");
     // 创建inputX aclTensor
     ret = CreateAclTensor(inputXHostData, inputXShape, &inputXDeviceAddr, aclDataType::ACL_FLOAT16, &inputX);
