@@ -13,13 +13,20 @@
  */
 #include "kernel_operator.h"
 #include <type_traits>
-using namespace AscendC;
+
 constexpr int32_t BUFFER_NUM = 2; // tensor num for each queue
 
-class KernelClipByValue {
+template <typename TYPE_X, typename TYPE_CLIP_VALUE_MIN, typename TYPE_CLIP_VALUE_MAX, typename TYPE_Y>
+class KernelClipByValue 
+{
 public:
     __aicore__ inline KernelClipByValue() {}
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR clip_value_min, GM_ADDR clip_value_max, GM_ADDR y, uint32_t totalLength, uint32_t ALIGN_NUM, uint32_t block_size, uint32_t core_size, uint32_t core_remain) {
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR clip_value_min,
+                                GM_ADDR clip_value_max, GM_ADDR y,
+                                uint32_t totalLength, uint32_t ALIGN_NUM,
+                                uint32_t block_size, uint32_t core_size,
+                                uint32_t core_remain) 
+    {
         this->blockLength = core_size + (AscendC::GetBlockNum() == AscendC::GetBlockIdx() + 1 ? core_remain : 0);
         this->tileLength = block_size;
         this->blockLength = this->blockLength + (this->blockLength % ALIGN_NUM ? ALIGN_NUM - this->blockLength % ALIGN_NUM : 0);
@@ -51,7 +58,7 @@ public:
         Compute(loopCount - 1, length);
         CopyOut(loopCount - 1, length);
     }
-    private:
+private:
     __aicore__ inline void CopyIn(int32_t progress, uint32_t length) {
         AscendC::LocalTensor<TYPE_X> x = Q_x.AllocTensor<TYPE_X>();
         AscendC::DataCopy(x, Gm_x[progress * this->tileLength], length);
@@ -85,10 +92,14 @@ private:
     uint32_t tileLength;
 };
 
-extern "C" __global__ __aicore__ void clip_by_value(GM_ADDR x, GM_ADDR clip_value_min, GM_ADDR clip_value_max, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
+extern "C" __global__ __aicore__ void clip_by_value(GM_ADDR x, GM_ADDR clip_value_min, GM_ADDR clip_value_max, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling)
+{
     GET_TILING_DATA(tiling_data, tiling);
+
     KernelClipByValue<DTYPE_X, DTYPE_CLIP_VALUE_MIN, DTYPE_CLIP_VALUE_MAX, DTYPE_Y> op;
-    op.Init(x, clip_value_min, clip_value_max, y, tiling_data.totalLength, tiling_data.ALIGN_NUM, tiling_data.block_size, tiling_data.core_size, tiling_data.core_remain);
+    op.Init(x, clip_value_min, clip_value_max, y, tiling_data.totalLength,
+            tiling_data.ALIGN_NUM, tiling_data.block_size, tiling_data.core_size,
+            tiling_data.core_remain);
     op.Process();
 }
 
