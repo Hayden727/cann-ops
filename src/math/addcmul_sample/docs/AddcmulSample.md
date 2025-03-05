@@ -76,7 +76,7 @@
 ## 算子原型
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Addcmul</th></tr> 
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">AddcmulSample</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="5" align="center">算子输入</td>
  
@@ -87,7 +87,7 @@
 
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcmul</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcmul_sample</td></tr>  
 </table>
 
 ## 调用示例

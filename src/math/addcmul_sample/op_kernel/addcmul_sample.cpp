@@ -12,22 +12,23 @@
 
 namespace {
     constexpr int32_t BUFFER_NUM = 2;  // tensor num for each queue
+    template<typename T>
+    struct Map {
+        using type = T;
+    };
+    template<> 
+    struct Map<int8_t> {
+        using type = half;
+    };
 }
-template<typename T>
-struct Map {
-    using type = T;
-};
-template<> 
-struct Map<int8_t> {
-    using type = half;
-};
+
 template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> 
 class KernelAddcmulSample {
-    using T = TYPE_Y;
-
 public:
     __aicore__ inline KernelAddcmulSample() {}
-    __aicore__ inline void Init(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, uint32_t totalLength, uint32_t ALIGN_NUM, uint32_t block_size, uint32_t core_size, uint32_t core_remain) {
+    __aicore__ inline void Init(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, 
+                                uint32_t totalLength, uint32_t ALIGN_NUM, uint32_t block_size, 
+                                uint32_t core_size, uint32_t core_remain) {
         ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
         this->blockLength = core_size + (AscendC::GetBlockNum() == AscendC::GetBlockIdx() + 1 ? core_remain : 0);
         this->tileLength = block_size;
@@ -85,7 +86,7 @@ private:
         AscendC::LocalTensor<TYPE_X1> x1 = Q_x1.DeQue<TYPE_X1>();
         AscendC::LocalTensor<TYPE_X2> x2 = Q_x2.DeQue<TYPE_X2>();
         AscendC::LocalTensor<TYPE_Y> y = Q_y.AllocTensor<TYPE_Y>();
-        if constexpr (std::is_same_v<T, int8_t> || std::is_same_v<T, signed char>) {
+        if constexpr (std::is_same_v<TYPE_Y, int8_t> || std::is_same_v<TYPE_Y, signed char>) {
             auto p1 = tmp1.Get<half>();
             auto p2 = tmp2.Get<half>();
             AscendC::Cast(p1, x1, AscendC::RoundMode::CAST_NONE, length);
@@ -132,10 +133,11 @@ private:
 };
 template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> 
 class KernelAddcmulSample_Broadcast {
-    using T = TYPE_Y;
 public:
     __aicore__ inline KernelAddcmulSample_Broadcast() {}
-    __aicore__ inline void Init(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, uint32_t input_data_length, uint32_t x1_length, uint32_t x2_length, uint32_t total_length, uint32_t ALIGN_NUM, uint32_t block_size, uint32_t core_size, uint32_t core_remain) {
+    __aicore__ inline void Init(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, 
+                                uint32_t input_data_length, uint32_t x1_length, uint32_t x2_length, uint32_t total_length, 
+                                uint32_t ALIGN_NUM, uint32_t block_size, uint32_t core_size, uint32_t core_remain) {
         this->inputdataLength = input_data_length;
         this->x1Length = x1_length;
         this->x2Length = x2_length;
@@ -193,7 +195,7 @@ private:
         AscendC::LocalTensor<TYPE_X1> x1 = Q_x1.DeQue<TYPE_X1>();
         AscendC::LocalTensor<TYPE_X2> x2 = Q_x2.DeQue<TYPE_X2>();
         AscendC::LocalTensor<TYPE_Y> y = Q_y.AllocTensor<TYPE_Y>();
-        if constexpr (std::is_same_v<T, int8_t> || std::is_same_v<T, signed char>) {
+        if constexpr (std::is_same_v<TYPE_Y, int8_t> || std::is_same_v<TYPE_Y, signed char>) {
             auto p1 = tmp1.Get<half>();
             auto p2 = tmp2.Get<half>();
             AscendC::Cast(p1, x1, AscendC::RoundMode::CAST_NONE, length);
@@ -250,7 +252,8 @@ private:
     uint32_t x2Length;
     typename Map<TYPE_VALUE>::type value;
 };
-extern "C" __global__ __aicore__ void addcmul_sample(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
+extern "C" __global__ __aicore__ void addcmul_sample(GM_ADDR input_data, GM_ADDR x1, GM_ADDR x2, GM_ADDR value, GM_ADDR y, 
+                                                     GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
     if (tiling_data.input_data_length == tiling_data.total_length && tiling_data.x1_length == tiling_data.total_length && tiling_data.x2_length == tiling_data.total_length) {
         KernelAddcmulSample<DTYPE_INPUT_DATA, DTYPE_X1, DTYPE_X2, DTYPE_VALUE, DTYPE_Y> op;

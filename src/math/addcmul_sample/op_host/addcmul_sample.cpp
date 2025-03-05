@@ -20,7 +20,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     int32_t NUM = 10; // 申请的内存块的个数（包括buffer和queue）
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     uint64_t ub_size; ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
-    auto aivNum = ascendcPlatform.GetCoreNum();
 
     uint32_t total_length = 0, min_length = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     for (int32_t i = 0; i < 3; ++i) { // 循环次数为3，表示处理3个输入形状
@@ -30,24 +29,21 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     uint32_t input_data_length = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t x1_length = context->GetInputShape(1)->GetStorageShape().GetShapeSize();
     uint32_t x2_length = context->GetInputShape(2)->GetStorageShape().GetShapeSize();
-    auto dt = context->GetInputDesc(0)->GetDataType();
-    uint32_t sizeofdatatype;
-    if (dt == ge::DT_INT8) {
+    uint32_t sizeofdatatype = 4; // 设置为4表示32位数据类型
+    if (context->GetInputDesc(0)->GetDataType() == ge::DT_INT8) {
         sizeofdatatype = 1;
         NUM = 12; // 申请的内存块的个数（包括buffer和queue）为12
     }
-    else if (dt == ge::DT_FLOAT16 || dt == ge::DT_BF16) {
+    else if (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT16 || context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
         sizeofdatatype = 2; // 设置为2表示16位数据类型
-    }
-    else {
-        sizeofdatatype = 4; // 设置为4表示32位数据类型
     }
 
     uint32_t ALIGN_NUM = BLOCK_SIZE / sizeofdatatype; // 计算对齐数
+    
     uint32_t tiling_size = ((ub_size) / BLOCK_SIZE / 2) / NUM; // 计算平铺大小
     tiling_size = tiling_size <= 8 ? tiling_size : tiling_size / 8 * 8; // 如果平铺大小小于等于8，则保持不变，否则调整为8的倍数
-
     uint32_t block_size = tiling_size * ALIGN_NUM; // 计算块大小
+
     if (total_length != min_length) {
         block_size = std::min(block_size, min_length); // 确保块大小不超过最小长度
         if (block_size != 0 && ALIGN_NUM != 0) { // 添加非零校验
@@ -57,15 +53,12 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
         }
     }
 
-    if (block_size == 0) {
-        block_size = 1;
-    }
+    auto aivNum = ascendcPlatform.GetCoreNum();
+    block_size = block_size == 0? 1:block_size;
     aivNum = (aivNum < total_length / block_size) ? aivNum : (total_length / block_size);
     aivNum = aivNum >= 1 ? aivNum : 1;
+    aivNum = aivNum == 0? 1:aivNum;
 
-    if (aivNum == 0) {
-        aivNum = 1;
-    }
     uint32_t core_size = (total_length / aivNum) / (ALIGN_NUM * 8) * (ALIGN_NUM * 8);
     uint32_t core_remain = total_length - aivNum * core_size;
 

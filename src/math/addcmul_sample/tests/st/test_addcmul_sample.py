@@ -12,6 +12,7 @@
 import tensorflow as tf
 import numpy as np
 
+
 def addcmul_test(input_data, x1, x2, value):
     input_data_tensor = tf.convert_to_tensor(input_data)
     x1_tensor = tf.convert_to_tensor(x1)
@@ -19,6 +20,7 @@ def addcmul_test(input_data, x1, x2, value):
     value_tensor = tf.convert_to_tensor(value)
     y = input_data_tensor + x1_tensor * x2_tensor * value_tensor
     return y.numpy()
+
 
 def calc_expect_func(input_data, x1, x2, value, y):
     res = addcmul_test(input_data["value"], x1['value'], x2['value'], value['value'])
