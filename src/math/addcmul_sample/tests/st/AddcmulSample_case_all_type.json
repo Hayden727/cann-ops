@@ -2,7 +2,7 @@
     {
         "case_name": "Test_AddcmulSample_001",
         "op": "AddcmulSample",
-        "calc_expect_func_file": "./test_addcmul_sample.py:calc_expect_func",
+        "calc_expect_func_file": "test_addcmul_sample.py:calc_expect_func",
         "input_desc": [
             {
                 "format": [

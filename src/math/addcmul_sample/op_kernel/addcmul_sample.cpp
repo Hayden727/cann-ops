@@ -130,7 +130,8 @@ private:
     uint32_t tileLength;
     typename Map<TYPE_VALUE>::type value;
 };
-template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> class KernelAddcmulSample_Broadcast {
+template<typename TYPE_INPUT_DATA, typename TYPE_X1, typename TYPE_X2, typename TYPE_VALUE, typename TYPE_Y> 
+class KernelAddcmulSample_Broadcast {
     using T = TYPE_Y;
 public:
     __aicore__ inline KernelAddcmulSample_Broadcast() {}

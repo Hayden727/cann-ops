@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_addcmul)
+project(acl_execute_addcmul_sample)
 
 # Compile options
 add_compile_options(-std=c++11)
