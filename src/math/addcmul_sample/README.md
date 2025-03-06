@@ -28,6 +28,7 @@ y = (input_data + (x1 * x2) * value)
 ## 支持的产品型号
 本样例支持如下产品型号：
 - Atlas A2训练系列产品
+- Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
 
 ## 目录结构介绍
