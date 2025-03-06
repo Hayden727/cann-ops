@@ -4,7 +4,8 @@
 
 ## 支持的产品型号
 
-Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atlas 800I A2推理产品/Atlas 200I/500 A2推理产品
+- Atlas A2 训练系列产品
+- Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -14,7 +15,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 
 ## 实现原理
 
-给定一个张量`x`，此操作返回一个与t类型和形状相同的张量，其值被剪裁到`clip_value_min`和`clip_value_max`。任何小于`clip_value_min`的值都被设置为`clip_lue_min`。任何大于`clip_vale_max`的值都设置为`cli0pvalue_max`。
+给定一个张量`x`，此操作返回一个与t类型和形状相同的张量，其值被剪裁到`clip_value_min`和`clip_value_max`。任何小于`clip_value_min`的值都被设置为`clip_lue_min`。任何大于`clip_vale_max`的值都设置为`clip_value_max`。
 
 ## 算子执行接口
 
@@ -45,7 +46,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y、out的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、clip_value_min, clip_value_max,out的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnClipByValue
