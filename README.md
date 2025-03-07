@@ -37,7 +37,7 @@ ops-contribution仓关键目录如下所示：
 - **直播平台**：【昇腾CANN】视频号、[B站【昇腾AI开发者】](https://space.bilibili.com/1190614918?spm_id_from=333.337.search-card.all.click)、[昇腾社区同步直播](https://www.hiascend.com/developer/activities/cann20251?tab=live)<br>
 - **回放地址**：https://www.bilibili.com/video/BV1Xm421g7Ck?spm_id_from=333.788.videopod.sections&vd_source=c6dd04a5e994013eb635c132220694f7 <br>
 - **直播预告**：<br>
-![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/resouce/%E7%A0%81%E5%8A%9B%E5%85%A8%E5%BC%80%E7%89%B9%E8%BE%91-%E9%A2%84%E5%91%8A3%E6%9C%88.jpg)
+![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/resouce/%E7%A0%81%E5%8A%9B%E5%85%A8%E5%BC%80%E7%89%B9%E8%BE%91-%E9%A2%84%E5%91%8A3%E6%9C%88-%E4%BF%AE%E6%94%B9.jpg)
 
 #### **🏅️ 项目发放**
 - **众智任务**：[点击链接直达](https://www.hiascend.com/ecosystem/all-wisdom)
