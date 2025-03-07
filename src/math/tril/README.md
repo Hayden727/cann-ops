@@ -2,17 +2,27 @@
 本样例通过`Ascend C`编程语言实现了`Tril`算子。
 
 ### 算子描述
-`Tril`算子是`PyTorch`中的一种常见矩阵构造函数。`Tril`函数默认情况下返回一个矩阵主对角线以下的下三角矩阵，其它元素全部为`0`。主对角线的偏移由可选参数`diagonal`决定，其缺省值为0。`diagonal`为正值时，主对角线向上偏移。当输入是一个多维张量时，其最后两个维度构成矩阵，`Tril`以迭代的方式处理多维张量中的每个矩阵，最终返回对应的下三角矩阵构成的多维张量。返回的多维张量与输入张量维度保持一致。
+`Tril`算子用于提取张量的下三角部分。返回一个张量`out`，包含输入矩阵(2D张量)的下三角部分，`out`其余部分被设为0。这里所说的下三角部分为矩阵指定对角线`diagonal`之上的元素。参数`diagonal`控制对角线：默认值是`0`，表示主对角线。如果 `diagonal > 0`，表示主对角线之上的对角线；如果 `diagonal < 0`，表示主对角线之下的对角线。
+
+计算公式为：
+  $$
+  y = tril(x, diagonal)
+  $$
 
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Tril</th></tr>
-<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
-<tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16</td><td align="center">ND</td><td align="center">\</td></tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32, float16</td><td align="center">ND</td><td align="center">\</td></tr>
-<tr><td rowspan="1" align="center">attr属性</td><td align="center">diagonal</td><td align="center">\</td><td align="center">int</td><td align="center">\</td><td align="center">0</td></tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">tril</td></td></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Tril</th></tr> 
+<tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
+<tr><td rowspan="2" align="center">算子输入</td>
+ 
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
+
+<tr><td rowspan="1" align="center">算子输出</td>
+<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
+<tr><td rowspan="1" align="center">算子属性</td>
+<td align="center">diagonal</td><td align="center">diagonal</td><td align="center">int</td><td align="center">-</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">tril</td></tr>  
 </table>
 
 
