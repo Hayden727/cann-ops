@@ -187,29 +187,29 @@ namespace ge{
 }
 
 namespace ops{
-    class Triu : public OpDef{
-    public:
-        explicit Triu(const char *name) : OpDef(name){
-            this->Input("x")
-                .ParamType(REQUIRED)
-                .DataType({ge::DT_FLOAT16, ge::DT_FLOAT})
-                .Format({ge::FORMAT_ND, ge::FORMAT_ND})
-                .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
-            this->Output("y")
-                .ParamType(REQUIRED)
-                .DataType({ge::DT_FLOAT16, ge::DT_FLOAT})
-                .Format({ge::FORMAT_ND, ge::FORMAT_ND})
-                .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
-            this->Attr("diagonal").AttrType(OPTIONAL).Int(0);
+class Triu : public OpDef{
+public:
+    explicit Triu(const char *name) : OpDef(name){
+        this->Input("x")
+            .ParamType(REQUIRED)
+            .DataType({ge::DT_FLOAT16, ge::DT_FLOAT})
+            .Format({ge::FORMAT_ND, ge::FORMAT_ND})
+            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
+        this->Output("y")
+            .ParamType(REQUIRED)
+            .DataType({ge::DT_FLOAT16, ge::DT_FLOAT})
+            .Format({ge::FORMAT_ND, ge::FORMAT_ND})
+            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
+        this->Attr("diagonal").AttrType(OPTIONAL).Int(0);
 
-            this->SetInferShape(ge::InferShape);
+        this->SetInferShape(ge::InferShape);
 
-            this->AICore()
-                .SetTiling(optiling::TilingFunc);
-            this->AICore().AddConfig("ascend310b")
-                          .AddConfig("ascend910b");
-        }
-    };
+        this->AICore()
+            .SetTiling(optiling::TilingFunc);
+        this->AICore().AddConfig("ascend310b")
+                        .AddConfig("ascend910b");
+    }
+};
 
-    OP_ADD(Triu);
+OP_ADD(Triu);
 }
