@@ -16,7 +16,7 @@ import numpy as np
 
 def triu_test(x, diagonal):
     tensor = tf.convert_to_tensor(x)
-    triu_result = tf.linalg.band_part(tensor, diagonal, -1)
+    triu_result = tf.linalg.band_part(tensor, 0, diagonal)
     return triu_result.numpy()
 
 
