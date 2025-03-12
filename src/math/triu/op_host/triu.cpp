@@ -11,40 +11,27 @@
 /**
  * @file triu.cpp
  */
-
 #include "triu_tiling.h"
 #include "register/op_def_registry.h"
+#include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
 
 namespace optiling{
-    constexpr int minNum = 1;
+    const uint32_t minNum = 1;
 
-    constexpr int keyOne = 1;
-    constexpr int keyTwo = 2;
-    constexpr int keyThree = 3;
-    constexpr int keyFour = 4;
+    const uint32_t keyOne = 1;
+    const uint32_t keyTwo = 2;
+    const uint32_t keyThree = 3;
+    const uint32_t keyFour = 4;
 
-    constexpr int bufferFour = 4;
-    constexpr int BlockSize = 32;
-    constexpr int computeBatchSize = 256;
-    constexpr int sizeHalf = 2;
-    constexpr int VAL_ZRRO = 0;
+    const uint32_t bufferFour = 4;
+    const uint32_t BlockSize = 32;
+    const uint32_t computeBatchSize = 256;
+    const uint32_t sizeHalf = 2;
+    const uint32_t VAL_ZRRO = 0;
 
-    uint32_t typeSize = VAL_ZRRO;
-    uint64_t key = keyOne;
-    // buffer for queue
-    uint64_t UB_SHARING_NUM = 2;
-    int64_t rowLength = VAL_ZRRO;
-    int64_t columnLength = VAL_ZRRO;
-    int64_t matrixNum = 1, matrixSize = 1;
-    int64_t diagVal = VAL_ZRRO;
-
-    uint32_t ALIGN_NUM = VAL_ZRRO;
-    uint32_t totalLengthAligned = VAL_ZRRO;
-    uint64_t loopCnt = VAL_ZRRO, fullTileLength = VAL_ZRRO, lastTileLength = VAL_ZRRO;
-    int32_t fullCnt = VAL_ZRRO, lastCnt = VAL_ZRRO;
-
-    static int setShapeInfo(gert::TilingContext *context){
+    static int setShapeInfo(gert::TilingContext *context)
+    {
         const auto inputDataType = context->GetInputTensor(0)->GetDataType();
 
         switch (inputDataType){
@@ -135,7 +122,21 @@ namespace optiling{
         return 0;
     }
 
-    static ge::graphStatus TilingFunc(gert::TilingContext *context){
+    static ge::graphStatus TilingFunc(gert::TilingContext *context)
+    {
+        uint32_t type_Size = VAL_ZRRO;
+        uint64_t key = keyOne;
+        // buffer for queue
+        uint64_t UB_SHARING_NUM = 2;
+        int64_t row_Length = VAL_ZRRO;
+        int64_t column_Length = VAL_ZRRO;
+        int64_t matrix_Num = 1, matrixSize = 1;
+        int64_t diag_Val = VAL_ZRRO;
+
+        uint32_t ALIGN_NUM = VAL_ZRRO;
+        uint32_t totalLengthAligned = VAL_ZRRO;
+        uint64_t loopCnt = VAL_ZRRO, fullTileLength = VAL_ZRRO, lastTileLength = VAL_ZRRO;
+        int32_t fullCnt = VAL_ZRRO, lastCnt = VAL_ZRRO;
         TriuTilingData tiling;
         auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
         auto coreNum = ascendcPlatform.GetCoreNum();

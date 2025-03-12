@@ -16,7 +16,7 @@
 #include "register/tilingdata_base.h"
 
 namespace optiling {
-  BEGIN_TILING_DATA_DEF(TriuTilingData)
+BEGIN_TILING_DATA_DEF(TriuTilingData)
   TILING_DATA_FIELD_DEF(uint32_t, totalLengthAligned);
   TILING_DATA_FIELD_DEF(int32_t, matrixNum);
   TILING_DATA_FIELD_DEF(int32_t, matrixSize);
