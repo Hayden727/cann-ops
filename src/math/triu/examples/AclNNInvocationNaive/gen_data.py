@@ -19,8 +19,8 @@ def triu(x, diagonal=0):
 
 
 def gen_golden_data_simple():
-    input_x = np.random.uniform(-10, 10, [10, 10]).astype(np.float32)
-    golden = triu(torch.Tensor(input_x), diagonal=0).numpy().astype(np.float32)
+    input_x = np.random.uniform(-10, 10, [10, 10]).astype(np.float16)
+    golden = triu(torch.Tensor(input_x), diagonal=0).numpy().astype(np.float16)
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     input_x.tofile("./input/input_x.bin")
