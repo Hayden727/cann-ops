@@ -23,7 +23,7 @@
 
 ## 实现原理
 
-Triu算子通过依次调用`Ascend C`的`API`接口进行实现。对于16位的数据类型将其通过`Cast`接口转换为32位浮点数进行计算。
+Triu算子通过依次调用`Ascend C`的`API`接口：`Adds`、`Sub`，分步计算实现Triu函数计算。
 
 ## 算子执行接口
 
@@ -71,10 +71,10 @@ Triu算子通过依次调用`Ascend C`的`API`接口进行实现。对于16位�
 
   返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
 
-
 ## 约束与限制
 
 - x，out的数据类型支持FLOAT16、FLOAT32，数据格式只支持ND
+- diagonal的数据类型只支持INT32，数据格式只支持SCALE
 
 ## 算子原型
 
