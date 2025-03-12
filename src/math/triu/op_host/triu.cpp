@@ -30,19 +30,33 @@ namespace optiling{
     const uint32_t sizeHalf = 2;
     const uint32_t VAL_ZRRO = 0;
 
+    uint32_t type_Size = VAL_ZRRO;
+    uint64_t key_value = keyOne;
+    // buffer for queue
+    uint64_t ub_Sharing_Num = 2;
+    int64_t row_Length = VAL_ZRRO;
+    int64_t column_Length = VAL_ZRRO;
+    int64_t matrix_Num = 1, matrix_Size = 1;
+    int64_t diag_Val = VAL_ZRRO;
+
+    uint32_t align_Num = VAL_ZRRO;
+    uint32_t total_Length_Aligned = VAL_ZRRO;
+    uint64_t loop_Cnt = VAL_ZRRO, full_Tile_Length = VAL_ZRRO, last_Tile_Length = VAL_ZRRO;
+    int32_t full_Cnt = VAL_ZRRO, last_Cnt = VAL_ZRRO;
+
     static int setShapeInfo(gert::TilingContext *context)
     {
         const auto inputDataType = context->GetInputTensor(0)->GetDataType();
 
         switch (inputDataType){
             case ge::DT_FLOAT:
-                typeSize = sizeof(float);
+                type_Size = sizeof(float);
                 break;
             case ge::DT_FLOAT16:
-                typeSize = sizeHalf;
+                type_Size = sizeHalf;
                 break;
             default:
-                typeSize = sizeof(float);
+                type_Size = sizeof(float);
                 break;
         }
 
@@ -51,92 +65,79 @@ namespace optiling{
         int64_t dimSize = inputShape.GetDimNum(), i = 0;
         // The number 2 is to preserve the last two dimensions
         for (i = 0; i < dimSize - 2; i++){
-            matrixNum *= inputShape.GetDim(i);
+            matrix_Num *= inputShape.GetDim(i);
         }
-        rowLength = inputShape.GetDim(i);
+        row_Length = inputShape.GetDim(i);
         i++;
-        columnLength = inputShape.GetDim(i);
-        matrixSize = rowLength * columnLength;
+        column_Length = inputShape.GetDim(i);
+        matrix_Size = row_Length * column_Length;
 
         const auto runtime_attrs = context->GetAttrs();
         const int64_t *diagPtr = runtime_attrs->GetInt(0);
-        diagVal = *diagPtr;
-        if (diagVal < columnLength - 1 && diagVal > -rowLength){
+        diag_Val = *diagPtr;
+        if (diag_Val < column_Length - 1 && diag_Val > -row_Length){
             // Regular
-            key = keyOne;
-        }else if (diagVal <= -rowLength){
+            key_value = keyOne;
+        }else if (diag_Val <= -row_Length){
             // The result is itself, TQueBind is enough
-            key = keyTwo;
+            key_value = keyTwo;
         }else{
             // All zero, just copyIn, Sub and copyOut
-            key = keyThree;
+            key_value = keyThree;
         }
         return 0;
     }
 
     static int setTilingInfo(gert::TilingContext *context,uint64_t ub_size){
-        loopCnt = VAL_ZRRO;
-        fullTileLength = VAL_ZRRO;
-        lastTileLength = VAL_ZRRO;
-        fullCnt = VAL_ZRRO; 
-        lastCnt = VAL_ZRRO;
-        uint64_t ub_length = ((ub_size / typeSize / UB_SHARING_NUM) / ALIGN_NUM * ALIGN_NUM) - ALIGN_NUM;
-        if (key == keyOne && diagVal <= 0 && columnLength % (computeBatchSize / typeSize) == 0){
+        loop_Cnt = VAL_ZRRO;
+        full_Tile_Length = VAL_ZRRO;
+        last_Tile_Length = VAL_ZRRO;
+        full_Cnt = VAL_ZRRO; 
+        last_Cnt = VAL_ZRRO;
+        uint64_t ub_length = ((ub_size / type_Size / ub_Sharing_Num) / align_Num * align_Num) - align_Num;
+        if (key_value == keyOne && diag_Val <= 0 && column_Length % (computeBatchSize / type_Size) == 0){
             // A faster method for aligned processing only
-            key = keyFour;
+            key_value = keyFour;
             // Double buffer setting
-            UB_SHARING_NUM = bufferFour;
+            ub_Sharing_Num = bufferFour;
             // The result would not be the expected
-            if (columnLength == 0){
-                columnLength = minNum;
+            if (column_Length == 0){
+                column_Length = minNum;
             }
-            ub_length = ((ub_size) / typeSize / UB_SHARING_NUM) / columnLength * columnLength;
-            loopCnt = (matrixSize + ub_length - 1) / ub_length;
-            if (loopCnt == 1){
-                fullCnt = 0;
-                lastCnt = rowLength;
+            ub_length = ((ub_size) / type_Size / ub_Sharing_Num) / column_Length * column_Length;
+            loop_Cnt = (matrix_Size + ub_length - 1) / ub_length;
+            if (loop_Cnt == 1){
+                full_Cnt = 0;
+                last_Cnt = row_Length;
             }else{
                 // The result would not be the expected
-                if (columnLength == 0){
-                    columnLength = minNum;
+                if (column_Length == 0){
+                    column_Length = minNum;
                 }
-                fullCnt = ub_length / columnLength;
-                lastCnt = rowLength - fullCnt * (loopCnt - 1);
+                full_Cnt = ub_length / column_Length;
+                last_Cnt = row_Length - full_Cnt * (loop_Cnt - 1);
             }
             // Already aligned
-            fullTileLength = fullCnt * columnLength;
-            lastTileLength = lastCnt * columnLength;
-        }else if (key == keyThree){
-            loopCnt = (totalLengthAligned + ub_length - 1) / ub_length;
-            UB_SHARING_NUM = bufferFour;
-            ub_length = ((ub_size / typeSize / UB_SHARING_NUM) / ALIGN_NUM * ALIGN_NUM) - ALIGN_NUM;
-            fullTileLength = ub_length;
-            lastTileLength = (totalLengthAligned - fullTileLength * (loopCnt - 1) + ALIGN_NUM - 1) / ALIGN_NUM * ALIGN_NUM;
-            if (loopCnt == 1){ fullTileLength = 0; }
+            full_Tile_Length = full_Cnt * column_Length;
+            last_Tile_Length = last_Cnt * column_Length;
+        }else if (key_value == keyThree){
+            loop_Cnt = (total_Length_Aligned + ub_length - 1) / ub_length;
+            ub_Sharing_Num = bufferFour;
+            ub_length = ((ub_size / type_Size / ub_Sharing_Num) / align_Num * align_Num) - align_Num;
+            full_Tile_Length = ub_length;
+            last_Tile_Length = (total_Length_Aligned - full_Tile_Length * (loop_Cnt - 1) + align_Num - 1) / align_Num * align_Num;
+            if (loop_Cnt == 1){ full_Tile_Length = 0; }
         }else{
-            loopCnt = (totalLengthAligned + ub_length - 1) / ub_length;
-            fullTileLength = ub_length;
-            lastTileLength = (totalLengthAligned - fullTileLength * (loopCnt - 1) + ALIGN_NUM - 1) / ALIGN_NUM * ALIGN_NUM;
-            if (loopCnt == 1){ fullTileLength = 0; }
+            loop_Cnt = (total_Length_Aligned + ub_length - 1) / ub_length;
+            full_Tile_Length = ub_length;
+            last_Tile_Length = (total_Length_Aligned - full_Tile_Length * (loop_Cnt - 1) + align_Num - 1) / align_Num * align_Num;
+            if (loop_Cnt == 1){ full_Tile_Length = 0; }
         }
         return 0;
     }
 
     static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
-        uint32_t type_Size = VAL_ZRRO;
-        uint64_t key = keyOne;
-        // buffer for queue
-        uint64_t UB_SHARING_NUM = 2;
-        int64_t row_Length = VAL_ZRRO;
-        int64_t column_Length = VAL_ZRRO;
-        int64_t matrix_Num = 1, matrixSize = 1;
-        int64_t diag_Val = VAL_ZRRO;
-
-        uint32_t ALIGN_NUM = VAL_ZRRO;
-        uint32_t totalLengthAligned = VAL_ZRRO;
-        uint64_t loopCnt = VAL_ZRRO, fullTileLength = VAL_ZRRO, lastTileLength = VAL_ZRRO;
-        int32_t fullCnt = VAL_ZRRO, lastCnt = VAL_ZRRO;
         TriuTilingData tiling;
         auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
         auto coreNum = ascendcPlatform.GetCoreNum();
@@ -145,32 +146,32 @@ namespace optiling{
 
         setShapeInfo(context);
 
-        ALIGN_NUM = BlockSize / typeSize;
-        totalLengthAligned = (matrixNum * matrixSize + ALIGN_NUM - 1) / ALIGN_NUM * ALIGN_NUM;
+        align_Num = BlockSize / type_Size;
+        total_Length_Aligned = (matrix_Num * matrix_Size + align_Num - 1) / align_Num * align_Num;
         uint64_t ub_size=0;
         ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
 
         setTilingInfo(context,ub_size);
 
-        tiling.set_totalLengthAligned(totalLengthAligned);
-        tiling.set_matrixNum(matrixNum);
-        tiling.set_matrixSize(matrixSize);
-        tiling.set_rowLength(rowLength);
-        tiling.set_columnLength(columnLength);
-        tiling.set_diagVal(diagVal);
+        tiling.set_totalLengthAligned(total_Length_Aligned);
+        tiling.set_matrixNum(matrix_Num);
+        tiling.set_matrixSize(matrix_Size);
+        tiling.set_rowLength(row_Length);
+        tiling.set_columnLength(column_Length);
+        tiling.set_diagVal(diag_Val);
 
-        tiling.set_loopCnt(loopCnt);
-        tiling.set_fullTileLength(fullTileLength);
-        tiling.set_lastTileLength(lastTileLength);
-        tiling.set_fullCnt(fullCnt);
-        tiling.set_lastCnt(lastCnt);
+        tiling.set_loopCnt(loop_Cnt);
+        tiling.set_fullTileLength(full_Tile_Length);
+        tiling.set_lastTileLength(last_Tile_Length);
+        tiling.set_fullCnt(full_Cnt);
+        tiling.set_lastCnt(last_Cnt);
 
-        tiling.set_alignNum(ALIGN_NUM);
-        tiling.set_typeSize(typeSize);
+        tiling.set_alignNum(align_Num);
+        tiling.set_typeSize(type_Size);
 
         tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
         context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-        context->SetTilingKey(key);
+        context->SetTilingKey(key_value);
         size_t *currentWorkspace = context->GetWorkspaceSizes(1);
         currentWorkspace[0] = 0;
 
