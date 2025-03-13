@@ -37,7 +37,7 @@ uint32_t start_length = VAL_ZERO;
 uint32_t end_length = VAL_ZERO;
 uint32_t weight_length = VAL_ZERO;
 uint32_t total_length = VAL_ZERO;
-uint32_t ALIGN_NUM = VAL_ZERO;
+uint32_t LERP_ALIGN_NUM = VAL_ZERO;
 uint32_t tiling_size = VAL_ZERO;
 uint32_t block_size = VAL_ZERO;
 uint32_t core_size = VAL_ZERO;
@@ -109,18 +109,18 @@ static void GetTillingParams(gert::TilingContext* context) {
         // Data type is 32-bit (4 bytes)
         sizeofdatatype = 4;
     }
-    ALIGN_NUM = BLOCK_SIZE / sizeofdatatype;
+    LERP_ALIGN_NUM = BLOCK_SIZE / sizeofdatatype;
     const int UB_DIV_COEF = 2;
     tiling_size = ((ub_size) / BLOCK_SIZE / UB_DIV_COEF) / NUM;
     // 8 blocks for 256-byte alignment
     tiling_size = tiling_size <= 8 ? tiling_size : tiling_size / 8 * 8;
-    block_size = tiling_size * ALIGN_NUM;
+    block_size = tiling_size * LERP_ALIGN_NUM;
     aivNum = (aivNum < total_length / block_size) ? aivNum : (total_length / block_size);
     aivNum = aivNum >= 1 ? aivNum : 1;
     if(aivNum == 0){
         aivNum = 1;
     }    
-    core_size = (total_length / aivNum) / (ALIGN_NUM * 8) * (ALIGN_NUM * 8); // 8 blocks for 256-byte alignment
+    core_size = (total_length / aivNum) / (LERP_ALIGN_NUM * 8) * (LERP_ALIGN_NUM * 8); // 8 blocks for 256-byte alignment
     core_remain = total_length - aivNum * core_size;
 }
 
@@ -161,7 +161,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_end_length(end_length);
     tiling.set_weight_length(weight_length);
     tiling.set_total_length(total_length);
-    tiling.set_ALIGN_NUM(ALIGN_NUM);
+    tiling.set_ALIGN_NUM(LERP_ALIGN_NUM);
     tiling.set_tiling_size(tiling_size);
     tiling.set_block_size(block_size);
     tiling.set_core_size(core_size);
