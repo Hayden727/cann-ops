@@ -171,7 +171,7 @@ int main(int argc, char **argv)
     size_t inputStartShapeSize_1=inputStartShape[0];
     size_t inputEndShapeSize_1=inputEndShape[0];
     size_t inputWeightShapeSize_1=inputWeightShape[0];
-    size_t outputYShapeSize_1=inputXShape[0];
+    size_t outputYShapeSize_1=inputStartShape[0];
     size_t dataType=2;
     std::vector<aclFloat16> inputStartHostData(inputStartShape[0]);
     std::vector<aclFloat16> inputEndHostData(inputEndShape[0]);
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
     void** input1=(void**)(&inputStartHostData);
     void** input2=(void**)(&inputEndHostData);
     void** input3=(void**)(&inputWeightHostData);
-    void** input2=(void**)(&outputYHostData);
+
     //读取数据
     ReadFile("../input/input_start.bin", fileSize, *input1, inputStartShapeSize_1*dataType);
     ReadFile("../input/input_end.bin", fileSize, *input2, inputEndShapeSize_1*dataType);
