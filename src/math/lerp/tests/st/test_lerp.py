@@ -18,8 +18,8 @@ def lerp_test(start, end, weight):
     tensor_start = tf.convert_to_tensor(start)
     tensor_end = tf.convert_to_tensor(end)
     tensor_weight = tf.convert_to_tensor(weight)
-    lerp_result = tensor_start + tensor_weight * (tensor_end - tensor_start)
-    return lerp_result.numpy()
+    res = tensor_start + tensor_weight * (tensor_end - tensor_start)
+    return res.numpy()
 
 
 def calc_expect_func(start, end, weight, y):
