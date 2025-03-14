@@ -125,7 +125,8 @@ namespace ops
 
             this->AICore()
                 .SetTiling(optiling::TilingFunc)
-                .AddConfig("ascend310b");
+                .AddConfig("ascend310b")
+                .AddConfig("ascend910b");
         }
     };
 

@@ -18,7 +18,7 @@ else ()
     message(STATUS "env INC_PATH: ${INC_PATH}")
 endif()
 
-set(CUST_PKG_PATH "/home/cp/Arange_run/vendors/customize/op_api")
+set(CUST_PKG_PATH "${INC_PATH}/opp/vendors/customize/op_api")
 
 set(LIB_PATH $ENV{NPU_HOST_LIB})
 
