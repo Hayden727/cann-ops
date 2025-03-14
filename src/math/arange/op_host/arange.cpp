@@ -24,6 +24,9 @@
 namespace optiling
 {
     const uint32_t BLOCK_SIZE = 32;
+    const uint32_t DTYPE_SIZE2 = 2;
+    const uint32_t DTYPE_SIZE4 = 4;
+    const uint32_t DTYPE_SIZE8 = 8;
     #define DIVIDE_AND_ALIGN(size, split, align) \
                                     ((((size) / (split)) + ((align)-1)) & ~((align)-1))
 
@@ -32,25 +35,25 @@ namespace optiling
         ArangeTilingData tiling;
         uint32_t totalLength = context->GetOutputShape(0)->GetOriginShape().GetShapeSize();
         ge::DataType dtype_out = context->GetOutputDesc(0)->GetDataType();
-        uint32_t dtype_size = 2;
+        uint32_t dtype_size = DTYPE_SIZE2;
         context->SetTilingKey(0);
         switch (dtype_out) {
             case ge::DataType::DT_FLOAT16:
             case ge::DataType::DT_BF16:
-                dtype_size = 2;
+                dtype_size = DTYPE_SIZE2;
                 break;
             case ge::DataType::DT_FLOAT:
-                dtype_size = 4;
+                dtype_size = DTYPE_SIZE4;
                 context->SetTilingKey(1);
                 break;
             case ge::DataType::DT_INT32:
-                dtype_size = 4;
+                dtype_size = DTYPE_SIZE4;
                 break;
             case ge::DataType::DT_INT64:
-                dtype_size = 8;
+                dtype_size = DTYPE_SIZE8;
                 break;
             default:
-                dtype_size = 2; 
+                dtype_size = DTYPE_SIZE2; 
                 break;
         }
 
@@ -131,13 +134,6 @@ namespace ops
                 .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_INT32, ge::DT_INT64, ge::DT_BF16})
                 .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
                 .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-
-            // this->Output("out")
-            //     .ParamType(REQUIRED)
-            //     .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_INT32, ge::DT_INT64, ge::DT_BF16})
-            //     .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            //     .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            //     .OutputShapeDependOnCompute();
 
             this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 

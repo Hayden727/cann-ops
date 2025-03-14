@@ -20,12 +20,12 @@ import numpy as np
 
 
 def gen_golden_data_simple():
-    input = np.array([1, -1113, -5], dtype=np.int32)
-    golden = np.arange(1, -1113, -5, dtype=np.int32)
+    input_data = np.array([1, -1113, -5], dtype=np.int32)
+    golden_data = np.arange(1, -1113, -5, dtype=np.int32)
     os.system("mkdir -p output")
     os.system("mkdir -p input")
-    input.tofile("./input/input.bin")
-    golden.tofile("./output/golden.bin")
+    input_data.tofile("./input/input.bin")
+    golden_data.tofile("./output/golden.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()

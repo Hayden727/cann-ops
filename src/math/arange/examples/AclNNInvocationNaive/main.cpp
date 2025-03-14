@@ -19,7 +19,6 @@
  */
 #include <iostream>
 #include <vector>
-#include <math.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -54,6 +53,14 @@
     printf(message, ##__VA_ARGS__); \
   } while (0)
 
+enum ArgName {
+    ARANGE_START,
+    ARANGE_END,
+    ARANGE_STEP,
+    ARANGE_COUNT
+};
+
+int64_t GetShapeSize(const std::vector<int64_t>& shape);
 
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
@@ -172,17 +179,12 @@ int main() {
   aclScalar* step = nullptr;
   aclTensor* out = nullptr;
   
-  std::vector<int32_t> inputDataHostData(3);
+  std::vector<int32_t> inputDataHostData(3);// 用于存储输入数据的向量
   void ** input1=(void **)(&inputDataHostData);
-  ReadFile("../input/input.bin", 0, *input1, 3*sizeof(int32_t));
-  int32_t startValue = inputDataHostData[0];
-  int32_t endValue = inputDataHostData[1];
-  int32_t stepValue = inputDataHostData[2];
-
-  // //c++不支持half和bf16 从文件种无法解析真实值
-  // int16_t startValue = 1;
-  // int16_t endValue = -1113;
-  // int16_t stepValue = -5;
+  ReadFile("../input/input.bin", 0, *input1, 3*sizeof(int32_t));// 读取3个int32_t大小的数据
+  int32_t startValue = inputDataHostData[ARANGE_START];
+  int32_t endValue = inputDataHostData[ARANGE_END];
+  int32_t stepValue = inputDataHostData[ARANGE_STEP];
 
   double size_arange = ceil(static_cast<double>(endValue - startValue) / stepValue);
   int64_t size_value = static_cast<int64_t>(size_arange);
@@ -190,13 +192,13 @@ int main() {
   std::vector<int32_t> outHostData(size_value, 0);
 
   // 创建start aclScalar
-  start = aclCreateScalar(&inputDataHostData[0], aclDataType::ACL_INT32);
+  start = aclCreateScalar(&inputDataHostData[ARANGE_START], aclDataType::ACL_INT32);
   CHECK_RET(start != nullptr, return ret);
   // 创建end aclScalar
-  end = aclCreateScalar(&inputDataHostData[1], aclDataType::ACL_INT32);
+  end = aclCreateScalar(&inputDataHostData[ARANGE_END], aclDataType::ACL_INT32);
   CHECK_RET(end != nullptr, return ret);
   // 创建step aclScalar
-  step = aclCreateScalar(&inputDataHostData[2], aclDataType::ACL_INT32);
+  step = aclCreateScalar(&inputDataHostData[ARANGE_STEP], aclDataType::ACL_INT32);
   CHECK_RET(step != nullptr, return ret);
   // 创建out aclTensor
   ret = CreateAclTensor(outHostData, outShape, &outDeviceAddr, aclDataType::ACL_INT32, &out);
