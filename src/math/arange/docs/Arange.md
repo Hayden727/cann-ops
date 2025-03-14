@@ -57,7 +57,7 @@ $$
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y、out的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：start、end、step或out的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnArange
@@ -74,7 +74,7 @@ $$
 
 ## 约束与限制
 
-- x，y，out的数据类型只支持FLOAT16，数据格式只支持ND
+- start、end、step、out的数据类型只支持FLOAT16、FLOAT、INT32、INT64、BFLOAT16，数据格式只支持ND
 
 ## 算子原型
 
