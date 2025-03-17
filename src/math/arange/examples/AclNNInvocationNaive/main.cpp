@@ -53,14 +53,14 @@
     printf(message, ##__VA_ARGS__); \
   } while (0)
 
-enum ArgName {
+enum ArgName : int {
     ARANGE_START,
     ARANGE_END,
     ARANGE_STEP,
     ARANGE_COUNT
 };
 
-int64_t GetShapeSize(const std::vector<int64_t>& shape);
+#define NUM_OF_ARGS 3
 
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
@@ -179,9 +179,9 @@ int main() {
   aclScalar* step = nullptr;
   aclTensor* out = nullptr;
   
-  std::vector<int32_t> inputDataHostData(3);// 用于存储输入数据的向量
+  std::vector<int32_t> inputDataHostData(NUM_OF_ARGS);
   void ** input1=(void **)(&inputDataHostData);
-  ReadFile("../input/input.bin", 0, *input1, 3*sizeof(int32_t));// 读取3个int32_t大小的数据
+  ReadFile("../input/input.bin", 0, *input1, NUM_OF_ARGS*sizeof(int32_t));
   int32_t startValue = inputDataHostData[ARANGE_START];
   int32_t endValue = inputDataHostData[ARANGE_END];
   int32_t stepValue = inputDataHostData[ARANGE_STEP];
@@ -254,5 +254,4 @@ int main() {
   aclrtResetDevice(deviceId);
   aclFinalize();
   return 0;
-  
 }

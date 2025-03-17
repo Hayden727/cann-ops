@@ -215,7 +215,7 @@ public:
     AscendC::Add(calc_init, calc_init, calc_step, this->unitNum);
     AscendC::Duplicate(calc_temp, (float)0.0, this->unitNum);
     this->offset_step_base = this->unitNum * float_step;
-    AscendC::Duplicate(calc_step, this->offset_step_base, this->unitNum);   
+    AscendC::Duplicate(calc_step, this->offset_step_base, this->unitNum);
   }
 
   __aicore__ inline void Process()
@@ -260,7 +260,6 @@ private:
       // AscendC::DumpTensor(outLocal,iter, num);
       AscendC::DataCopy(outGm[iter*this->unitNum], outLocal, copy_num);
       outQueue.FreeTensor(outLocal);
-
   }
 
   AscendC::TPipe pipe;
@@ -307,7 +306,6 @@ extern "C" __global__ __aicore__ void arange(GM_ADDR start, GM_ADDR end, GM_ADDR
 
     op.Process();
   }
-
 }
 
 #ifndef ASCENDC_CPU_DEBUG

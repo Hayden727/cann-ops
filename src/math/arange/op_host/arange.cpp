@@ -74,9 +74,6 @@ namespace optiling
         tiling.set_unitLoops(unitLoops);
         tiling.set_tailNum(tailNum);
 
-        // printf("totalNum %d unitNum %d tailNum %d loops\n",
-        //     totalNum, unitNum, tailNum, unitLoops);
-
         context->SetBlockDim(1);
         tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
                             context->GetRawTilingData()->GetCapacity());
