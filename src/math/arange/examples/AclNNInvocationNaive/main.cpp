@@ -60,8 +60,6 @@ enum ArgName : int {
     ARANGE_COUNT
 };
 
-#define NUM_OF_ARGS 3
-
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
     struct stat sBuf;
@@ -179,9 +177,9 @@ int main() {
   aclScalar* step = nullptr;
   aclTensor* out = nullptr;
   
-  std::vector<int32_t> inputDataHostData(NUM_OF_ARGS);
+  std::vector<int32_t> inputDataHostData(ARANGE_COUNT);
   void ** input1=(void **)(&inputDataHostData);
-  ReadFile("../input/input.bin", 0, *input1, NUM_OF_ARGS*sizeof(int32_t));
+  ReadFile("../input/input.bin", 0, *input1, ARANGE_COUNT*sizeof(int32_t));
   int32_t startValue = inputDataHostData[ARANGE_START];
   int32_t endValue = inputDataHostData[ARANGE_END];
   int32_t stepValue = inputDataHostData[ARANGE_STEP];
