@@ -39,7 +39,7 @@ cpp-extension方式是通过编译出一个C++的算子扩展包的形式来调�
   以命令行方式下载样例代码，master分支为例。
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/CppExtensions/jit
+  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/CppExtensions/jit
   ```
   
   - 配置环境变量
@@ -72,7 +72,7 @@ cpp-extension方式是通过编译出一个C++的算子扩展包的形式来调�
   以命令行方式下载样例代码，master分支为例。
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/CppExtensions/load_library
+  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/CppExtensions/load_library
   ```
   
   - 执行编译命令
@@ -90,7 +90,7 @@ cpp-extension方式是通过编译出一个C++的算子扩展包的形式来调�
   以命令行方式下载样例代码，master分支为例。
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/CppExtensions/load_library/test
+  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/CppExtensions/load_library/test
   ```
   
   - 配置环境变量
@@ -120,7 +120,7 @@ cpp-extension方式是通过编译出一个C++的算子扩展包的形式来调�
   以命令行方式下载样例代码，master分支为例。
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/CppExtensions/setup
+  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/CppExtensions/setup
   ```
   
   - 执行编译命令
@@ -141,7 +141,7 @@ cpp-extension方式是通过编译出一个C++的算子扩展包的形式来调�
   以命令行方式下载样例代码，master分支为例。
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/CppExtensions/setup/test
+  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/CppExtensions/setup/test
   ```
   
   - 配置环境变量
@@ -203,7 +203,7 @@ cpp-extension方式是通过编译出一个C++的算子扩展包的形式来调�
   - 样例执行
     
     ```bash
-    cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/CppExtensions/setup/test
+    cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/CppExtensions/setup/test
     python3 test_add_custom_graph.py
     ```
 

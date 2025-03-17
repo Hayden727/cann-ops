@@ -9,7 +9,7 @@
 本仓对应算子的目录结构如下
 
 ```
-├── add_custom                // ops-contribution库算子目录
+├── add_custom                // cann-ops库算子目录
 │ ├── docs                    // 算子文档目录
 │ ├── example                 // 算子调用示例目录
 │ │ └── AclNNInvocationNaive  // aclnn接口测试目录

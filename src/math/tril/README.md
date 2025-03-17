@@ -52,7 +52,7 @@
   - 进入到仓库目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution
+    cd ${git_clone_path}/cann-ops
     ```
 
   - 执行编译

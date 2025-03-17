@@ -8,14 +8,14 @@ CANN开放项目使用Gitee提供的Issue跟踪和管理系统用于记录每一
 
    Gitee每一个源码仓都有Issue板块，在该板块中单击“新建Issue”，即可进入Issue类型选择界面。
    a. 单击“新建issue”。
-     ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/images/issue-banner.png)
+     ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/images/issue-banner.png)
    b. 根据自身诉求，选择Issue类型，并单击“立即开始”。
-     ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/images/iusse_select.png)
+     ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/images/iusse_select.png)
   
 2. 填写Issue。
 
    在Issue填写界面中按照提示填写Issue相关信息，如下图所示：
-   ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/images/issue-details.png)
+   ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/images/issue-details.png)
 
    a. 填写Issue标题。
 

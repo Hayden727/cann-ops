@@ -34,7 +34,7 @@ aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/add_custom/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置

@@ -48,7 +48,7 @@ $$y=x\cdot\mathrm{sigmoid}\left(s\cdot x\right)=x\cdot\frac{1}{1+e^{-s\cdot x}}$
   - 进入到仓库目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution
+    cd ${git_clone_path}/cann-ops
     ```
 
   - 执行编译

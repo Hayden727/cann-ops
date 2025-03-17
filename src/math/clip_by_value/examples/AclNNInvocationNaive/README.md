@@ -34,7 +34,7 @@ aclnnStatus aclnnClipByValue(void *workspace, int64_t workspaceSize, aclOpExecut
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/ops-contribution/src/math/clip_by_value/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/math/clip_by_value/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置

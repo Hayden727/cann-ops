@@ -52,7 +52,7 @@ $$\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 
   - 进入到仓库目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution
+    cd ${git_clone_path}/cann-ops
     ```
 
   - 执行编译

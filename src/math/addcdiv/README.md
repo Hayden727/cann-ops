@@ -49,7 +49,7 @@ y = (input_data + (x1 / x2) * value)
   - 进入到仓库目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution
+    cd ${git_clone_path}/cann-ops
     ```
 
   - 执行编译

@@ -27,7 +27,7 @@
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution/src/math/clip_by_value/tests/st
+    cd ${git_clone_path}/cann-ops/src/math/clip_by_value/tests/st
     ```
 
   - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH

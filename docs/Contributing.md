@@ -62,7 +62,7 @@
 
 3. 代码下载与贡献流程
 
-   ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/ops-contribution/images/contri-flow.png)
+   ![](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/images/contri-flow.png)
 
    1. 进行代码开发前，请先将需要参与开发的仓库fork到个人仓，然后将个人仓下载到本地。并在本地分支进行代码修改。
    2. 参考每个开放项目的说明文档，进行本地构建与验证。
