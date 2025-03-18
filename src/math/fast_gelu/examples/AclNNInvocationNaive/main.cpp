@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_fastgelu.h"
+#include "aclnn_fast_gelu.h"
 
 #define SUCCESS 0
 #define FAILED 1
