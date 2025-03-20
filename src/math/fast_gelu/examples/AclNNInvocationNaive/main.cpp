@@ -163,7 +163,7 @@ int main(int argc, char **argv)
     aclTensor *inputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize_1=inputXShape[0];
-    size_t outputYShapeSize_1=inputXShape[0];
+    size_t outputYShapeSize_1=outputYShape[0];
     size_t dataType=2;
     std::vector<aclFloat16> inputXHostData(inputXShape[0]);
     std::vector<aclFloat16> outputYHostData(outputYShape[0]);

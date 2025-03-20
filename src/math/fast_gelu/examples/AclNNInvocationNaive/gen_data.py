@@ -12,7 +12,7 @@
 import os
 import torch
 import numpy as np
-
+import torch.nn.functional as F
 
 def gen_golden_data_simple():
     input_x = np.random.uniform(-10, 10, [1024]).astype(np.float16)
