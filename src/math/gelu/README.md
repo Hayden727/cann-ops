@@ -71,7 +71,7 @@ $$\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocation"> AclNNInvocation</td><td>通过aclnn调用的方式调用Gelu算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Gelu算子。</td>
     </tr>
 </table>
 
