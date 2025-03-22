@@ -43,7 +43,7 @@ cmake --build build -j
     cd build
     ./execute_fast_gelu_grad_op
 )
-ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
+ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
 echo $ret
 if [ "x$ret" == "xtest pass" ]; then
     echo ""

@@ -218,7 +218,7 @@ int main(int argc, char **argv)
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void** output1=(void**)(&resultData);
     //写出数据
-    WriteFile("../output/output_y.bin", *output1, outputZShapeSize_1*dataType);
+    WriteFile("../output/output_z.bin", *output1, outputZShapeSize_1*dataType);
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
