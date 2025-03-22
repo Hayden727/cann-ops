@@ -195,7 +195,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnFastGeluGradGetWorkspaceSize(inputX, inputDY, outputZ, &workspaceSize, &executor);
+    ret = aclnnFastGeluGradGetWorkspaceSize(inputDY, inputX, outputZ, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFastGeluGradGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
