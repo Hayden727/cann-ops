@@ -19,13 +19,22 @@ def fast_gelu_grad_test(dy, x):
     if original_dtype != np.float32:
         x = tf.cast(x, tf.float32).numpy()
         dy = tf.cast(dy, tf.float32).numpy()
-    value1 = 1.702
-    value2 = -1.702
-    temp1 = np.exp(value2 * np.abs(x))
-    temp2 = value1 * x * temp1
-    temp3 = np.exp(value1 * (x - np.abs(x)))
-    temp4 = np.square(temp1 +1)
-    res = dy * ((temp1 + temp2 + temp3) / temp4)
+    attr = 1.702
+    attr_opp = 0 - attr
+    attr_half = attr / 2
+
+    abs_x = np.abs(x)
+    mul_abs_x = abs_x * attr_opp
+    exp_x = np.exp(mul_abs_x)
+
+    add_2 = x * exp_x * attr
+    exp_pn_x = np.exp((x - abs_x) * attr)
+
+    div_up = exp_x + add_2 +exp_pn_x
+    div_down = (exp_x + 1) ** 2
+
+    result_temp = div_up / div_down
+    res = dy * result_temp
     if original_dtype != np.float32:
         res = tf.cast(res, original_dtype).numpy()
     return res
