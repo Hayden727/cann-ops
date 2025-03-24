@@ -216,7 +216,7 @@ int main(int argc, char **argv)
     auto size = GetShapeSize(softmaxOutputShape);
     std::vector<float> resultData(size, 0);
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), softmaxOutputDeviceAddr,
-                      size * 4, ACL_MEMCPY_DEVICE_TO_HOST);
+                      size * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void ** output1=(void **)(&resultData);
     //写出数据
