@@ -166,7 +166,7 @@ int main(int argc, char **argv)
     std::vector<float> inputXHostData(inputXShapeSize);
     size_t dataType = sizeof(float);
     size_t fileSize = 0;
-    void ** input1=(void **)(&inputXHostData);
+    void **input1=(void **)(&inputXHostData);
     //读取数据
     ReadFile("../input/input_x.bin", fileSize, *input1, inputXShapeSize * dataType);
 
@@ -181,7 +181,9 @@ int main(int argc, char **argv)
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
     // 0 表示FLOAT,1表示FLOAT_16
-    ret = aclnnEyeGetWorkspaceSize(inputX, 18, 10, batchShapeAcl, 0, &workspaceSize, &executor);
+    uint32_t num_rows = 18;
+    uint32_t num_columns = 10;
+    ret = aclnnEyeGetWorkspaceSize(inputX, num_rows, num_columns, batchShapeAcl, 0, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnEyeGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
@@ -202,7 +204,7 @@ int main(int argc, char **argv)
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), inputXDeviceAddr,
                       size * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void ** output1=(void **)(&resultData);
+    void **output1=(void **)(&resultData);
     //写出数据
     WriteFile("../output/output.bin", *output1, inputXShapeSize * dataType);
     INFO_LOG("Write output success");

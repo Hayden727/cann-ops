@@ -37,12 +37,9 @@ namespace optiling {
         const int64_t* pnum_rows = context->GetAttrs()->GetInt(0);
         const int64_t* pnum_columns = context->GetAttrs()->GetInt(1);
         const int64_t* pdtype = context->GetAttrs()->GetInt(2);
-        // auto *pbatch_shapecv = context->GetAttrs()->GetListInt(0);
         int32_t num_rows = *pnum_rows;
         int32_t num_columns = *pnum_columns;
         int32_t dtype = *pdtype;
-        // const int64_t *pbatch_shape = pbatch_shapecv->GetData();
-        // int32_t batchShapeSize = pbatch_shapecv->GetSize();
         if(num_columns == 0){
             num_columns = num_rows;
         }
@@ -81,7 +78,8 @@ namespace optiling {
 
         // 3. 填满UB大小
         uint32_t ub_block_num = ub_size / BLOCK_SIZE / dataNum - 256;
-        if (ub_block_num % 2 != 0) {
+	uint32_t DOUBLE_BUFFER = 2;
+        if (ub_block_num % DOUBLE_BUFFER != 0) {
             ub_block_num = ub_block_num - 1;
         }
 
@@ -104,7 +102,7 @@ namespace optiling {
 
         if (tile_num == 0) { // 不足一个ub的情况
             tile_num = 1;
-            tileLength = ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM;
+            tileLength = ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM; // 计算块的长度，使其对齐到ALIGN_NUM的倍数
             lasttileLength = tileLength;
         } else if((blockLength / ALIGN_NUM) % ub_block_num == 0){ // 核内能均分
             tileLength = ub_block_num * ALIGN_NUM;
@@ -113,7 +111,7 @@ namespace optiling {
             tile_num = tile_num + 1;    // 加一个小包的数量
             tileLength = ub_block_num * ALIGN_NUM;
             lasttileLength = blockLength - (tile_num - 1) * tileLength;
-            lasttileLength = ((lasttileLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM;
+            lasttileLength = ((lasttileLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM; // 计算最后一个块的长度，使其对齐到ALIGN_NUM的倍数
         }
 
         tiling.set_blockLength(blockLength);
