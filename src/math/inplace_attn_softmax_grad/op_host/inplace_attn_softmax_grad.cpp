@@ -21,21 +21,24 @@ constexpr uint32_t L2_CACHE_LINE_SIZE = 512;  // pack unit in cache 512B
 constexpr uint32_t SINGLE_UB_SIZE_BF16 = 20;
 constexpr uint32_t SINGLE_UB_SIZE_FLOAT16 = 20;
 constexpr uint32_t SINGLE_UB_SIZE_FLOAT32 = 20;
+constexpr uint32_t ALIGN = 1;
+constexpr uint32_t NO_ALIGN = 2;
+constexpr uint64_t RSV_UB_SIZE = 10240;
+constexpr uint32_t CORES_PER_BLOCK = 2;
 
 std::map<const ge::DataType, const uint32_t> typeLen = {
     {ge::DT_FLOAT16, 2}, {ge::DT_BF16, 2}, {ge::DT_FLOAT, 4}};
-
 
 ge::graphStatus TilingKeyChose(gert::TilingContext *context, InplaceAttnSoftmaxGradCompileInfo &compileInfo,
     InplaceAttnSoftmaxGradTilingParam &tilingParam, InplaceAttnSoftmaxGradTilingData &tilingData)
 {
     uint32_t tilingKey = tilingData.baseTilingData.get_tilingKey();
     if (compileInfo.inputDataType == ge::DT_FLOAT16) {
-        tilingKey += 10;
+        tilingKey += FLOAT16_BASE_TILING_KEY;
     } else if (compileInfo.inputDataType == ge::DT_BF16) {
-        tilingKey += 20;
+        tilingKey += BFLOAT16_BASE_TILING_KEY;
     } else if (compileInfo.inputDataType == ge::DT_FLOAT) {
-        tilingKey += 30;
+        tilingKey += FLOAT_BASE_TILING_KEY;
     }
     // 判断是否对齐
     tilingKey = tilingParam.alignColLen == tilingParam.colLen ? tilingKey + 1 : tilingKey + 2;
@@ -77,10 +80,10 @@ ge::graphStatus SetSoftMaxTilingData(gert::TilingContext *context, InplaceAttnSo
     std::vector<int64_t> headShapeVec = {tilingParam.optBaseRowLenHeadCore, tilingParam.alignColLen};
     ge::Shape headSrcShape(headShapeVec);
     // 本样例中仅做为样例说明，通过GetSoftMaxMinTmpSize获取最小值并传入，来保证功能正确，开发者可以根据需要传入合适的空间大小
-    const uint32_t headLocalWorkSpaceSize = AscendC::GetSoftMaxGradMinTmpSize(headSrcShape, 4, false, false);
+    const uint32_t headLocalWorkSpaceSize = AscendC::GetSoftMaxGradMinTmpSize(headSrcShape, sizeof(float), false, false);
     // 获取SoftMax Tiling参数
     AscendC::SoftMaxGradTilingFunc(
-        headSrcShape, 4, headLocalWorkSpaceSize, tilingData.headSoftMaxGradTilingData);
+        headSrcShape, sizeof(float), headLocalWorkSpaceSize, tilingData.headSoftMaxGradTilingData);
     tilingParam.headLocalWorkSpaceSize = headLocalWorkSpaceSize;
     return ge::GRAPH_SUCCESS;
 }
@@ -142,7 +145,6 @@ ge::graphStatus CalBaseTilingData(gert::TilingContext *context, InplaceAttnSoftm
         tilingParam.rowLenPerTailCore = 0;
     }
     
-
     // Align ColLen
     tilingParam.alignColLen = AlignUp<uint32_t>(tilingParam.colLen, compileInfo.blockNum);
     tilingParam.blockNum = compileInfo.blockNum;
@@ -161,7 +163,7 @@ ge::graphStatus CalBaseTilingData(gert::TilingContext *context, InplaceAttnSoftm
         tilingParam.innerLoopTailColLen = tilingParam.colLen % tilingParam.innerLoopHeadColLen;
         ubAvailRowNum = ONE;
         uint32_t new_tiling_key = tilingData.baseTilingData.get_tilingKey();
-        new_tiling_key += 100;
+        new_tiling_key += BIG_SHAPE_BASE_TILING_KEY;
         tilingData.baseTilingData.set_tilingKey(new_tiling_key);
     } else {
         tilingParam.innerLoopHeadColLen = tilingParam.colLen;
@@ -188,13 +190,13 @@ ge::graphStatus GetBaseTilingData(gert::TilingContext *context, InplaceAttnSoftm
     compileInfo.inputDataType = softmaxOutputDtype;
     compileInfo.inputDataByte = typeLen[softmaxOutputDtype];
     if (softmaxOutputDtype == ge::DT_FLOAT16) {
-        compileInfo.dataNumSingleUb = (compileInfo.ubSize -10240) / SINGLE_UB_SIZE_FLOAT16;
+        compileInfo.dataNumSingleUb = (compileInfo.ubSize -RSV_UB_SIZE) / SINGLE_UB_SIZE_FLOAT16;
     }
     else if (softmaxOutputDtype == ge::DT_BF16) {
-        compileInfo.dataNumSingleUb = (compileInfo.ubSize -10240) / SINGLE_UB_SIZE_BF16;
+        compileInfo.dataNumSingleUb = (compileInfo.ubSize -RSV_UB_SIZE) / SINGLE_UB_SIZE_BF16;
     }
     else if (softmaxOutputDtype == ge::DT_FLOAT) {
-        compileInfo.dataNumSingleUb = (compileInfo.ubSize -10240) / SINGLE_UB_SIZE_FLOAT32;
+        compileInfo.dataNumSingleUb = (compileInfo.ubSize -RSV_UB_SIZE) / SINGLE_UB_SIZE_FLOAT32;
     }
     // UB空间可处理的最大数据量，32-Byte对齐
     compileInfo.blockNum = BLOCK_SIZE / compileInfo.inputDataByte;
@@ -209,18 +211,19 @@ ge::graphStatus GetCubeTilingData(gert::TilingContext *context, InplaceAttnSoftm
     auto softmaxOutputShape = context->GetInputShape(SOFTMAX_OUTPUT_INDEX)->GetStorageShape();
     auto gradOutputShape = context->GetInputShape(GRAD_OUTPUT_INDEX)->GetStorageShape();
     int32_t dimNum = softmaxOutputShape.GetDimNum();
-    if (dimNum < 2) {
+    if (dimNum < MIN_DIM_NUM) {
         return ge::GRAPH_FAILED;
     }
 
     int32_t batch = 1;
-    for (int32_t dim = 0; dim < dimNum - 2; ++dim) {
+    int32_t no_bath_len = 2;
+    for (int32_t dim = 0; dim < dimNum - no_bath_len; ++dim) {
         batch *= softmaxOutputShape.GetDim(dim);
     }
     tilingParam.b = static_cast<uint32_t>(batch);
-    tilingParam.m = softmaxOutputShape.GetDim(static_cast<uint32_t>(dimNum - 2));
-    tilingParam.n = softmaxOutputShape.GetDim(static_cast<uint32_t>(dimNum - 1));
-    tilingParam.k = gradOutputShape.GetDim(static_cast<uint32_t>(gradOutputShape.GetDimNum() - 1));
+    tilingParam.m = softmaxOutputShape.GetDim(static_cast<uint32_t>(dimNum - 2)); // 计算softmax输出形状的倒数第二个维度
+    tilingParam.n = softmaxOutputShape.GetDim(static_cast<uint32_t>(dimNum - 1)); // 计算softmax输出形状的最后一个维度
+    tilingParam.k = gradOutputShape.GetDim(static_cast<uint32_t>(gradOutputShape.GetDimNum() - 1)); // 计算梯度输出形状的最后一个维度
 
     return ge::GRAPH_SUCCESS;
 }
@@ -283,13 +286,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     // 读取属性和dtype来计算tilingKey
     TilingKeyChose(context, compileInfo, tilingParam, tilingData);
 
-    context->SetBlockDim(CeilDiv(tilingData.baseTilingData.get_realCoreNum(), (uint32_t)2));
+    context->SetBlockDim(CeilDiv(tilingData.baseTilingData.get_realCoreNum(), CORES_PER_BLOCK));
     context->SetTilingKey(tilingData.baseTilingData.get_tilingKey());
     // large shape情况下需要提供workspace空间 大小为get_realCoreNum() * alingedColLen
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     uint32_t sysWorkspaceSize = ascendcPlatform.GetLibApiWorkSpaceSize();
     size_t *currentWorkspace = context->GetWorkspaceSizes(1);  // 通过框架获取workspace的指针，GetworkspaceSizes入参为所需workspace的块数。当前限制使用一块。
-    currentWorkspace[0] = 4 * tilingData.baseTilingData.get_rowLen() * tilingData.baseTilingData.get_alignColLen() +
+    currentWorkspace[0] = sizeof(float) * tilingData.baseTilingData.get_rowLen() * tilingData.baseTilingData.get_alignColLen() +
                           sysWorkspaceSize;  // 设置总的workspace的数值大小，总的workspace空间由框架来申请并管理。
     return ge::GRAPH_SUCCESS;
 }
