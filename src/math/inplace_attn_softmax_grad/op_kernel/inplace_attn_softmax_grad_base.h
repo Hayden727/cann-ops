@@ -63,7 +63,6 @@ public:
     BaseTiling baseTilingData_;
     SoftMaxTiling headSoftMaxGradTilingData_;
     TCubeTiling cubeTilingData_;
-
     
     /* variable */
     AscendC::GlobalTensor<dataType> softmaxOutputGm_;   // 输入A，兼输出
