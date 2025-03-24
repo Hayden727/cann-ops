@@ -33,32 +33,32 @@ extern "C" __global__ __aicore__ void inplace_attn_softmax(GM_ADDR x, GM_ADDR wo
     }
     TPipe pipe;
     if (TILING_KEY_IS(101)) {
-        InplaceAttnSoftmax<half, half, true> op(&pipe);
+        InplaceAttnSoftmax<half, half, true, false> op(&pipe);
         op.Init(x, workspace, &tiling_data);
         op.Process();
     }
     else if (TILING_KEY_IS(111)) {
-        InplaceAttnSoftmaxBigShape<half, half, true> op(&pipe);
+        InplaceAttnSoftmaxBigShape<half, half, true, true> op(&pipe);
         op.Init(x, workspace, &tiling_data);
         op.Process();
     }
     else if (TILING_KEY_IS(201)) {
-        InplaceAttnSoftmax<bfloat16_t, bfloat16_t, true> op(&pipe);
+        InplaceAttnSoftmax<bfloat16_t, bfloat16_t, true, false> op(&pipe);
         op.Init(x, workspace, &tiling_data);
         op.Process();
     }
     else if (TILING_KEY_IS(211)) {
-        InplaceAttnSoftmaxBigShape<bfloat16_t, bfloat16_t, true> op(&pipe);
+        InplaceAttnSoftmaxBigShape<bfloat16_t, bfloat16_t, true, true> op(&pipe);
         op.Init(x, workspace, &tiling_data);
         op.Process();
     }
     else if (TILING_KEY_IS(301)) {
-        InplaceAttnSoftmax<float, float, false> op(&pipe);
+        InplaceAttnSoftmax<float, float, false, false> op(&pipe);
         op.Init(x, workspace, &tiling_data);
         op.Process();
     }
     else if (TILING_KEY_IS(311)) {
-        InplaceAttnSoftmaxBigShape<float, float, false> op(&pipe);
+        InplaceAttnSoftmaxBigShape<float, float, false, true> op(&pipe);
         op.Init(x, workspace, &tiling_data);
         op.Process();
     } 
