@@ -7,16 +7,18 @@
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Moe_init_routing_v2</td></tr>
-</tr>
-<tr><td rowspan="3" align="center">新增的算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">start_expertId</td><td align="center">scalar</td><td align="center">int32_t</td><td align="center">-</td></tr>
-<tr><td align="center">end_expertId</td><td align="center">scalar</td><td align="center">int32_t</td><td align="center">-</td></tr>
-<tr><td align="center">device_id</td><td align="center">scalar</td><td align="center">int32_t</td><td align="center">-</td></tr>
-</tr>
-</tr>
-</tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">moe_init_routing_v2</td></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Moe_init_routing_v2</th></tr> 
+<tr><td align="center"> </td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
+<tr><td rowspan="4" align="center">新增算子输入</td>
+<tr><td align="center">start_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">ND</td></tr>  
+
+<tr><td align="center">end_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">ND</td></tr> 
+
+<tr><td align="center">device_id</td><td align="center">1</td><td align="center">int32</td><td align="center">ND</td></tr> 
+
+<tr><td rowspan="1" align="center">算子输出变更</td>
+<td align="center">localexpandedXOut</td><td align="center">tensor</td><td align="center">float 16</td><td align="center">ND</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Moe_init_routing_v2</td></tr>  
 </table>
 
 ### 支持的产品型号
