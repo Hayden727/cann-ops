@@ -29,7 +29,7 @@ constexpr uint32_t BLOCK_SIZE = 32;
 struct InplaceAttnSoftmaxOffsetParam {
     uint64_t tmpVecGmOffset;
 };
-template <typename inType, typename outType, bool isCast>
+template <typename inType, typename outType, bool isCast, bool isBigshape>
 class InplaceAttnSoftmaxBase {
 public:
     __aicore__ inline InplaceAttnSoftmaxBase()
@@ -46,6 +46,42 @@ public:
         tilingData_.basicColLen = tilingData->basicColLen;                  // 每次计算的列数
         tilingData_.headCoreNum = tilingData->headCoreNum;                  // 使用的head核数
         tilingData_.realCoreNum = tilingData->realCoreNum;                  // 使用的核数
+    }
+
+    __aicore__ inline void InitParamsComm()
+    {
+        colLen = tilingData_.colLen;
+        basicColLen = tilingData_.basicColLen;
+
+        coreIdx = static_cast<uint32_t>(GetBlockIdx());
+        headCoreNum = tilingData_.headCoreNum;
+        if (coreIdx < headCoreNum) {
+            rowLenPerCore = tilingData_.rowLenPerHeadCore;
+            basicRowLen = tilingData_.basicRowLenHeadCore;
+        } else if (coreIdx >= headCoreNum && coreIdx < tilingData_.realCoreNum) {
+            rowLenPerCore = tilingData_.rowLenPerTailCore;
+            basicRowLen = tilingData_.basicRowLenTailCore;
+        } 
+        if constexpr(isBigshape) {
+            rowLoop = CeilDiv(rowLenPerCore, basicRowLen);
+            colLoop = CeilDiv(colLen, basicColLen);
+            lastcolLen = Ceilabs(colLen, basicColLen);
+            rightPadding = basicColLen - lastcolLen;
+        } else 
+        {
+            if (coreIdx < headCoreNum) {
+                baseRow = coreIdx * rowLenPerCore;
+            } else if (coreIdx >= headCoreNum && coreIdx < tilingData_.realCoreNum) {
+                baseRow = headCoreNum * tilingData_.rowLenPerHeadCore + (coreIdx - headCoreNum) * rowLenPerCore;
+            } 
+            rowLoop = CeilDiv(rowLenPerCore, basicRowLen);
+
+            uint32_t alignedNum = BLOCK_SIZE / sizeof(inType);
+            sizeHalfLen = AlignUp(basicColLen, alignedNum);
+            // 若basicColLen比32B还小 -> sizeHalfLen == 0 -> sizeHalfLen直接按32B字节算
+            tileLength = basicRowLen * (sizeHalfLen == 0 ? (BLOCK_SIZE / sizeof(inType)) : sizeHalfLen);
+            rightPadding = sizeHalfLen - basicColLen;
+        }
     }
 
     template <typename T>
