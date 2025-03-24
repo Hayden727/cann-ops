@@ -22,8 +22,8 @@
 namespace InplaceAttnSoftmaxOpt {
 using namespace AscendC;
 
-template <typename inType, typename outType, bool isCast>
-class InplaceAttnSoftmaxBigShape : public InplaceAttnSoftmaxBase<inType, outType, isCast> {
+template <typename inType, typename outType, bool isCast, bool isBigshape>
+class InplaceAttnSoftmaxBigShape : public InplaceAttnSoftmaxBase<inType, outType, isCast, isBigshape> {
 public:
     __aicore__ inline InplaceAttnSoftmaxBigShape(TPipe *pipe)
     {
@@ -33,7 +33,7 @@ public:
     __aicore__ inline void Init(GM_ADDR x,GM_ADDR workspace, const InplaceAttnSoftmaxTilingData *__restrict tilingData)
     {
         this->ParseTilingData(tilingData);
-        InitParams();
+        this->InitParamsComm();
         InitAndSetBuffer(x, workspace);
     }
 
@@ -43,32 +43,6 @@ public:
     }
 
 private:
-    __aicore__ inline void InitParams()
-    {
-        this->colLen = this->tilingData_.colLen;
-        this->basicColLen = this->tilingData_.basicColLen;
-
-        this->coreIdx = static_cast<uint32_t>(GetBlockIdx());
-        this->headCoreNum = this->tilingData_.headCoreNum;
-
-        if (this->coreIdx < this->headCoreNum) {
-            this->rowLenPerCore = this->tilingData_.rowLenPerHeadCore;
-            this->basicRowLen = this->tilingData_.basicRowLenHeadCore;
-            this->rowLoop = this->CeilDiv(this->rowLenPerCore, this->basicRowLen);
-            this->colLoop = this->CeilDiv(this->colLen, this->basicColLen);
-            this->lastcolLen = this->Ceilabs(this->colLen, this->basicColLen);
-            this->rightPadding = this->basicColLen - this->lastcolLen;
-        } else if (this->coreIdx >= this->headCoreNum && this->coreIdx < this->tilingData_.realCoreNum) {
-            this->rowLenPerCore = this->tilingData_.rowLenPerTailCore;
-            this->basicRowLen = this->tilingData_.basicRowLenTailCore;
-            this->rowLoop = this->CeilDiv(this->rowLenPerCore, this->basicRowLen);
-            this->colLoop = this->CeilDiv(this->colLen, this->basicColLen);
-            this->lastcolLen = this->Ceilabs(this->colLen, this->basicColLen);
-            this->rightPadding = this->basicColLen - this->lastcolLen;
-        } 
-
-        uint32_t alignedNum = BLOCK_SIZE / sizeof(inType);
-    }
 
     __aicore__ inline void InitAndSetBuffer(GM_ADDR x, GM_ADDR workspace_gm)
     {
