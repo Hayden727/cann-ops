@@ -2,7 +2,7 @@
 本样例通过`Ascend C`编程语言实现了`Moe_init_routing_v2`算子。
 
 ### 算子描述
-`Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX按指定开始和结束行数进行切分的功能。
+`Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX按指定开始和结束行数进行切分的功能以满足EP的需求。
 
 ### 算子规格描述
 
