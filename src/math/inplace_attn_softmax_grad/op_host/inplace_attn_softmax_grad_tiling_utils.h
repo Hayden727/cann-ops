@@ -20,6 +20,14 @@ constexpr uint32_t GRAD_OUTPUT_INDEX = 1;
 constexpr uint32_t VALUES_INDEX = 2;
 constexpr uint32_t ONE = 1;
 constexpr uint32_t COMPARE_INT = 255;
+constexpr uint32_t FLOAT16_BASE_TILING_KEY = 10;
+constexpr uint32_t BFLOAT16_BASE_TILING_KEY = 20;
+constexpr uint32_t FLOAT_BASE_TILING_KEY = 30;
+constexpr uint32_t BIG_SHAPE_BASE_TILING_KEY = 100;
+constexpr uint32_t MIN_DIM_NUM = 2;
+constexpr uint32_t MAX_DIM_NUM = 8;
+constexpr uint32_t K_MIN_VALUE = 1;
+constexpr uint32_t K_MAX_VALUE = 65535;
 
 template <typename T>
 T AlignUp(T num, T div)
@@ -47,7 +55,7 @@ inline T Min(T num, T div)
 
 template <typename T>
 inline T AlignDown(T a, T base) {
-  return a / base * base;
+  return base == 0 ? 0 : a / base * base;
 }
 
 
@@ -76,31 +84,31 @@ ge::graphStatus CheckOpInputShape(gert::TilingContext *context)
 {
     auto softmaxOutputShape = context->GetInputShape(SOFTMAX_OUTPUT_INDEX);
     size_t softmaxOutputDimNum = softmaxOutputShape->GetStorageShape().GetDimNum();
-    if (softmaxOutputDimNum < 2 || softmaxOutputDimNum > 8) {
+    if (softmaxOutputDimNum < MIN_DIM_NUM || softmaxOutputDimNum > MAX_DIM_NUM) {
         printf("input softmaxOutput dimension should be in [2, 8]!\n");
         return ge::GRAPH_FAILED;
     }
     auto gradOutputShape = context->GetInputShape(GRAD_OUTPUT_INDEX);
     size_t gradOutputDimNum = gradOutputShape->GetStorageShape().GetDimNum();
-    if (gradOutputDimNum < 2  || gradOutputDimNum > 8) {
+    if (gradOutputDimNum < MIN_DIM_NUM  || gradOutputDimNum > MAX_DIM_NUM) {
         printf("input gradOutput dimension should be in [2, 8]!\n");
         return ge::GRAPH_FAILED;
     }
 
     size_t gradOutputDimValue = gradOutputShape->GetStorageShape().GetDim(1);
-    if (gradOutputDimValue > 65535 || gradOutputDimValue < 1 ){
+    if (gradOutputDimValue > K_MAX_VALUE || gradOutputDimValue < K_MIN_VALUE ){
         printf("input gradOutput ka value should be in [1, 65535]!\n");
         return ge::GRAPH_FAILED;
     }
     auto valuesShape = context->GetInputShape(VALUES_INDEX);
     size_t valuesDimNum = valuesShape->GetStorageShape().GetDimNum();
-    if (valuesDimNum < 2 || valuesDimNum > 8) {
+    if (valuesDimNum < MIN_DIM_NUM || valuesDimNum > MAX_DIM_NUM) {
         printf("input values dimension should be in [2, 8]!\n");
         return ge::GRAPH_FAILED;
     }
 
     size_t valuesDimValue = valuesShape->GetStorageShape().GetDim(1);
-    if (valuesDimValue > 65535 || valuesDimValue < 1 ){
+    if (valuesDimValue > K_MAX_VALUE || valuesDimValue < K_MIN_VALUE ){
         printf("input values kb value should be in [1, 65535]!\n");
         return ge::GRAPH_FAILED;
     }
