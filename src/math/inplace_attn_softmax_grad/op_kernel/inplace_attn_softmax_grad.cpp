@@ -15,8 +15,12 @@
 using namespace InplaceAttnSoftmaxGradOpt;
 
 extern "C" __global__ __aicore__ void inplace_attn_softmax_grad(
-    GM_ADDR softmaxOutput, GM_ADDR gradOutput, GM_ADDR values, GM_ADDR workspace, GM_ADDR tiling)
-{
+    GM_ADDR softmaxOutput, 
+    GM_ADDR gradOutput, 
+    GM_ADDR values, 
+    GM_ADDR workspace, 
+    GM_ADDR tiling
+) {
     GET_TILING_DATA(tilingData, tiling);
     KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
     TPipe pipe;
