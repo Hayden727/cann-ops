@@ -10,11 +10,11 @@
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Moe_init_routing_v2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">新增算子输入</td>
-<tr><td align="center">start_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">ND</td></tr>  
+<tr><td align="center">start_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr>  
 
-<tr><td align="center">end_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">ND</td></tr> 
+<tr><td align="center">end_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
 
-<tr><td align="center">device_id</td><td align="center">1</td><td align="center">int32</td><td align="center">ND</td></tr> 
+<tr><td align="center">device_id</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
 
 <tr><td rowspan="1" align="center">算子输出变更</td>
 <td align="center">localexpandedXOut</td><td align="center">NUM_ROWS * K, H</td><td align="center">float 16</td><td align="center">ND</td></tr>  
