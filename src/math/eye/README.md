@@ -57,7 +57,7 @@
   - 进入到仓库目录
 
     ```bash
-    cd ${git_clone_path}/ops-contribution
+    cd ${git_clone_path}/cann-ops
     ```
 
   - 执行编译
@@ -76,21 +76,6 @@
     <th>目录</th><th>描述</th>
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOfflineModel"> AclOfflineModel</td><td>通过aclopExecuteV2调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用AddCustom算子。</td>
     </tr>
 </table>
 
