@@ -7,7 +7,6 @@ def gen_golden_data_simple():
     num_rows = 18
     num_columns = 10
     batch_shape = [3, 4]
-    # batch_shape = []
     if num_columns != 0:
         res_shape = [*batch_shape, num_rows, num_columns]
         res = torch.eye(n=num_rows, m=num_columns)

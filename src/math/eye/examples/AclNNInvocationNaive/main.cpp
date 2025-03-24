@@ -146,8 +146,6 @@ int CreateAclTensor(const std::vector<T> &hostData, const std::vector<int64_t> &
     return SUCCESS;
 }
 
-// aclFloat本身是没有定义的，aclFloat16是有定义且为uint_16的，此处宏定义便于管理
-#define aclFloat float
 int main(int argc, char **argv)
 {
     // 1. （固定写法）device/stream初始化, 参考acl对外接口列表
@@ -165,8 +163,8 @@ int main(int argc, char **argv)
     void *inputXDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1] * inputXShape[2] * inputXShape[3];
-    std::vector<aclFloat> inputXHostData(inputXShapeSize);
-    size_t dataType = sizeof(aclFloat);
+    std::vector<float> inputXHostData(inputXShapeSize);
+    size_t dataType = sizeof(float);
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
     //读取数据
@@ -200,9 +198,9 @@ int main(int argc, char **argv)
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
     auto size = GetShapeSize(inputXShape);
-    std::vector<aclFloat> resultData(size, 0);
+    std::vector<float> resultData(size, 0);
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), inputXDeviceAddr,
-                      size * sizeof(aclFloat), ACL_MEMCPY_DEVICE_TO_HOST);
+                      size * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void ** output1=(void **)(&resultData);
     //写出数据
