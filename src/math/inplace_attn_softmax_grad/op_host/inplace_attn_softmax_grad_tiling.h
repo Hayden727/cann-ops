@@ -88,8 +88,13 @@ struct InplaceAttnSoftmaxGradTilingParam {
     uint32_t innerLoopHeadColLen = 1;
     uint32_t innerLoopTailColLen = 1;
 
-    uint32_t b, m, n, k;
-    uint32_t mAligned, baseM, baseN;
+    uint32_t b;
+    uint32_t m;
+    uint32_t n;
+    uint32_t k;
+    uint32_t mAligned; 
+    uint32_t baseM; 
+    uint32_t baseN;
     uint32_t headLocalWorkSpaceSize;
 };
 
