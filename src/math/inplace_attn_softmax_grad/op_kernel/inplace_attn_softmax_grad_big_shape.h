@@ -122,11 +122,9 @@ public:
                 CopyIn(offset, this->baseTilingData_.innerLoopTailColLen);
                 SubMul(this->baseTilingData_.innerLoopTailColLen);
                 CopyOut(offset, this->baseTilingData_.innerLoopTailColLen);
-            }
-                
+            }    
         }
     }
-
 
     __aicore__ inline void ComputeGmOffset(uint32_t &rowNumOffset, uint32_t &nBatchOffset,
         uint32_t &softmaxOutputOffsetGm, uint32_t &gradOutputOffsetGm, uint32_t &valuesOffsetGm, uint32_t &gradSoftmaxOffsetGm,
@@ -134,7 +132,6 @@ public:
     {
         if (this->blockIdx_ < this->baseTilingData_.headCoreNum) {
             rowNumOffset = this->blockIdx_ * this->baseTilingData_.rowLenPerHeadCore;
-
         } else {
             rowNumOffset =
                 this->baseTilingData_.headCoreNum * this->baseTilingData_.rowLenPerHeadCore +
@@ -151,7 +148,6 @@ public:
     __aicore__ inline void CubeCompute(uint32_t &rowNumOffset, uint32_t &nBatchOffset, uint32_t &gradOutputOffsetGm,
         uint32_t &valuesOffsetGm, uint32_t &gradSoftmaxOffsetGm)
     {
-
         uint32_t lastTailMLen = rowNumOffset - nBatchOffset * this->baseTilingData_.m;
         uint32_t curMPos = (this->baseTilingData_.m - lastTailMLen) > this->rowLen_ ? this->rowLen_ : (this->baseTilingData_.m - lastTailMLen);
         uint32_t endMPos = this->rowLen_;   
@@ -313,12 +309,8 @@ public:
                 AscendC::DataCopyPad(this->gradXGm_[offset], gradXUb, copyParams);
             }
         }
-        
         this->outQueueGradX_.FreeTensor(gradXUb);
     }
-
-private:
-
 };
 }  // namespace InplaceAttnSoftmaxGradOpt
 #endif  // INPLACE_ATTN_SOFTMAX_GRAD_BIG_SHAPE_H
