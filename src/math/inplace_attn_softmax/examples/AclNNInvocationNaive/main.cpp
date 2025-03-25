@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
-    std::vector<int64_t> inputXShape = {8,2048};
+    std::vector<int64_t> inputXShape = {8,4096};
     void *inputXDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
