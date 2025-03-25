@@ -102,7 +102,7 @@ public:
             this->softmaxTmpUb1_.SetValue(0, tmpreduce);
             const uint32_t srcShape_[1] = {1};
             const uint32_t dstShape_[1] = {this->baseTilingData_.innerLoopHeadColLen};
-            AscendC::Broadcast<float, 1, 0>(this->softmaxTmpUb2_, this->softmaxTmpUb1_, dstShape_, srcShape_);
+            AscendC::BroadCast<float, 1, 0>(this->softmaxTmpUb2_, this->softmaxTmpUb1_, dstShape_, srcShape_);
             AscendC::PipeBarrier<PIPE_V>();
             for (colIdx = 0; colIdx < this->baseTilingData_.innerLoopTimes; ++colIdx){
                 uint32_t offset = softmaxOutputOffsetGm + colIdx * this->baseTilingData_.innerLoopHeadColLen + roundIdx * this->baseTilingData_.colLen;
