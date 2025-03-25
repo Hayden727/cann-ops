@@ -41,7 +41,7 @@ ge::graphStatus TilingKeyChose(gert::TilingContext *context, InplaceAttnSoftmaxG
         tilingKey += FLOAT_BASE_TILING_KEY;
     }
     // 判断是否对齐
-    tilingKey = tilingParam.alignColLen == tilingParam.colLen ? tilingKey + 1 : tilingKey + 2;
+    tilingKey = tilingParam.alignColLen == tilingParam.colLen ? tilingKey + ALIGN : tilingKey + NO_ALIGN;
     tilingData.baseTilingData.set_tilingKey(tilingKey);
     return ge::GRAPH_SUCCESS;
 }
