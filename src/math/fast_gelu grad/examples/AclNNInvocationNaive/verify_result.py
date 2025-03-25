@@ -13,7 +13,7 @@ import os
 import sys
 import numpy as np
 
-LOSS = 1e-2 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
+LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
 MINIMUM = 10e-10
 
 
