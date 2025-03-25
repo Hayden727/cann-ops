@@ -87,8 +87,11 @@ private:
         splitCopyoutParams = {this->basicRowLenCal,(uint16_t)(this->basicColLen * sizeof(outType)),0,0};
         ComputeVecInGmOffset(ridx);
         CopyIn(this->offsetParam, splitCopyinParams,ridx);
+        PipeBarrier<PIPE_ALL>();
         Compute(ridx);
+        PipeBarrier<PIPE_ALL>();
         CopyOut(this->offsetParam, splitCopyoutParams,ridx);
+        PipeBarrier<PIPE_ALL>();
     }
 
     __aicore__ inline void CopyIn(InplaceAttnSoftmaxOffsetParam &offsetParam,DataCopyParams &splitCopyinParams,uint32_t ridx)
