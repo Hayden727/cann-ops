@@ -27,7 +27,7 @@
   - 进入样例代码所在路径
   
     ```bash
-    cd ${git_clone_path}/ops-contribution/src/math/inplace_attn_softmax_grad/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/cann-ops/src/math/inplace_attn_softmax_grad/examples/AclNNInvocationNaive
     ```
   
   - 环境变量配置
