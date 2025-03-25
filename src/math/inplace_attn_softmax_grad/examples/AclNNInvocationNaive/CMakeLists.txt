@@ -57,4 +57,4 @@ target_link_libraries(execute_inpalcesoftmaxgrad_op
     stdc++
 )
 
-install(TARGETS execute_inpalcesoftmax_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_inpalcesoftmaxgrad_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
