@@ -78,14 +78,7 @@ public:
         uint32_t valuesOffsetGm = 0;
         uint32_t gradSoftmaxOffsetGm = 0;
         uint32_t gradXOffsetGm = 0;
-        ComputeGmOffset(rowNumOffset,
-            nBatchOffset,
-            softmaxOutputOffsetGm,
-            gradOutputOffsetGm,
-            valuesOffsetGm,
-            gradSoftmaxOffsetGm,
-            gradXOffsetGm);
-
+        ComputeGmOffset(rowNumOffset, nBatchOffset, softmaxOutputOffsetGm, gradOutputOffsetGm, valuesOffsetGm, gradSoftmaxOffsetGm, gradXOffsetGm);
         CubeCompute(rowNumOffset, nBatchOffset, gradOutputOffsetGm, valuesOffsetGm, gradSoftmaxOffsetGm);
         for (uint32_t roundIdx = 0; roundIdx < this->rowLen_; ++roundIdx) {
             float tmpreduce = 0.0;
