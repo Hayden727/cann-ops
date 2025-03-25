@@ -100,28 +100,28 @@ private:
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
-        // PipeBarrier<PIPE_ALL>();
+        PipeBarrier<PIPE_ALL>();
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceMax(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen, false);
-                // PipeBarrier<PIPE_V>(); 
+                PipeBarrier<PIPE_V>(); 
             }else {
                 ReduceMax(tmpALocal, tmpCLocal, tmpALocal, this->basicColLen, false);
-                // PipeBarrier<PIPE_V>();
+                PipeBarrier<PIPE_V>();
                 }
         } else
         {
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceMax(tmpALocal, aLocal, tmpALocal, this->lastcolLen, false);
-                // PipeBarrier<PIPE_V>(); 
+                PipeBarrier<PIPE_V>(); 
             } else {
                 ReduceMax(tmpALocal, aLocal, tmpALocal, this->basicColLen, false);
-                // PipeBarrier<PIPE_V>();
+                PipeBarrier<PIPE_V>();
                 }
         }
-        // PipeBarrier<PIPE_V>();
+        PipeBarrier<PIPE_V>();
         if(cidx == 0){
             maxperrow = tmpALocal.GetValue(0);
         }else {
@@ -129,7 +129,7 @@ private:
                 maxperrow = tmpALocal.GetValue(0);
             } 
         }
-        // PipeBarrier<PIPE_V>();
+        PipeBarrier<PIPE_V>();
         inQueueA.FreeTensor(aLocal);
     }
 
@@ -140,46 +140,46 @@ private:
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
-        // PipeBarrier<PIPE_ALL>();
+        PipeBarrier<PIPE_ALL>();
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             Adds<float>(tmpCLocal, tmpCLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             Exp<float>(tmpCLocal, tmpCLocal, this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen);
-                // PipeBarrier<PIPE_V>();
+                PipeBarrier<PIPE_V>();
             }else {
                 ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->basicColLen);
-                // PipeBarrier<PIPE_V>(); 
+                PipeBarrier<PIPE_V>(); 
             }
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             AscendC::Cast(aLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, splitCopyinParams);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
         } else
         {
             Adds<inType>(aLocal, aLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             Exp<inType>(aLocal, aLocal, this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
             DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, splitCopyinParams);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceSum(tmpALocal, aLocal, tmpALocal, this->lastcolLen);
-                // PipeBarrier<PIPE_V>();
+                PipeBarrier<PIPE_V>();
             }else {
                 ReduceSum(tmpALocal, aLocal, tmpALocal, this->basicColLen);
-                // PipeBarrier<PIPE_V>(); 
+                PipeBarrier<PIPE_V>(); 
             }
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
         }
         inQueueA.FreeTensor(aLocal);
     }
@@ -190,25 +190,25 @@ private:
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
-        // PipeBarrier<PIPE_ALL>();
+        PipeBarrier<PIPE_ALL>();
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             Muls<float>(tmpCLocal, tmpCLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
             AscendC::Cast(aLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
         } else 
         {
             Muls<inType>(aLocal, aLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
         }
         if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
             DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, {1,(uint16_t)(this->lastcolLen * sizeof(inType)),0,0});
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
         }else {
             DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, {1,(uint16_t)(this->basicColLen * sizeof(inType)),0,0});
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_ALL>();
         }
         inQueueA.FreeTensor(aLocal);
     }
