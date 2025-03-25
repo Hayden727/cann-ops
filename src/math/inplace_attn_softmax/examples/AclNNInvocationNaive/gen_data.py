@@ -16,7 +16,7 @@ import torch.nn as nn
 
 
 def gen_golden_data_simple():
-    x = torch.randn([8, 2048], dtype=torch.float)
+    x = torch.randn([8, 4096], dtype=torch.float)
     x = x.detach().clone()
     x.requires_grad = True
     softmax = nn.Softmax(dim=-1)
