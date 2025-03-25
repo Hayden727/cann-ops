@@ -111,11 +111,11 @@ private:
         SoftMaxShapeInfo srcShape = { this->basicRowLenCal, this->sizeHalfLen, this->basicRowLenCal, this->basicColLen};
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             SoftMax<float>(tmpCLocal, tmpCLocal, this->softmaxTilingData_, srcShape);
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
             AscendC::Cast(aLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            PipeBarrier<PIPE_V>();
         } else {
             SoftMax<inType>(aLocal, aLocal, this->softmaxTilingData_, srcShape);
         }
