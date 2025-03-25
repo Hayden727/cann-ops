@@ -1,5 +1,5 @@
-/**
- * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+/*
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
@@ -7,11 +7,6 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
-
-/**
- * @file inplace_attn_softmax.h
- */
- 
 #ifndef INPLACE_ATTN_SOFTMAX_LARGE_SHAPE_H
 #define INPLACE_ATTN_SOFTMAX_LARGE_SHAPE_H
 
@@ -34,6 +29,8 @@ public:
     {
         this->ParseTilingData(tilingData);
         this->softmaxTilingData_ = tilingData->softmaxTilingData;
+        // InitParams();
+        // this->InitParams();
         this->InitParamsComm();
         InitAndSetBuffer(input_gm, workspace);
     }
@@ -44,11 +41,39 @@ public:
     }
 
 private:
+    // __aicore__ inline void InitParams()
+    // {
+    //     this->colLen = this->tilingData_.colLen;
+    //     this->basicColLen = this->tilingData_.basicColLen;
+
+    //     this->coreIdx = static_cast<uint32_t>(GetBlockIdx());
+    //     this->headCoreNum = this->tilingData_.headCoreNum;
+
+    //     if (this->coreIdx < this->headCoreNum) {
+    //         this->rowLenPerCore = this->tilingData_.rowLenPerHeadCore;
+    //         this->basicRowLen = this->tilingData_.basicRowLenHeadCore;
+    //         this->rowLoop = this->CeilDiv(this->rowLenPerCore, this->basicRowLen);
+    //         this->baseRow = this->coreIdx * this->rowLenPerCore;
+    //     } else if (this->coreIdx >= this->headCoreNum && this->coreIdx < this->tilingData_.realCoreNum) {
+    //         this->rowLenPerCore = this->tilingData_.rowLenPerTailCore;
+    //         this->basicRowLen = this->tilingData_.basicRowLenTailCore;
+    //         this->rowLoop = this->CeilDiv(this->rowLenPerCore, this->basicRowLen);
+    //         this->baseRow = this->headCoreNum * this->tilingData_.rowLenPerHeadCore + (this->coreIdx - this->headCoreNum) * this->rowLenPerCore;
+    //     } 
+
+    //     uint32_t alignedNum = BLOCK_SIZE / sizeof(inType);
+    //     this->sizeHalfLen = this->AlignUp(this->basicColLen, alignedNum);
+    //     // 若basicColLen比32B还小 -> this->sizeHalfLen == 0 -> sizeHalfLen直接按32B字节算
+    //     this->tileLength = this->basicRowLen * (this->sizeHalfLen == 0 ? (BLOCK_SIZE / sizeof(inType)) : this->sizeHalfLen);
+    //     this->rightPadding = this->sizeHalfLen - this->basicColLen;
+    // }
+
     __aicore__ inline void InitAndSetBuffer(GM_ADDR input_gm,GM_ADDR workspace_gm)
     {
         // gm数据
         xGm.SetGlobalBuffer((__gm__ inType *)input_gm,this->tilingData_.rowLen * this->tilingData_.colLen);
         this->pPipe->InitBuffer(inQueueA, BUFFER_NUM, this->tileLength * sizeof(inType));
+        this->pPipe->InitBuffer(outQueueA, BUFFER_NUM, this->tileLength * sizeof(inType));
         // 若tilingKey为101, 201，则需要给精度转换留空间
         if constexpr(isCast) {
             this->pPipe->InitBuffer(sharedBTempBuf, this->tileLength * sizeof(float));
@@ -104,29 +129,32 @@ private:
 
     __aicore__ inline void CopyOut(InplaceAttnSoftmaxOffsetParam &offsetParam,DataCopyParams &splitCopyoutParams,uint32_t ridx)
     {
-        LocalTensor<outType> outLocal = inQueueA.DeQue<outType>(); 
+        LocalTensor<outType> outLocal = outQueueA.DeQue<outType>(); 
         DataCopyPad(xGm[this->offsetParam.tmpVecGmOffset], outLocal, splitCopyoutParams);
-        inQueueA.FreeTensor(outLocal);
+        outQueueA.FreeTensor(outLocal);
     }
     __aicore__ inline void Compute(uint32_t ridx)
     {
         LocalTensor<inType> aLocal = inQueueA.template DeQue<inType>(); 
+        LocalTensor<inType> outLocal = outQueueA.template AllocTensor<inType>(); 
         SoftMaxShapeInfo srcShape = { this->basicRowLenCal, this->sizeHalfLen, this->basicRowLenCal, this->basicColLen};
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
             // PipeBarrier<PIPE_V>();
             SoftMax<float>(tmpCLocal, tmpCLocal, this->softmaxTilingData_, srcShape);
             // PipeBarrier<PIPE_V>();
-            AscendC::Cast(aLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
+            AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
             // PipeBarrier<PIPE_V>();
         } else {
-            SoftMax<inType>(aLocal, aLocal, this->softmaxTilingData_, srcShape);
+            SoftMax<inType>(outLocal, aLocal, this->softmaxTilingData_, srcShape);
         }
-        inQueueA.template EnQue<outType>(aLocal);
+        inQueueA.FreeTensor(aLocal);
+        outQueueA.template EnQue<outType>(outLocal);
     }
 
 private:
     TQue<QuePosition::VECIN, BUFFER_NUM> inQueueA;
+    TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueA;
     GlobalTensor<inType> xGm;
     TBuf<TPosition::VECCALC> sharedBTempBuf; 
     // quant
