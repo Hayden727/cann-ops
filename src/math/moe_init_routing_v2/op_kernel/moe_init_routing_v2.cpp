@@ -7,7 +7,7 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
- 
+
 #include "kernel_operator.h"
 #include "moe_v2_gather_out.h"
 #include "moe_v2_mrgsort_out.h"
@@ -77,7 +77,7 @@ extern "C" __global__ __aicore__ void moe_init_routing_v2(GM_ADDR x, GM_ADDR exp
     }
     TPipe srcToDstPipe;
     MoeV2SrcToDstOp srcToDstOp;
-    srcToDstOp.Init<MoeInitRoutingV2TilingData>(expandedRowIdx, userWS, t, &srcToDstPipe);
+    srcToDstOp.Init<MoeInitRoutingV2TilingData>(expandedRowIdx, expertTokensCountOrCumsum, userWS, t, &srcToDstPipe);
     srcToDstOp.Process();
     srcToDstPipe.Destroy();
   } else if (TILING_KEY_IS(10011) ||
