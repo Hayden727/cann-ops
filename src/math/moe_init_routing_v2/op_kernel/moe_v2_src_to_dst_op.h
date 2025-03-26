@@ -173,7 +173,7 @@ __aicore__ inline void MoeV2SrcToDstOp::Init(GM_ADDR expandSrcToDstRow,  GM_ADDR
   this->srcToDstTilingData = &(tilingData->srcToDstComputeParamsOp);
 
   this->expertNum = tilingData->expertNum;
-  this->start_expertId = tilingData->start_expertId;
+  this->start_expertId_ = tilingData->start_expertId;
   this->device_id_ = tilingData -> device_id;
   BASE_SIZE_TOTAL = 32/sizeof(int32_t);
   per_dim_total_ = this->expertNum;// 256
