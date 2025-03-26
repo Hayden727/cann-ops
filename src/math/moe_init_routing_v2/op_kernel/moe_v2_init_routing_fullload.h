@@ -22,7 +22,7 @@
 #define MOE_V2_FULL_LOAD_H
 
 #include "moe_v2_mrgsort.h"
-
+#include "kernel_operator.h"
 namespace MoeInitRoutingV2 {
 using namespace AscendC;
 
@@ -257,7 +257,7 @@ __aicore__ inline void MoeV2FullLoad<T>::CopyOutX() {
       }
     }
   }
-  if(this->blockIdx != 0){
+  if(this->blockIdx_ != 0){
     expandedRowIdxCopyOutQueue_.FreeTensor(expandedRowIdx);
   }else{
     expandedRowIdxCopyOutQueue_.EnQue(expandedRowIdx);
