@@ -1,13 +1,3 @@
-/**
- * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
- * This file is a part of the CANN Open Software.
- * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
- * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
- */
-
 #include "acl/acl.h"
 #include "aclnn_moe_init_routing_v2.h"
 #include <iostream>
@@ -69,34 +59,39 @@ int main() {
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
     // 2. 构造输入与输出，需要根据API的接口定义构造
     std::vector<int64_t> xShape = {3, 4};
-    std::vector<int64_t> idxShape = {3, 2};
-    std::vector<int64_t> expandedXOutShape = {3, 2, 4};
-    std::vector<int64_t> idxOutShape = {6};
-    std::vector<int64_t> expertTokenOutShape = {3};
+    std::vector<int64_t> idxShape = {3, 3};
+    std::vector<int64_t> expandedXOutShape = {9, 4};
+    std::vector<int64_t> idxOutShape = {9};
+    std::vector<int64_t> expertTokensCountOrCumsumOutShape = {3};
     void* xDeviceAddr = nullptr;
     void* expertIdxDeviceAddr = nullptr;
     void* expandedXOutDeviceAddr = nullptr;
     void* expandedRowIdxOutDeviceAddr = nullptr;
-    void* expertTokenBeforeCapacityOutDeviceAddr = nullptr;
+    void* expertTokensCountOrCumsumOutDeviceAddr = nullptr;
     aclTensor* x = nullptr;
     aclTensor* expertIdx = nullptr;
     int64_t activeNum = 0;
-    int64_t expertCapacity = 2;
+    int64_t expertCapacity = 0;
     int64_t expertNum = 3;
-    int64_t dropPadMode = 1;
-    int64_t expertTokensCountOrCumsumFlag = 0;
-    bool expertTokensBeforeCapacityFlag = true;
+    int64_t dropPadMode = 0;
+    int64_t expertTokensCountOrCumsumFlag = 1;
+    bool expertTokensBeforeCapacityFlag = false;
     int64_t startExpertIdOptional = 0;
-    int64_t endExpertIdOptional= 0;
     int64_t deviceIdOptional = 0;
+    if(deviceIdOptional != 0)
+    {
+      startExpertIdOptional = (deviceIdOptional) * expertNum - 1;
+    }
+    int64_t endExpertIdOptional= (deviceIdOptional + 1) * expertNum - 1;
+    
     aclTensor* expandedXOut = nullptr;
     aclTensor* expandedRowIdxOut = nullptr;
-    aclTensor* expertTokensBeforeCapacityOut = nullptr;
+    aclTensor* expertTokensCountOrCumsumOut = nullptr;
     std::vector<float> xHostData = {0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.3, 0.3, 0.3, 0.3};
-    std::vector<int> expertIdxHostData = {1, 2, 0, 1, 0, 2};
-    std::vector<float> expandedXOutHostData = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    std::vector<int> expandedRowIdxOutHostData = {0, 0, 0, 0, 0, 0};
-    std::vector<int> expertTokensBeforeCapacityOutHostData = {0, 0, 0};
+    std::vector<int> expertIdxHostData = {1, 2, 0, 1, 0, 2, 1, 0, 2};
+    std::vector<float> expandedXOutHostData = {0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<int> expandedRowIdxOutHostData = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<int> expertTokensCountOrCumsumHostData = {0, 0, 0};
     // 创建self aclTensor
     ret = CreateAclTensor(xHostData, xShape, &xDeviceAddr, aclDataType::ACL_FLOAT, &x);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -107,7 +102,7 @@ int main() {
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(expandedRowIdxOutHostData, idxOutShape, &expandedRowIdxOutDeviceAddr, aclDataType::ACL_INT32, &expandedRowIdxOut);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
-    ret = CreateAclTensor(expertTokensBeforeCapacityOutHostData, expertTokenOutShape, &expertTokenBeforeCapacityOutDeviceAddr, aclDataType::ACL_INT32, &expertTokensBeforeCapacityOut);
+    ret = CreateAclTensor(expertTokensCountOrCumsumHostData, expertTokensCountOrCumsumOutShape, &expertTokensCountOrCumsumOutDeviceAddr, aclDataType::ACL_INT32, &expertTokensCountOrCumsumOut);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     // 3. 调用CANN算子库API，需要修改为具体的API
     uint64_t workspaceSize = 0;
@@ -116,7 +111,7 @@ int main() {
     ret = aclnnMoeInitRoutingV2GetWorkspaceSize(x, expertIdx, activeNum, expertCapacity,
                                                 expertNum, dropPadMode, expertTokensCountOrCumsumFlag, expertTokensBeforeCapacityFlag, 
                                                 startExpertIdOptional, endExpertIdOptional, deviceIdOptional, expandedXOut, 
-                                                expandedRowIdxOut, nullptr, expertTokensBeforeCapacityOut, &workspaceSize, &executor);
+                                                expandedRowIdxOut, expertTokensCountOrCumsumOut, nullptr, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMoeInitRoutingV2GetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
     // 根据第一段接口计算出的workspaceSize申请device内存
     void* workspaceAddr = nullptr;
@@ -147,26 +142,26 @@ int main() {
     for (int64_t i = 0; i < expandedRowIdxSize; i++) {
         LOG_PRINT("expandedRowIdxData[%ld] is: %d\n", i, expandedRowIdxData[i]);
     }
-    auto expertTokensBeforeCapacitySize = GetShapeSize(expertTokenOutShape);
-    std::vector<int> expertTokenIdxData(expertTokensBeforeCapacitySize, 0);
-    ret = aclrtMemcpy(expertTokenIdxData.data(), expertTokenIdxData.size() * sizeof(expertTokenIdxData[0]), expertTokenBeforeCapacityOutDeviceAddr, expertTokensBeforeCapacitySize * sizeof(int32_t), ACL_MEMCPY_DEVICE_TO_HOST);
+    auto pertTokensCountOrCumsumSize = GetShapeSize(expertTokensCountOrCumsumOutShape);
+    std::vector<int> pertTokensCountOrCumsumData(pertTokensCountOrCumsumSize, 0);
+    ret = aclrtMemcpy(pertTokensCountOrCumsumData.data(), pertTokensCountOrCumsumData.size() * sizeof(pertTokensCountOrCumsumData[0]), expertTokensCountOrCumsumOutDeviceAddr, pertTokensCountOrCumsumSize * sizeof(int32_t), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return ret);
-    for (int64_t i = 0; i < expertTokensBeforeCapacitySize; i++) {
-        LOG_PRINT("expertTokenIdxData[%ld] is: %d\n", i, expertTokenIdxData[i]);
+    for (int64_t i = 0; i < pertTokensCountOrCumsumSize; i++) {
+        LOG_PRINT("pertTokensCountOrCumsumData[%ld] is: %d\n", i, pertTokensCountOrCumsumData[i]);
     }
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(x);
     aclDestroyTensor(expertIdx);
     aclDestroyTensor(expandedXOut);
     aclDestroyTensor(expandedRowIdxOut);
-    aclDestroyTensor(expertTokensBeforeCapacityOut);
+    aclDestroyTensor(expertTokensCountOrCumsumOut);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(xDeviceAddr);
     aclrtFree(expertIdxDeviceAddr);
     aclrtFree(expandedXOutDeviceAddr);
     aclrtFree(expandedRowIdxOutDeviceAddr);
-    aclrtFree(expertTokenBeforeCapacityOutDeviceAddr);
+    aclrtFree(expertTokensCountOrCumsumOutDeviceAddr);
     if (workspaceSize > 0) {
       aclrtFree(workspaceAddr);
     }
