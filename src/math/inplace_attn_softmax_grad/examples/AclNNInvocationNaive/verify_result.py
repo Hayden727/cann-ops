@@ -21,6 +21,7 @@ def verify_result(real_result, golden):
     print(real_result.shape)
     print(real_result[:10])
     golden = np.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
+    print(golden.shape)
     print(golden.shape[:10])
     result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
     deno = np.maximum(np.abs(real_result), np.abs(golden))  # 获取最大值并组成新数组
