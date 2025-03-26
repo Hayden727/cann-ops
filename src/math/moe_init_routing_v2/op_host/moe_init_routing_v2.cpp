@@ -96,8 +96,7 @@ void MoeInitRoutingV2TilingBase::Reset() {
 
 ge::graphStatus MoeInitRoutingV2TilingBase::GetPlatformInfo() {
   auto platformInfo = context_->GetPlatformInfo();
-//   OP_TILING_CHECK(platformInfo == nullptr, VECTOR_INNER_ERR_REPORT_TILIING(opName, "fail to get platform info"),
-//                   return ge::GRAPH_FAILED);
+
   if (platformInfo == nullptr)
   {
     return ge::GRAPH_FAILED;
@@ -177,7 +176,7 @@ ge::graphStatus MoeInitRoutingV2TilingBase::CheckOutShape() {
 
 ge::graphStatus MoeInitRoutingV2TilingBase::GetShapeAttrsInfo() {
   opName = context_->GetNodeName();
-//   OP_LOG_FULL(DLOG_DEBUG, opName, "TilingContext: %s", optiling::DebugTilingContext(context_).c_str());
+
 
   // 获取输入shape
   auto xShapePtr = context_->GetInputShape(INDEX_INPUT_X);
