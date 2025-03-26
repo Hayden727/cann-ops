@@ -28,11 +28,11 @@ def softmax(x):
 
 def gen_golden_data_simple():
     # 定义数组的形状
-    shape = (1, 2048, 576)
+    shape = (1, 2048, 512)
     # 创建query、key和value数组，所有元素的值都为3，数据类型为float16
-    query = np.random.uniform(1, 10, [1, 2048, 576]).astype(np.float16)
-    key = np.random.uniform(1, 10, [1, 2048, 576]).astype(np.float16)
-    value = np.random.uniform(1, 10, [1, 2048, 576]).astype(np.float16)
+    query = np.random.uniform(1, 10, [1, 2048, 512]).astype(np.float16)
+    key = np.random.uniform(1, 10, [1, 2048, 512]).astype(np.float16)
+    value = np.random.uniform(1, 10, [1, 2048, 512]).astype(np.float16)
     os.system("mkdir -p input")
     os.system("mkdir -p output")
 
