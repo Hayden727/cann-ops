@@ -127,7 +127,7 @@ __aicore__ inline void MoeV2SrcToDstOp::ComputeTotalRows() {
   this->start_row_ = 0;
   if(this->device_id_ != 0)
   {
-    this->start_row_ = total_rowsLocal.GetValue(this->start_expertId);
+    this->start_row_ = total_rowsLocal.GetValue(this->start_expertId_);
   }
   inQueue_total_rows.FreeTensor(total_rowsLocal);
 
