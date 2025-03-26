@@ -97,11 +97,6 @@ private:
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
-        // PipeBarrier<PIPE_ALL>();
-        // AscendC::TEventID eventIDMax = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_MTE2);
-        // AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(eventIDMax);
-        // AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(eventIDMax);
-        // AscendC::PipeBarrier<PIPE_V>();
         event_t eventIdMTE2ToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
         SetFlag<HardEvent::MTE2_V>(eventIdMTE2ToV);
         WaitFlag<HardEvent::MTE2_V>(eventIdMTE2ToV);
@@ -140,11 +135,6 @@ private:
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
-        // PipeBarrier<PIPE_ALL>();
-        // AscendC::TEventID eventIDSub = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_MTE2);
-        // AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(eventIDSub);
-        // AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(eventIDSub);
-        // AscendC::PipeBarrier<PIPE_V>();
         event_t eventIdMTE2ToV1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
         SetFlag<HardEvent::MTE2_V>(eventIdMTE2ToV1);
         WaitFlag<HardEvent::MTE2_V>(eventIdMTE2ToV1);
@@ -184,7 +174,6 @@ private:
             outQueueA.FreeTensor(outLocalDeQue);
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
         }
-        // inQueueA.FreeTensor(aLocal);
     }
 
     __aicore__ inline void mulCopyIn(InplaceAttnSoftmaxOffsetParam &offsetParam,DataCopyParams &splitCopyinParams,uint32_t ridx,uint32_t cidx)
@@ -194,11 +183,6 @@ private:
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
-        // PipeBarrier<PIPE_ALL>();
-        // AscendC::TEventID eventIDMul = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_MTE2);
-        // AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(eventIDMul);
-        // AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(eventIDMul);
-        // AscendC::PipeBarrier<PIPE_V>();
         event_t eventIdMTE2ToV2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
         SetFlag<HardEvent::MTE2_V>(eventIdMTE2ToV2);
         WaitFlag<HardEvent::MTE2_V>(eventIdMTE2ToV2);
