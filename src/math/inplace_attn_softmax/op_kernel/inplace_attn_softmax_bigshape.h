@@ -1,5 +1,5 @@
-/**
- * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+/*
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
@@ -7,11 +7,6 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
-
-/**
- * @file inplace_attn_softmax_bigshape.h
- */
-
 #ifndef INPLACE_ATTN_SOFTMAX_BIG_SHAPE_H
 #define INPLACE_ATTN_SOFTMAX_BIG_SHAPE_H
 
@@ -44,12 +39,14 @@ public:
 
 private:
 
+
     __aicore__ inline void InitAndSetBuffer(GM_ADDR x, GM_ADDR workspace_gm)
     {
         // gm数据
         xGm.SetGlobalBuffer((__gm__ inType *)x,this->tilingData_.rowLen * this->tilingData_.colLen);
         // queue
         this->pPipe->InitBuffer(inQueueA, BUFFER_NUM, this->basicColLen * sizeof(inType));
+        this->pPipe->InitBuffer(outQueueA, BUFFER_NUM, this->tileLength * sizeof(inType));
         this->pPipe->InitBuffer(sharedTempBuf, this->basicColLen * sizeof(inType));
         tmpALocal = sharedTempBuf.Get<float>(this->basicColLen);
         if constexpr(isCast) {
@@ -103,25 +100,20 @@ private:
         // PipeBarrier<PIPE_ALL>();
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-                ReduceMax(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen, false);
-                // PipeBarrier<PIPE_V>(); 
+                ReduceMax(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen, false); 
             }else {
                 ReduceMax(tmpALocal, tmpCLocal, tmpALocal, this->basicColLen, false);
-                // PipeBarrier<PIPE_V>();
                 }
         } else
         {
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-                ReduceMax(tmpALocal, aLocal, tmpALocal, this->lastcolLen, false);
-                // PipeBarrier<PIPE_V>(); 
+                ReduceMax(tmpALocal, aLocal, tmpALocal, this->lastcolLen, false); 
             } else {
                 ReduceMax(tmpALocal, aLocal, tmpALocal, this->basicColLen, false);
-                // PipeBarrier<PIPE_V>();
                 }
         }
-        // PipeBarrier<PIPE_V>();
+        inQueueA.FreeTensor(aLocal);
         if(cidx == 0){
             maxperrow = tmpALocal.GetValue(0);
         }else {
@@ -129,88 +121,80 @@ private:
                 maxperrow = tmpALocal.GetValue(0);
             } 
         }
-        // PipeBarrier<PIPE_V>();
-        inQueueA.FreeTensor(aLocal);
     }
 
     __aicore__ inline void subCopyIn(InplaceAttnSoftmaxOffsetParam &offsetParam, DataCopyParams &splitCopyinParams, 
                                     uint32_t ridx, uint32_t cidx)
     {
         LocalTensor<inType> aLocal = inQueueA.template AllocTensor<inType>();
+        LocalTensor<inType> outLocal = outQueueA.template AllocTensor<inType>(); 
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
         // PipeBarrier<PIPE_ALL>();
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            inQueueA.FreeTensor(aLocal);
             Adds<float>(tmpCLocal, tmpCLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
-            // PipeBarrier<PIPE_V>();
             Exp<float>(tmpCLocal, tmpCLocal, this->basicColLen);
             // PipeBarrier<PIPE_ALL>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen);
-                // PipeBarrier<PIPE_V>();
             }else {
-                ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->basicColLen);
-                // PipeBarrier<PIPE_V>(); 
+                ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->basicColLen); 
             }
-            // PipeBarrier<PIPE_V>();
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
-            // PipeBarrier<PIPE_V>();
-            AscendC::Cast(aLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, splitCopyinParams);
+            AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, splitCopyinParams);
             // PipeBarrier<PIPE_ALL>();
+            outQueueA.FreeTensor(outLocal);
         } else
         {
-            Adds<inType>(aLocal, aLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
-            // PipeBarrier<PIPE_V>();
-            Exp<inType>(aLocal, aLocal, this->basicColLen);
+            Adds<inType>(outLocal, aLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
+            inQueueA.FreeTensor(aLocal);
+            Exp<inType>(outLocal, outLocal, this->basicColLen);
             // PipeBarrier<PIPE_ALL>();
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, splitCopyinParams);
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, splitCopyinParams);
             // PipeBarrier<PIPE_ALL>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-                ReduceSum(tmpALocal, aLocal, tmpALocal, this->lastcolLen);
-                // PipeBarrier<PIPE_V>();
+                ReduceSum(tmpALocal, outLocal, tmpALocal, this->lastcolLen);
             }else {
-                ReduceSum(tmpALocal, aLocal, tmpALocal, this->basicColLen);
-                // PipeBarrier<PIPE_V>(); 
+                ReduceSum(tmpALocal, outLocal, tmpALocal, this->basicColLen); 
             }
-            // PipeBarrier<PIPE_V>();
+            outQueueA.FreeTensor(outLocal);
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
-            // PipeBarrier<PIPE_V>();
         }
-        inQueueA.FreeTensor(aLocal);
+        // inQueueA.FreeTensor(aLocal);
     }
 
     __aicore__ inline void mulCopyIn(InplaceAttnSoftmaxOffsetParam &offsetParam,DataCopyParams &splitCopyinParams,uint32_t ridx,uint32_t cidx)
     {
         LocalTensor<inType> aLocal = inQueueA.template AllocTensor<inType>();
+        LocalTensor<inType> outLocal = outQueueA.template AllocTensor<inType>(); 
         getSplitCopyinParams(cidx, splitCopyinParams);
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
         // PipeBarrier<PIPE_ALL>();
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            inQueueA.FreeTensor(aLocal);
             Muls<float>(tmpCLocal, tmpCLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
             // PipeBarrier<PIPE_ALL>();
-            AscendC::Cast(aLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
+            AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
         } else 
         {
-            Muls<inType>(aLocal, aLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
+            Muls<inType>(outLocal, aLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
             // PipeBarrier<PIPE_ALL>();
+            inQueueA.FreeTensor(aLocal);
         }
         if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, {1,(uint16_t)(this->lastcolLen * sizeof(inType)),0,0});
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, {1,(uint16_t)(this->lastcolLen * sizeof(inType)),0,0});
             // PipeBarrier<PIPE_ALL>();
         }else {
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], aLocal, {1,(uint16_t)(this->basicColLen * sizeof(inType)),0,0});
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, {1,(uint16_t)(this->basicColLen * sizeof(inType)),0,0});
             // PipeBarrier<PIPE_ALL>();
         }
-        inQueueA.FreeTensor(aLocal);
+        outQueueA.FreeTensor(outLocal);
     }
 
     __aicore__ inline void ComputeVecInGmOffset(uint32_t ridx,uint32_t cidx)
@@ -226,6 +210,7 @@ private:
 
 private:
     TQue<QuePosition::VECIN, BUFFER_NUM> inQueueA;
+    TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueA;
     TBuf<TPosition::VECCALC> sharedTempBuf; 
     TBuf<TPosition::VECCALC> sharedBTempBuf;
     LocalTensor<float> tmpCLocal;
