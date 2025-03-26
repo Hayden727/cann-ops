@@ -17,7 +17,7 @@
 #include <iostream>
 #include <vector>
 #include "acl/acl.h"
-#include "aclnn_flash_attention_score.h"
+#include "aclnn_flash_attention_score_with_large_head_dim.h"
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -215,16 +215,16 @@ int main() {
 
   uint64_t workspaceSize = 0;
   aclOpExecutor* executor;
-  ret = aclnnFlashAttentionScoreGetWorkspaceSize(q, k, v, scaleValue, headNum, softmaxMax, softmaxSum, attentionOut, &workspaceSize, &executor);
-  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionScoreGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
+  ret = aclnnFlashAttentionScoreWithLargeHeadDImGetWorkspaceSize(q, k, v, scaleValue, headNum, softmaxMax, softmaxSum, attentionOut, &workspaceSize, &executor);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionScoreWithLargeHeadDImGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
   void* workspaceAddr = nullptr;
   if (workspaceSize > 0) {
     ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret);
   }
 
-  ret = aclnnFlashAttentionScore(workspaceAddr, workspaceSize, executor, stream);
-  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionScore failed. ERROR: %d\n", ret); return ret);
+  ret = aclnnFlashAttentionScoreWithLargeHeadDIm(workspaceAddr, workspaceSize, executor, stream);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionScoreWithLargeHeadDIm failed. ERROR: %d\n", ret); return ret);
 
   ret = aclrtSynchronizeStream(stream);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
