@@ -29,8 +29,6 @@ public:
     {
         this->ParseTilingData(tilingData);
         this->softmaxTilingData_ = tilingData->softmaxTilingData;
-        // InitParams();
-        // this->InitParams();
         this->InitParamsComm();
         InitAndSetBuffer(input_gm, workspace);
     }
@@ -41,32 +39,6 @@ public:
     }
 
 private:
-    // __aicore__ inline void InitParams()
-    // {
-    //     this->colLen = this->tilingData_.colLen;
-    //     this->basicColLen = this->tilingData_.basicColLen;
-
-    //     this->coreIdx = static_cast<uint32_t>(GetBlockIdx());
-    //     this->headCoreNum = this->tilingData_.headCoreNum;
-
-    //     if (this->coreIdx < this->headCoreNum) {
-    //         this->rowLenPerCore = this->tilingData_.rowLenPerHeadCore;
-    //         this->basicRowLen = this->tilingData_.basicRowLenHeadCore;
-    //         this->rowLoop = this->CeilDiv(this->rowLenPerCore, this->basicRowLen);
-    //         this->baseRow = this->coreIdx * this->rowLenPerCore;
-    //     } else if (this->coreIdx >= this->headCoreNum && this->coreIdx < this->tilingData_.realCoreNum) {
-    //         this->rowLenPerCore = this->tilingData_.rowLenPerTailCore;
-    //         this->basicRowLen = this->tilingData_.basicRowLenTailCore;
-    //         this->rowLoop = this->CeilDiv(this->rowLenPerCore, this->basicRowLen);
-    //         this->baseRow = this->headCoreNum * this->tilingData_.rowLenPerHeadCore + (this->coreIdx - this->headCoreNum) * this->rowLenPerCore;
-    //     } 
-
-    //     uint32_t alignedNum = BLOCK_SIZE / sizeof(inType);
-    //     this->sizeHalfLen = this->AlignUp(this->basicColLen, alignedNum);
-    //     // 若basicColLen比32B还小 -> this->sizeHalfLen == 0 -> sizeHalfLen直接按32B字节算
-    //     this->tileLength = this->basicRowLen * (this->sizeHalfLen == 0 ? (BLOCK_SIZE / sizeof(inType)) : this->sizeHalfLen);
-    //     this->rightPadding = this->sizeHalfLen - this->basicColLen;
-    // }
 
     __aicore__ inline void InitAndSetBuffer(GM_ADDR input_gm,GM_ADDR workspace_gm)
     {
@@ -112,11 +84,8 @@ private:
         splitCopyoutParams = {this->basicRowLenCal,(uint16_t)(this->basicColLen * sizeof(outType)),0,0};
         ComputeVecInGmOffset(ridx);
         CopyIn(this->offsetParam, splitCopyinParams,ridx);
-        // PipeBarrier<PIPE_ALL>();
         Compute(ridx);
-        // PipeBarrier<PIPE_ALL>();
         CopyOut(this->offsetParam, splitCopyoutParams,ridx);
-        // PipeBarrier<PIPE_ALL>();
     }
 
     __aicore__ inline void CopyIn(InplaceAttnSoftmaxOffsetParam &offsetParam,DataCopyParams &splitCopyinParams,uint32_t ridx)
@@ -140,11 +109,8 @@ private:
         SoftMaxShapeInfo srcShape = { this->basicRowLenCal, this->sizeHalfLen, this->basicRowLenCal, this->basicColLen};
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
             SoftMax<float>(tmpCLocal, tmpCLocal, this->softmaxTilingData_, srcShape);
-            // PipeBarrier<PIPE_V>();
             AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
-            // PipeBarrier<PIPE_V>();
         } else {
             SoftMax<inType>(outLocal, aLocal, this->softmaxTilingData_, srcShape);
         }
