@@ -172,8 +172,11 @@ __aicore__ inline void MoeV2FullLoad<T>::CopyOutIdx() {
   DataCopyParams intriParams;
   intriParams.blockCount = 1;
   intriParams.blockLen = this->totalLength * sizeof(int32_t);
+
+  Adds(expandedRowIdx, expandedRowIdx, -1 * this->start_row_, this->totalLength);
+  SetWaitFlag<HardEvent::V_MTE3>(HardEvent::V_MTE3);
   DataCopyPad(expandedRowIdxGm_, expandedRowIdx, intriParams);
-  expandedRowIdxCopyOutQueue_.EnQue(expandedRowIdx);
+  expandedRowIdxCopyOutQueue_.FreeTensor(expandedRowIdx);
 }
 
 template <typename T>
@@ -254,8 +257,13 @@ __aicore__ inline void MoeV2FullLoad<T>::CopyOutX() {
       }
     }
   }
-  expandedRowIdxCopyOutQueue_.FreeTensor(expandedRowIdx);
+  if(this->blockIdx != 0){
+    expandedRowIdxCopyOutQueue_.FreeTensor(expandedRowIdx);
+  }else{
+    expandedRowIdxCopyOutQueue_.EnQue(expandedRowIdx);
+  }
   xCopyInQueue_.FreeTensor(xLocal);
+    
 }
 
 template <typename T>
@@ -327,15 +335,18 @@ __aicore__ inline void MoeV2FullLoad<T>::Process() {
   if (this->blockIdx_ < this->needCoreNum_) {
     CopyIn();
     SortCompute();
-    if (this->blockIdx_ == 0) {
-      CopyOutIdx();
-    }
+
     if (this->blockIdx_ <= this->needCoreNum_ - 1 && this->expertTokensCountOrCumsumFlag > EXERPT_TOKENS_NONE) {
       ComputeExpertTokenCountOrCumsum();
     } else {
       CopyOutEmpty();
     }
     CopyOutX();
+
+    if (this->blockIdx_ == 0) {
+      CopyOutIdx();
+    }
+
   }
 }
 }  // namespace MoeInitRoutingV2
