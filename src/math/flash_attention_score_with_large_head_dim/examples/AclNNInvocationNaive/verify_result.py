@@ -19,7 +19,7 @@ import sys
 import numpy as np
 
 loss = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
-minimum = 10e-10
+minimum = 1e-10
 
 def verify_result(real_result, golden):
     real_result = np.fromfile(real_result, dtype=np.float16) # 从bin文件读取实际运算结果
