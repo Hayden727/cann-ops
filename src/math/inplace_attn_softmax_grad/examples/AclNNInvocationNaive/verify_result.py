@@ -18,7 +18,10 @@ MINIMUM = 10e-10
 def verify_result(real_result, golden):
     dtype = np.float32
     real_result = np.fromfile(real_result, dtype=dtype) # 从bin文件读取实际运算结果
+    print(real_result.shape)
+    print(real_result[:10])
     golden = np.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
+    print(golden.shape[:10])
     result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
     deno = np.maximum(np.abs(real_result), np.abs(golden))  # 获取最大值并组成新数组
     result_atol = np.less_equal(result, LOSS) # 计算绝对误差
