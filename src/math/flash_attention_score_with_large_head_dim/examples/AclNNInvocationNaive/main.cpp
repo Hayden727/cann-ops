@@ -157,7 +157,7 @@ int main() {
   const short batch = 1;
   const short s1 = 2048;
   const short s2 = 2048;
-  const short headnum = 512;
+  const short headnum = 576;
 
   std::vector<int64_t> qShape = {batch, s1, headnum};
   std::vector<int64_t> kShape = {batch, s2, headnum};
@@ -211,7 +211,7 @@ int main() {
   ret = CreateAclTensor(softmaxSumHostData, softmaxSumShape, &softmaxSumDeviceAddr, aclDataType::ACL_FLOAT, &softmaxSum);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
   double scaleValue = 0.0625;  
-  int64_t headNum = 1;
+  int64_t headNum = 576;
 
   uint64_t workspaceSize = 0;
   aclOpExecutor* executor;
