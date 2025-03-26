@@ -1,6 +1,6 @@
 声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 
-# FlashAttentionScore
+# FlashAttentionScoreWithLargeHeadDim
 
 ## 支持的产品型号
 
@@ -24,7 +24,7 @@ Atlas A2 训练系列产品
 
 图1 训练计算流程图
 
-![FA图](./fig/FlashAttentionScore.png)
+![FA图](./fig/FlashAttentionScoreWithLargeHeadDim.png)
 
 按照flashAttention正向计算流程实现，整体计算流程如下：
 
@@ -41,29 +41,29 @@ Atlas A2 训练系列产品
 
 ## 算子执行接口
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnFlashAttentionScoreGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnFlashAttentionScore”接口执行计算。
+每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnFlashAttentionScoreWithLargeHeadDimGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnFlashAttentionScoreWithLargeHeadDim”接口执行计算。
 
-* `aclnnStatus aclnnFlashAttentionScoreGetWorkspaceSize(const aclTensor *query, const aclTensor *key, const aclTensor *value, double scaleValueOptional, int64_t headNum, const aclTensor *softmaxMaxOut, const aclTensor *softmaxSumOut, const aclTensor *attentionOutOut, uint64_t *workspaceSize, aclOpExecutor **executor)`
-* `aclnnStatus aclnnFlashAttentionScore(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
+* `aclnnStatus aclnnFlashAttentionScoreWithLargeHeadDimGetWorkspaceSize(const aclTensor *query, const aclTensor *key, const aclTensor *value, double scaleValueOptional, int64_t headNum, const aclTensor *softmaxMaxOut, const aclTensor *softmaxSumOut, const aclTensor *attentionOutOut, uint64_t *workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnFlashAttentionScoreWithLargeHeadDim(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnFlashAttentionScoreGetWorkspaceSize
+### aclnnFlashAttentionScoreWithLargeHeadDimGetWorkspaceSize
 
 - **参数说明：**
 
-  - query（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据类型与key/value的数据类型一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - key（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据类型与query/value的数据类型一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - value（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据类型与query/key的数据类型一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - query（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT16，数据类型与key/value的数据类型一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - key（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT16，数据类型与query/value的数据类型一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - value（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT16，数据类型与query/key的数据类型一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - scaleValueOptional（double，计算输入）：Host侧的double，可选参数，公式中的scale，代表缩放系数，作为计算流中Muls的scalar值，数据类型支持DOUBLE，一般设置为D^-0.5。
   - headNum（int64\_t，计算输入）：Host侧的int64_t，代表单卡的head个数，即输入query的N轴长度，数据类型支持INT64。
   - softmaxMaxOut（aclTensor\*，计算输出）：Device侧的aclTensor，Softmax计算的Max中间结果，用于反向计算。数据类型支持FLOAT，输出的shape类型为[B,N,Sq,8]，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - softmaxSumOut（aclTensor\*，计算输出）：Device侧的aclTensor，Softmax计算的Sum中间结果，用于反向计算。数据类型支持FLOAT，输出的shape类型为[B,N,Sq,8]，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - softmaxOutOut（aclTensor\*，计算输出）：预留参数，暂未使用。
-  - attentionOutOut（aclTensor\*，计算输出）：Device侧的aclTensor，计算公式的最终输出。数据类型支持FLOAT16、BFLOAT16、FLOAT32，数据类型和shape与query一致，输出的shape类型为[B,N,Sq,D]，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - attentionOutOut（aclTensor\*，计算输出）：Device侧的aclTensor，计算公式的最终输出。数据类型支持FLOAT16，数据类型和shape与query一致，输出的shape类型为[B,N,Sq,D]，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
   
@@ -77,12 +77,12 @@ Atlas A2 训练系列产品
   - 返回161002（ACLNN_ERR_PARAM_INVALID）：query、key、value、softmaxMaxOut、softmaxSumOut、softmaxOutOut、attentionOutOut的数据类型和数据格式不在支持的范围内。
   ```
 
-### aclnnFlashAttentionScore
+### aclnnFlashAttentionScoreWithLargeHeadDim
 
 - **参数说明：**
 
   -   workspace（void\*，入参）：在Device侧申请的workspace内存起址。
-  -   workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnFlashAttentionScoreGetWorkspaceSize获取。
+  -   workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnFlashAttentionScoreWithLargeHeadDimGetWorkspaceSize获取。
   -   executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   -   stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 
@@ -108,18 +108,18 @@ Atlas A2 训练系列产品
 ## 算子原型
 
 ```c++
-REG_OP(FlashAttentionScore)
-    .INPUT(query, TensorType({DT_FLOAT16, DT_BF16, DT_FLOAT32}))
-    .INPUT(key, TensorType({DT_FLOAT16, DT_BF16, DT_FLOAT32}))
-    .INPUT(value, TensorType({DT_FLOAT16, DT_BF16, DT_FLOAT32}))
+REG_OP(FlashAttentionScoreWithLargeHeadDim)
+    .INPUT(query, TensorType({DT_FLOAT16}))
+    .INPUT(key, TensorType({DT_FLOAT16}))
+    .INPUT(value, TensorType({DT_FLOAT16}))
     .OUTPUT(softmax_max, TensorType({DT_FLOAT32}))
     .OUTPUT(softmax_sum, TensorType({DT_FLOAT32}))
-    .OUTPUT(attention_out, TensorType({DT_FLOAT16, DT_BF16, DT_FLOAT32}))
+    .OUTPUT(attention_out, TensorType({DT_FLOAT16}))
     .ATTR(scale_value, Float, 1.0)
     .REQUIRED_ATTR(head_num, Int)
-    .OP_END_FACTORY_REG(FlashAttentionScore)
+    .OP_END_FACTORY_REG(FlashAttentionScoreWithLargeHeadDim)
 ```
 
 ## 调用示例
 
-详见[FlashAttentionScore自定义算子样例说明算子调用章节](../README.md#算子调用)
+详见[FlashAttentionScoreWithLargeHeadDim自定义算子样例说明算子调用章节](../README.md#算子调用)

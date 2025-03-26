@@ -1,6 +1,6 @@
 ## 目录结构介绍
 
-通过aclnn调用的方式调用FlashAttention算子。
+通过aclnn调用的方式调用FlashAttentionScoreWithLargeHeadDim算子。
 
 ``` 
 ├── AclNNInvocationNaive         
@@ -15,10 +15,10 @@
 
 自定义算子编译部署后，会自动生成单算子API，可以直接在应用程序中调用。算子API的形式一般定义为“两段式接口”，形如：
    ```cpp    
-   aclnnStatus aclnnFlashAttentionScoreGetWorkspaceSize(const aclTensor *query, const aclTensor *key, const aclTensor *value, double scaleValueOptional, int64_t headNum, const aclTensor *softmaxMaxOut, const aclTensor *softmaxSumOut, const aclTensor *attentionOutOut, uint64_t *workspaceSize, aclOpExecutor **executor);
-   aclnnStatus aclnnFlashAttentionScore(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
+   aclnnStatus aclnnFlashAttentionScoreWithLargeHeadDimGetWorkspaceSize(const aclTensor *query, const aclTensor *key, const aclTensor *value, double scaleValueOptional, int64_t headNum, const aclTensor *softmaxMaxOut, const aclTensor *softmaxSumOut, const aclTensor *attentionOutOut, uint64_t *workspaceSize, aclOpExecutor **executor);
+   aclnnStatus aclnnFlashAttentionScoreWithLargeHeadDim(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
    ```
-其中aclnnFlashAttentionScoreGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnFlashAttentionScore执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
+其中aclnnFlashAttentionScoreWithLargeHeadDimGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnFlashAttentionScoreWithLargeHeadDim执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
 ## 运行样例算子
   **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**

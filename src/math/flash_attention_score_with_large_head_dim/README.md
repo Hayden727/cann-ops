@@ -1,4 +1,4 @@
-## FlashAttention自定义算子样例说明 
+## FlashAttentionWithLargeHeadDim自定义算子样例说明 
 
 本样例基于FlashAttentionScore改造，使其支持了head_dim=576的场景，为进一步适配MLA算子打下基础。与cpu环境下精度对标通过。
 
@@ -13,7 +13,7 @@ $$
 ## 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">FlashAttentionScore</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">FlashAttentionWithLargeHeadDim</td></tr>
 </tr>
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">query</td><td align="center">B,S1,H1</td><td align="center">float16</td><td align="center">ND</td></tr>
@@ -29,8 +29,9 @@ $$
 <tr><td rowspan="3" align="center">算子属性</td><td align="center">scale_value</td><td align="center">-</td><td align="center">float32</td><td align="center">ND</td></tr>
 <td align="center">head_num</td><td align="center">-</td><td align="center">int</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">flash_attention_score</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">flash_attention_score_with_large_head_dim</td></tr>
 </table>
+
 
 
 ## 支持的产品型号
