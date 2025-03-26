@@ -38,8 +38,6 @@ public:
     }
 
 private:
-
-
     __aicore__ inline void InitAndSetBuffer(GM_ADDR x, GM_ADDR workspace_gm)
     {
         // gm数据
