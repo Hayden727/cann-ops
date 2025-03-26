@@ -66,7 +66,7 @@ class MoeV2SrcToDstOp {
 
   int64_t expertNum;
   int64_t start_expertId_;
-  int64_t start_row_;
+  int32_t start_row_;
   int64_t device_id_;
   int32_t align_cnt_total_rows;
   int32_t per_dim_total_;
