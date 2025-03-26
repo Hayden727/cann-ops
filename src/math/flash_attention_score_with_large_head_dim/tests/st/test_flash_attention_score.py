@@ -33,5 +33,5 @@ def flash_attention_score_test(query, key, value, scale_value=0.0625, head_num=5
 
 
 def calc_expect_func(query, key, value, scale_value=0.0625, head_num=576, softmax_max=None, softmax_sum=None, attention_out=None):
-    res1, res2, res3 = flash_attention_score_test(query["value"], key["value"], value["value"], scale_value["value"], head_num["value"])
+    res1, res2, res3 = flash_attention_score_test(query["value"], key["value"], value["value"], scale_value, head_num)
     return [res1, res2, res3]
