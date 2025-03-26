@@ -59,8 +59,8 @@ class MoeV2FullLoad : public MoeV2SortBase {
   
   int64_t start_expertId_;
   int64_t end_expertId_;
-  int64_t start_row_;
-  int64_t end_row_;
+  int32_t start_row_;
+  int32_t end_row_;
   int64_t device_id_;
   int64_t core_id_;
 
