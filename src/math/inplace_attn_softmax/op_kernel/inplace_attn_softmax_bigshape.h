@@ -98,8 +98,17 @@ private:
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
         // PipeBarrier<PIPE_ALL>();
+        // AscendC::TEventID eventIDMax = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_MTE2);
+        // AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(eventIDMax);
+        // AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(eventIDMax);
+        // AscendC::PipeBarrier<PIPE_V>();
+        event_t eventIdMTE2ToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
+        SetFlag<HardEvent::MTE2_V>(eventIdMTE2ToV);
+        WaitFlag<HardEvent::MTE2_V>(eventIdMTE2ToV);
+        inQueueA.template EnQue(aLocal);
+        LocalTensor<inType> aLocalDeQue = inQueueA.DeQue<inType>(); 
         if constexpr(isCast) {
-            AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
+            AscendC::Cast(tmpCLocal, aLocalDeQue, AscendC::RoundMode::CAST_NONE, aLocalDeQue.GetSize());
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceMax(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen, false); 
             }else {
@@ -108,12 +117,12 @@ private:
         } else
         {
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-                ReduceMax(tmpALocal, aLocal, tmpALocal, this->lastcolLen, false); 
+                ReduceMax(tmpALocal, aLocalDeQue, tmpALocal, this->lastcolLen, false); 
             } else {
-                ReduceMax(tmpALocal, aLocal, tmpALocal, this->basicColLen, false);
+                ReduceMax(tmpALocal, aLocalDeQue, tmpALocal, this->basicColLen, false);
                 }
         }
-        inQueueA.FreeTensor(aLocal);
+        inQueueA.FreeTensor(aLocalDeQue);
         if(cidx == 0){
             maxperrow = tmpALocal.GetValue(0);
         }else {
@@ -132,36 +141,47 @@ private:
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
         // PipeBarrier<PIPE_ALL>();
+        // AscendC::TEventID eventIDSub = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_MTE2);
+        // AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(eventIDSub);
+        // AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(eventIDSub);
+        // AscendC::PipeBarrier<PIPE_V>();
+        event_t eventIdMTE2ToV1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
+        SetFlag<HardEvent::MTE2_V>(eventIdMTE2ToV1);
+        WaitFlag<HardEvent::MTE2_V>(eventIdMTE2ToV1);
+        inQueueA.template EnQue(aLocal);
+        LocalTensor<inType> aLocalDeQue = inQueueA.DeQue<inType>(); 
         if constexpr(isCast) {
-            AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
-            inQueueA.FreeTensor(aLocal);
+            AscendC::Cast(tmpCLocal, aLocalDeQue, AscendC::RoundMode::CAST_NONE, aLocalDeQue.GetSize());
+            inQueueA.FreeTensor(aLocalDeQue);
             Adds<float>(tmpCLocal, tmpCLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
             Exp<float>(tmpCLocal, tmpCLocal, this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_V>();
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
                 ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->lastcolLen);
             }else {
                 ReduceSum(tmpALocal, tmpCLocal, tmpALocal, this->basicColLen); 
             }
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
-            AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
+            AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocalDeQue.GetSize());
+            outQueueA.template EnQue(outLocal);
+            LocalTensor<outType> outLocal = outQueueA.DeQue<outType>(); 
             DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, splitCopyinParams);
-            // PipeBarrier<PIPE_ALL>();
             outQueueA.FreeTensor(outLocal);
         } else
         {
-            Adds<inType>(outLocal, aLocal, static_cast<float>(-1*maxperrow), this->basicColLen);
-            inQueueA.FreeTensor(aLocal);
+            Adds<inType>(outLocal, aLocalDeQue, static_cast<float>(-1*maxperrow), this->basicColLen);
+            inQueueA.FreeTensor(aLocalDeQue);
             Exp<inType>(outLocal, outLocal, this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, splitCopyinParams);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_V>();
+            outQueueA.template EnQue(outLocal);
+            LocalTensor<outType> outLocalDeQue = outQueueA.DeQue<outType>(); 
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocalDeQue, splitCopyinParams);
             if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-                ReduceSum(tmpALocal, outLocal, tmpALocal, this->lastcolLen);
+                ReduceSum(tmpALocal, outLocalDeQue, tmpALocal, this->lastcolLen);
             }else {
-                ReduceSum(tmpALocal, outLocal, tmpALocal, this->basicColLen); 
+                ReduceSum(tmpALocal, outLocalDeQue, tmpALocal, this->basicColLen); 
             }
-            outQueueA.FreeTensor(outLocal);
+            outQueueA.FreeTensor(outLocalDeQue);
             sumperrow = sumperrow + static_cast<float>(tmpALocal.GetValue(0));
         }
         // inQueueA.FreeTensor(aLocal);
@@ -175,26 +195,34 @@ private:
         padParams = {true, 0, 0, 0};
         DataCopyPad(aLocal, xGm[offsetParam.tmpVecGmOffset], splitCopyinParams, padParams);
         // PipeBarrier<PIPE_ALL>();
+        // AscendC::TEventID eventIDMul = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_MTE2);
+        // AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(eventIDMul);
+        // AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(eventIDMul);
+        // AscendC::PipeBarrier<PIPE_V>();
+        event_t eventIdMTE2ToV2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
+        SetFlag<HardEvent::MTE2_V>(eventIdMTE2ToV2);
+        WaitFlag<HardEvent::MTE2_V>(eventIdMTE2ToV2);
+        inQueueA.template EnQue(aLocal);
         if constexpr(isCast) {
             AscendC::Cast(tmpCLocal, aLocal, AscendC::RoundMode::CAST_NONE, aLocal.GetSize());
             inQueueA.FreeTensor(aLocal);
             Muls<float>(tmpCLocal, tmpCLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_V>();
             AscendC::Cast(outLocal, tmpCLocal, AscendC::RoundMode::CAST_RINT, aLocal.GetSize());
         } else 
         {
             Muls<inType>(outLocal, aLocal, static_cast<float>(1 / sumperrow), this->basicColLen);
-            // PipeBarrier<PIPE_ALL>();
+            PipeBarrier<PIPE_V>();
             inQueueA.FreeTensor(aLocal);
         }
+        outQueueA.template EnQue(outLocal);
+        LocalTensor<outType> outLocalDeQue = outQueueA.DeQue<outType>(); 
         if(cidx == this->colLoop - 1 && this->lastcolLen != 0){
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, {1,(uint16_t)(this->lastcolLen * sizeof(inType)),0,0});
-            // PipeBarrier<PIPE_ALL>();
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocalDeQue, {1,(uint16_t)(this->lastcolLen * sizeof(inType)),0,0});
         }else {
-            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocal, {1,(uint16_t)(this->basicColLen * sizeof(inType)),0,0});
-            // PipeBarrier<PIPE_ALL>();
+            DataCopyPad(xGm[offsetParam.tmpVecGmOffset], outLocalDeQue, {1,(uint16_t)(this->basicColLen * sizeof(inType)),0,0});
         }
-        outQueueA.FreeTensor(outLocal);
+        outQueueA.FreeTensor(outLocalDeQue);
     }
 
     __aicore__ inline void ComputeVecInGmOffset(uint32_t ridx,uint32_t cidx)
