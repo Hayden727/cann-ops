@@ -157,7 +157,7 @@ int main() {
   const short batch = 1;
   const short s1 = 2048;
   const short s2 = 2048;
-  const short headnum = 576;
+  const short headnum = 512;
 
   std::vector<int64_t> qShape = {batch, s1, headnum};
   std::vector<int64_t> kShape = {batch, s2, headnum};
