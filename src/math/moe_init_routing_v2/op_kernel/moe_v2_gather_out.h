@@ -96,17 +96,6 @@ __aicore__ inline void MoeV2GatherOut<T>::CopyInIndices(int64_t progress) {
   DataCopyPad(indicesLocal, expandedRowIdxGm[indicesOffset], dataCopyParams, dataCopyPadParams);
 
   expandDstToSrcRowCopyInQueue.EnQue<int32_t>(indicesLocal);
-}
-
-template <typename T>
-__aicore__ inline void MoeV2GatherOut<T>::Compute(int64_t progress) {
-  LocalTensor<int32_t> total_rowsLocal = inQueue_total_rows.DeQue<int32_t>();
-  this->start_row_ = 0;
-  if(this->device_id_ != 0){
-    this->start_row_ = total_rowsLocal.GetValue(this->start_expertId);
-  }
-  this->end_row_ = total_rowsLocal.GetValue(this->end_expertId);
-  inQueue_total_rows.FreeTensor(total_rowsLocal);
 
   if(progress == 0)
   {
@@ -114,6 +103,19 @@ __aicore__ inline void MoeV2GatherOut<T>::Compute(int64_t progress) {
       DataCopy(total_rowsLocal, expertTokensCountOrCumsumGm[0], align_cnt_total_rows);
       inQueue_total_rows.EnQue(total_rowsLocal);
   }
+}
+
+template <typename T>
+__aicore__ inline void MoeV2GatherOut<T>::Compute(int64_t progress) {
+  LocalTensor<int32_t> total_rowsLocal = inQueue_total_rows.DeQue<int32_t>();
+  this->start_row_ = 0;
+  if(this->device_id_ != 0)
+  {
+    this->start_row_ = total_rowsLocal.GetValue(this->start_expertId);
+  }
+  this->end_row_ = total_rowsLocal.GetValue(this->end_expertId);
+  inQueue_total_rows.FreeTensor(total_rowsLocal);
+
 }
 
 template <typename T>
@@ -147,7 +149,6 @@ __aicore__ inline void MoeV2GatherOut<T>::CopyOut(int64_t progress) {
           continue;
         }
 
-      outIndex = outIndex - this->start_row_;
       if(outIndex >= 0 && outIndex < this->end_row_ - this->start_row_){
         outOffset = outIndex * cols + colsLoop * this->perLoopCols;
         DataCopyPad(expandedXGm[ outOffset], inLocal, intriParams);
@@ -203,7 +204,7 @@ __aicore__ inline void MoeV2GatherOut<T>::Init(GM_ADDR inputX, GM_ADDR expandedR
   expandedXGm.SetGlobalBuffer((__gm__ T*)expandedX, tilingData->n * tilingData->k * this->cols);
 
   expertTokensCountOrCumsumGm.SetGlobalBuffer(( __gm__ int32_t*)expertTokensCountOrCumsum, this->expertNum);
-  pipe->InitBuffer(inQueue_total_rows,BUFFER_NUM, align_cnt_total_rows*sizeof(int32_t));
+  pipe->InitBuffer(inQueue_total_rows, 1, align_cnt_total_rows*sizeof(int32_t));
 
   expandedRowIdxGm.SetGlobalBuffer(
       (__gm__ int32_t*)expandedRowIdx + this->blockIdx * this->gatherOutTilingData->perCoreRows,
