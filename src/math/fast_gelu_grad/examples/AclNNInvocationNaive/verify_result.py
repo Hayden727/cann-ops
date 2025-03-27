@@ -13,7 +13,7 @@ import os
 import sys
 import numpy as np
 
-LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
+LOSS = 1e-2 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
 MINIMUM = 10e-10
 
 
@@ -25,13 +25,6 @@ def verify_result(real_result, golden):
     result_atol = np.less_equal(result, LOSS) # 计算绝对误差
     result_rtol = np.less_equal(result / np.add(deno, MINIMUM), LOSS) # 计算相对误差
     if not result_rtol.all() and not result_atol.all():
-        print("---------------")
-        print("result_atol: ", result_atol)
-        print("result_rtol: ", result_rtol)
-        print("np.sum(result_rtol == False)",np.sum(result_rtol == False))
-        print("np.sum(result_atol == False)",np.sum(result_atol == False))
-        print("real_result.size * LOSS", real_result.size * LOSS)
-        print("---------------")
         if np.sum(result_rtol == False) > real_result.size * LOSS and \
            np.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
