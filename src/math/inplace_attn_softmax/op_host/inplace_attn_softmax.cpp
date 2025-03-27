@@ -62,8 +62,8 @@ ge::graphStatus GetCompileInfo(gert::TilingContext *context, InplaceAttnSoftmaxC
 ge::graphStatus GetTillingData(gert::TilingContext *context, InplaceAttnSoftmaxCompileInfo &compileInfo,
     InplaceAttnSoftmaxTilingParam &tilingParam, InplaceAttnSoftmaxTilingData &tilingData)
 {
-    // 1. 获取相关信息
-    if (CheckOpParams(context, compileInfo) != ge::GRAPH_SUCCESS) {
+    // 1. 参数校验
+    if (CheckOpParams(context) != ge::GRAPH_SUCCESS) {
         return ge::GRAPH_FAILED;
     }
     auto xDtype = context->GetInputDesc(0)->GetDataType();
