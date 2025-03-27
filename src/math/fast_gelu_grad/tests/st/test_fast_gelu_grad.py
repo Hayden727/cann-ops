@@ -17,20 +17,19 @@ import numpy as np
 def fast_gelu_grad_test(dy, x):
     dy = tf.convert_to_tensor(dy)
     x = tf.convert_to_tensor(x)
-    attr = 1.702
-    attr_opp = 0 - attr
-    attr_half = tf.math.divide(attr, 2)
-
+    compute_dtype = x.dtype
+    const_value = 1.702
     abs_x = tf.math.abs(x)
-    mul_abs_x = tf.math.multiply(abs_x, attr_opp)
+    mul_abs_x = tf.math.multiply(abs_x, tf.math.negative(const_value))
     exp_x = tf.math.exp(mul_abs_x)
 
-    add_2 = tf.math.multiply(x, tf.math.multiply(exp_x, attr))
+    add_2 = tf.math.multiply(x, tf.math.multiply(exp_x, const_value))
     temp1 = tf.math.subtract(x, abs_x)
-    exp_pn_x = tf.math.exp(tf.math.multiply(temp1, attr))
+    exp_pn_x = tf.math.exp(tf.math.multiply(temp1, const_value))
 
     div_up = tf.math.add(exp_x, tf.math.add(add_2, exp_pn_x))
-    div_down = tf.math.square(tf.math.add(exp_x, 1))
+    const_one = tf.ones(x.shape, dtype=compute_dtype)
+    div_down = tf.math.square(tf.math.add(exp_x, const_one))
 
     result_temp = tf.math.divide(div_up, div_down)
     res = tf.math.multiply(dy, result_temp)
