@@ -73,32 +73,18 @@ endfunction()
 function(op_add_subdirectory OP_LIST OP_DIR_LIST)
     set(_OP_LIST)
     set(_OP_DIR_LIST)
-    # 定义待扫描的目录列表
+
     set(SCAN_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/math
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/foreach
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/image
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/rnn
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/quant
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/objdetect
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/pooling
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/activation
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/matmul
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/conv
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/random
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/loss
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/index
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/optim
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/norm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pooling/
     )
+
     # 遍历每个待扫描的目录
     foreach(scan_dir ${SCAN_DIRS})
         file(GLOB CHILD_DIRS_LIST RELATIVE ${scan_dir} "${scan_dir}/*")
-
+        
         # 遍历子目录
         foreach(child_dir ${CHILD_DIRS_LIST})
-            set(child_full_path "${scan_dir}/${child_dir}")
+        set(child_full_path "${scan_dir}/${child_dir}")
             if(IS_DIRECTORY ${child_full_path})
                 if (EXISTS ${child_full_path}/op_host)
                     # 检查 ASCEND_OP_NAME 条件
@@ -122,7 +108,6 @@ function(op_add_subdirectory OP_LIST OP_DIR_LIST)
     list(REMOVE_DUPLICATES _OP_DIR_LIST)
     list(SORT _OP_LIST)
     list(SORT _OP_DIR_LIST)
-
     # 返回结果
     set(${OP_LIST} ${_OP_LIST} PARENT_SCOPE)
     set(${OP_DIR_LIST} ${_OP_DIR_LIST} PARENT_SCOPE)
