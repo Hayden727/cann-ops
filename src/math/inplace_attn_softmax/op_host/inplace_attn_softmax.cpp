@@ -63,6 +63,9 @@ ge::graphStatus GetTillingData(gert::TilingContext *context, InplaceAttnSoftmaxC
     InplaceAttnSoftmaxTilingParam &tilingParam, InplaceAttnSoftmaxTilingData &tilingData)
 {
     // 1. 获取相关信息
+    if (CheckOpParams(context, compileInfo) != ge::GRAPH_SUCCESS) {
+        return ge::GRAPH_FAILED;
+    }
     auto xDtype = context->GetInputDesc(0)->GetDataType();
     // 2. 计算rowlen和collen
     auto inputShape = context->GetInputTensor(INPUT_X_INDEX)->GetStorageShape();
