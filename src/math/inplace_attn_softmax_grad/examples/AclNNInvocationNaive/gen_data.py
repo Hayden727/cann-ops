@@ -14,7 +14,7 @@ import torch
 
 
 def gen_golden_data_simple():
-    # torch.manual_seed(11)
+    torch.manual_seed(11)
     softmax_output = torch.randn(512, 256)
     grad_output = torch.randn(512, 128)
     values = torch.randn(256, 128)
