@@ -23,6 +23,8 @@ constexpr uint32_t OUTPUT_X_INDEX = 0;
 constexpr uint32_t ONE = 1;
 constexpr uint32_t COMPARE_INT = 255;
 constexpr uint32_t TEN = 10;
+constexpr uint32_t MINDIM = 2;
+constexpr uint32_t MAXDIM = 8;
 
 template <typename T>
 auto AlignUp(T num, T div) -> T
@@ -64,7 +66,7 @@ ge::graphStatus CheckOpInputShape(gert::TilingContext *context)
 {
     auto xShape = context->GetInputShape(INPUT_X_INDEX);
     size_t xDimNum = xShape->GetStorageShape().GetDimNum();
-    if (xDimNum < 2 || xDimNum > 8) {
+    if (xDimNum < MINDIM || xDimNum > MAXDIM) {
         printf("x dimension should be in [2, 8] !\n");
         return ge::GRAPH_FAILED;
     }
