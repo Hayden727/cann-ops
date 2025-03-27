@@ -60,30 +60,26 @@ ge::graphStatus CheckInputDtype(gert::TilingContext *context)
 }
 
 
-ge::graphStatus CheckOpInputShape(gert::TilingContext *context, InplaceAttnSoftmaxCompileInfo &compileInfo)
+ge::graphStatus CheckOpInputShape(gert::TilingContext *context)
 {
     auto xShape = context->GetInputShape(INPUT_X_INDEX);
     size_t xDimNum = xShape->GetStorageShape().GetDimNum();
-    if (xDimNum == 1) {
-        printf("x shape dimension is less than 2!\n");
+    if (xDimNum < 2 || xDimNum > 8) {
+        printf("x dimension should be in [2, 8] !\n");
         return ge::GRAPH_FAILED;
     }
     return ge::GRAPH_SUCCESS;
 }
 
-ge::graphStatus CheckOpShape(gert::TilingContext *context, InplaceAttnSoftmaxCompileInfo &compileInfo)
-{
-    if (CheckOpInputShape(context, compileInfo) != ge::GRAPH_SUCCESS) {
-        printf("input shape check failed!\n");
-        return ge::GRAPH_FAILED;
-    }
-    return ge::GRAPH_SUCCESS;
-}
 
-ge::graphStatus CheckOpParams(gert::TilingContext *context, InplaceAttnSoftmaxCompileInfo &compileInfo)
+ge::graphStatus CheckOpParams(gert::TilingContext *context)
 {
     if (CheckInputDtype(context) != ge::GRAPH_SUCCESS) {
         printf("x dtype is invalid!\n");
+        return ge::GRAPH_FAILED;
+    }
+    if (CheckOpInputShape(context) != ge::GRAPH_SUCCESS) {
+        printf("x shape dimension is invalid!\n");
         return ge::GRAPH_FAILED;
     }
     return ge::GRAPH_SUCCESS;
