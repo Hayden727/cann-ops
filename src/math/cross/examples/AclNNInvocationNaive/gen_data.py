@@ -19,7 +19,7 @@ def gen_golden_data_simple():
     x1 = torch.from_numpy(x1_tensor)
     x2 = torch.from_numpy(x2_tensor)
     dim = 1
-    res_tensor = torch.cross(x1,x2)# , dim=dim)
+    res_tensor = torch.cross(x1, x2)
     golden = res_tensor.numpy().astype(np.int8)
 
     os.system("mkdir -p input")

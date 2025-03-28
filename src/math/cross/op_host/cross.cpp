@@ -52,7 +52,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
 }
 }
 
-
 namespace ge {
 static ge::graphStatus InferShape(gert::InferShapeContext* context)
 {
@@ -91,8 +90,7 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b")
-                        .AddConfig("ascend910b");
-
+                      .AddConfig("ascend910b");
     }
 };
 
