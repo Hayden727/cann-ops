@@ -182,13 +182,13 @@ int main(int argc, char **argv)
     ReadFile("../input/input_x2.bin", fileSize, *input2, inputX2ShapeSize*dataType);
     INFO_LOG("Set input success");
     // create inputX1 aclTensor
-    ret = CreateAclTensor(inputX1HostData, inputX1Shape, &inputX1DeviceAddr, aclDataType::ACL_INT8, &inputX1);
+    ret = CreateAclTensor(inputX1HostData, inputX1Shape, &inputX1DeviceAddr, aclDataType::ACL_FLOAT16, &inputX1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // create inputX2 aclTensor
-    ret = CreateAclTensor(inputX2HostData, inputX2Shape, &inputX2DeviceAddr, aclDataType::ACL_INT8, &inputX2);
+    ret = CreateAclTensor(inputX2HostData, inputX2Shape, &inputX2DeviceAddr, aclDataType::ACL_FLOAT16, &inputX2);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // create outputY aclTensor
-    ret = CreateAclTensor(outputYHostData, outputYShape, &outputYDeviceAddr, aclDataType::ACL_INT8, &outputY);
+    ret = CreateAclTensor(outputYHostData, outputYShape, &outputYDeviceAddr, aclDataType::ACL_FLOAT16, &outputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
     // 3. 调用CANN自定义算子库API
