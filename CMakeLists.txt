@@ -479,12 +479,12 @@ foreach (op_dir ${OP_DIR_LIST})
     get_filename_component(_op_name "${op_dir}" NAME)
 
     file(GLOB KERNEL_FILES
-            ${op_dir}/*.cpp
-            ${op_dir}/*.h
+            ${op_dir}/op_kernel/*.cpp
+            ${op_dir}/op_kernel/*.h
     )
 
     install(FILES ${KERNEL_FILES}
-            DESTINATION ${IMPL_INSTALL_DIR}/ascendc/${_op_name}
+            DESTINATION ${IMPL_DYNAMIC_INSTALL_DIR}
             OPTIONAL
     )
 endforeach ()
