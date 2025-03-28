@@ -26,11 +26,8 @@
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas 训练系列产品
-- Atlas 推理系列产品
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
-- Atlas 200I/500 A2推理产品
 
 ### 目录结构介绍
 ```
@@ -69,21 +66,6 @@
     <th>目录</th><th>描述</th>
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Moe_init_routing_v2算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOfflineModel"> AclOfflineModel</td><td>通过aclopExecuteV2调用的方式调用Moe_init_routing_v2算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用Moe_init_routing_v2算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用Moe_init_routing_v2算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用Moe_init_routing_v2算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用Moe_init_routing_v2算子。</td>
     </tr>
 </table>
 
