@@ -63,26 +63,26 @@ install(FILES op_host/aclnn_max_pool3d_with_argmax.h
 install(FILES op_kernel/max_pool3d_with_argmax_v2.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_big_kernel.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_big_kernel.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
         
-install(FILES op_kernel/max_pool3d_with_argmax_v2_base.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_base.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_v2_huge_kernel.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_huge_kernel.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_v2_no_expand_indices.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_no_expand_indices.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_v2_nosplit.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_nosplit.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_v2_splitd.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_splitd.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_v2_splith.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_splith.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/max_pool3d_with_argmax_v2_splitw.cpp
+install(FILES op_kernel/max_pool3d_with_argmax_v2_splitw.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
