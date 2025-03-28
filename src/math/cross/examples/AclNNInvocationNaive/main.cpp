@@ -194,7 +194,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnCrossGetWorkspaceSize(inputX1, inputX2, -65530, outputY, &workspaceSize, &executor);
+    ret = aclnnCrossGetWorkspaceSize(inputX1, inputX2, 0, outputY, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnCrossGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
