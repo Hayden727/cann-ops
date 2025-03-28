@@ -183,7 +183,7 @@ int main() {
 
     // 读取数据
     ReadFile("../input/self.bin", fileSize, *input1, selfShapeSize * dataType);
-    INFO_LOG("Set input success!")
+    INFO_LOG("Set input success!");
 
     // 创建self aclTensor
     ret = CreateAclTensor(selfHostData, selfShape, &selfDeviceAddr, aclDataType::ACL_FLOAT, &self);
@@ -241,9 +241,9 @@ int main() {
     void ** output2 = (void **)(&indicesResultData);
 
     WriteFile("../output/out.bin", *output1, outShapeSize * dataType);
-    INFO_LOG("Write out success!")
+    INFO_LOG("Write out success!");
     WriteFile("../output/indices.bin", *output2, indicesShapeSize * sizeof(int32_t));
-    INFO_LOG("Write indices success!")
+    INFO_LOG("Write indices success!");
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(self);
