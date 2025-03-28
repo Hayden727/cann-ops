@@ -73,31 +73,57 @@ endfunction()
 function(op_add_subdirectory OP_LIST OP_DIR_LIST)
     set(_OP_LIST)
     set(_OP_DIR_LIST)
-    set(OP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/math)
-    file(GLOB CHILD_DIRS_LIST RELATIVE ${OP_SOURCE_DIR} "${OP_SOURCE_DIR}/*")
+    # 定义待扫描的目录列表
+    set(SCAN_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/math
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/foreach
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/image
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/rnn
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/quant
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/objdetect
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/pooling
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/activation
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/matmul
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/conv
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/random
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/loss
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/optim
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/norm
+    )
+    # 遍历每个待扫描的目录
+    foreach(scan_dir ${SCAN_DIRS})
+        file(GLOB CHILD_DIRS_LIST RELATIVE ${scan_dir} "${scan_dir}/*")
 
-    foreach(child_dir ${CHILD_DIRS_LIST})
-        set(child_full_path "${OP_SOURCE_DIR}/${child_dir}")
-        if(IS_DIRECTORY ${child_full_path})
-            if ( EXISTS ${child_full_path}/op_host) 
-                if (DEFINED ASCEND_OP_NAME AND NOT "${ASCEND_OP_NAME}" STREQUAL "")
-                    if (NOT "${ASCEND_OP_NAME}" STREQUAL "all" AND NOT "${ASCEND_OP_NAME}" STREQUAL "ALL")
-                        if (NOT ${child_dir} IN_LIST ASCEND_OP_NAME)
-                            continue()
+        # 遍历子目录
+        foreach(child_dir ${CHILD_DIRS_LIST})
+            set(child_full_path "${scan_dir}/${child_dir}")
+            if(IS_DIRECTORY ${child_full_path})
+                if (EXISTS ${child_full_path}/op_host)
+                    # 检查 ASCEND_OP_NAME 条件
+                    if (DEFINED ASCEND_OP_NAME AND NOT "${ASCEND_OP_NAME}" STREQUAL "")
+                        if (NOT "${ASCEND_OP_NAME}" STREQUAL "all" AND NOT "${ASCEND_OP_NAME}" STREQUAL "ALL")
+                            if (NOT ${child_dir} IN_LIST ASCEND_OP_NAME)
+                                continue()
+                            endif ()
                         endif ()
                     endif ()
-                endif ()
-
-                list(APPEND _OP_LIST ${child_dir})
-                list(APPEND _OP_DIR_LIST ${child_full_path})
+                    # 添加到结果列表
+                    list(APPEND _OP_LIST ${child_dir})
+                    list(APPEND _OP_DIR_LIST ${child_full_path})
+                endif()
             endif()
-        endif()
+        endforeach()
     endforeach()
 
+    # 去重和排序
     list(REMOVE_DUPLICATES _OP_LIST)
     list(REMOVE_DUPLICATES _OP_DIR_LIST)
     list(SORT _OP_LIST)
     list(SORT _OP_DIR_LIST)
+
+    # 返回结果
     set(${OP_LIST} ${_OP_LIST} PARENT_SCOPE)
     set(${OP_DIR_LIST} ${_OP_DIR_LIST} PARENT_SCOPE)
 endfunction()
