@@ -62,7 +62,6 @@ static ge::graphStatus InferShape(gert::InferShapeContext* context)
 }
 }
 
-
 namespace ops {
 class Cross : public OpDef {
 public:
