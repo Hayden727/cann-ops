@@ -157,23 +157,23 @@ int main(int argc, char **argv)
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     
-    std::vector<int64_t> inputX1Shape = {1024, 4, 3};
-    std::vector<int64_t> inputX2Shape = {1, 4, 3};
-    std::vector<int64_t> outputYShape = {1024, 4, 3};
+    std::vector<int64_t> inputX1Shape = {4, 3};
+    std::vector<int64_t> inputX2Shape = {4, 3};
+    std::vector<int64_t> outputYShape = {4, 3};
     void *inputX1DeviceAddr = nullptr;
     void *inputX2DeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     aclTensor *inputX1 = nullptr;
     aclTensor *inputX2 = nullptr;
     aclTensor *outputY = nullptr;
-    size_t inputX1ShapeSize=inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2];
-    size_t inputX2ShapeSize=inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2];
-    size_t outputYShapeSize=outputYShape[0] * outputYShape[1] * outputYShape[2];
+    size_t inputX1ShapeSize=inputX1Shape[0] * inputX1Shape[1];
+    size_t inputX2ShapeSize=inputX2Shape[0] * inputX2Shape[1];
+    size_t outputYShapeSize=outputYShape[0] * outputYShape[1];
     size_t dataType=sizeof(float);
     int64_t dim = 1;
-    std::vector<float> inputX1HostData(inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2]);
-    std::vector<float> inputX2HostData(inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2]);
-    std::vector<float> outputYHostData(outputYShape[0] * outputYShape[1] * outputYShape[2]);
+    std::vector<float> inputX1HostData(inputX1Shape[0] * inputX1Shape[1]);
+    std::vector<float> inputX2HostData(inputX2Shape[0] * inputX2Shape[1]);
+    std::vector<float> outputYHostData(outputYShape[0] * outputYShape[1]);
 
     size_t fileSize = 0;
     void** input1=(void**)(&inputX1HostData);
