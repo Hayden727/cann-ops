@@ -51,4 +51,4 @@ def verify_result(real_result_out, real_result_indices, golden_out, golden_indic
     return True
 
 if __name__ == '__main__':
-    verify_result(sys.argv[1],sys.argv[2],sys.argv[3],,sys.argv[4])
+    verify_result(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
