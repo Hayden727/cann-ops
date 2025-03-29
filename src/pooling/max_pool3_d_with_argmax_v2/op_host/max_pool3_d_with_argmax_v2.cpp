@@ -17,6 +17,14 @@
 
 using namespace AscendC;
 
+#define OP_LOGD(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__)
+
+int32_t CheckLogLevel(int32_t moduleId, int32_t logLevel) {
+    (void)moduleId;
+    (void)logLevel;
+    return 1;
+}
+
 namespace optiling {
 #define OP_LOGE(opname, ...)
 #define unlikely(x) __builtin_expect((x), 0)
