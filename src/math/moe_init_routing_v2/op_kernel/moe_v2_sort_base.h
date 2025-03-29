@@ -18,6 +18,7 @@
  * \file moe_v2_sort_base.h
  * \brief
  */
+ 
 #ifndef MOE_V2_SORT_BASE_H
 #define MOE_V2_SORT_BASE_H
 
