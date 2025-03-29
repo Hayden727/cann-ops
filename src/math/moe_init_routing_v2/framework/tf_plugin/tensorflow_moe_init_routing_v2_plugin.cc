@@ -13,8 +13,9 @@ rights reserved.
  */
 
 #include "register/register.h"
-
-namespace domi {
+ 
+namespace domi 
+{
 // register op info to GE
 REGISTER_CUSTOM_OP("MoeInitRoutingV2")
     .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
