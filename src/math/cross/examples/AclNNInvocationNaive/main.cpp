@@ -169,7 +169,7 @@ int main(int argc, char **argv)
     size_t inputX1ShapeSize=inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2] * inputX1Shape[3] * inputX1Shape[4] * inputX1Shape[5] * inputX1Shape[6];
     size_t inputX2ShapeSize=inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2] * inputX2Shape[3] * inputX2Shape[4] * inputX2Shape[5] * inputX2Shape[6];
     size_t outputYShapeSize=outputYShape[0] * outputYShape[1] * outputYShape[2] * outputYShape[3] * outputYShape[4] * outputYShape[5] * outputYShape[6];
-    size_t dataType=sizeof(int);
+    size_t dataType=sizeof(int8_t);
     std::vector<int8_t> inputX1HostData(inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2] * inputX1Shape[3] * inputX1Shape[4] * inputX1Shape[5] * inputX1Shape[6]);
     std::vector<int8_t> inputX2HostData(inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2] * inputX2Shape[3] * inputX2Shape[4] * inputX2Shape[5] * inputX2Shape[6]);
     std::vector<int8_t> outputYHostData(outputYShape[0] * outputYShape[1] * outputYShape[2] * outputYShape[3] * outputYShape[4] * outputYShape[5] * outputYShape[6]);
