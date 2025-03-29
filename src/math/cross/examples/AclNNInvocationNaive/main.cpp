@@ -157,22 +157,23 @@ int main(int argc, char **argv)
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     
-    std::vector<int64_t> inputX1Shape = {4, 3, 6, 5, 7, 8, 3};
-    std::vector<int64_t> inputX2Shape = {1, 3, 1, 1, 1, 1, 1};
-    std::vector<int64_t> outputYShape = {4, 3, 6, 5, 7, 8, 3};
+    std::vector<int64_t> inputX1Shape = {1024, 4, 3};
+    std::vector<int64_t> inputX2Shape = {1, 4, 3};
+    std::vector<int64_t> outputYShape = {1024, 4, 3};
     void *inputX1DeviceAddr = nullptr;
     void *inputX2DeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     aclTensor *inputX1 = nullptr;
     aclTensor *inputX2 = nullptr;
     aclTensor *outputY = nullptr;
-    size_t inputX1ShapeSize=inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2] * inputX1Shape[3] * inputX1Shape[4] * inputX1Shape[5] * inputX1Shape[6];
-    size_t inputX2ShapeSize=inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2] * inputX2Shape[3] * inputX2Shape[4] * inputX2Shape[5] * inputX2Shape[6];
-    size_t outputYShapeSize=outputYShape[0] * outputYShape[1] * outputYShape[2] * outputYShape[3] * outputYShape[4] * outputYShape[5] * outputYShape[6];
-    size_t dataType=sizeof(int8_t);
-    std::vector<int8_t> inputX1HostData(inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2] * inputX1Shape[3] * inputX1Shape[4] * inputX1Shape[5] * inputX1Shape[6]);
-    std::vector<int8_t> inputX2HostData(inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2] * inputX2Shape[3] * inputX2Shape[4] * inputX2Shape[5] * inputX2Shape[6]);
-    std::vector<int8_t> outputYHostData(outputYShape[0] * outputYShape[1] * outputYShape[2] * outputYShape[3] * outputYShape[4] * outputYShape[5] * outputYShape[6]);
+    size_t inputX1ShapeSize=inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2];
+    size_t inputX2ShapeSize=inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2];
+    size_t outputYShapeSize=outputYShape[0] * outputYShape[1] * outputYShape[2];
+    size_t dataType=sizeof(float);
+    int64_t dim = 1;
+    std::vector<float> inputX1HostData(inputX1Shape[0] * inputX1Shape[1] * inputX1Shape[2]);
+    std::vector<float> inputX2HostData(inputX2Shape[0] * inputX2Shape[1] * inputX2Shape[2]);
+    std::vector<float> outputYHostData(outputYShape[0] * outputYShape[1] * outputYShape[2]);
 
     size_t fileSize = 0;
     void** input1=(void**)(&inputX1HostData);
@@ -182,19 +183,19 @@ int main(int argc, char **argv)
     ReadFile("../input/input_x2.bin", fileSize, *input2, inputX2ShapeSize*dataType);
     INFO_LOG("Set input success");
     // create inputX1 aclTensor
-    ret = CreateAclTensor(inputX1HostData, inputX1Shape, &inputX1DeviceAddr, aclDataType::ACL_INT8, &inputX1);
+    ret = CreateAclTensor(inputX1HostData, inputX1Shape, &inputX1DeviceAddr, aclDataType::ACL_FLOAT, &inputX1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // create inputX2 aclTensor
-    ret = CreateAclTensor(inputX2HostData, inputX2Shape, &inputX2DeviceAddr, aclDataType::ACL_INT8, &inputX2);
+    ret = CreateAclTensor(inputX2HostData, inputX2Shape, &inputX2DeviceAddr, aclDataType::ACL_FLOAT, &inputX2);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // create outputy aclTensor
-    ret = CreateAclTensor(outputYHostData, outputYShape, & outputYDeviceAddr, aclDataType::ACL_INT8, &outputY);
+    ret = CreateAclTensor(outputYHostData, outputYShape, & outputYDeviceAddr, aclDataType::ACL_FLOAT, &outputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // 3. 调用CANN自定义算子库API
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnCrossGetWorkspaceSize(inputX1, inputX2, 0, outputY, &workspaceSize, &executor);
+    ret = aclnnCrossGetWorkspaceSize(inputX1, inputX2, dim, outputY, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnCrossGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
@@ -211,9 +212,9 @@ int main(int argc, char **argv)
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
     auto size = GetShapeSize(outputYShape);
-    std::vector<int8_t> resultData(size, 0);
+    std::vector<float> resultData(size, 0);
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputYDeviceAddr,
-                    size * sizeof(int8_t), ACL_MEMCPY_DEVICE_TO_HOST);
+                    size * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void** output1=(void**)(&resultData);
     //写出数据

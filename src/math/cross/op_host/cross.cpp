@@ -48,7 +48,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     return ge::GRAPH_SUCCESS;
-
 }
 }
 
