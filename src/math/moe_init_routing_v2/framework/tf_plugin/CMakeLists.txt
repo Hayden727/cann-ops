@@ -10,4 +10,4 @@ endif()
 target_link_libraries(cust_tf_parsers PRIVATE intf_pub graph)
 install(TARGETS cust_tf_parsers
         LIBRARY DESTINATION packages/vendors/${vendor_name}/framework/tensorflow
-)
+) 
