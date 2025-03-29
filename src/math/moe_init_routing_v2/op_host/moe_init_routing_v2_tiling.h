@@ -1,6 +1,6 @@
 #include "register/tilingdata_base.h"
 #include "./tiling_base.h"
-namespace optiling {
+namespace optiling { 
   BEGIN_TILING_DATA_DEF(MoeV2VBSComputeTilingData)
   TILING_DATA_FIELD_DEF(int64_t, needCoreNum);
   TILING_DATA_FIELD_DEF(int64_t, perCoreElements);
