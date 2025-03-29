@@ -18,6 +18,7 @@
  * \file moe_v2_sort_multi_core.h
  * \brief
  */
+ 
 #ifndef MOE_V2_VBS_ONE_CORE_H
 #define MOE_V2_VBS_ONE_CORE_H
 
