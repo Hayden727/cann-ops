@@ -21,7 +21,7 @@ def verify_result(real_result_out, real_result_indices, golden_out, golden_indic
     real_result_indices = np.fromfile(real_result_indices, dtype=np.int32) # 从bin文件读取实际运算结果
 
     golden_out = np.fromfile(golden_out, dtype=dtype) # 从bin文件读取预期运算结果
-    golden_indices = np.fromfile(golden_indices, dtype=np.int32) # 从bin文件读取预期运算结果
+    golden_indices = np.fromfile(golden_indices, dtype=np.int64) # 从bin文件读取预期运算结果
 
     result_out = np.abs(real_result_out - golden_out) # 计算运算结果和预期结果偏差
     result_indices = np.abs(real_result_indices - golden_indices) # 计算运算结果和预期结果偏差
