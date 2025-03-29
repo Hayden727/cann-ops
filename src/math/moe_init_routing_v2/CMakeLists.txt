@@ -5,6 +5,7 @@ add_ops_compile_options(
                 -Werror
 )
 
+
 target_sources(op_host_aclnn PRIVATE
 op_host/moe_init_routing_v2.cpp
 )
