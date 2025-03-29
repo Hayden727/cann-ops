@@ -40,14 +40,13 @@ def verify_result(real_result_out, real_result_indices, golden_out, golden_indic
            np.sum(result_out_atol == False) > real_result_out.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
             return False
-    print("test out pass")
 
     if not result_indices_rtol.all() and not result_indices_atol.all():
         if np.sum(result_indices_rtol == False) > real_result_indices.size * LOSS and \
            np.sum(result_indices_atol == False) > real_result_indices.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
             return False
-    print("test indices pass")
+    print("test pass")
     return True
 
 if __name__ == '__main__':
