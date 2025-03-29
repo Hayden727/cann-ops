@@ -10,7 +10,7 @@
 #include "moe_init_routing_v2_tiling.h"
 #include "register/op_def_registry.h"
 #include <cmath>
-
+ 
 using namespace std;
 namespace optiling {
 const static int64_t TILING_KEY_DROPLESS_SORT_ONE_CORE = 10001;
