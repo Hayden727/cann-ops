@@ -1,6 +1,6 @@
 ## `Moe_init_routing_v2`自定义算子样例说明 
 本样例通过`Ascend C`编程语言实现了`Moe_init_routing_v2`算子。
-
+ 
 ### 算子描述
 `Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX 和 expandRowId按EP规则进行切分。
  
