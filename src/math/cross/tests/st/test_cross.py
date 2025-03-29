@@ -14,7 +14,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def cross_test(x1, x2, dim):
+def cross_test(x1, x2):
     x1_dtype = x1.dtype
     if x1_dtype != np.int8:
         x1 = tf.cast(x1, tf.int8).numpy()
@@ -27,6 +27,6 @@ def cross_test(x1, x2, dim):
     return res.numpy()
 
 
-def calc_expect_func(x1, x2, dim, y):
+def calc_expect_func(x1, x2, y):
     res = cross_test(x1["value"], x2["value"])
     return [res]
