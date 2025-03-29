@@ -27,6 +27,7 @@
 using namespace std;
 
 namespace ops {
+
 #define OPS_CHECK_NULL_WITH_CONTEXT(context, ptr)                                                \
     if ((ptr) == nullptr) {                                                                        \
         std::printf("nullptr error!");                                                             \
@@ -51,6 +52,15 @@ inline const gert::Shape &EnsureNotScalar(const gert::Shape &in_shape) {
 }
 
 namespace optiling {
+
+#define OP_LOGD(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__)
+
+int32_t CheckLogLevel(int32_t moduleId, int32_t logLevel) {
+    (void)moduleId;
+    (void)logLevel;
+    return 1;
+}
+
 #define VECTOR_INNER_ERR_REPORT_TILIING(op_name, err_msg, ...) std::printf(err_msg, ##__VA_ARGS__)
 
 #define OP_TILING_CHECK(cond, log_func, expr) \
