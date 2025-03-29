@@ -15,15 +15,17 @@ import numpy as np
 
 
 def cross_test(x1, x2):
-    x1_dtype = x1.dtype
-    if x1_dtype != np.int8:
-        x1 = tf.cast(x1, tf.int8).numpy()
-    x2_dtype = x1.dtype
-    if x2_dtype != np.int8:
-        x2 = tf.cast(x2, tf.int8).numpy()    
-    res = tf.linalg.cross(x1, x2)
-    if x1_dtype != np.int8:
-        res = tf.cast(res, x1_dtype).numpy()
+    x1 = tf.convert_to_tensor(x1, name='x1')
+    x2 = tf.convert_to_tensor(x2, name='x2')
+
+    x11, x12, x13 = tf.split(x1, 3, axis=-1)
+    x21, x22, x23 = tf.split(x2, 3, axis=-1)
+
+    res =tf.concat([
+        (x12 * x23) - (x13 * x22),
+        (x13 * x21) - (x11 * x23),
+        (x11 * x22) - (x12 * x21)
+    ], axis=-1)
     return res.numpy()
 
 

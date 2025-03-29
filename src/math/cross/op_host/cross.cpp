@@ -19,11 +19,11 @@
 namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     CrossTilingData tiling;
-    uint32_t numshapes = context->GetInputShape(0)->GetStorageShape().GetDimNum();
+    int64_t numshapes = context->GetInputShape(0)->GetStorageShape().GetDimNum();
     tiling.set_numshapes(numshapes);
-    uint32_t shape[128];
+    int64_t shape[128];
     for (int k = 0; k < 2; ++k) {
-        uint32_t *ss = &shape[k * 64];
+        int64_t *ss = &shape[k * 64];
         const gert::StorageShape* shape = context->GetInputShape(k);
         for (int i = 0; i < shape->GetStorageShape().GetDimNum(); i++) {
             ss[i] = shape->GetStorageShape().GetDim(i);
@@ -48,6 +48,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     return ge::GRAPH_SUCCESS;
+
 }
 }
 
