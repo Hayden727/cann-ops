@@ -25,7 +25,8 @@ template <typename uIdxType, typename idxType, typename dataType>
 class KernelCoalesceSparse {
 public:
     __aicore__  inline KernelCoalesceSparse() = default;
-    __aicore__  inline void Init(GM_ADDR uniqueIndices, GM_ADDR indices, GM_ADDR values, GM_ADDR newIndices, GM_ADDR newValue, const CoalesceSparseTilingData* __restrict tilingData);
+    __aicore__  inline void Init(GM_ADDR uniqueIndices, GM_ADDR indices, GM_ADDR values, GM_ADDR newIndices,
+                                 GM_ADDR newValue, const CoalesceSparseTilingData* __restrict tilingData);
     __aicore__  inline void Process();
 
 private:
@@ -75,7 +76,9 @@ private:
 };
 
 template <typename uIdxType, typename idxType, typename dataType>
-__aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::Init(GM_ADDR uniqueIndices, GM_ADDR indices, GM_ADDR values, GM_ADDR newIndices, GM_ADDR newValue, const CoalesceSparseTilingData* __restrict tilingData) {
+__aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::Init(
+    GM_ADDR uniqueIndices, GM_ADDR indices, GM_ADDR values, GM_ADDR newIndices, GM_ADDR newValue,
+    const CoalesceSparseTilingData* __restrict tilingData) {
     InitTilingValue(tilingData);
     uint64_t coreId = GetBlockIdx();
     uint64_t beginOffset = coreId * taskNum;
@@ -173,25 +176,25 @@ __aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::Comput
     LocalTensor<uIdxType> uniqueIndicesLocal = uniqueIndicesQueue.DeQue<uIdxType>();
     LocalTensor<idxType> indicesLocal = indicesQueue.DeQue<idxType>();
      for(uint64_t i = 0; i < taskLen; i++) {
-        pipe_barrier(PIPE_ALL);
         int64_t uniqueIndicesId = uniqueIndicesLocal.GetValue(i);
         int64_t gmIndicesOffset = uniqueIndicesId * m;
         int64_t gmValueOffset = uniqueIndicesId * valueSize;
-        pipe_barrier(PIPE_ALL);
         DataCopyParams copyParams_indices{1, (uint16_t)(mByte), 0, 0};
         DataCopyPad(newIndicesGm[gmIndicesOffset], indicesLocal[i * indicesAlign32], copyParams_indices);
         for (int j = 0; j < moveValueTimes; j++) {
-            pipe_barrier(PIPE_ALL);
+            event_t eventIdMte3ToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_S));
+            SetFlag<HardEvent::MTE3_S>(eventIdMte3ToS);
+            WaitFlag<HardEvent::MTE3_S>(eventIdMte3ToS);
             uint64_t valueOffset = gmValueOffset + j * moveValueLen;
             uint64_t ubValueOffset = repeatTime * moveOneSize + i * valueSize + j * moveValueLen;
-            pipe_barrier(PIPE_ALL);
             valueMove(valueOffset, ubValueOffset, moveValueLen);
         }
         if (moveValueTail > 0) {
-            pipe_barrier(PIPE_ALL);
+            event_t eventIdMte3ToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_S));
+            SetFlag<HardEvent::MTE3_S>(eventIdMte3ToS);
+            WaitFlag<HardEvent::MTE3_S>(eventIdMte3ToS);
             uint64_t valueOffset = gmValueOffset + moveValueTimes * moveValueLen;
             uint64_t ubValueOffset = repeatTime * moveOneSize + i * valueSize + moveValueTimes * moveValueLen;
-            pipe_barrier(PIPE_ALL);
             valueMove(valueOffset, ubValueOffset, moveValueTail);
         }
     }
@@ -206,7 +209,9 @@ __aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::valueM
     DataCopyExtParams copyParams_value_ {(uint16_t)1, (uint32_t)(valueByte) , 0, 0, 0};
     DataCopyPadExtParams<dataType> values_padParams{true, 0, 0, 0};
     DataCopyPad(valueLocal, valueGm[ubValueOffset], copyParams_value_, values_padParams);
-    pipe_barrier(PIPE_ALL);
+    event_t eventIdMte2ToMte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_MTE3));
+    SetFlag<HardEvent::MTE2_MTE3>(eventIdMte2ToMte3);
+    WaitFlag<HardEvent::MTE2_MTE3>(eventIdMte2ToMte3);
     DataCopyParams copyParams_value{1, (uint16_t)(valueByte), 0, 0};
     SetAtomicAdd<dataType>();
     DataCopyPad(newValueGm[valueOffset], valueLocal, copyParams_value);
