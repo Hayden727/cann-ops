@@ -81,12 +81,12 @@
 
 - **参数说明：**
 
-  - grad（aclTensor*，计算输入）：待更新参数对应的梯度，对应公式中的``grad``，Device侧的aclTensor，数据类型支持BFLOAT16，FLOAT16，FLOAT32，[数据格式](common/数据格式.md)支持ND。
-  - varRef（aclTensor\*，计算输入/输出）：待更新参数，对应公式中的``var``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，[数据格式](common/数据格式.md)支持ND。
-  - mRef（aclTensor\*，计算输入/输出）：待更新参数对应的一阶动量，对应公式中的``m``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，[数据格式](common/数据格式.md)支持ND。
-  - vRef（aclTensor\*，计算输入/输出）：待更新参数对应的二阶动量，对应公式中的``v``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，[数据格式](common/数据格式.md)支持ND。
-  - sRef（aclTensor\*，计算输入/输出）：待更新参数对应的EMA权重，对应公式中的``s``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，[数据格式](common/数据格式.md)支持ND。
-  - step（aclTensor*，计算输入）：优化器当前的更新次数，对应公式中的``step``，Device侧的aclTensor, 数据类型支持INT64，[数据格式](common/数据格式.md)支持ND。
+  - grad（aclTensor*，计算输入）：待更新参数对应的梯度，对应公式中的``grad``，Device侧的aclTensor，数据类型支持BFLOAT16，FLOAT16，FLOAT32，数据格式支持ND。
+  - varRef（aclTensor\*，计算输入/输出）：待更新参数，对应公式中的``var``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，数据格式支持ND。
+  - mRef（aclTensor\*，计算输入/输出）：待更新参数对应的一阶动量，对应公式中的``m``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，数据格式支持ND。
+  - vRef（aclTensor\*，计算输入/输出）：待更新参数对应的二阶动量，对应公式中的``v``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，数据格式支持ND。
+  - sRef（aclTensor\*，计算输入/输出）：待更新参数对应的EMA权重，对应公式中的``s``，Device侧的aclTensor, 数据类型支持BFLOAT16，FLOAT16，FLOAT32，shape和数据类型需要和grad保持一致，数据格式支持ND。
+  - step（aclTensor*，计算输入）：优化器当前的更新次数，对应公式中的``step``，Device侧的aclTensor, 数据类型支持INT64，数据格式支持ND。
   - lr（double，计算输入）：学习率，对应公式中的``lr``。
   - emaDecay（double，计算输入）：指数移动平均（EMA）的衰减速率，对应公式中的``emaDecay``。
   - beta1（double，计算输入）：计算一阶动量的系数，对应公式中的$\beta_1$。

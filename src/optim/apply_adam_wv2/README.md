@@ -1,57 +1,23 @@
-## `ApplyFusedEmaAdam`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`ApplyFusedEmaAdam`算子。
+## `ApplyAdamWV2`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`ApplyAdamWV2`算子。
 
 ### 算子描述
-- **算子功能**：实现FusedEmaAdam融合优化器功能。
-- **计算公式**：
+- **算子功能：** 实现adamW优化器功能，计算公式如下：
 
   $$
-  (correction_{\beta_1},correction_{\beta_2},)=\begin{cases}
-  (1,1),&biasCorrection=False\\
-  (1-\beta_1^{step},1-\beta_2^{step}),&biasCorrection=True
-  \end{cases}
+  m_{t}=\beta_{1} m_{t-1}+\left(1-\beta_{1}\right) g_{t} \\
   $$
-  
   $$
-  grad=\begin{cases}
-  grad+weightDecay*var,&mode=0\\
-  grad,&mode=1
-  \end{cases}
+  v_{t}=\beta_{2} v_{t-1}+\left(1-\beta_{2}\right) g_{t}^{2}
   $$
-  
   $$
-  m_{out}=\beta_1*m+(1-\beta_1)*grad
+  \hat{m}_{t}=\frac{m_{t}}{1-\beta_{1}^{t}} \\
   $$
-
   $$
-  v_{out}=\beta_2*v+(1-\beta_2)*grad^2
+  \hat{v}_{t}=\frac{v_{t}}{1-\beta_{2}^{t}} \\
   $$
-
   $$
-  m_{next}=m_{out}/correction_{\beta_1}
-  $$
-
-  $$
-  v_{next}=v_{out}/correction_{\beta_2}
-  $$
-
-  $$
-  denom=\sqrt{v_{next}}+eps
-  $$
-
-  $$
-  update=\begin{cases}
-  m_{next}/denom,&mode=0\\
-  m_{next}/denom+weightDecay*var,&mode=1
-  \end{cases}
-  $$
-
-  $$
-  var_{out}=var-lr*update
-  $$
-
-  $$
-  s_{out}=emaDecay*s+(1-emaDecay)*var_{out}
+  \theta_{t+1}=\theta_{t}-\frac{\eta}{\sqrt{\hat{v}_{t}}+\epsilon} \hat{m}_{t}-\eta \cdot \lambda \cdot \theta_{t-1}
   $$
 
 ### 算子规格描述
@@ -60,36 +26,35 @@
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ApplyAdamWV2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入/输出</td> 
-<tr><td align="center">grad</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
-<tr><td rowspan="2" align="center">算子输入/输出</td> 
 <tr><td align="center">varRef</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
 <tr><td rowspan="2" align="center">算子输入/输出</td>
 <tr><td align="center">mRef</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
 <tr><td rowspan="2" align="center">算子输入/输出</td>
 <tr><td align="center">vRef</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
 <tr><td rowspan="2" align="center">算子输入/输出</td>
-<tr><td align="center">sRef</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
+<tr><td align="center">maxGradNormOptionalRef</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
+
 <tr><td rowspan="2" align="center">算子输入</td>
-<tr><td align="center">step</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
+<tr><td align="center">grad</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
+<tr><td rowspan="2" align="center">算子输入</td>
+<tr><td align="center">step</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">lr</td><td align="center">scalar</td><td align="center">double</td><td align="center">-</td></tr>  
+<td align="center">lr</td><td align="center">scalar</td><td align="center">float</td><td align="center">-</td></tr>  
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">emaDecay</td><td align="center">scalar</td><td align="center">double</td><td align="center">-</td></tr>
+<td align="center">beta1</td><td align="center">scalar</td><td align="center">float</td><td align="center">-</td></tr>
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">beta1</td><td align="center">scalar</td><td align="center">double</td><td align="center">-</td></tr>
+<td align="center">beta2</td><td align="center">scalar</td><td align="center">float</td><td align="center">-</td></tr>  
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">beta2</td><td align="center">scalar</td><td align="center">double</td><td align="center">-</td></tr>  
+<td align="center">weightDecay</td><td align="center">scalar</td><td align="center">float</td><td align="center">-</td></tr>  
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">eps</td><td align="center">scalar</td><td align="center">double</td><td align="center">-</td></tr>  
+<td align="center">eps</td><td align="center">scalar</td><td align="center">float</td><td align="center">-</td></tr>  
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">mode</td><td align="center">scalar</td><td align="center">int64</td><td align="center">-</td></tr>  
+<td align="center">amsgrad</td><td align="center">scalar</td><td align="center">bool</td><td align="center">-</td></tr>  
 <tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">biasCorrection</td><td align="center">scalar</td><td align="center">bool</td><td align="center">-</td></tr>  
-<tr><td rowspan="1" align="center">算子属性</td>
-<td align="center">weightDecay</td><td align="center">scalar</td><td align="center">double</td><td align="center">-</td></tr>
+<td align="center">maximize</td><td align="center">scalar</td><td align="center">bool</td><td align="center">-</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">apply_fused_ema_adam</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">apply_adam_w_v2</td></tr>  
 </table>
 
 
@@ -136,7 +101,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用ApplyFusedEmaAdam算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用ApplyAdamWV2算子。</td>
     </tr>
 </table>
 
