@@ -8,7 +8,7 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-   
+         
 import os
 import torch
 import numpy as np
@@ -20,7 +20,7 @@ def gen_golden_data_simple():
 
     x = np.random.uniform(-1, 1, input_shape).astype(dtype)
     y = np.random.uniform(-1, 1, input_shape).astype(dtype)
-
+ 
     golden = np.add(x, y)
 
     os.system("mkdir -p input")

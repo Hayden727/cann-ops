@@ -18,7 +18,7 @@
  * \file moe_v2_sort_one_core.h
  * \brief
  */
- 
+   
 #ifndef MOE_V2_SORT_ONE_CORE_H
 #define MOE_V2_SORT_ONE_CORE_H
 

@@ -7,7 +7,7 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
- 
+   
 #include "kernel_operator.h"
 #include "moe_v2_gather_out.h"
 #include "moe_v2_mrgsort_out.h"

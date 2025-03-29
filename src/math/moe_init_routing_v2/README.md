@@ -17,7 +17,7 @@
 <tr><td align="center">end_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
 
 <tr><td align="center">device_id</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
-
+   
 <tr><td rowspan="2" align="center">算子输出变更</td>
 <td align="center">localexpandedXOut</td><td align="center">NUM_ROWS * K, H</td><td align="center">float 16</td><td align="center">ND</td></tr> 
 <td align="center">localexpandedRowIdxOut</td><td align="center">NUM_ROWS * K, </td><td align="center">int32</td><td align="center">ND</td></tr>
