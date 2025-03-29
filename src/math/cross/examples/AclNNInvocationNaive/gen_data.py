@@ -14,8 +14,8 @@ import torch
 import numpy as np
 
 def gen_golden_data_simple():
-    x1_tensor = np.random.uniform(-1e9, 1e9, [4, 3]).astype(np.int8)
-    x2_tensor = np.random.uniform(-1e9, 1e9, [4, 3]).astype(np.int8)
+    x1_tensor = np.random.uniform(-10, 10, [4, 3]).astype(np.int8)
+    x2_tensor = np.random.uniform(-10, 10, [4, 3]).astype(np.int8)
     x1 = torch.from_numpy(x1_tensor)
     x2 = torch.from_numpy(x2_tensor)
     dim = 1
