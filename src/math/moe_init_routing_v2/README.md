@@ -5,7 +5,7 @@
 `Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX 和 expandRowId按EP规则进行切分。
 
 ### 约束与限制
- 仅支持dropPadMode=0，expertTokensCountOrCumsumFlag场景下EP规则切分。
+ 仅支持dropPadMode=0，expertTokensCountOrCumsumFlag场景下EP规则切分。 
 ### 算子规格描述
 
 <table>
