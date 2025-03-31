@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_inpalcesoftmax_op
+    ./execute_inplacesoftmax_op
 )
 
 ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
