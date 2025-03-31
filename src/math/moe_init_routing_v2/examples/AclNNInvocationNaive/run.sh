@@ -7,7 +7,7 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-
+         
 if [ -n "$ASCEND_INSTALL_PATH" ]; then
     _ASCEND_INSTALL_PATH=$ASCEND_INSTALL_PATH
 elif [ -n "$ASCEND_HOME_PATH" ]; then
@@ -26,7 +26,7 @@ export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
 rm -rf $HOME/ascend/log/*
 rm ./input/*.bin
 rm ./output/*.bin
-
+ 
 # python3 gen_data.py
 
 # if [ $? -ne 0 ]; then

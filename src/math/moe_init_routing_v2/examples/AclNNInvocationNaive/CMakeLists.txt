@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1)
 
 # project information
 project(acl_execute_add)
-
+ 
 # Compile options
 add_compile_options(-std=c++11)
 
@@ -50,7 +50,7 @@ link_directories(
 add_executable(execute_op
     main.cpp
 )
-
+ 
 target_link_libraries(execute_op
     ascendcl
     cust_opapi
@@ -61,4 +61,3 @@ target_link_libraries(execute_op
 )
 
 install(TARGETS execute_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-

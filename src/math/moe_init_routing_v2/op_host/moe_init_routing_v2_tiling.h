@@ -1,7 +1,6 @@
-
 #include "register/tilingdata_base.h"
 #include "./tiling_base.h"
-namespace optiling {
+namespace optiling { 
   BEGIN_TILING_DATA_DEF(MoeV2VBSComputeTilingData)
   TILING_DATA_FIELD_DEF(int64_t, needCoreNum);
   TILING_DATA_FIELD_DEF(int64_t, perCoreElements);
@@ -15,7 +14,7 @@ namespace optiling {
   TILING_DATA_FIELD_DEF(int64_t, oneLoopMaxElements);
   END_TILING_DATA_DEF;
   REGISTER_TILING_DATA_CLASS(MoeV2VBSComputeTilingDataOp, MoeV2VBSComputeTilingData)
-
+   
   BEGIN_TILING_DATA_DEF(MoeV2VMSMiddleComputeTilingData)
   TILING_DATA_FIELD_DEF(int64_t, needCoreNum);
   END_TILING_DATA_DEF;

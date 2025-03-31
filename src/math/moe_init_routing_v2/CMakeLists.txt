@@ -20,6 +20,6 @@ target_include_directories(optiling PRIVATE
 target_sources(opsproto PRIVATE
          op_host/moe_init_routing_v2.cpp
 )
-
+  
 install(FILES op_kernel/moe_init_routing_v2.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
