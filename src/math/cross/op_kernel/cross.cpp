@@ -38,9 +38,10 @@ public:
         Gm_x1.SetGlobalBuffer((__gm__ T*)x1, totalSize[0]);
         Gm_x2.SetGlobalBuffer((__gm__ T*)x2, totalSize[1]);
         Gm_y.SetGlobalBuffer((__gm__ T*)y, maxtotalSize);
-        this->shape = new int64_t[128];
+        int64_t shapeCopy[128]
+        std::copy(std::begin(this->shape), std::end(this->shape), std::begin(shapeCopy));
         for (int i = 0; i < 128; ++i) {
-            this->shape[i] = ss[i];
+            shapeCopy[i] = ss[i];
         }
         this->numshapes = numshapes;
         this->dim = dim;
