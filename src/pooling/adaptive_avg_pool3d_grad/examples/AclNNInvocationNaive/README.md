@@ -1,6 +1,6 @@
 ## 概述
 
-通过aclnn调用的方式调用AvgPool3dGrad算子。
+通过aclnn调用的方式调用AdaptiveAvgPool3dGrad算子。
 
 ## 目录结构介绍
 
@@ -21,13 +21,11 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnAvgPool3dBackwardGetWorkspaceSize(const aclTensor* gradOuput, const aclTensor* self,
-                                                             const aclIntArray* kernelSize, const aclIntArray* stride,
-                                                             const aclIntArray* padding, bool ceilMode, bool countIncludePad,
-                                                             int64_t divisorOverride, aclTensor* output,
-                                                             uint64_t* workspaceSize, aclOpExecutor** executor);
+aclnnStatus aclnnAdaptiveAvgPool3dBackwardGetWorkspaceSize(const aclTensor* gradOutput, const aclTensor* self,
+                                                                     aclTensor* out, uint64_t* workspaceSize,
+                                                                     aclOpExecutor** executor);
 // 执行算子
-aclnnStatus aclnnAvgPool3dBackward(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, const aclrtStream stream);
+aclnnStatus aclnnAdaptiveAvgPool3dBackward(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream);
 ```
 
 其中aclnnAvgPool3dBackwardGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnAvgPool3dBackward执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
@@ -38,7 +36,7 @@ aclnnStatus aclnnAvgPool3dBackward(void* workspace, uint64_t workspaceSize, aclO
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/pooling/avg_pool3_d_grad/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/pooling/adaptive_avg_pool3d_grad/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
@@ -57,7 +55,7 @@ aclnnStatus aclnnAvgPool3dBackward(void* workspace, uint64_t workspaceSize, aclO
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_avgpool3dgrad_op
+    ./execute_adaptive_avgpool3dgrad_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。
@@ -70,4 +68,4 @@ aclnnStatus aclnnAvgPool3dBackward(void* workspace, uint64_t workspaceSize, aclO
 
 | 时间       | 更新事项     |
 | ---------- | ------------ |
-| 2025/03/29 | 新增本readme |
+| 2025/03/31 | 新增本readme |

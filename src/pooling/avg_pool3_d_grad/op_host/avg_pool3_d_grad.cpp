@@ -9,7 +9,7 @@
  */
 
 /*!
- * \file avg_pool_3d_grad_tiling.cc
+ * \file avg_pool_3d_grad.cpp
  * \brief
  */
 
