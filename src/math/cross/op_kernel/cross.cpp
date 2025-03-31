@@ -34,7 +34,7 @@ public:
         }
         return index;
     }
-    __aicore__ inline void Init(GM_ADDR x1, GM_ADDR x2, GM_ADDR y, int64_t ss[], int64_t numshapes, int64_t dim) {
+    __aicore__ inline void Init(GM_ADDR x1, GM_ADDR x2, GM_ADDR y, const int64_t ss[], int64_t numshapes, int64_t dim) {
         Gm_x1.SetGlobalBuffer((__gm__ T*)x1, totalSize[0]);
         Gm_x2.SetGlobalBuffer((__gm__ T*)x2, totalSize[1]);
         Gm_y.SetGlobalBuffer((__gm__ T*)y, maxtotalSize);
