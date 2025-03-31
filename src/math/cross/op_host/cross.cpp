@@ -20,7 +20,6 @@ namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     CrossTilingData tiling;
     int64_t numshapes = context->GetInputShape(0)->GetStorageShape().GetDimNum();
-    tiling.set_numshapes(numshapes);
     int64_t shape[128];
     for (int k = 0; k < 2; ++k) {
         int64_t *ss = &shape[k * 64];
@@ -29,7 +28,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
             ss[i] = shape->GetStorageShape().GetDim(i);
         }
     }
-    tiling.set_shape(shape);
     int64_t dim = *context->GetAttrs()->GetInt(0);
     if (dim < 0) {
         dim = numshapes + dim;
@@ -42,13 +40,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
             }
         }
     }
+    tiling.set_shape(shape);
     tiling.set_dim(dim);
-
+    tiling.set_numshapes(numshapes);
     context->SetBlockDim(1);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     return ge::GRAPH_SUCCESS;
-
 }
 }
 
@@ -83,9 +81,7 @@ public:
             .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
         this->Attr("dim").AttrType(OPTIONAL).Int(-65530);
-
         this->SetInferShape(ge::InferShape);
-
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b")

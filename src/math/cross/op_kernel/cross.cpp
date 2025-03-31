@@ -38,8 +38,9 @@ public:
         Gm_x1.SetGlobalBuffer((__gm__ T*)x1, totalSize[0]);
         Gm_x2.SetGlobalBuffer((__gm__ T*)x2, totalSize[1]);
         Gm_y.SetGlobalBuffer((__gm__ T*)y, maxtotalSize);
+        this->shape = new int64_t[128];
         for (int i = 0; i < 128; ++i) {
-            ((int64_t *)this->shape)[i] = ss[i];
+            this->shape[i] = ss[i];
         }
         this->numshapes = numshapes;
         this->dim = dim;
