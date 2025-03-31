@@ -11,7 +11,7 @@
 
 ## 功能描述
 
-- 算子功能：该InplaceFusedMatmulSoftmaxGrad算子提供等同torch.softmax的反向grad计算功能。InplaceFusedMatmulSoftmaxGrad算子的主要功能是将InplaceFusedMatmulSoftmax的输出作为反向传播的输入，并将结果原地写入输入张量。
+- 算子功能：该InplaceFusedMatmulSoftmaxGrad算子提供等同torch.softmax的反向grad计算功能。InplaceFusedMatmulSoftmaxGrad算子的主要功能是将InplaceAttnSoftmax的输出作为反向传播的输入，并将结果原地写入输入张量。
 
 ## 实现原理
 先对数据按照rows进行切分，切分完成后进行Matmul计算。
