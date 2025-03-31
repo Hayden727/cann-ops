@@ -14,13 +14,13 @@ import torch
 import numpy as np
 
 def gen_golden_data_simple():
-    x1_tensor = np.random.uniform(-10, 10, [4, 3]).astype(np.int32)
-    x2_tensor = np.random.uniform(-10, 10, [4, 3]).astype(np.int32)
+    x1_tensor = np.random.uniform(-10, 10, [4, 3]).astype(np.int8)
+    x2_tensor = np.random.uniform(-10, 10, [4, 3]).astype(np.int8)
     x1 = torch.from_numpy(x1_tensor)
     x2 = torch.from_numpy(x2_tensor)
     dim = 1
     res_tensor = torch.cross(x1, x2)
-    golden = res_tensor.numpy().astype(np.int32)
+    golden = res_tensor.numpy().astype(np.int8)
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

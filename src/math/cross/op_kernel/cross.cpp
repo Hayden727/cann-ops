@@ -24,22 +24,22 @@ template<> struct map<int32_t> {
 template<typename T> class KernelCross {
 public:
     __aicore__ inline KernelCross() {}
-    __aicore__ inline uint32_t get_index(uint32_t i, uint32_t j) {
-        uint32_t index = 0, step = 1, offset = 1;
-        for (uint32_t k = numshapes - 1; k >= 0; --k) {
-            const uint32_t idx = i / step % outshape[k];
+    __aicore__ inline int64_t get_index(int64_t i, int64_t j) {
+        int64_t index = 0, step = 1, offset = 1;
+        for (int64_t k = numshapes - 1; k >= 0; --k) {
+            const int64_t idx = i / step % outshape[k];
             step *= outshape[k];
             index += idx % shape[j][k] * offset;
             offset *= shape[j][k];
         }
         return index;
     }
-    __aicore__ inline void Init(GM_ADDR x1, GM_ADDR x2, GM_ADDR y, uint32_t ss[], uint32_t numshapes, uint32_t dim) {
+    __aicore__ inline void Init(GM_ADDR x1, GM_ADDR x2, GM_ADDR y, int64_t ss[], int64_t numshapes, int64_t dim) {
         Gm_x1.SetGlobalBuffer((__gm__ T*)x1, totalSize[0]);
         Gm_x2.SetGlobalBuffer((__gm__ T*)x2, totalSize[1]);
         Gm_y.SetGlobalBuffer((__gm__ T*)y, maxtotalSize);
         for (int i = 0; i < 128; ++i) {
-            ((uint32_t *)this->shape)[i] = ss[i];
+            ((int64_t *)this->shape)[i] = ss[i];
         }
         this->numshapes = numshapes;
         this->dim = dim;
@@ -74,8 +74,8 @@ public:
     }
     __aicore__ inline void Process() {
         using F = typename map<T>::type;
-        for (uint32_t i = 0; i < maxbatchSize; ++i) {
-            for (uint32_t j = 0; j < maxstepSize; ++j) {
+        for (int64_t i = 0; i < maxbatchSize; ++i) {
+            for (int64_t j = 0; j < maxstepSize; ++j) {
                 auto index1 = i * 3 * maxstepSize + 0 * maxstepSize + j;
                 auto index2 = i * 3 * maxstepSize + 1 * maxstepSize + j;
                 auto index3 = i * 3 * maxstepSize + 2 * maxstepSize + j;
@@ -96,14 +96,13 @@ public:
     }
 private:
     AscendC::GlobalTensor<T> Gm_x1, Gm_x2, Gm_y;
-    uint32_t shape[2][64];
-    uint32_t numshapes;
-    uint32_t dim;
-    uint32_t outshape[64] = {};
-    uint32_t maxtotalSize = 1, maxbatchSize = 1, maxstepSize = 1;
-    uint32_t totalSize[3] = { 1, 1, 1 }, batchSize[3] = { 1, 1, 1 }, stepSize[3] = { 1, 1, 1 };
+    int64_t shape[2][64];
+    int64_t numshapes;
+    int64_t dim;
+    int64_t outshape[64] = {};
+    int64_t maxtotalSize = 1, maxbatchSize = 1, maxstepSize = 1;
+    int64_t totalSize[3] = { 1, 1, 1 }, batchSize[3] = { 1, 1, 1 }, stepSize[3] = { 1, 1, 1 };
 };
-
 extern "C" __global__ __aicore__ void cross(GM_ADDR x1, GM_ADDR x2, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
     KernelCross<DTYPE_X1> op;

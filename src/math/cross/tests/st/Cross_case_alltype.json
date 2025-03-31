@@ -68,7 +68,7 @@
             {
                 "name": "dim",
                 "type": "int",
-                "value": -65530
+                "value": 1
             }
         ]
     }
