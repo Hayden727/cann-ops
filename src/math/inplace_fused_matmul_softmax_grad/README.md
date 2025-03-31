@@ -7,7 +7,7 @@
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">SoftmaxInplaceGrad</th></tr> 
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">InplaceFusedMatmulSoftmaxGrad</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td><td align="center">约束</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
 <tr><td align="center">softmaxOutput</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td><td align="center">[m,n]</td></tr>
