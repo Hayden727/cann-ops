@@ -39,6 +39,6 @@ cmake --build build -j
     cd build
     ./execute_test_op
 )
-#echo "#####################################"
-#echo "INFO: you have passed the Precision!"
-#echo "#####################################"
+echo "#####################################"
+echo "INFO: you have passed the Precision!"
+echo "#####################################"
