@@ -106,7 +106,7 @@ target_sources(opsproto PRIVATE
        ${PROTO_AUTO_FILES}
 )
 target_compile_options(opsproto PRIVATE
-        $<$<COMPILE_LANGUAGE:CXX>:-std=c++11>
+        $<$<COMPILE_LANGUAGE:CXX>:-std=c++14>
         -fvisibility=hidden
 )
 target_compile_definitions(opsproto PRIVATE
@@ -144,7 +144,7 @@ target_sources(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/common/src/fallback_comm.cpp
 )
 target_compile_options(optiling PRIVATE
-        $<$<COMPILE_LANGUAGE:CXX>:-std=c++11>
+        $<$<COMPILE_LANGUAGE:CXX>:-std=c++14>
         -fvisibility=hidden
 )
 target_compile_definitions(optiling PRIVATE

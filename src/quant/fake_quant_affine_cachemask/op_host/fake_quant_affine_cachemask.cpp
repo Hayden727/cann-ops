@@ -136,7 +136,7 @@ namespace optiling {
 
     OP_LOGD(tilingContext->GetNodeName(), "headNum %u, calcLength %u, totalLength %u.", headNum, calcLength, totalLength);
 
-    coreNum = ascendcPlatform.GetCoreNumAic();
+    coreNum = ascendcPlatform.GetCoreNumAiv();
     OP_LOGD(tilingContext->GetNodeName(), "coreNum %u.", coreNum);
     if (coreNum == 0) {
         return ge::GRAPH_FAILED;

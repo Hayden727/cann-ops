@@ -64,20 +64,15 @@ class FakeQuantAffineCachemaskFp16 : public FakeQuantAffineCachemaskBase<yType> 
                     uint32_t calcOffset = dataOffset + j * this->tileLength;
                     repeatTimes = (this->tileLength + this->mask - 1) / this->mask;
                     this->CommonCopyIn(inQueueData, xGm, calcOffset, this->tileLength);
-                    pipe_barrier(PIPE_ALL);
                     Compute(this->tileLength);
-                    pipe_barrier(PIPE_ALL);
                     this->CommonCopyOut(outQueueOut, outQueueMask, yGm, maskGm, calcOffset, this->tileLength);
-                    pipe_barrier(PIPE_ALL);
                 }
 
                 if (this->lastTileLength > 0) {
                     uint32_t calcOffset = dataOffset + this->tileNum * this->tileLength;
                     repeatTimes = (this->lastTileLength + this->mask - 1) / this->mask;
                     this->CommonCopyIn(inQueueData, xGm, calcOffset, this->lastActulTileLength);
-                    pipe_barrier(PIPE_ALL);
                     Compute(this->tileLength);
-                    pipe_barrier(PIPE_ALL);
                     this->CommonCopyOut(outQueueOut, outQueueMask, yGm, maskGm, calcOffset, this->lastActulTileLength);
                 }
             }
@@ -102,7 +97,7 @@ class FakeQuantAffineCachemaskFp16 : public FakeQuantAffineCachemaskBase<yType> 
             Cast(curTemp, curInt32Temp, RoundMode::CAST_NONE, calCount);
             Adds(curTemp, curTemp, static_cast<float>(zeroPointValue), calCount);
             Cast(curHf16Temp, curTemp, RoundMode::CAST_RINT, calCount);
-            pipe_barrier(PIPE_ALL);
+
 
             // maskTemp = (round(tmp) >= quant_min) & (round(tmp) <= quant_max)
             Compare(maskTemp, curHf16Temp, quantMinTensor, CMPMODE::GE, calCount);
