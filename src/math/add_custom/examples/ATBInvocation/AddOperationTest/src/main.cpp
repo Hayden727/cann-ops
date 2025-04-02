@@ -13,7 +13,14 @@
  */
 #include "main.h"
 using namespace common;
-bool SetInputData(std::vector<InputData> &inputData){
+static aclError CheckAcl(aclError ret)
+{
+    if (ret != ACL_ERROR_NONE) {
+        std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << ret << std::endl;
+    }
+    return ret;
+}
+static bool SetInputData(std::vector<InputData> &inputData){
     std::string xPath = "./script/input/input0.bin";
     std::string yPath = "./script/input/input1.bin";
     InputData inputX;
@@ -25,7 +32,7 @@ bool SetInputData(std::vector<InputData> &inputData){
     return true;
 }
 
-bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
+static bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     atb::TensorDesc xDesc;
     xDesc.dtype = ACL_FLOAT16;
     xDesc.format = ACL_FORMAT_ND;
@@ -42,9 +49,8 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     
     intensorDescs.at(0) = xDesc;
     intensorDescs.at(1) = yDesc;
+    return true;
 }
-
-
 
 static void SetCurrentDevice()
 {
@@ -56,65 +62,7 @@ static void SetCurrentDevice()
         return;
     }
     std::cout << "[INFO]: aclrtSetDevice success" << std::endl;
-}
-
-
-static void FreeTensor(atb::Tensor &tensor)
-{
-    if (tensor.deviceData) {
-        int ret = aclrtFree(tensor.deviceData);
-        if (ret != 0) {
-            std::cout << "[ERROR]: aclrtFree fail" << std::endl;
-        }
-        tensor.deviceData = nullptr;
-        tensor.dataSize = 0;
-    }
-    if (tensor.hostData) {
-        int ret = aclrtFreeHost(tensor.hostData);
-        if (ret != 0) {
-            std::cout << "[ERROR]: aclrtFreeHost fail, ret = " << ret << std::endl;
-        }
-        tensor.hostData = nullptr;
-        tensor.dataSize = 0;
-    }
-}
-
-static void FreeTensors(atb::SVector<atb::Tensor> &inTensors, atb::SVector<atb::Tensor> &outTensors)
-{
-    for (size_t i = 0; i < inTensors.size(); ++i) {
-        FreeTensor(inTensors.at(i));
-    }
-    for (size_t i = 0; i < outTensors.size(); ++i) {
-        FreeTensor(outTensors.at(i));
-    }
-}
-bool SaveMemoryToBinFile(void* memoryAddress, size_t memorySize, size_t i) {
-    // 创建 output 目录（如果不存在）
-    std::filesystem::create_directories("output");
-
-    // 生成文件名
-    std::string filename = "script/output/output_" + std::to_string(i) + ".bin";
-
-    // 打开文件以二进制写入模式
-    std::ofstream file(filename, std::ios::binary);
-    if (!file) {
-        std::cerr << "无法打开文件: " << filename << std::endl;
-        return false;
-    }
-
-    // 写入数据
-    file.write(static_cast<const char*>(memoryAddress), memorySize);
-    if (!file) {
-        std::cerr << "写入文件时出错: " << filename << std::endl;
-        file.close();
-        return false;
-    }
-
-    // 关闭文件
-    file.close();
-    std::cout << "数据已成功保存到: " << filename << std::endl;
-    return true;
-}    
+}  
 
 int main(int argc, const char *argv[])
 {

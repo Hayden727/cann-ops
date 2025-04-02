@@ -34,19 +34,7 @@ namespace common{
         bool needUpdateTensorDataPtr = false;
         atb::SVector<int64_t> strides = {};
     };
-    
-    public atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims)
-    {
-        atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
-        if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量
-            printf("tensor's dimNum is larger than 8, GetCopyTensorStride failed.");
-            return tmpStrides;
-        }
-        for (int64_t i = static_cast<int64_t>(tensorDims.dimNum) - 2; i >= 0; i--) {
-            tmpStrides[i] = (tensorDims.dims[i + 1] * tmpStrides[i + 1]);
-        }
-        return tmpStrides;
-    }
+
     class AddOperation: public atb::Operation{
     public:
         AddOperation(const std::string &name, AddAttrParam param);
@@ -57,16 +45,15 @@ namespace common{
         const atb::SVector<atb::TensorDesc> &inTensorDesc, atb::SVector<atb::TensorDesc> &outTensorDesc) const;
         std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
         atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
-        constexpr int inputNum = 2;   // 算子入参个数
-        constexpr int outputNum = 1;  // 算子出参个数
+        static constexpr int inputNum = 2;   // 算子入参个数
+        static constexpr int outputNum = 1;  // 算子出参个数
         uint32_t GetInputNum() const
         {
             return inputNum; 
         }
-
         uint32_t GetOutputNum() const
         {
-            return 1; 
+            return outputNum; 
         }
         std::string GetName() const
         {

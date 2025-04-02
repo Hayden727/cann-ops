@@ -18,6 +18,20 @@ AddOperation::AddOperation(const std::string &name, AddAttrParam param){
     attrParam = param;
     opName_ = name;
 }   
+    
+static atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims)
+{
+    atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
+    if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量
+        printf("tensor's dimNum is larger than 8, GetCopyTensorStride failed.");
+        return tmpStrides;
+    }
+    for (int64_t i = static_cast<int64_t>(tensorDims.dimNum) - 2; i >= 0; i--) {
+        tmpStrides[i] = (tensorDims.dims[i + 1] * tmpStrides[i + 1]);
+    }
+    return tmpStrides;
+}
+
 std::shared_ptr<AclnnTensor> AddOperation::CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx)
 {
     auto aclnnTensor = std::make_shared<AclnnTensor>();
