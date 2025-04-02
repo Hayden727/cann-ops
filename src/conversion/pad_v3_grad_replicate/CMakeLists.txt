@@ -55,7 +55,7 @@ target_include_directories(op_host_aclnnInner PRIVATE
 )
 
 target_sources(opapi PRIVATE
-        src\conversion\circular_pad_grad\op_host\padv3grad.cpp
+        ../circular_pad_grad/op_host/padv3grad.cpp
         op_host/aclnn_pad2d_backward.cpp
 )
 
