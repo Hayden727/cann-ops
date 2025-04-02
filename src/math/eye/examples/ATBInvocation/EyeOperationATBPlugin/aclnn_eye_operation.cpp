@@ -14,10 +14,24 @@
 #include "aclnn_eye_operation.h"
 #include "aclnn_eye.h"
 using namespace common;
+
 EyeOperation::EyeOperation(const std::string &name, EyeAttrParam param){
     attrParam = param;
     opName_ = name;
 }   
+
+atb::SVector<int64_t> EyeOperation::GetCopyTensorStride(atb::Dims &tensorDims)
+{
+    atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
+    if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量
+        printf("tensor's dimNum is larger than 8, GetCopyTensorStride failed.");
+        return tmpStrides;
+    }
+    for (int64_t i = static_cast<int64_t>(tensorDims.dimNum) - 2; i >= 0; i--) {
+        tmpStrides[i] = (tensorDims.dims[i + 1] * tmpStrides[i + 1]);
+    }
+    return tmpStrides;
+}
 
 std::shared_ptr<AclnnTensor> EyeOperation::CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx)
 {

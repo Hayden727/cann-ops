@@ -40,18 +40,6 @@ namespace common{
         bool needUpdateTensorDataPtr = false;
         atb::SVector<int64_t> strides = {};
     };
-    atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims)
-    {
-        atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
-        if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量
-            printf("tensor's dimNum is larger than 8, GetCopyTensorStride failed.");
-            return tmpStrides;
-        }
-        for (int64_t i = static_cast<int64_t>(tensorDims.dimNum) - 2; i >= 0; i--) {
-            tmpStrides[i] = (tensorDims.dims[i + 1] * tmpStrides[i + 1]);
-        }
-        return tmpStrides;
-    }
     class EyeOperation: public atb::Operation{
     public:
         EyeOperation(const std::string &name, EyeAttrParam param);
@@ -60,10 +48,11 @@ namespace common{
                                                 uint64_t workspaceSize, atb::Context *context) override;
         atb::Status InferShape(
         const atb::SVector<atb::TensorDesc> &inTensorDesc, atb::SVector<atb::TensorDesc> &outTensorDesc) const;
+        atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims);
         std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
         atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
-        constexpr int inputNum = 1;   // 算子入参个数
-        constexpr int outputNum = 1;  // 算子出参个数
+        static constexpr int inputNum = 1;   // 算子入参个数
+        static constexpr int outputNum = 1;  // 算子出参个数
         uint32_t GetInputNum() const
         {
             return inputNum; 
