@@ -27,7 +27,7 @@ for header in $HEADER_FILES; do
 done
 
 # 复制 .a 文件到 /usr/local/lib
-cp "$A_FILE" /usr/local/lib/
+cp -f "$A_FILE" /usr/local/lib/
 
 echo "构建完成，头文件和 .a 文件已复制到目标目录。"
     
