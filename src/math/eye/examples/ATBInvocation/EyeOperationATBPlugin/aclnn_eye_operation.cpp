@@ -19,19 +19,6 @@ EyeOperation::EyeOperation(const std::string &name, EyeAttrParam param){
     opName_ = name;
 }   
 
-atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims)
-{
-    atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
-    if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量
-        printf("tensor's dimNum is larger than 8, GetCopyTensorStride failed.");
-        return tmpStrides;
-    }
-    for (int64_t i = static_cast<int64_t>(tensorDims.dimNum) - 2; i >= 0; i--) {
-        tmpStrides[i] = (tensorDims.dims[i + 1] * tmpStrides[i + 1]);
-    }
-    return tmpStrides;
-}
-
 std::shared_ptr<AclnnTensor> EyeOperation::CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx)
 {
     auto aclnnTensor = std::make_shared<AclnnTensor>();
@@ -39,7 +26,6 @@ std::shared_ptr<AclnnTensor> EyeOperation::CreateAclnnTensor(atb::Tensor atbTens
     aclnnTensor->needUpdateTensorDataPtr = true;
     aclnnTensor->atbTensor = atbTensor;
     aclnnTensor->strides = GetCopyTensorStride(atbTensor.desc.shape);
-
     // 创建Aclnn tensor
     aclnnTensor->tensor = aclCreateTensor(atbTensor.desc.shape.dims,
         atbTensor.desc.shape.dimNum,
@@ -66,13 +52,11 @@ atb::Status EyeOperation::UpdateAclnnVariantPack(const atb::VariantPack &variant
             aclInTensors_[i]->tensorIdx,
             aclInTensors_[i]->tensor,
             aclInTensors_[i]->atbTensor.deviceData);
-
         if (ret != 0) {
             printf("set input fail");
             return atb::ERROR_CANN_ERROR;
         }
     }
-
     // 更新outTensor的device地址
     for (size_t i = 0; i < aclOutTensors_.size(); ++i) {
         int ret = -1;
@@ -94,7 +78,6 @@ atb::Status EyeOperation::UpdateAclnnVariantPack(const atb::VariantPack &variant
 }
 
 atb::Status EyeOperation::Setup(const atb::VariantPack &variantPack, uint64_t &workspaceSize, atb::Context *context) {
-
     aclInTensors_.resize(GetInputNum());
     for (size_t i = 0; i < aclInTensors_.size(); ++i) {
         auto aclnnTensor = CreateAclnnTensor(variantPack.inTensors.at(i), i);
@@ -104,24 +87,18 @@ atb::Status EyeOperation::Setup(const atb::VariantPack &variantPack, uint64_t &w
         }
         aclInTensors_[i] = aclnnTensor;
     }
-
     auto ret = aclnnEyeGetWorkspaceSize(aclInTensors_.at(0)->tensor,
         attrParam.num_rows,
         attrParam.num_columns,
         attrParam.batch_shape,
         attrParam.dtype,
         &workspaceSize_,
-        &aclExecutor_);
-   
+        &aclExecutor_);  
     workspaceSize = workspaceSize_;
     return ret;
-
 }
 
 atb::Status EyeOperation::Execute(const atb::VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, atb::Context *context) {
-
-
- 
     aclrtStream stream = context->GetExecuteStream();
     if (!stream) {
         printf("get stream fail");
@@ -134,8 +111,7 @@ atb::Status EyeOperation::Execute(const atb::VariantPack &variantPack, uint8_t *
         return atb::ERROR_CANN_ERROR;
     }
     ret = aclnnEye(workspace, workspaceSize_, aclExecutor_, stream);
-
-  return ret;
+    return ret;
 }
 
 atb::Status EyeOperation::InferShape(

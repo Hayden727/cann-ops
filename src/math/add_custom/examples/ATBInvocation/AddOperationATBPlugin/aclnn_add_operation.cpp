@@ -18,20 +18,6 @@ AddOperation::AddOperation(const std::string &name, AddAttrParam param){
     attrParam = param;
     opName_ = name;
 }   
-
-atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims)
-{
-    atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
-    if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量
-        printf("tensor's dimNum is larger than 8, GetCopyTensorStride failed.");
-        return tmpStrides;
-    }
-    for (int64_t i = static_cast<int64_t>(tensorDims.dimNum) - 2; i >= 0; i--) {
-        tmpStrides[i] = (tensorDims.dims[i + 1] * tmpStrides[i + 1]);
-    }
-    return tmpStrides;
-}
-
 std::shared_ptr<AclnnTensor> AddOperation::CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx)
 {
     auto aclnnTensor = std::make_shared<AclnnTensor>();
@@ -39,7 +25,6 @@ std::shared_ptr<AclnnTensor> AddOperation::CreateAclnnTensor(atb::Tensor atbTens
     aclnnTensor->needUpdateTensorDataPtr = true;
     aclnnTensor->atbTensor = atbTensor;
     aclnnTensor->strides = GetCopyTensorStride(atbTensor.desc.shape);
-
     // 创建Aclnn tensor
     aclnnTensor->tensor = aclCreateTensor(atbTensor.desc.shape.dims,
         atbTensor.desc.shape.dimNum,
@@ -66,13 +51,11 @@ atb::Status AddOperation::UpdateAclnnVariantPack(const atb::VariantPack &variant
             aclInTensors_[i]->tensorIdx,
             aclInTensors_[i]->tensor,
             aclInTensors_[i]->atbTensor.deviceData);
-
         if (ret != 0) {
             printf("set input fail");
             return atb::ERROR_CANN_ERROR;
         }
     }
-
     // 更新outTensor的device地址
     for (size_t i = 0; i < aclOutTensors_.size(); ++i) {
         int ret = -1;
@@ -84,7 +67,6 @@ atb::Status AddOperation::UpdateAclnnVariantPack(const atb::VariantPack &variant
             aclOutTensors_[i]->tensorIdx,
             aclOutTensors_[i]->tensor,
             aclOutTensors_[i]->atbTensor.deviceData);
-
         if (ret != 0) {
             printf("set output fail");
             return atb::ERROR_CANN_ERROR;
