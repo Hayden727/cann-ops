@@ -3,7 +3,6 @@
 ## 支持的产品型号 
 
 * 昇腾910B AI处理器。
-* 昇腾910_93 AI处理器。
 
 ## 接口原型 
 每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclRfft1DGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclRfft1D”接口执行计算。
