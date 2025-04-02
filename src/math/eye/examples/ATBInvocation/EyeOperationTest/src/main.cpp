@@ -30,15 +30,55 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     constexpr int INPUT_FIRST_DIM_SECOND = 4; // 第一个输入的第二个维度为4
     constexpr int INPUT_FIRST_DIM_THIRD = 133; // 第一个输入的第三个维度为133
     constexpr int INPUT_FIRST_DIM_FOURTH = 4095; // 第一个输入的第四个维度为4095
+    constexpr int DIMENSION_INDEX_FIRST = 0; // 第一个输入的第一个维度
+    constexpr int DIMENSION_INDEX_SECOND = 1; // 第一个输入的第二个维度 
+    constexpr int DIMENSION_INDEX_THIRD = 2; // 第一个输入的第三个维度 
+    constexpr int DIMENSION_INDEX_FOURTH = 3; // 第一个输入的第四个维度 
     xDesc.shape.dimNum = INPUT_0_DIM_NUM;  
-    xDesc.shape.dims[0] = INPUT_FIRST_DIM_FIRST; 
-    xDesc.shape.dims[1] = INPUT_FIRST_DIM_SECOND; 
-    xDesc.shape.dims[2] = INPUT_FIRST_DIM_THIRD; // 第一个输入的第二个维度为133 
-    xDesc.shape.dims[3] = INPUT_FIRST_DIM_FOURTH; // 第一个输入的第三个维度为4095 
+    xDesc.shape.dims[DIMENSION_INDEX_FIRST] = INPUT_FIRST_DIM_FIRST; 
+    xDesc.shape.dims[DIMENSION_INDEX_SECOND] = INPUT_FIRST_DIM_SECOND; 
+    xDesc.shape.dims[DIMENSION_INDEX_THIRD] = INPUT_FIRST_DIM_THIRD; // 第一个输入的第三个维度为133 
+    xDesc.shape.dims[DIMENSION_INDEX_FOURTH] = INPUT_FIRST_DIM_FOURTH; // 第一个输入的第四个维度为4095 
     intensorDescs.at(0) = xDesc;
 }
+aclError CheckAcl(aclError ret) {
+    if (ret != ACL_ERROR_NONE) {
+        std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << ret << std::endl;
+    }
+    return ret;
+}
+void* ReadBinFile(const char* filename, size_t& size) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file) {
+        std::cerr << "无法打开文件: " << filename << std::endl;
+        return nullptr;
+    }
 
+    // 获取文件大小
+    size = file.tellg();
+    file.seekg(0, std::ios::beg);
 
+    // 分配内存
+    void* buffer;
+    int ret = aclrtMallocHost(&buffer,size);
+    if (!buffer) {
+        std::cerr << "内存分配失败" << std::endl;
+        file.close();
+        return nullptr;
+    }
+
+    // 读取文件内容到内存
+    file.read(static_cast<char*>(buffer), size);
+    if (!file) {
+        std::cerr << "读取文件失败" << std::endl;
+        delete[] static_cast<char*>(buffer);
+        file.close();
+        return nullptr;
+    }
+
+    file.close();
+    return buffer;
+}
 
 static void SetCurrentDevice()
 {
@@ -51,7 +91,6 @@ static void SetCurrentDevice()
     }
     std::cout << "[INFO]: aclrtSetDevice success" << std::endl;
 }
-
 
 static void FreeTensor(atb::Tensor &tensor)
 {
@@ -79,7 +118,7 @@ static void FreeTensors(atb::SVector<atb::Tensor> &inTensors)
         FreeTensor(inTensors.at(i));
     }
 }
-bool SaveMemoryToBinFile(void* memoryAddress, size_t memorySize, size_t i) {
+static bool SaveMemoryToBinFile(void* memoryAddress, size_t memorySize, size_t i) {
     // 创建 output 目录（如果不存在）
     std::filesystem::create_directories("output");
 
