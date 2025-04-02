@@ -19,7 +19,7 @@ AddOperation::AddOperation(const std::string &name, AddAttrParam param){
     opName_ = name;
 }   
     
-static atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims)
+atb::SVector<int64_t> AddOperation::GetCopyTensorStride(atb::Dims &tensorDims)
 {
     atb::SVector<int64_t> tmpStrides(tensorDims.dimNum, 1);
     if (tensorDims.dimNum > 8) {  // 8: tensor最大维度数量

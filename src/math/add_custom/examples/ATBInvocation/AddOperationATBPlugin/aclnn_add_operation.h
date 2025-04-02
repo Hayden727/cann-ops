@@ -43,6 +43,7 @@ namespace common{
                                                 uint64_t workspaceSize, atb::Context *context) override;
         atb::Status InferShape(
         const atb::SVector<atb::TensorDesc> &inTensorDesc, atb::SVector<atb::TensorDesc> &outTensorDesc) const;
+        atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims);
         std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
         atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
         static constexpr int inputNum = 2;   // 算子入参个数

@@ -11,48 +11,61 @@
 /**
  * @file main.cpp
  */
-#include "main.h"
+#include <acl/acl.h>
+#include "atb/atb_infer.h"
+#include "aclnn_add_operation.h"
+#include "securec.h"
+
+#include <fstream>
+#include <random>
+#include <filesystem>
+#include <string>
+#include <vector>
+#include <iostream>
 using namespace common;
-static aclError CheckAcl(aclError ret)
+struct InputData{
+    void* data;
+    uint64_t size;
+};
+
+aclError CheckAcl(aclError ret)
 {
     if (ret != ACL_ERROR_NONE) {
         std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << ret << std::endl;
     }
     return ret;
 }
-static bool SetInputData(std::vector<InputData> &inputData){
-    std::string xPath = "./script/input/input0.bin";
-    std::string yPath = "./script/input/input1.bin";
-    InputData inputX;
-    InputData inputY;
-    inputX.data = ReadBinFile(xPath,inputX.size);
-    inputY.data = ReadBinFile(yPath,inputY.size);
-    inputData.push_back(inputX);
-    inputData.push_back(inputY);
-    return true;
+
+void* ReadBinFile(const std::string filename, size_t& size) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file) {
+        std::cerr << "无法打开文件: " << filename << std::endl;
+        return nullptr;
+    }
+    // 获取文件大小
+    size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    // 分配内存
+    void* buffer;
+    int ret = aclrtMallocHost(&buffer,size);
+    if (!buffer) {
+        std::cerr << "内存分配失败" << std::endl;
+        file.close();
+        return nullptr;
+    }
+    // 读取文件内容到内存
+    file.read(static_cast<char*>(buffer), size);
+    if (!file) {
+        std::cerr << "读取文件失败" << std::endl;
+        delete[] static_cast<char*>(buffer);
+        file.close();
+        return nullptr;
+    }
+    file.close();
+    return buffer;
 }
 
-static bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
-    atb::TensorDesc xDesc;
-    xDesc.dtype = ACL_FLOAT16;
-    xDesc.format = ACL_FORMAT_ND;
-    xDesc.shape.dimNum = 2; // 第一个输入是个2维tensor
-    xDesc.shape.dims[0] = 8; // 第一个输入第一维是8
-    xDesc.shape.dims[1] = 2048; // 第一个输入第二维是2048
-
-    atb::TensorDesc yDesc;
-    yDesc.dtype = ACL_FLOAT16;
-    yDesc.format = ACL_FORMAT_ND;
-    yDesc.shape.dimNum = 2; // 第二个输入是个2维tensor
-    yDesc.shape.dims[0] = 8; // 第二个输入第一维是8
-    yDesc.shape.dims[1] = 2048; // 第二个输入第二维是2048
-    
-    intensorDescs.at(0) = xDesc;
-    intensorDescs.at(1) = yDesc;
-    return true;
-}
-
-static void SetCurrentDevice()
+void SetCurrentDevice()
 {
     const int deviceId = 0;
     std::cout << "[INFO]: aclrtSetDevice " << deviceId << std::endl;
@@ -64,8 +77,60 @@ static void SetCurrentDevice()
     std::cout << "[INFO]: aclrtSetDevice success" << std::endl;
 }  
 
+bool SaveMemoryToBinFile(void* memoryAddress, size_t memorySize, size_t i) {
+    // 生成文件名
+    std::string filename = "script/output/output_" + std::to_string(i) + ".bin";
+    // 打开文件以二进制写入模式
+    std::ofstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "无法打开文件: " << filename << std::endl;
+        return false;
+    }
+    // 写入数据
+    file.write(static_cast<const char*>(memoryAddress), memorySize);
+    if (!file) {
+        std::cerr << "写入文件时出错: " << filename << std::endl;
+        file.close();
+        return false;
+    }
+    // 关闭文件
+    file.close();
+    std::cout << "数据已成功保存到: " << filename << std::endl;
+    return true;
+}   
+
+void FreeTensor(atb::Tensor &tensor)
+{
+    if (tensor.deviceData) {
+        int ret = aclrtFree(tensor.deviceData);
+        if (ret != 0) {
+            std::cout << "[ERROR]: aclrtFree fail" << std::endl;
+        }
+        tensor.deviceData = nullptr;
+        tensor.dataSize = 0;
+    }
+    if (tensor.hostData) {
+        int ret = aclrtFreeHost(tensor.hostData);
+        if (ret != 0) {
+            std::cout << "[ERROR]: aclrtFreeHost fail, ret = " << ret << std::endl;
+        }
+        tensor.hostData = nullptr;
+        tensor.dataSize = 0;
+    }
+}
+
+void FreeTensors(atb::SVector<atb::Tensor> &inTensors,atb::SVector<atb::Tensor> &outTensors)
+{
+    for (size_t i = 0; i < inTensors.size(); ++i) {
+        FreeTensor(inTensors.at(i));
+    }
+    for (size_t i = 0; i < outTensors.size(); ++i) {
+        FreeTensor(outTensors.at(i));
+    }
+}
 int main(int argc, const char *argv[])
 {
+    // 初始化
     const int deviceId = 0;
     std::cout << "[INFO]: aclrtSetDevice " << deviceId << std::endl;
     int ret = aclrtSetDevice(deviceId);
@@ -83,21 +148,40 @@ int main(int argc, const char *argv[])
         return 1;
     }
     context->SetExecuteStream(stream);
-
-    std::vector<InputData> input;
-    SetInputData(input);
-
+    std::cout << "[INFO]: complete CreateOp!" << std::endl;
+    // 算子创建
     AddAttrParam addAttrParam;
     AddOperation *op = new AddOperation("Add",addAttrParam);
-    std::cout << "[INFO]: complete CreateOp!" << std::endl;
-
-    if(input.size() != op->GetInputNum()) std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
-
+    // 输入描述信息设置
     atb::SVector<atb::TensorDesc> intensorDescs;
     atb::SVector<atb::TensorDesc> outtensorDescs;
     intensorDescs.resize(op->GetInputNum());
     outtensorDescs.resize(op->GetOutputNum());
-    SetOperationInputDesc(intensorDescs);
+    atb::TensorDesc xDesc;
+    xDesc.dtype = ACL_FLOAT16;
+    xDesc.format = ACL_FORMAT_ND;
+    xDesc.shape.dimNum = 2; // 第一个输入是个2维tensor
+    xDesc.shape.dims[0] = 8; // 第一个输入第一维是8
+    xDesc.shape.dims[1] = 2048; // 第一个输入第二维是2048
+    atb::TensorDesc yDesc;
+    yDesc.dtype = ACL_FLOAT16;
+    yDesc.format = ACL_FORMAT_ND;
+    yDesc.shape.dimNum = 2; // 第二个输入是个2维tensor
+    yDesc.shape.dims[0] = 8; // 第二个输入第一维是8
+    yDesc.shape.dims[1] = 2048; // 第二个输入第二维是2048
+    intensorDescs.at(0) = xDesc;
+    intensorDescs.at(1) = yDesc;
+    // 输入数据读取
+    std::vector<InputData> input;
+    std::string xPath = "./script/input/input0.bin";
+    std::string yPath = "./script/input/input1.bin";
+    InputData inputX;
+    InputData inputY;
+    inputX.data = ReadBinFile(xPath,inputX.size);
+    inputY.data = ReadBinFile(yPath,inputY.size);
+    input.push_back(inputX);
+    input.push_back(inputY);
+    if(input.size() != op->GetInputNum()) std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
     atb::Status st = op->InferShape(intensorDescs,outtensorDescs);
     if (st != 0) {
         std::cout << "[ERROR]: Operation InferShape fail" << std::endl;
@@ -128,7 +212,6 @@ int main(int argc, const char *argv[])
         CheckAcl(aclrtMalloc(&variantPack.outTensors.at(i).deviceData, outSize, ACL_MEM_MALLOC_HUGE_FIRST));
         CheckAcl(aclrtMallocHost(&variantPack.outTensors.at(i).hostData, outSize));
     }
-
     uint64_t workspaceSize = 0;
     st = op->Setup(variantPack, workspaceSize, context);
     if (st != 0) {
@@ -139,8 +222,7 @@ int main(int argc, const char *argv[])
     void *workspace = nullptr;
     if (workspaceSize > 0) {
         aclrtMalloc(&workspace, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
-    }
-    
+    }  
     std::cout << "[INFO]: Operation execute start" << std::endl;
     st = op->Execute(variantPack, (uint8_t*)workspace, workspaceSize, context);
     if (st != 0) {
@@ -154,7 +236,6 @@ int main(int argc, const char *argv[])
         variantPack.outTensors.at(i).dataSize, ACL_MEMCPY_DEVICE_TO_HOST));
         SaveMemoryToBinFile(variantPack.outTensors.at(i).hostData,variantPack.outTensors.at(i).dataSize,i);
     }
-
     FreeTensors(variantPack.inTensors, variantPack.outTensors);
     st = atb::DestroyContext(context);
     CheckAcl(aclrtDestroyStream(stream));
