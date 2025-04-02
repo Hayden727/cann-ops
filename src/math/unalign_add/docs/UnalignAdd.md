@@ -1,10 +1,14 @@
 声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 
-# UnalignAddCustom(非对齐)
+# UnalignAdd(非对齐)
 
 ## 支持的产品型号
 
-Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atlas 800I A2推理产品/Atlas 200I/500 A2推理产品
+- Atlas 训练系列产品
+- Atlas 推理系列产品
+- Atlas A2训练系列产品
+- Atlas 800I A2推理产品
+- Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -22,27 +26,27 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 
 ## 实现原理
 
-图1 AddCustom推理计算流程图
+图1 UnalignAdd推理计算流程图
 
 ![image](https://obs-book.obs.cn-east-2.myhuaweicloud.com/AddCustom.png)
 
-UnalignAddCustom由Add操作组成，计算过程只有1步：
+UnalignAdd由Add操作组成，计算过程只有1步：
 
 1. out = Add(x[offset], y[offset])
 
 ## 算子执行接口
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnAddCustomGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAddCustom”接口执行计算。
+每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnAddGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAdd”接口执行计算。
 
-* `aclnnStatus aclnnUnalignAddCustomGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
-* `aclnnStatus aclnnUnalignAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
+* `aclnnStatus aclnnUnalignAddGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnUnalignAdd(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnUnalignAddCustomGetWorkspaceSize
+### aclnnUnalignAddGetWorkspaceSize
 
 - **参数说明：**
   
@@ -61,12 +65,12 @@ UnalignAddCustom由Add操作组成，计算过程只有1步：
   - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y、out的数据类型和数据格式不在支持的范围内。
   ```
 
-### aclnnAddCustom
+### aclnnUnalignAdd
 
 - **参数说明：**
   
   - workspace（void\*，入参）：在Device侧申请的workspace内存起址。
-  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnAddCustomGetWorkspaceSize获取。
+  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnAddGetWorkspaceSize获取。
   - executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**
@@ -80,7 +84,7 @@ UnalignAddCustom由Add操作组成，计算过程只有1步：
 ## 算子原型
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddCustom</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">UnalignAdd</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
@@ -89,9 +93,9 @@ UnalignAddCustom由Add操作组成，计算过程只有1步：
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">unalign_add</td></tr>
 </table>
 
 ## 调用示例
 
-详见[UnalignAddCustom自定义算子样例说明算子调用章节](../README.md#算子调用)
+详见[UnalignAdd自定义算子样例说明算子调用章节](../README.md#算子调用)

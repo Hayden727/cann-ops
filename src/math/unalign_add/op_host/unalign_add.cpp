@@ -9,9 +9,9 @@
  */
 
 /**
- * @file unalign_add_custom.cpp
+ * @file unalign_add.cpp
  */
-#include "unalign_add_custom_tiling.h"
+#include "unalign_add_tiling.h"
 #include "register/op_def_registry.h"
 
 namespace optiling {
@@ -50,9 +50,9 @@ static graphStatus InferDataType(gert::InferDataTypeContext *context)
 } // namespace ge
 
 namespace ops {
-class UnalignAddCustom : public OpDef {
+class UnalignAdd : public OpDef {
 public:
-    explicit UnalignAddCustom(const char *name) : OpDef(name)
+    explicit UnalignAdd(const char *name) : OpDef(name)
     {
         this->Input("x")
             .ParamType(REQUIRED)
@@ -76,5 +76,5 @@ public:
             .AddConfig("ascend910b");
     }
 };
-OP_ADD(UnalignAddCustom);
+OP_ADD(UnalignAdd);
 } // namespace ops

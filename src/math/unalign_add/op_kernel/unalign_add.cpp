@@ -9,7 +9,7 @@
  */
 
 /**
- * @file add_custom.cpp
+ * @file unalign_add.cpp
  */
 #include "kernel_operator.h"
 constexpr int32_t BUFFER_NUM = 2; // tensor num for each queue
@@ -79,7 +79,7 @@ private:
     uint32_t tileLength;
 };
 
-extern "C" __global__ __aicore__ void unalign_add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
+extern "C" __global__ __aicore__ void unalign_add(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
 {
     GET_TILING_DATA(tiling_data, tiling);
     KernelUnalignAdd op;
@@ -89,9 +89,9 @@ extern "C" __global__ __aicore__ void unalign_add_custom(GM_ADDR x, GM_ADDR y, G
 
 #ifndef ASCENDC_CPU_DEBUG
 // call of kernel function
-void unalign_add_custom_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *y, uint8_t *z,
+void unalign_add_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *x, uint8_t *y, uint8_t *z,
                    uint8_t *workspace, uint8_t *tiling)
 {
-    unalign_add_custom<<<blockDim, l2ctrl, stream>>>(x, y, z, workspace, tiling);
+    unalign_add<<<blockDim, l2ctrl, stream>>>(x, y, z, workspace, tiling);
 }
 #endif

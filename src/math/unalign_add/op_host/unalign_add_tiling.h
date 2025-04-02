@@ -8,12 +8,19 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include "register/register.h"
+/**
+ * @file unalign_add_tiling.h
+ */
+#ifndef UNALIGN_ADD_TILING_H
+#define UNALIGN_ADD_TILING_H
+#include "register/tilingdata_base.h"
 
-namespace domi {
-// register op info to GE
-REGISTER_CUSTOM_OP("UnalignAddCustom")
-    .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
-    .OriginOpType("UnalignAddCustom")      // name in tf module
-    .ParseParamsByOperatorFn(AutoMappingByOpFn);
-}  // namespace domi
+namespace optiling {
+BEGIN_TILING_DATA_DEF(TilingData)
+TILING_DATA_FIELD_DEF(uint32_t, totalLength);
+TILING_DATA_FIELD_DEF(uint32_t, tileNum);
+END_TILING_DATA_DEF;
+
+REGISTER_TILING_DATA_CLASS(UnalignAdd, TilingData)
+} // namespace optiling
+#endif // UNALIGN_ADD_TILING_H

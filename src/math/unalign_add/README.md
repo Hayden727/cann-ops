@@ -1,13 +1,13 @@
-## `UnalignAddCustom`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`UnalignAddCustom`算子。
+## `UnalignAdd`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`UnalignAdd`算子。
 
 ### 算子描述
-`UnalignAddCustom`算子返回两个数据相加的结果。
+`UnalignAdd`算子返回两个数据相加的结果。
 
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddCustom</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">UnalignAdd</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
@@ -16,7 +16,7 @@
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">unalign_add</td></tr>
 </table>
 
 ### 支持的产品型号
@@ -63,7 +63,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用UnalignAddCustom算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用UnalignAdd算子。</td>
     </tr>
 </table>
 
