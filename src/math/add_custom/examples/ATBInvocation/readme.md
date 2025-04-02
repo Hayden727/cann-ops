@@ -31,7 +31,7 @@
 
   ```shell
   cd AddOperationTest  
-  bash run.sh
+  bash script/run.sh
   ```
 
 ## AddOperation算子介绍
