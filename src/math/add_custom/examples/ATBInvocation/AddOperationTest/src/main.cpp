@@ -1,17 +1,15 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
+ * @file main.cpp
  */
 #include "main.h"
 
@@ -31,16 +29,16 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     atb::TensorDesc xDesc;
     xDesc.dtype = ACL_FLOAT16;
     xDesc.format = ACL_FORMAT_ND;
-    xDesc.shape.dimNum = 2;
-    xDesc.shape.dims[0] = 8;
-    xDesc.shape.dims[1] = 2048;
+    xDesc.shape.dimNum = 2; // 第一个输入是个2维tensor
+    xDesc.shape.dims[0] = 8; // 第一个输入第一维是8
+    xDesc.shape.dims[1] = 2048; // 第一个输入第二维是2048
 
     atb::TensorDesc yDesc;
     yDesc.dtype = ACL_FLOAT16;
     yDesc.format = ACL_FORMAT_ND;
-    yDesc.shape.dimNum = 2;
-    yDesc.shape.dims[0] = 8;
-    yDesc.shape.dims[1] = 2048;
+    yDesc.shape.dimNum = 2; // 第二个输入是个2维tensor
+    yDesc.shape.dims[0] = 8; // 第二个输入第一维是8
+    yDesc.shape.dims[1] = 2048; // 第二个输入第二维是2048
     
     intensorDescs.at(0) = xDesc;
     intensorDescs.at(1) = yDesc;
