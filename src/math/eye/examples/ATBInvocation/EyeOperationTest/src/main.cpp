@@ -14,7 +14,7 @@
 #include "main.h"
 using namespace common;
 bool SetInputData(std::vector<InputData> &inputData){
-    char *xPath = "./script/input/input0.bin";
+    std::string xPath = "./script/input/input0.bin";
     InputData inputX;
     inputX.data = ReadBinFile(xPath,inputX.size);
     inputData.push_back(inputX);
@@ -25,11 +25,11 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     atb::TensorDesc xDesc;
     xDesc.dtype = ACL_FLOAT;
     xDesc.format = ACL_FORMAT_ND;
-    xDesc.shape.dimNum = 4;
-    xDesc.shape.dims[0] = 3;
-    xDesc.shape.dims[1] = 4;
-    xDesc.shape.dims[2] = 133;
-    xDesc.shape.dims[3] = 4095;
+    xDesc.shape.dimNum = 4;  // 第一个输入是四维tensor
+    xDesc.shape.dims[0] = 3; // 第一个输入的第一个维度为3
+    xDesc.shape.dims[1] = 4; // 第一个输入的第二个维度为4
+    xDesc.shape.dims[2] = 133; // 第一个输入的第三个维度为133
+    xDesc.shape.dims[3] = 4095; // 第一个输入的第四个维度为4095
     intensorDescs.at(0) = xDesc;
 }
 

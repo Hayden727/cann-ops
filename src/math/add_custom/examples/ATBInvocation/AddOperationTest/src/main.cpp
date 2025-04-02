@@ -14,8 +14,8 @@
 #include "main.h"
 using namespace common;
 bool SetInputData(std::vector<InputData> &inputData){
-    char *xPath = "./script/input/input0.bin";
-    char *yPath = "./script/input/input1.bin";
+    std::string xPath = "./script/input/input0.bin";
+    std::string yPath = "./script/input/input1.bin";
     InputData inputX;
     InputData inputY;
     inputX.data = ReadBinFile(xPath,inputX.size);

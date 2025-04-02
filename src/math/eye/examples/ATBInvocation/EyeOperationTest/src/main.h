@@ -13,18 +13,17 @@
  */
 #ifndef MAIN_H
 #define MAIN_H
-#include <iostream>
-#include <cstring>
+#include <acl/acl.h>
+#include "atb/atb_infer.h"
+#include "aclnn_eye_operation.h"
+#include "securec.h"
+
 #include <fstream>
 #include <random>
 #include <filesystem>
 #include <string>
-#include <acl/acl.h>
-#include "securec.h"
-#include "atb/atb_infer.h"
-#include "aclnn_eye_operation.h"
 #include <vector>
-
+#include <iostream>
 namespace common{
     struct InputData{
         void* data;
