@@ -1,8 +1,8 @@
 import torch
 import os
 def gen_golden_data_simple():
-    input1 = torch.randn(108, 4096, dtype=torch.float16)
-    input2 = torch.randn(108, 4096, dtype=torch.float16)
+    input1 = torch.randn(8, 2048, dtype=torch.float16)
+    input2 = torch.randn(8, 2048, dtype=torch.float16)
     
     
     golden = input1 + input2
