@@ -82,7 +82,6 @@ atb::Status EyeOperation::UpdateAclnnVariantPack(const atb::VariantPack &variant
             aclOutTensors_[i]->tensorIdx,
             aclOutTensors_[i]->tensor,
             aclOutTensors_[i]->atbTensor.deviceData);
-
         if (ret != 0) {
             printf("set output fail");
             return atb::ERROR_CANN_ERROR;

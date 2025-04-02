@@ -18,6 +18,7 @@
 #include <atb/atb_infer.h>
 #include <atb/types.h>
 #include <atb/utils.h>
+
 #include "atb/infer_op_params.h"
 
 namespace common{

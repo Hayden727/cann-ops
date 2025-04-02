@@ -184,7 +184,9 @@ int main(int argc, const char *argv[])
     inputY.data = ReadBinFile(yPath,inputY.size);
     input.push_back(inputX);
     input.push_back(inputY);
-    if(input.size() != op->GetInputNum()) std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
+    if(input.size() != op->GetInputNum()){
+        std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
+    } 
     atb::Status st = op->InferShape(intensorDescs,outtensorDescs);
     if (st != 0) {
         std::cout << "[ERROR]: Operation InferShape fail" << std::endl;

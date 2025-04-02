@@ -160,7 +160,9 @@ int main(int argc, const char *argv[])
     eyeAttrParam.dtype = 0;
     EyeOperation *op = new EyeOperation("Eye",eyeAttrParam);
     std::cout << "[INFO]: complete CreateOp!" << std::endl;
-    if(input.size() != op->GetInputNum()) std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
+    if(input.size() != op->GetInputNum()){
+        std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
+    } 
     // 创建输入描述
     atb::SVector<atb::TensorDesc> intensorDescs;
     atb::SVector<atb::TensorDesc> outtensorDescs;
