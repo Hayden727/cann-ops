@@ -25,11 +25,16 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     atb::TensorDesc xDesc;
     xDesc.dtype = ACL_FLOAT;
     xDesc.format = ACL_FORMAT_ND;
-    xDesc.shape.dimNum = 4;  // 第一个输入是四维tensor
-    xDesc.shape.dims[0] = 3; // 第一个输入的第一个维度为3
-    xDesc.shape.dims[1] = 4; // 第一个输入的第二个维度为4
-    xDesc.shape.dims[2] = 133; // 第一个输入的第三个维度为133
-    xDesc.shape.dims[3] = 4095; // 第一个输入的第四个维度为4095
+    constexpr int INPUT_0_DIM_NUM = 4 // 第一个输入是四维tensor
+    constexpr int INPUT_0_DIM_0 = 3; // 第一个输入的第一个维度为3 
+    constexpr int INPUT_0_DIM_1 = 4; // 第一个输入的第二个维度为4
+    constexpr int INPUT_0_DIM_2 = 133; // 第一个输入的第三个维度为133
+    constexpr int INPUT_0_DIM_3 = 4095;   // 第一个输入的第四个维度为4095
+    xDesc.shape.dimNum = INPUT_0_DIM_NUM;  
+    xDesc.shape.dims[0] = INPUT_0_DIM_0; 
+    xDesc.shape.dims[1] = INPUT_0_DIM_1; 
+    xDesc.shape.dims[2] = INPUT_0_DIM_2; 
+    xDesc.shape.dims[3] = INPUT_0_DIM_3; 
     intensorDescs.at(0) = xDesc;
 }
 
@@ -126,8 +131,8 @@ int main(int argc, const char *argv[])
     SetInputData(input);
 
     EyeAttrParam eyeAttrParam;
-    eyeAttrParam.num_rows = 133;
-    eyeAttrParam.num_columns = 4095;
+    eyeAttrParam.num_rows = 133; // 设置行数为133 
+    eyeAttrParam.num_columns = 4095; // 设置列数为4095
 
     std::vector<int64_t> batchShape = {3,4};
     eyeAttrParam.batch_shape = aclCreateIntArray(batchShape.data(),batchShape.size());
