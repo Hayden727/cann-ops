@@ -31,10 +31,10 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     constexpr int INPUT_FIRST_DIM_THIRD = 133; // 第一个输入的第三个维度为133
     constexpr int INPUT_FIRST_DIM_FOURTH = 4095; // 第一个输入的第四个维度为4095
     xDesc.shape.dimNum = INPUT_0_DIM_NUM;  
-    xDesc.shape.dims[0] = INPUT_0_DIM_0; 
-    xDesc.shape.dims[1] = INPUT_0_DIM_1; 
-    xDesc.shape.dims[2] = INPUT_0_DIM_2; 
-    xDesc.shape.dims[3] = INPUT_0_DIM_3; 
+    xDesc.shape.dims[0] = INPUT_FIRST_DIM_FIRST; 
+    xDesc.shape.dims[1] = INPUT_FIRST_DIM_SECOND; 
+    xDesc.shape.dims[2] = INPUT_FIRST_DIM_THIRD; // 第一个输入的第二个维度为133 
+    xDesc.shape.dims[3] = INPUT_FIRST_DIM_FOURTH; // 第一个输入的第三个维度为4095 
     intensorDescs.at(0) = xDesc;
 }
 
