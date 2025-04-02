@@ -18,52 +18,53 @@
 #include <atb/utils.h>
 #include "atb/infer_op_params.h"
 
-using namespace common;
-struct AddAttrParam
-{
-    // add没属性，此处空
-};
-
-struct AclnnTensor
-{
-public:
-    atb::Tensor atbTensor; //
-    aclTensor *tensor = nullptr;
-    int tensorIdx = -1; // aclTensor在aclExecutor中的index
-    bool needUpdateTensorDataPtr = false;
-    atb::SVector<int64_t> strides = {};
-};
-
-class AddOperation: public atb::Operation{
-public:
-    AddOperation(const std::string &name, AddAttrParam param);
-    atb::Status Setup(const atb::VariantPack &variantPack, uint64_t &workspaceSize, atb::Context *context) override;
-    atb::Status Execute(const atb::VariantPack &variantPack, uint8_t *workspace, 
-                                            uint64_t workspaceSize, atb::Context *context) override;
-    atb::Status InferShape(
-    const atb::SVector<atb::TensorDesc> &inTensorDesc, atb::SVector<atb::TensorDesc> &outTensorDesc) const;
-    std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
-    atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
-
-    uint32_t GetInputNum() const
+namespace common{
+    struct AddAttrParam
     {
-        return 2; // 算子入参个数
-    }
+        // add没属性，此处空
+    };
 
-    uint32_t GetOutputNum() const
+    struct AclnnTensor
     {
-        return 1; // 算子出参个数
-    }
-    std::string GetName() const
-    {
-        return opName_;
-    }
+    public:
+        atb::Tensor atbTensor; //
+        aclTensor *tensor = nullptr;
+        int tensorIdx = -1; // aclTensor在aclExecutor中的index
+        bool needUpdateTensorDataPtr = false;
+        atb::SVector<int64_t> strides = {};
+    };
 
-    aclOpExecutor *aclExecutor_ = nullptr;
-    AddAttrParam attrParam;
-    std::string opName_;
-    uint64_t workspaceSize_;
+    class AddOperation: public atb::Operation{
+    public:
+        AddOperation(const std::string &name, AddAttrParam param);
+        atb::Status Setup(const atb::VariantPack &variantPack, uint64_t &workspaceSize, atb::Context *context) override;
+        atb::Status Execute(const atb::VariantPack &variantPack, uint8_t *workspace, 
+                                                uint64_t workspaceSize, atb::Context *context) override;
+        atb::Status InferShape(
+        const atb::SVector<atb::TensorDesc> &inTensorDesc, atb::SVector<atb::TensorDesc> &outTensorDesc) const;
+        std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
+        atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
 
-    atb::SVector<std::shared_ptr<AclnnTensor>> aclInTensors_;
-    atb::SVector<std::shared_ptr<AclnnTensor>> aclOutTensors_;
-};
+        uint32_t GetInputNum() const
+        {
+            return 2; // 算子入参个数
+        }
+
+        uint32_t GetOutputNum() const
+        {
+            return 1; // 算子出参个数
+        }
+        std::string GetName() const
+        {
+            return opName_;
+        }
+
+        aclOpExecutor *aclExecutor_ = nullptr;
+        AddAttrParam attrParam;
+        std::string opName_;
+        uint64_t workspaceSize_;
+
+        atb::SVector<std::shared_ptr<AclnnTensor>> aclInTensors_;
+        atb::SVector<std::shared_ptr<AclnnTensor>> aclOutTensors_;
+    };
+}
