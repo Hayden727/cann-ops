@@ -1,0 +1,44 @@
+# op_muls.yaml
+api: pytorch
+api_type: aclnn_cpu_muls #function
+version: v2.1
+aclnn_name: Muls
+dtype_numbers: 200  #每个数据类型生成用例数量
+extra_numbers: all
+generate: reduce
+standard:
+    acc: default
+    perf: not_key
+inputs: #输入参数信息
+  - name: x
+    type: tensor
+    required: true
+    dtypes:
+      values: [fp16,fp32,bf16,int16,int32,int64,complex32,complex64]
+    ranges: #输入数据取值可选范围
+      valid:
+        values:  [[1,2] ]
+      invalid:
+        values:  [[1,2] ]
+    shapes:
+      dim_numbers:
+        values: [1, 2]
+      max_length: 4294967295
+    boundary:
+      has_empty: true
+      has_infnan: true
+      has_scalar: true
+      has_upper_border: true
+      has_lower_border: true
+  - name: value
+    type: attr
+    required: true
+    dtypes:
+      values: [ float ]
+    ranges:
+      valid:
+        values: [ [1, 2] ]
+      invalid:
+        values: [ [1, 2] ]
+
+  
