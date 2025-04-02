@@ -51,15 +51,16 @@ namespace common{
         const atb::SVector<atb::TensorDesc> &inTensorDesc, atb::SVector<atb::TensorDesc> &outTensorDesc) const;
         std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
         atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
-
+        constexpr int inputNum = 1;   // 算子入参个数
+        constexpr int outputNum = 1;  // 算子出参个数
         uint32_t GetInputNum() const
         {
-            return 1; // 算子入参个数
+            return inputNum; 
         }
 
         uint32_t GetOutputNum() const
         {
-            return 1; // 算子出参个数
+            return outputNum; 
         }
         std::string GetName() const
         {
