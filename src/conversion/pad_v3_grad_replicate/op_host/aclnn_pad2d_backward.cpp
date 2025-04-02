@@ -12,7 +12,7 @@
  * @file aclnn_pad2d_backward.cpp
  */
 #include "aclnn_pad2d_backward.h"
-#include "pad_v3_grad_replicate_l0.h"
+#include "../../circular_pad_grad/op_host/padv3grad.h"
 #include "aclnn_kernels/contiguous.h"
 #include "squeeze_pad_v3_grad_replicate.h"
 #include "unsqueeze_pad_v3_grad_replicate.h"
