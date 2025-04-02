@@ -32,15 +32,15 @@ bool SetOperationInputDesc(atb::SVector<atb::TensorDesc> &intensorDescs){
     xDesc.dtype = ACL_FLOAT16;
     xDesc.format = ACL_FORMAT_ND;
     xDesc.shape.dimNum = 2;
-    xDesc.shape.dims[0] = 108;
-    xDesc.shape.dims[1] = 4096;
+    xDesc.shape.dims[0] = 8;
+    xDesc.shape.dims[1] = 2048;
 
     atb::TensorDesc yDesc;
     yDesc.dtype = ACL_FLOAT16;
     yDesc.format = ACL_FORMAT_ND;
     yDesc.shape.dimNum = 2;
-    yDesc.shape.dims[0] = 108;
-    yDesc.shape.dims[1] = 4096;
+    yDesc.shape.dims[0] = 8;
+    yDesc.shape.dims[1] = 2048;
     
     intensorDescs.at(0) = xDesc;
     intensorDescs.at(1) = yDesc;
