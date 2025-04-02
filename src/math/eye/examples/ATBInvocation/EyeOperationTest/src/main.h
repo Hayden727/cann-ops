@@ -11,6 +11,8 @@
 /**
  * @file main.h
  */
+#ifndef MAIN_H
+#define MAIN_H
 #include <iostream>
 #include <cstring>
 #include <fstream>
@@ -68,3 +70,4 @@ namespace common{
         return buffer;
     }
 }
+#endif

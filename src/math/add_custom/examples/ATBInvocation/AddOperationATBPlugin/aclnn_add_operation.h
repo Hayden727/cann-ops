@@ -11,6 +11,8 @@
 /**
  * @file aclnn_add_operation.h
  */
+#ifndef ACLNN_ADD_OPERATION_H
+#define ACLNN_ADD_OPERATION_H
 #include <acl/acl.h>
 #include <aclnn/acl_meta.h>
 #include <atb/atb_infer.h>
@@ -23,7 +25,6 @@ namespace common{
     {
         // add没属性，此处空
     };
-
     struct AclnnTensor
     {
     public:
@@ -33,7 +34,6 @@ namespace common{
         bool needUpdateTensorDataPtr = false;
         atb::SVector<int64_t> strides = {};
     };
-
     class AddOperation: public atb::Operation{
     public:
         AddOperation(const std::string &name, AddAttrParam param);
@@ -68,3 +68,4 @@ namespace common{
         atb::SVector<std::shared_ptr<AclnnTensor>> aclOutTensors_;
     };
 }
+#endif

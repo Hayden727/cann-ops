@@ -11,6 +11,8 @@
 /**
  * @file aclnn_eye_operation.h
  */
+#ifndef ACLNN_EYE_OPERATION_H
+#define ACLNN_EYE_OPERATION_H
 #include <acl/acl.h>
 #include <aclnn/acl_meta.h>
 #include <atb/atb_infer.h>
@@ -73,3 +75,4 @@ namespace common{
         atb::SVector<std::shared_ptr<AclnnTensor>> aclOutTensors_;
     };
 }
+#endif

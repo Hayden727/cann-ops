@@ -11,6 +11,8 @@
 /**
  * @file main.h
  */
+#ifndef MAIN_H
+#define MAIN_H
 #include <acl/acl.h>
 #include "atb/atb_infer.h"
 #include "aclnn_add_operation.h"
@@ -67,3 +69,4 @@ namespace common{
         return buffer;
     }
 }
+#endif

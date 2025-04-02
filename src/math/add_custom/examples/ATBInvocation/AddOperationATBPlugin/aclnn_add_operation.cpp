@@ -93,8 +93,8 @@ atb::Status AddOperation::UpdateAclnnVariantPack(const atb::VariantPack &variant
     return atb::NO_ERROR;
 }
 
-atb::Status AddOperation::Setup(const atb::VariantPack &variantPack, uint64_t &workspaceSize, atb::Context *context) {
-
+atb::Status AddOperation::Setup(const atb::VariantPack &variantPack, uint64_t &workspaceSize, atb::Context *context) 
+{
     aclInTensors_.resize(GetInputNum());
     for (size_t i = 0; i < aclInTensors_.size(); ++i) {
         auto aclnnTensor = CreateAclnnTensor(variantPack.inTensors.at(i), i);
@@ -104,7 +104,6 @@ atb::Status AddOperation::Setup(const atb::VariantPack &variantPack, uint64_t &w
         }
         aclInTensors_[i] = aclnnTensor;
     }
-
     aclOutTensors_.resize(GetOutputNum());
     for (size_t i = 0; i < aclOutTensors_.size(); ++i) {
         auto aclnnTensor = CreateAclnnTensor(variantPack.outTensors.at(i), i);
@@ -114,23 +113,16 @@ atb::Status AddOperation::Setup(const atb::VariantPack &variantPack, uint64_t &w
         }
         aclOutTensors_[i] = aclnnTensor;
     }
-
-
     auto ret = aclnnAddCustomGetWorkspaceSize(aclInTensors_.at(0)->tensor,
         aclInTensors_.at(1)->tensor,
         aclOutTensors_.at(0)->tensor,
         &workspaceSize_,
         &aclExecutor_);
-
-workspaceSize = workspaceSize_;
+    workspaceSize = workspaceSize_;
     return ret;
-
 }
 
 atb::Status AddOperation::Execute(const atb::VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, atb::Context *context) {
-
-
-
     aclrtStream stream = context->GetExecuteStream();
     if (!stream) {
         printf("get stream fail");
@@ -143,8 +135,7 @@ atb::Status AddOperation::Execute(const atb::VariantPack &variantPack, uint8_t *
         return atb::ERROR_CANN_ERROR;
     }
     ret = aclnnAddCustom(workspace, workspaceSize_, aclExecutor_, stream);
-
-return ret;
+    return ret;
 }
 
 atb::Status AddOperation::InferShape(
