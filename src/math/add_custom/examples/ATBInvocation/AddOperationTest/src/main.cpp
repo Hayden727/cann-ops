@@ -201,6 +201,7 @@ int main(int argc, const char *argv[])
         std::cout << "[ERROR]: Operation execute fail" << std::endl;
         return -1;
     }
+    ret = aclrtSynchronizeStream(stream);
     std::cout << "[INFO]: Operation execute success" << std::endl;
     for(size_t i = 0; i < op->GetOutputNum(); i++){
         CheckAcl(aclrtMemcpy(variantPack.outTensors.at(i).hostData, variantPack.outTensors.at(i).dataSize, variantPack.outTensors.at(0).deviceData,

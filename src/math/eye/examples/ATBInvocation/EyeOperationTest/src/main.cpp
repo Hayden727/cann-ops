@@ -180,7 +180,7 @@ int main(int argc, const char *argv[])
         return -1;
     }
     std::cout << "[INFO]: Operation execute success" << std::endl;
-
+    ret = aclrtSynchronizeStream(stream);
     CheckAcl(aclrtMemcpy(variantPack.inTensors.at(0).hostData, variantPack.inTensors.at(0).dataSize, variantPack.inTensors.at(0).deviceData,
     variantPack.inTensors.at(0).dataSize, ACL_MEMCPY_DEVICE_TO_HOST));
     SaveMemoryToBinFile(variantPack.inTensors.at(0).hostData,variantPack.inTensors.at(0).dataSize,0);
