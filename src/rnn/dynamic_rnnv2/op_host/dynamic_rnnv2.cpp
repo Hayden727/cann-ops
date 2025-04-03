@@ -15,8 +15,8 @@
  */
 
 /*!
- * \file avg_pool3_d.cpp
- * \brief op_host of avg_pool3d
+ * \file dynamic_rnnv2.cpp
+ * \brief op_host of dynamic_rnnv2
  */
 #include <string>
 #include <vector>
@@ -30,14 +30,8 @@
 #include "register/op_impl_registry.h"
 #include "log/ops_log.h"
 #include "register/op_def_registry.h"
-// #include "op_util.h"
-// #include "op_log.h"
-// #include "op_const.h"
-// #include "nn_recurrent.h"
 #include "register/op_impl_registry.h"
 #include "dynamic_rnnv2.h"
-// #include "runtime2_util.h"
-// #include "op_tiling_util.h"
 #include "tiling/tiling_api.h"
 
 namespace optiling {
@@ -53,7 +47,6 @@ namespace optiling {
 
 bool AddWorkspace(gert::TilingContext* context, const size_t workspace) {
   size_t* workspace_size = context->GetWorkspaceSizes(1);
-  // OPS_CHECK_NULL_WITH_CONTEXT_RET(context, workspace_size, false);
   *workspace_size = workspace;
   return true;
 }
@@ -63,11 +56,9 @@ void LstmTiling::GetAICoreIntrinsicDtype(fe::PlatFormInfos& platform_info, const
   (void)platform_info.GetPlatformRes("AICoreintrinsicDtypeMap", intrinsic_name, val);
 
   if (!val.empty()) {
-    // OP_LOGD("NO_OP_NAME", "PLATFORM INFO %s : %s", intrinsic_name.c_str(), val.c_str());
     value = true;
   } else {
     value = false;
-    // OP_LOGW("NO_OP_NAME", "NO PLATFORM INFO for %s", intrinsic_name.c_str());
   }
 
   return;
@@ -307,7 +298,6 @@ ge::graphStatus LstmTiling::SetTilingData(gert::TilingContext* context, DynamicR
   tilingData.set_forgetBias(rnnParams.forgetBias);
 
   gert::TilingData* rnnRawTilingData = context->GetRawTilingData();
-  // OP_LOGE_IF(rnnRawTilingData == nullptr, ge::GRAPH_FAILED, context->GetNodeType(), "GetRawTilingData failed.");
   OP_TILING_CHECK(tilingData.GetDataSize() > rnnRawTilingData->GetCapacity(),
                   VECTOR_INNER_ERR_REPORT_TILIING(context, "actual tiling data size %zu > context tiling data size %zu",
                                                   tilingData.GetDataSize(), rnnRawTilingData->GetCapacity()),
@@ -327,92 +317,23 @@ bool DynamicRNNV2Tiling::CheckInitParamsShape(gert::TilingContext* context) {
 
   if (bInput != nullptr) {
     auto bShape = bInput->GetStorageShape();
-    // OP_TILING_CHECK(bShape.GetDimNum() != 1,
-    //                 VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-    //                 "DynamicrnnV2 get bias shape dim is not 1, please check."), return false);
-
-    // OP_TILING_CHECK(bShape.GetDim(0) != 4 * outputShape.GetDim(2),
-    //                 VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-    //                 "DynamicrnnV2 bias and output is not equal, please check."), return false);
   }
   
-//   OP_TILING_CHECK(seqInput != nullptr,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 do not support seqlength, please check."), return false);
-
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, inithInput);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, initcInput);
   auto inithShape = inithInput->GetStorageShape();
   auto initcShape = initcInput->GetStorageShape();
-
-//   OP_TILING_CHECK(inithShape.GetDimNum() != 3,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get init_h shape dim is not 3, please check."), return false);
-
-//   OP_TILING_CHECK(initcShape.GetDimNum() != 3,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get init_c shape dim is not 3, please check."), return false);
-
-//   OP_TILING_CHECK(inithShape.GetDim(1) != outputShape.GetDim(1),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 init_h and output batch is unequal, please check."), return false);
-
-//   OP_TILING_CHECK(initcShape.GetDim(1) != outputShape.GetDim(1),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 init_c and output batch is unequal, please check."), return false);
-                  
-//   OP_TILING_CHECK(inithShape.GetDim(2) != outputShape.GetDim(2),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 init_h and output hidden is unequal, please check."), return false);
-
-//   OP_TILING_CHECK(initcShape.GetDim(2) != outputShape.GetDim(2),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 init_c and output hidden is unequal, please check."), return false);
-
   return true;
 }
 
 bool DynamicRNNV2Tiling::CheckAttrOps(gert::TilingContext* context) {
   // get attr
   auto attrs = context->GetAttrs();
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, attrs, false);
   const char* cellType = attrs->GetAttrPointer<char>(0);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, cellType, false);
   const char* direction = attrs->GetAttrPointer<char>(1);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, direction, false);
   const int* cellDepth = attrs->GetAttrPointer<int>(2);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, cellDepth, false);
   const bool* usePeephole = attrs->GetAttrPointer<bool>(3);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, usePeephole, false);
   const float* keepProb = attrs->GetAttrPointer<float>(4);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, keepProb, false);
   const float* cellClip = attrs->GetAttrPointer<float>(5);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, cellClip, false);
-
-//   OP_TILING_CHECK(*cellDepth != 1,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr cell_depth only support 1, please check."), return false);
-
-//   OP_TILING_CHECK(std::abs(*keepProb - 1) >= std::numeric_limits<float>::epsilon(),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr keep_prob only support 1.0, please check."), return false);
-
-//   OP_TILING_CHECK(std::abs(*cellClip + 1) >= std::numeric_limits<float>::epsilon(),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr cell_clip only support -1.0, please check."), return false);
-
-//   OP_TILING_CHECK(*usePeephole,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr use_peephole only support false, please check."), return false);
-
   std::vector<std::string> supportDirection = {"UNIDIRECTIONAL", "REDIRECTIONAL"};
-//   OP_TILING_CHECK(std::find(supportDirection.begin(), supportDirection.end(), direction) == supportDirection.end(),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr direction is not support, please check."), return false);
-
-//   OP_TILING_CHECK(strcmp(cellType, "LSTM") != 0,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr cell_type is not support, please check."), return false);
   return true;
 }
 
@@ -420,68 +341,26 @@ bool DynamicRNNV2Tiling::CheckAttrTiling(gert::TilingContext* context) {
   // get attr
   auto attrs = context->GetAttrs();
   const int* numProj = attrs->GetAttrPointer<int>(6);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, numProj, false);
   const bool* timeMajor = attrs->GetAttrPointer<bool>(7);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, timeMajor, false);
   const char* activation = attrs->GetAttrPointer<char>(8);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, activation, false);
   const char* recurrentActivation = attrs->GetAttrPointer<char>(9);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, recurrentActivation, false);
   const float* forgetBias = attrs->GetAttrPointer<float>(10);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, forgetBias, false);
   const char* gateOrder = attrs->GetAttrPointer<char>(11);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, gateOrder, false);
   const bool* stateful = attrs->GetAttrPointer<bool>(12);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, stateful, false);
   const char* mergeMode = attrs->GetAttrPointer<char>(13);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, mergeMode, false);
   const bool* isTraining = attrs->GetAttrPointer<bool>(14);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, isTraining, false);
-
-//   OP_TILING_CHECK(*numProj != 0,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr num_proj only support 0, please check."), return false);
-//   OP_TILING_CHECK(!(*timeMajor),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr time_major only support true, please check."), return false);
-
-//   OP_TILING_CHECK(*stateful,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr stateful only support false, please check."), return false);
-
   std::vector<std::string> supportGateOrder = {"ifco", "ijfo"};
-//   OP_TILING_CHECK(std::find(supportGateOrder.begin(), supportGateOrder.end(), gateOrder) == supportGateOrder.end(),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr gate_order is not support, please check."), return false);
-
-//   OP_TILING_CHECK(strcmp(activation, "tanh") != 0,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr activation is not support, please check."), return false);
-
-//   OP_TILING_CHECK(strcmp(recurrentActivation, "sigmoid") != 0,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr recurrent_activation is not support, please check."), return false);
-
   std::vector<std::string> supportMergeMode = {"concat", "add"};
-//   OP_TILING_CHECK(std::find(supportMergeMode.begin(), supportMergeMode.end(), mergeMode) == supportMergeMode.end(),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 attr merge_mode is not support, please check."), return false);
   return true;
 }
 
 ge::graphStatus DynamicRNNV2Tiling::GetOpInfo(const gert::TilingContext* context, DynamicRnnTiling& rnnParams) {
-//   OP_TILING_CHECK(context->GetComputeNodeInputNum() < DEFAULT_PARAS_INPUT_SIZE,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(), "DynamicrnnV2 input shape error."),
-//                   return ge::GRAPH_FAILED);
 
   // get x shape
   auto xTensor = context->GetInputShape(0);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, xTensor);
   auto xShape = xTensor->GetStorageShape();
-
   // get w shape
   auto weightHiddenTensor = context->GetInputShape(2);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, weightHiddenTensor);
   auto weightHiddenShape = weightHiddenTensor->GetStorageShape();
 
   // get bias seq_length, init_h, init_C
@@ -495,12 +374,7 @@ ge::graphStatus DynamicRNNV2Tiling::GetOpInfo(const gert::TilingContext* context
   (inithShape != nullptr && initcShape != nullptr) ? rnnParams.isInithc = 1 : rnnParams.isInithc = 0;
 
   int32_t dim = 2;
-//   OP_TILING_CHECK(xShape.GetDimNum() != 3,
-//                 VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                 "DynamicrnnV2 get x shape dim is not 3, please check."), return false);
-//   OP_TILING_CHECK(weightHiddenShape.GetDimNum() != 2,
-//                 VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                 "DynamicrnnV2 get weight_hidden shape dim is not 2, please check."), return false);
+
   rnnParams.timeStep = static_cast<int64_t>(xShape.GetDim(0));
   rnnParams.batch = static_cast<int64_t>(xShape.GetDim(1));
   rnnParams.inputSize = static_cast<int64_t>(xShape.GetDim(dim));
@@ -512,11 +386,9 @@ ge::graphStatus DynamicRNNV2Tiling::GetOpInfo(const gert::TilingContext* context
 ge::graphStatus DynamicRNNV2Tiling::GetAttr(const gert::TilingContext* context, DynamicRnnTiling& rnnParams) {
   // get attr
   auto attrs = context->GetAttrs();
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, attrs);
 
   // get gate_order
   const char* gateOrder = attrs->GetAttrPointer<char>(11);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, gateOrder);
   if (strcmp(gateOrder, "ijfo") == 0) {
     rnnParams.gateOrder = static_cast<int64_t>(GateOrder::IJFO);
   } else {
@@ -528,17 +400,14 @@ ge::graphStatus DynamicRNNV2Tiling::GetAttr(const gert::TilingContext* context, 
 
   // get cell_clip
   const float* cellClip = attrs->GetAttrPointer<float>(5);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, cellClip);
   rnnParams.cellClip = *cellClip;
 
   // get forget_bias
   const float* forgetBias = attrs->GetAttrPointer<float>(10);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, forgetBias);
   rnnParams.forgetBias = *forgetBias;
 
   // get is_training
   const bool* isTraining = attrs->GetAttrPointer<bool>(14);
-//   OPS_CHECK_NULL_WITH_CONTEXT(context, isTraining);
   rnnParams.isTraining = *isTraining;
 
   return ge::GRAPH_SUCCESS;
@@ -547,55 +416,18 @@ ge::graphStatus DynamicRNNV2Tiling::GetAttr(const gert::TilingContext* context, 
 bool DynamicRNNV2Tiling::CheckParamsShape(gert::TilingContext* context) {
   // get input shape
   auto xInput = context->GetInputShape(0);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, xInput, false);
   auto xShape = xInput->GetStorageShape();
   // get weight input shape
   auto wInput = context->GetInputShape(1);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, wInput, false);
   auto wInputShape = wInput->GetStorageShape();
 
   // get weight hidden shape
   auto wHidden = context->GetInputShape(2);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, wHidden, false);
   auto wHiddenShape = wHidden->GetStorageShape();
 
   // get output y shape
   auto outputY = context->GetOutputShape(0);
-//   OPS_CHECK_NULL_WITH_CONTEXT_RET(context, outputY, false);
   auto outputShape = outputY->GetStorageShape();
-
-  // check dim num
-//   OP_TILING_CHECK(xShape.GetDimNum() != 3,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get x shape dim is not 3, please check."), return false);
-//   OP_TILING_CHECK(xShape.GetDim(CONST_TWO) == 0,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 input_size not support 0, please check."), return false);
-//   OP_TILING_CHECK(wInputShape.GetDimNum() != 2,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get weight_input shape dim is not 2, please check."), return false);
-
-//   OP_TILING_CHECK(wHiddenShape.GetDimNum() != 2,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get weight_hidden shape dim is not 2, please check."), return false);
-//   OP_TILING_CHECK(outputShape.GetDimNum() != 3,
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get output shape dim is not 3, please check."), return false);
-
-  // check batch dim
-//   OP_TILING_CHECK(xShape.GetDim(1) != outputShape.GetDim(1),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get x, output batch is not equal, please check."), return false);
-
-//   // check x/w input_size dim
-//   OP_TILING_CHECK(wInputShape.GetDim(0) != xShape.GetDim(2),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get weight_input shape dim0 is wrong, please check."), return false);
-
-//   // check hidden dim
-//   OP_TILING_CHECK(wHiddenShape.GetDim(1) != 4 * outputShape.GetDim(2),
-//                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(),
-//                   "DynamicrnnV2 get weight_hidden shape dim1 is wrong, please check."), return false);
   bool ret = CheckInitParamsShape(context);
 
   return ret;
@@ -651,7 +483,6 @@ namespace ge {
   constexpr int64_t UNKNOWN_DIM_VALUE = -1;
 
   static ge::graphStatus InferDataType4DynamicRNNV2(gert::InferDataTypeContext* context) {
-    // OP_LOGD(context->GetNodeName(), "InferDataType4DynamicRNNV2 start");
     auto input_x_dtype = context->GetInputDataType(0);
     auto output_y_dtype = input_x_dtype;
 
@@ -663,61 +494,22 @@ namespace ge {
       output_y_dtype = initc_dtype;
     }
 
-    // OP_CHECK(context->SetOutputDataType(0, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType y Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(1, input_x_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType output_h Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(RNN_OUTPUT_INDEX_C, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType output_c Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(RNN_OUTPUT_INDEX_I, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType i Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(RNN_OUTPUT_INDEX_J, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType j Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(RNN_OUTPUT_INDEX_F, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType f Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(RNN_OUTPUT_INDEX_O, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType o Fail"), return ge::GRAPH_FAILED);
-    // OP_CHECK(context->SetOutputDataType(RNN_OUTPUT_INDEX_TANHC, output_y_dtype) != ge::GRAPH_SUCCESS, 
-    //         OP_LOGE(context->GetNodeName(), "SetOutputDataType tanhc Fail"), return ge::GRAPH_FAILED);
-
-    // OP_LOGD(context->GetNodeName(), "InferDataType4DynamicRNNV2 end");
     return ge::GRAPH_SUCCESS;
   }
 
   static ge::graphStatus InferShape4DynamicRNNV2(gert::InferShapeContext* context) {
-    // OP_LOGD(context->GetNodeName(), "InferShape4DynamicRNNV2 start");
     auto x_shape = context->GetInputShape(0);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, x_shape);
-
-    // OP_CHECK(x_shape->GetDimNum() != X_SHAPE_SIZE_LIMIT,
-    //         VECTOR_INFER_SHAPE_INNER_ERR_REPORT(context->GetNodeName(),
-    //                                             "The dimension count of x should be 3, please check!"),
-    //         return ge::GRAPH_FAILED);
 
     auto weight_hidden_shape = context->GetInputShape(2);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, weight_hidden_shape);
-
-    // OP_CHECK(weight_hidden_shape->GetDimNum() != WEIGHT_INPUT_SIZE_LIMIT,
-    //         VECTOR_INFER_SHAPE_INNER_ERR_REPORT(
-    //             context->GetNodeName(), "The dimension count of weight hidden should be equal to 2, please check!"),
-    //         return ge::GRAPH_FAILED);
 
     auto y_shape = context->GetOutputShape(0);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, y_shape);
     auto outputh_shape = context->GetOutputShape(1);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, outputh_shape);
     auto outputc_shape = context->GetOutputShape(2);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, outputc_shape);
     auto i_shape = context->GetOutputShape(3);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, i_shape);
     auto j_shape = context->GetOutputShape(4);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, j_shape);
     auto f_shape = context->GetOutputShape(5);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, f_shape);
     auto o_shape = context->GetOutputShape(6);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, o_shape);
     auto tanhc_shape = context->GetOutputShape(7);
-    // OPS_CHECK_NULL_WITH_CONTEXT(context, tanhc_shape);
 
     int64_t num_step = x_shape->GetDim(0);
     int64_t batch_size = x_shape->GetDim(1);
