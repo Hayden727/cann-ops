@@ -9,9 +9,9 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-import numpy as np
 import os
 import torch
+import numpy as np
 import torch.nn as nn
 
 def gen_golden_data_simple():
@@ -25,7 +25,7 @@ def gen_golden_data_simple():
     targets = torch.tensor(input_label)
 
     # 计算损失
-    loss = mse_loss(predictions, targets )
+    loss = mse_loss(predictions, targets)
 
     golden = loss.numpy()
 
