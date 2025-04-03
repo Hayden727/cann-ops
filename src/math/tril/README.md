@@ -73,6 +73,10 @@
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Tril算子。</td>
     </tr>
+    <tr>
+        <td><a href="./examples/ATBInvocation"> ATBInvocation</td><td>通过ATB调用的方式调用Tril算子。</td>
+    </tr>
+
 </table>
 
 ## 更新说明
