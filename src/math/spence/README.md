@@ -20,9 +20,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 
 ## 实现原理
 
-图1 Spence推理计算流程图
 
-![image](https://obs-book.obs.cn-east-2.myhuaweicloud.com/Spence.png)
 
 Spence算子实现主要分为以下步骤：
 
