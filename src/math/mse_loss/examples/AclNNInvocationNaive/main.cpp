@@ -188,14 +188,14 @@ int main(int argc, char **argv)
     ret = CreateAclTensor(inputLabelHostData, inputLabelShape, &inputLabelDeviceAddr, aclDataType::ACL_FLOAT, &inputLabel);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // 创建outputY aclTensor
-    ret = CreateAclTensor(outputYHostData, outputYShape, &outputYDeviceAddr, aclDataType::ACL_FLOAT16, &outputY);
+    ret = CreateAclTensor(outputYHostData, outputYShape, &outputYDeviceAddr, aclDataType::ACL_FLOAT, &outputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
     // 3. 调用CANN自定义算子库API
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnMseLossGetWorkspaceSize(inputPredict, inputLabel, reduction, outputY, &workspaceSize, &executor);
+    ret = aclnnMseLossGetWorkspaceSize(inputPredict, inputLabel, reduction.c_str(), outputY, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
