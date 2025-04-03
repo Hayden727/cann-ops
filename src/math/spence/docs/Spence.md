@@ -1,8 +1,9 @@
+声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 # Spence
 
 ## 支持的产品型号
 
-Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atlas 800I A2推理产品/Atlas 200I/500 A2推理产品
+Atlas A2训练系列产品/Atlas 800I A2推理产品/Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -20,9 +21,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 
 ## 实现原理
 
-图1 Spence推理计算流程图
 
-![image](https://obs-book.obs.cn-east-2.myhuaweicloud.com/Spence.png)
 
 Spence算子实现主要分为以下步骤：
 
@@ -49,8 +48,8 @@ Spence算子实现主要分为以下步骤：
 
 - **参数说明：**
   
-  - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、FLOAT32(BF16需要强制转换为FLOAT32才能满足spence的精度要求，但是官方spence.cpp默认中支持BF16，因此若输入为BF16，需在msopst.init的atc_singleop_advance_option中--precision_mode=force_fp32)，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、FLOAT32和BF16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、FLOAT32，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、FLOAT32，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -77,7 +76,7 @@ Spence算子实现主要分为以下步骤：
 
 ## 约束与限制
 
-- x和out的数据类型支持FLOAT16、FLOAT32和BF16(需强制转换为FLOAT32)，数据格式只支持ND
+- x和out的数据类型支持FLOAT16、FLOAT32，数据格式只支持ND
 - 输入x和输出out的shape必须相同
 
 ## 算子原型
@@ -86,10 +85,10 @@ Spence算子实现主要分为以下步骤：
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Spence</td></tr>
 </tr>
 <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">4095</td><td align="center">float16/float32/bf16</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">4095</td><td align="center">float16/float32/bf16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">spence</td></tr>
 </table>
