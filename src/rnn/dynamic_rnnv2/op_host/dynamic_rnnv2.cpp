@@ -45,7 +45,7 @@ namespace optiling {
     }                                         \
   } while (0)
 
-bool AddWorkspace(gert::TilingContext* context, const size_t workspace) {
+bool RnnAddWorkspace(gert::TilingContext* context, const size_t workspace) {
   size_t* workspace_size = context->GetWorkspaceSizes(1);
   *workspace_size = workspace;
   return true;
@@ -111,7 +111,7 @@ ge::graphStatus LstmTiling::TilingWithAscendC(gert::TilingContext* context) {
   auto launchCore = (rnnParams.usedCoreNum + DEFAULT_INDEX_TWO - 1) / DEFAULT_INDEX_TWO;
   context->SetBlockDim(launchCore);  // 24上限
   context->SetTilingKey(rnnParams.tilingKey);
-  AddWorkspace(context, workspaceSize);
+  RnnAddWorkspace(context, workspaceSize);
 
   return ge::GRAPH_SUCCESS;
 }
