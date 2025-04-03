@@ -1,6 +1,6 @@
 ## 概述
 
-本样例基于AscendC自定义[Tril](https://gitee.com/ascend/cann-ops/tree/master/src/math/Tril)算子,开发了ATB插件并进行了插件调用测试.
+本样例基于AscendC自定义[Tril](https://gitee.com/ascend/cann-ops/tree/master/src/math/tril)算子,开发了ATB插件并进行了插件调用测试.
 
 ## 项目结构介绍
 
@@ -44,14 +44,6 @@
   y = tril(x, diagonal)
   $$
 
-### 定义
-
-```
-struct TrilAttrParam
-{
-    int diagonal;
-};
-```
 
 ### 参数列表
 
