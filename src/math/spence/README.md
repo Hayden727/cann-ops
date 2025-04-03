@@ -42,7 +42,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AddCustom算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Spence算子。</td>
     </tr>
 </table>
 
