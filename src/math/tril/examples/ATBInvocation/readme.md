@@ -31,7 +31,7 @@
 
   ```shell
   cd TrilOperationTest  
-  bash run.sh
+  bash script/run.sh
   ```
 
 ## TrilOperation算子介绍
