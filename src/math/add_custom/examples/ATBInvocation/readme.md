@@ -1,6 +1,6 @@
 ## 概述
 
-本样例基于AscendC自定义AddCustom算子,开发了ATB插件并进行了插件调用测试.
+本样例基于AscendC自定义[AddCustom](https://gitee.com/ascend/cann-ops/tree/master/src/math/add_custom)算子,开发了ATB插件并进行了插件调用测试.
 
 ## 项目结构介绍
 
@@ -40,12 +40,6 @@
 
 实现两个输入张量相加
 
-### 定义
-
-```
-struct AddParam {
-};
-```
 
 ### 参数列表
 
