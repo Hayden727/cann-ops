@@ -1,54 +1,81 @@
 [
     {
-        "case_name": "Test_DynamicRNNV2_001",
-        "op": "DynamicRNNV2",
-        "calc_expect_func_file":"test_dynamic_rnnv2.py:calc_expect_func", 
+        "case_name": "Test_DynamicRNN_001",
+        "op": "DynamicRNN",
+        "calc_expect_func_file":"test_dynamic_rnn.py:calc_expect_func", 
         "input_desc": [
           {
             "shape": [
-              -1,
+              1,
               16,
               16
             ],
             "ori_shape": [
-              -1,
+              1,
               16,
               16
             ],
             "ori_format": "ND",
             "format": "ND",
-            "typical_shape": [1, 16, 16],
-            "shape_range": [[1, 1]],
-            "value_range": [[1, 1]],
             "name": "x",
             "type": "float16"
           },
           {
             "shape": [
-              16,
+              32,
               64
             ],
             "ori_shape": [
-              16,
+              32,
               64
             ],
             "ori_format": "ND",
             "format": "ND",
-            "name": "weight_input",
+            "name": "w",
             "type": "float16"
           },
           {
             "shape": [
-              16,
               64
             ],
             "ori_shape": [
-              16,
               64
             ],
             "ori_format": "ND",
             "format": "ND",
-            "name": "weight_hidden",
+            "name": "b",
+            "type": "float16"
+          },
+          {
+            "shape": [
+              1,
+              16,
+              16
+            ],
+            "ori_shape": [
+              1,
+              16,
+              16
+            ],
+            "ori_format": "ND",
+            "format": "ND",
+            "name": "init_h",
+            "type": "float16"
+          },
+          {
+            "shape": [
+              1,
+              16,
+              16
+            ],
+            "ori_shape": [
+              1,
+              16,
+              16
+            ],
+            "ori_format": "ND",
+            "format": "ND",
+            "name": "init_c",
             "type": "float16"
           }
         ],
@@ -187,21 +214,6 @@
             "name": "time_major",
             "type": "bool",
             "value": true
-          },
-          {
-            "name": "activation",
-            "type": "string",
-            "value": "tanh"
-          },
-          {
-            "name": "recurrent_activation",
-            "type": "string",
-            "value": "sigmoid"
-          },
-          {
-            "name": "gate_order",
-            "type": "string",
-            "value": "ijfo"
           }
         ]
     }

@@ -15,15 +15,14 @@
  */
 
 /*!
- * \file dynamic_rnn_v2.h
+ * \file dynamic_rnn.h
  * \brief
  */
-#ifndef AIR_CXX_RUNTIME_V2_OP_IMPL_DYNAMIC_RNN_V2_H_
-#define AIR_CXX_RUNTIME_V2_OP_IMPL_DYNAMIC_RNN_V2_H_
+#ifndef AIR_CXX_RUNTIME_V2_OP_IMPL_DYNAMIC_RNN_H_
+#define AIR_CXX_RUNTIME_V2_OP_IMPL_DYNAMIC_RNN_H_
 #include <cstdint>
 #include <vector>
 #include <string>
-// #include "register/op_compile_info_base.h"
 #include "register/tilingdata_base.h"
 #include "tiling/tiling_api.h"
 #include "register/op_def_registry.h"
@@ -146,9 +145,9 @@ TILING_DATA_FIELD_DEF_STRUCT(TCubeTiling, hiddenMMParam);
 
 END_TILING_DATA_DEF;
 
-REGISTER_TILING_DATA_CLASS(DynamicRNNV2, DynamicRNNTilingData)
+REGISTER_TILING_DATA_CLASS(DynamicRNN, DynamicRNNTilingData)
 
-class LstmTilingRNNV2 {
+class LstmTilingRNN {
  public:
     void GetAICoreIntrinsicDtype(fe::PlatFormInfos& platform_info, const std::string& intrinsic_name, bool& value);
     ge::graphStatus TilingWithAscendC(gert::TilingContext* context);
@@ -190,25 +189,17 @@ class LstmTilingRNNV2 {
   DynamicRnnTiling rnnParams;
 };
 
-constexpr int32_t DST_SHAPE_SIZE = 3;
-constexpr int32_t DST_INPUT_SIZE = 2;
-constexpr int32_t NUM_SIXTEEN = 16;
-constexpr int32_t INPUT_INDEX_TWO = 2;
-constexpr int32_t MAX_BLOCK_DIM = 32;
-constexpr int32_t WORK_SPACE_INDEX_TWO = 2;
-const std::vector<int32_t> WORKSPACE_SIZES = {4096, 4194304, 4194304};
-
-struct DynamicRNNV2TilingData {
-  int32_t sequenceLength{0};
-  int32_t dynamicrnnBatch{0};
-  int32_t chequeIndex{-1};
+struct DynamicRnnTilingData {
+  int32_t sequenceLength;
+  int32_t dynamicRnnBatch;
+  int32_t chequeIndex;
 };
 
-struct DynamicRNNV2CompileInfo : public optiling::CompileInfoBase {
+struct DynamicRnnCompileInfo : public optiling::CompileInfoBase {
   std::vector<std::vector<int64_t>> tuneShapeList;
 };
 
-class DynamicRNNV2Tiling : public LstmTilingRNNV2 {
+class DynamicRNNTiling : public LstmTilingRNN {
   protected:
     bool CheckParamsShape(gert::TilingContext* context) override;
     bool CheckInitParamsShape(gert::TilingContext* context) override;
@@ -220,4 +211,4 @@ class DynamicRNNV2Tiling : public LstmTilingRNNV2 {
 };
 
 }  // namespace optiling
-#endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_DYNAMIC_RNN_V2_H_
+#endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_DYNAMIC_RNN_H_
