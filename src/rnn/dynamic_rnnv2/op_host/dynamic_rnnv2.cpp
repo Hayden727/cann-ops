@@ -45,13 +45,13 @@ namespace optiling {
     }                                         \
   } while (0)
 
-bool RnnAddWorkspace(gert::TilingContext* context, const size_t workspace) {
+bool AddWorkspaceRNNV2(gert::TilingContext* context, const size_t workspace) {
   size_t* workspace_size = context->GetWorkspaceSizes(1);
   *workspace_size = workspace;
   return true;
 }
 
-void LstmTiling::GetAICoreIntrinsicDtype(fe::PlatFormInfos& platform_info, const std::string& intrinsic_name, bool& value) {
+void LstmTilingRNNV2::GetAICoreIntrinsicDtype(fe::PlatFormInfos& platform_info, const std::string& intrinsic_name, bool& value) {
   std::string val;
   (void)platform_info.GetPlatformRes("AICoreintrinsicDtypeMap", intrinsic_name, val);
 
@@ -64,7 +64,7 @@ void LstmTiling::GetAICoreIntrinsicDtype(fe::PlatFormInfos& platform_info, const
   return;
 }
 
-ge::graphStatus LstmTiling::TilingWithAscendC(gert::TilingContext* context) {
+ge::graphStatus LstmTilingRNNV2::TilingWithAscendC(gert::TilingContext* context) {
   OP_TILING_CHECK(!CheckParamsShape(context),
                   VECTOR_INNER_ERR_REPORT_TILIING(context->GetNodeName(), "check shape fail."),
                   return ge::GRAPH_FAILED);
@@ -111,12 +111,12 @@ ge::graphStatus LstmTiling::TilingWithAscendC(gert::TilingContext* context) {
   auto launchCore = (rnnParams.usedCoreNum + DEFAULT_INDEX_TWO - 1) / DEFAULT_INDEX_TWO;
   context->SetBlockDim(launchCore);  // 24上限
   context->SetTilingKey(rnnParams.tilingKey);
-  RnnAddWorkspace(context, workspaceSize);
+  AddWorkspaceRNNV2(context, workspaceSize);
 
   return ge::GRAPH_SUCCESS;
 }
 
- bool LstmTiling::CheckParamsDtype(const gert::TilingContext* context) {
+ bool LstmTilingRNNV2::CheckParamsDtype(const gert::TilingContext* context) {
   // dtype support list
   std::vector<ge::DataType> supportDtype = {ge::DT_FLOAT, ge::DT_FLOAT16};
 
@@ -143,7 +143,7 @@ ge::graphStatus LstmTiling::TilingWithAscendC(gert::TilingContext* context) {
   return true;
 }
 
-bool LstmTiling::CheckAttr(gert::TilingContext* context) {
+bool LstmTilingRNNV2::CheckAttr(gert::TilingContext* context) {
   bool ret = CheckAttrOps(context);
   if (ret) {
     ret = CheckAttrTiling(context);
@@ -152,7 +152,7 @@ bool LstmTiling::CheckAttr(gert::TilingContext* context) {
   return ret;
 }
 
-ge::graphStatus LstmTiling::GetMMTilingData(gert::TilingContext* context, DynamicRNNTilingData& tilingData,
+ge::graphStatus LstmTilingRNNV2::GetMMTilingData(gert::TilingContext* context, DynamicRNNTilingData& tilingData,
                                           DynamicRnnTiling& rnnParams) {
   int32_t ubSeq = 10;
   int32_t ubNoSeq = 8;
@@ -181,7 +181,7 @@ ge::graphStatus LstmTiling::GetMMTilingData(gert::TilingContext* context, Dynami
   return ret;
 }
 
-ge::graphStatus LstmTiling::GetMMTilingDataSplit(const gert::TilingContext* context, DynamicRNNTilingData& tilingData,
+ge::graphStatus LstmTilingRNNV2::GetMMTilingDataSplit(const gert::TilingContext* context, DynamicRNNTilingData& tilingData,
                                                  DynamicRnnTiling& rnnParams, matmul_tiling::DataType dataType) {
   int32_t hiddenBlock = 4;
   int64_t aivDouble = 2;
@@ -255,7 +255,7 @@ ge::graphStatus LstmTiling::GetMMTilingDataSplit(const gert::TilingContext* cont
   return ge::GRAPH_SUCCESS;
 }
 
-ge::graphStatus LstmTiling::CalcTilingKey(DynamicRnnTiling& rnnParams) {
+ge::graphStatus LstmTilingRNNV2::CalcTilingKey(DynamicRnnTiling& rnnParams) {
   // 判断是否需要切分L0c输出，分次搬入UB
   int64_t tilingKey = 0;
 
@@ -270,7 +270,7 @@ ge::graphStatus LstmTiling::CalcTilingKey(DynamicRnnTiling& rnnParams) {
   return ge::GRAPH_SUCCESS;
 }
 
-ge::graphStatus LstmTiling::SetTilingData(gert::TilingContext* context, DynamicRNNTilingData& tilingData,
+ge::graphStatus LstmTilingRNNV2::SetTilingData(gert::TilingContext* context, DynamicRNNTilingData& tilingData,
                                         DynamicRnnTiling& rnnParams) {
   // 无效数据附初值
   rnnParams.isHF32 = 0;

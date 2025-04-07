@@ -1,14 +1,19 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-"""
-Special golden data generation function for apply_came_part1
-"""
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
+
+import numpy as np
+import torch
+
 
 def gen_rnn_cpu(x_data, w_data, bias_num, h_new, c_new, forget_bias, direction, cell_clip, seq_length, gate_order):
-    print("------------------------gen_rnn_cpu-----------------")
-    import numpy as np
-    import torch
-
     def sigmoid(x):
         s = 1 / (1 + np.exp(-x))
         return s
@@ -116,18 +121,13 @@ def gen_rnn_cpu(x_data, w_data, bias_num, h_new, c_new, forget_bias, direction, 
     return [output_y, output_h, output_c, output_i, output_j, output_f, output_o, output_tanc]
 
 
-def dynamic_rnn_v2_golden(**kwargs):
-    import numpy as np
-    print("kwargs=", kwargs)
-    print("kwargs=", type(kwargs))
-    # x, w_i, w_h, bias_num, seq_length, init_h, init_c, wci, wcf, wco, weight_input = context.input_arrays
+def calc_expect_func(**kwargs):
     x = kwargs.get('x', {'value':None})['value']
     w = kwargs.get('w', {'value':None})['value']
     bias_num = kwargs.get('b', {'value':None})['value']
     w_i = kwargs.get('weight_input', {'value':None})['value']
     w_h = kwargs.get('weight_hidden', {'value':None})['value']
 
-    # attr
     forget_bias = kwargs.get('forget_bias', 0.0)
     gate_order = kwargs.get('gate_order', "ijfo")
     direction = kwargs.get('direction', "UNIDIRECTIONAL")
