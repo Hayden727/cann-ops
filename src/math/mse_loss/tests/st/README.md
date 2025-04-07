@@ -1,7 +1,7 @@
 ## 目录结构介绍
 ```
 ├── msopst.ini                  // st测试配置文件 
-├── Mse_Loss_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
+├── MseLoss_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
 └── test_Mse_Loss.py               // 算子期望数据生成脚本
 ```
 
@@ -41,7 +41,7 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Mse_Loss_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./MseLoss_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明
