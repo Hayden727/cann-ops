@@ -14,7 +14,7 @@
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="2" align="center">算子输入</td>
-<tr><td align="center">size</td><td align="center">aclIntArray</td><td align="center">int</td><td align="center"></td></tr>    
+<tr><td align="center">shape</td><td align="center">aclIntArray</td><td align="center">int</td><td align="center"></td></tr>    
 
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
@@ -50,7 +50,6 @@
   - 执行编译
 
     ```bash
-    cd src/expand/ExpandV2
     bash build.sh
     ```
 
