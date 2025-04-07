@@ -176,8 +176,8 @@ int main(int argc, char **argv)
     void * input1=&inputX1HostData;
     void * input2=&inputX2HostData;
     //读取数据
-    ReadFile("../input/input_x1.bin", fileSize, *input1, inputX1ShapeSize * dataType);
-    ReadFile("../input/input_x2.bin", fileSize, *input2, inputX1ShapeSize * dataType);
+    ReadFile("../input/input_x1.bin", fileSize, input1, inputX1ShapeSize * dataType);
+    ReadFile("../input/input_x2.bin", fileSize, input2, inputX1ShapeSize * dataType);
 
     INFO_LOG("Set input success");
     // 创建inputX aclTensor
@@ -214,9 +214,9 @@ int main(int argc, char **argv)
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputYDeviceAddr,
                       size * sizeof(uint8_t), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void ** output1=(void **)(&resultData);
+    void * output1=&resultData;
     //写出数据
-    WriteFile("../output/output_y.bin", *output1, outputYShapeSize);
+    WriteFile("../output/output_y.bin", output1, outputYShapeSize);
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
