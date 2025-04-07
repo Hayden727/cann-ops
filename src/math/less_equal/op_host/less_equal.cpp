@@ -1,4 +1,16 @@
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
 
+/**
+ * @file less_equal.cpp
+ */
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -7,19 +19,18 @@
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
 
+namespace optiling {
+
 constexpr uint32_t DATA_SIZE_4 = 4;
 constexpr uint32_t DATA_SIZE_2 = 2;
 constexpr uint32_t DATA_SIZE_1 = 1;
 constexpr uint32_t BLOCK_SIZE = 32;
 
-namespace optiling {
-
-static ge::graphStatus TilingFunc(gert::TilingContext* context) {
+static ge::graphStatus TF(gert::TilingContext* context) {
   LessEqualTilingData tiling;
   uint64_t ubSize;
   uint32_t bufferNum = 16;
-  auto ascendcPlatform =
-      platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
+  auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
   ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
   uint32_t dataType = context->GetInputDesc(0)->GetDataType();
   uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
@@ -42,17 +53,14 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
       dataSize = DATA_SIZE_4;
       break;
   }
-
   uint32_t pad32 = BLOCK_SIZE;
-  uint32_t padMax = (ubSize / bufferNum / dataSize) / (2 * BLOCK_SIZE) * (2 * BLOCK_SIZE);
-
+  uint32_t padMax = ((uint32_t)ubSize / bufferNum / dataSize) / ((uint32_t)2 * BLOCK_SIZE) * ((uint32_t)2 * BLOCK_SIZE);
   if (totalLength < pad32 * coreNum) {
     coreNum =
         totalLength % pad32 ? totalLength / pad32 + 1 : totalLength / pad32;
   }
   context->SetBlockDim(coreNum);
   tiling.set_totalLength(totalLength);
-
   uint32_t tileNumMean = 0;
   uint32_t tileNumEnd = 0;
   uint32_t tileLengthMean = 0;
@@ -63,8 +71,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
   if (totalLength < pad32) {
     blockLengthMean = pad32;
     blockLengthEnd = totalLength;
-    tileNumMean = 1;
-    tileNumEnd = 1;
+    tileNumMean = (uint32_t)1;
+    tileNumEnd = (uint32_t)1;
     tileLengthMean = totalLength;
     tileLengthEnd = totalLength;
   } else {  // 总数据至少比32B大时
@@ -82,11 +90,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
       maxBlockLength = totalLength / coreNum;
     }
 
-    if (maxBlockLength >
-        padMax) {  // maxBlockLength大于padMax时对maxBlockLength进行判定
+    if (maxBlockLength > padMax) {  // maxBlockLength大于padMax时对maxBlockLength进行判定
       uint32_t padTemp = 0;
-      for (uint32_t i = padMax / 2; i <= padMax; i += pad32) {
-        padTemp = maxBlockLength % i == 0 ? i : padTemp;
+      for (uint32_t i = padMax / (uint32_t)2; i <= padMax; i += pad32) {
+        padTemp = maxBlockLength % i == (uint32_t)0 ? i : padTemp;
       }
       if (padTemp) {  // 如果maxBlockLength可以被PadTemp整除，那么padTemp就是tilelength
         blockLengthMean = maxBlockLength;
@@ -189,7 +196,7 @@ class LessEqual : public OpDef {
 
     this->SetInferShape(ge::InferShape);
 
-    this->AICore().SetTiling(optiling::TilingFunc);
+    this->AICore().SetTiling(optiling::TF);
 
     this->AICore().AddConfig("ascend310p")
                   .AddConfig("ascend310b")
