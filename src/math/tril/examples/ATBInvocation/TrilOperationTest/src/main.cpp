@@ -39,7 +39,7 @@ namespace common{
         return ret;
     }
 
-    void* ReadBinFile(const string filename, size_t& size) {
+    void* ReadBinFile(const std::string filename, size_t& size) {
         std::ifstream file(filename, std::ios::binary | std::ios::ate);
         if (!file) {
             std::cerr << "无法打开文件: " << filename << std::endl;
@@ -178,7 +178,7 @@ int main(int argc, const char *argv[])
     std::cout << "[INFO]: Operation InferShape success" << std::endl;
     // 读取输入文件到HOST内存
     std::vector<InputData> input;
-    std::string *xPath = "./script/input/input0.bin";
+    std::string xPath = "./script/input/input0.bin";
     InputData inputX;
     inputX.data = ReadBinFile(xPath,inputX.size);
     input.push_back(inputX);
