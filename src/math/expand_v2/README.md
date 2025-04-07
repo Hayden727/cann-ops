@@ -2,12 +2,12 @@
 本样例通过`Ascend C`编程语言实现了`ExpandV2`算子。
 
 ### 算子描述
-将输入张量x广播成指定size的张量。
+将输入张量x广播成指定shape的张量。
 
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Sqrt</th></tr> 
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ExpandV2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
  

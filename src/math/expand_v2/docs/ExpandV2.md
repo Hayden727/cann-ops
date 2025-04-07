@@ -97,7 +97,7 @@ Atlas A2 训练系列产品/Atlas 800I A2推理产品
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="1" align="center">属性</td>
-<td align="center">shape</td><td align="center">IntArray</td><td align="center">int64</td><td align="center"></td></tr> 
+<td align="center">shape</td><td align="center">IntArray</td><td align="center">int</td><td align="center"></td></tr> 
 
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
