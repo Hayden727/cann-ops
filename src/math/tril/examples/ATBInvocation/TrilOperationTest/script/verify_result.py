@@ -24,7 +24,8 @@ def verify_result(real_result, golden):
     result_atol = numpy.less_equal(result, LOSS) # 计算绝对误差
     result_rtol = numpy.less_equal(result / numpy.add(deno, MINIMUM), LOSS) # 计算相对误差
     if not result_rtol.all() and not result_atol.all():
-        if numpy.sum(result_rtol == False) > real_result.size * LOSS and numpy.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
+        if numpy.sum(result_rtol == False) > real_result.size * LOSS and \
+           numpy.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
             return False
     print("test Operation success!")

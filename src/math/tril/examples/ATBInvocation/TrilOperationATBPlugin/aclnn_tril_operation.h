@@ -11,16 +11,15 @@
 /**
  * @file aclnn_tril_operation.h
  */
+#ifndef ACLNN_TRIL_OPERATION_H
+#define ACLNN_TRIL_OPERATION_H
 #include <acl/acl.h>
 #include <aclnn/acl_meta.h>
 #include <atb/atb_infer.h>
 #include <atb/types.h>
 #include <atb/utils.h>
-#include "atb/infer_op_params.h"
 #include <vector>
-
-#ifndef ACLNN_TRIL_OPERATION_H
-#define ACLNN_TRIL_OPERATION_H
+#include "atb/infer_op_params.h"
 namespace common{
     struct TrilAttrParam
     {

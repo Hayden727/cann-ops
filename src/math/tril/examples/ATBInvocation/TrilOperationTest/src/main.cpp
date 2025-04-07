@@ -39,7 +39,7 @@ namespace common{
         return ret;
     }
 
-    void* ReadBinFile(const char* filename, size_t& size) {
+    void* ReadBinFile(const string filename, size_t& size) {
         std::ifstream file(filename, std::ios::binary | std::ios::ate);
         if (!file) {
             std::cerr << "无法打开文件: " << filename << std::endl;
@@ -166,9 +166,9 @@ int main(int argc, const char *argv[])
     atb::TensorDesc xDesc;
     xDesc.dtype = ACL_FLOAT16;
     xDesc.format = ACL_FORMAT_ND;
-    xDesc.shape.dimNum = 2;
-    xDesc.shape.dims[0] = 10;
-    xDesc.shape.dims[1] = 10;
+    xDesc.shape.dimNum = 2; // 第一个输入是个2维tensor
+    xDesc.shape.dims[0] = 10; // 第一个输入的第一个维度是10
+    xDesc.shape.dims[1] = 10; // 第一个输入的第二个维度是10
     intensorDescs.at(0) = xDesc;
     atb::Status st = op->InferShape(intensorDescs,outtensorDescs);
     if (st != 0) {
@@ -178,11 +178,13 @@ int main(int argc, const char *argv[])
     std::cout << "[INFO]: Operation InferShape success" << std::endl;
     // 读取输入文件到HOST内存
     std::vector<InputData> input;
-    char *xPath = "./script/input/input0.bin";
+    std::string *xPath = "./script/input/input0.bin";
     InputData inputX;
     inputX.data = ReadBinFile(xPath,inputX.size);
     input.push_back(inputX);
-    if(input.size() != op->GetInputNum()) std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
+    if(input.size() != op->GetInputNum()) {
+        std::cout << "[ERROR]: Operation actual input num is not equal to GetInputNum()";
+    }
     // variantPack输入输出准备
     atb::VariantPack variantPack;
     variantPack.inTensors.resize(op->GetInputNum());
