@@ -1,56 +1,60 @@
 # CMake lowest version requirement
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.5.1)
 
-# 设置工程名
-project(expand_test)
+# project information
+project(acl_expand_test)
 
 # Compile options
-add_compile_options(-std=c++17)
+add_compile_options(-std=c++11)
 
-# 设置编译选项
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "./")    
-set(CMAKE_CXX_FLAGS_DEBUG "-fPIC -O0 -g -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "-fPIC -O2 -Wall")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./")
 
-# 设置ASCEND_PATH（CANN软件包目录，请根据实际路径修改）和INCLUDE_BASE_DIR（头文件目录）
-if(NOT "$ENV{ASCEND_CUSTOM_PATH}" STREQUAL "")      
-    set(ASCEND_PATH $ENV{ASCEND_CUSTOM_PATH})
-else()
-    set(ASCEND_PATH "/usr/local/Ascend/ascend-toolkit/latest")
+set(INC_PATH $ENV{DDK_PATH})
+
+if (NOT DEFINED ENV{DDK_PATH})
+    set(INC_PATH "/usr/local/Ascend/ascend-toolkit/latest")
+    message(STATUS "set default INC_PATH: ${INC_PATH}")
+else ()
+    message(STATUS "env INC_PATH: ${INC_PATH}")
 endif()
 
-string(TOLOWER "${CMAKE_SYSTEM_NAME}" SYSTEM_NAME_LOWER)
+set(CUST_PKG_PATH "${INC_PATH}/opp/vendors/customize/op_api")
 
-set(CUST_PKG_PATH "${ASCEND_PATH}/opp/vendors/customize/op_api")
-set(LIB_PATH ${ASCEND_PATH}/${CMAKE_SYSTEM_PROCESSOR}-${SYSTEM_NAME_LOWER}/lib64)
+set(LIB_PATH $ENV{NPU_HOST_LIB})
 
-set(INCLUDE_BASE_DIR "${ASCEND_PATH}/include")
+# Dynamic libraries in the stub directory can only be used for compilation
+if (NOT DEFINED ENV{NPU_HOST_LIB})
+    set(LIB_PATH "/usr/local/Ascend/ascend-toolkit/latest/acllib/lib64/stub/")
+    set(LIB_PATH1 "/usr/local/Ascend/ascend-toolkit/latest/atc/lib64/stub/")
+    message(STATUS "set default LIB_PATH: ${LIB_PATH}")
+else ()
+    message(STATUS "env LIB_PATH: ${LIB_PATH}")
+endif()
+
+# Header path
 include_directories(
-    ${INCLUDE_BASE_DIR}
-    ${INCLUDE_BASE_DIR}/aclnn
+    ${INC_PATH}/runtime/include
+    ${INC_PATH}/atc/include
     ${CUST_PKG_PATH}/include
 )
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-
+# add host lib path
 link_directories(
     ${LIB_PATH}
+    ${LIB_PATH1}
     ${CUST_PKG_PATH}/lib
 )
 
-# 设置可执行文件名（如opapi_test），并指定待运行算子文件*.cpp所在目录
-add_executable(${PROJECT_NAME}
-               main.cpp)
+add_executable(expand_test
+    main.cpp
+)
 
-# 设置链接的库文件路径
-# arch表示操作系统结构，os表示操作系统
-target_link_libraries(${PROJECT_NAME}
-                ascendcl
-                cust_opapi
-                acl_op_compiler
-                nnopbase
-                stdc++)
+target_link_libraries(expand_test
+    ascendcl
+    cust_opapi
+    acl_op_compiler
+    nnopbase
+    stdc++
+)
 
-# 可执行文件在CMakeLists文件所在目录的bin目录下
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS expand_test DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
