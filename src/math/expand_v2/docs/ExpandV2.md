@@ -19,15 +19,13 @@ Atlas A2 训练系列产品/Atlas 800I A2推理产品
   \begin{matrix}
   3
   \end{matrix}
-  \right]
-  \newline
+  \right] \\
   shape = 
   \left[
   \begin{matrix}
   2,2
   \end{matrix}
-  \right]
-  \newline
+  \right] \\
   y = 
   \left[
   \begin{matrix}
@@ -58,7 +56,7 @@ Atlas A2 训练系列产品/Atlas 800I A2推理产品
 - **参数说明：**
 
   - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持INT64，数据格式支持ND。
-  - shape（aclIntArray\*，计算输入）：必选参数，公式中的输入shape，表示要广播后的维度。
+  - shape（aclIntArray\*，属性）：必选参数，公式中的输入shape，表示要广播后的维度。
   - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持INT64，数据格式支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
@@ -92,11 +90,14 @@ Atlas A2 训练系列产品/Atlas 800I A2推理产品
 ## 算子原型
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Sqrt</th></tr> 
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ExpandV2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
  
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
+
+<tr><td rowspan="1" align="center">属性</td>
+<td align="center">shape</td><td align="center">IntArray</td><td align="center">int64</td><td align="center"></td></tr> 
 
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">int64</td><td align="center">ND</td></tr>  
