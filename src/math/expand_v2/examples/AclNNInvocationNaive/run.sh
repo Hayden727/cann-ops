@@ -1,4 +1,16 @@
 #!/bin/bash
+rm -rf $HOME/ascend/log/*
+rm ./input/*.bin
+rm ./output/*.bin
+
+python3 gen_data.py
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: generate input data failed!"
+    return 1
+fi
+echo "INFO: generate input data success!"
+
 set -e
 
 rm -rf build
