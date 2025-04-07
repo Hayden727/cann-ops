@@ -45,12 +45,12 @@ add_executable(${PROJECT_NAME}
 
 # 设置链接的库文件路径
 # arch表示操作系统结构，os表示操作系统
-target_link_libraries(${PROJECT_NAME} PRIVATE
-	              Threads::Threads
-                  ascendcl
-                  nnopbase
-                  cust_opapi
-                  opapi)
+target_link_libraries(${PROJECT_NAME}
+                ascendcl
+                cust_opapi
+                acl_op_compiler
+                nnopbase
+                stdc++)
 
 # 可执行文件在CMakeLists文件所在目录的bin目录下
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
