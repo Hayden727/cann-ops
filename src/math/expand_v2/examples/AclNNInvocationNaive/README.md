@@ -25,23 +25,25 @@
   - 进入样例代码所在路径
   
     ```bash
-    cd ${git_clone_path}/cann-ops/src/expand/ExpandV2/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/cann-ops/src/math/expand_v2/examples/AclNNInvocationNaive
     ```
   
 
   - 样例执行
     
-    运行run.sh脚本，会自动编译与运行aclnn样例，最后打印运行结果。
+    样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     
     ```bash
-    chmod +x run.sh
-    ./run.sh
-    ```
-    用户亦可以自己手动编译运行
-    ```
-    mkdir build && cd build
+    mkdir -p build
+    cd build
     cmake .. && make
     ./expand_test
+    ```
+    
+    用户亦可参考run.sh脚本进行编译与运行。
+    
+    ```bash
+    bash run.sh
     ```
 
 
