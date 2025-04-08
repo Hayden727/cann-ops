@@ -279,7 +279,7 @@ static ge::graphStatus GetInputInfo(gert::TilingContext* tilingContext, InputPar
     params.alignHeight = CeilAlign(params.height, ALIGN_16);
     params.alignWidth = CeilAlign(params.width, ALIGN_16);
   
-  return ge::GRAPH_SUCCESS;
+    return ge::GRAPH_SUCCESS;
 }
 
 static void FillTilingKey(ReflectionPad3dGradTilingData* tilingData, ge::DataType inputDatatype) {

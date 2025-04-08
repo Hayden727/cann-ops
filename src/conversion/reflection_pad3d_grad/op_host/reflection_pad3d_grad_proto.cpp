@@ -95,8 +95,8 @@ static ge::graphStatus InferShapeReflectionPad3dGrad(gert::InferShapeContext* co
     }
 }
 
-    IMPL_OP_INFERSHAPE(PadV3Grad)
-        .InferShape(InferShapeReflectionPad3dGrad)
-        .InputsDataDependency({INDEX_PADDINGS});
+IMPL_OP_INFERSHAPE(PadV3Grad)
+    .InferShape(InferShapeReflectionPad3dGrad)
+    .InputsDataDependency({INDEX_PADDINGS});
 
 } // namespace ops
