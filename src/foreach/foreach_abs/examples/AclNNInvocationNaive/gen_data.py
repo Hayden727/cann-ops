@@ -10,25 +10,24 @@
 # ======================================================================================================================
 
 import os
-import torch
 import numpy as np
 
 def gen_golden_data_simple():
-    dtype = torch.float32
     np_dtype = np.float32
     input_shape = [8, 2048]
 
-    x1 = torch.randn(input_shape).to(dtype)
-    x2 = torch.randn(input_shape).to(dtype)
+    x1 = np.random.uniform(-1, 1, input_shape).astype(np_dtype)
+    x2 = np.random.uniform(-1, 1, input_shape).astype(np_dtype)
 
-    out1, out2 = torch._foreach_abs((x1, x2))
+    out1 = np.abs(x1)
+    out2 = np.abs(x2)
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
-    x1.numpy().astype(np_dtype).tofile("./input/input_x1.bin")
-    x2.numpy().astype(np_dtype).tofile("./input/input_x2.bin")
-    out1.numpy().astype(np_dtype).tofile("./output/golden_out1.bin")
-    out2.numpy().astype(np_dtype).tofile("./output/golden_out2.bin")
+    x1.astype(np_dtype).tofile("./input/input_x1.bin")
+    x2.astype(np_dtype).tofile("./input/input_x2.bin")
+    out1.astype(np_dtype).tofile("./output/golden_out1.bin")
+    out2.astype(np_dtype).tofile("./output/golden_out2.bin")
 
 
 if __name__ == "__main__":
