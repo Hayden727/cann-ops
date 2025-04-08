@@ -60,9 +60,9 @@
         ],
         "attr": [
             {
-                "name": "reduction",
-                "type": "string",
-                "value": "mean"
+                "name": "mode",
+                "type": "int",
+                "value": "0"
             }
         ]
     }

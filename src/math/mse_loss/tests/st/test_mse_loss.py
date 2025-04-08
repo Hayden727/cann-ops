@@ -14,10 +14,9 @@ import tensorflow as tf
 import numpy as np
 
 
-def mse_loss_test(predict, label, reduction):
+def mse_loss_test(predict, label):
     tensor_predict = tf.convert_to_tensor(predict)
     tensor_label = tf.convert_to_tensor(label)
-    reduction = "mean"
     res = tf.keras.losses.mean_squared_error(
         y_true=tensor_label,
         y_pred=tensor_predict
@@ -25,6 +24,6 @@ def mse_loss_test(predict, label, reduction):
     return res.numpy()
 
 
-def calc_expect_func(predict, label, reduction, y):
+def calc_expect_func(predict, label, y):
     res = mse_loss_test(predict["value"], label["value"])
     return [res]
