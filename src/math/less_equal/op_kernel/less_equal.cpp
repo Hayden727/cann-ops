@@ -1,18 +1,15 @@
-/**
- * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
- * This file is a part of the CANN Open Software.
- * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
- * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
- */
-
-/**
- * @file less_equal.cpp
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2022-2023. All rights reserved.
+ *
+ * Function : z = x + y
+ * This sample is a very basic sample that implements vector add on Ascend
+ * plaform.
  */
 #include <type_traits>
 #include "kernel_operator.h"
+
+
+namespace LessEqualK{
 
 constexpr int32_t BUFFER_NUM = 2;  // tensor num for each queue
 constexpr float NEGATIVE_ONE_FP32 = -1.0F;
@@ -32,13 +29,9 @@ class KernelLessEqual {
 public:
   __aicore__ inline KernelLessEqual() {}
   __aicore__ inline void Init(GM_ADDR x1, GM_ADDR x2, GM_ADDR y,
-    uint32_t total_length, uint32_t tile_num_mean,
-    uint32_t tile_num_end, uint32_t tile_length_mean,
-    uint32_t tile_length_end, uint32_t block_length_mean,
-    uint32_t block_length_end) {
+      const LessEqualTilingData& tiling_data) {
     ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
-    ResovleTiling(total_length, tile_num_mean, tile_num_end, tile_length_mean,
-      tile_length_end, block_length_mean, block_length_end);
+    ResovleTiling(tiling_data);
     x1_gm.SetGlobalBuffer(
       (__gm__ typeT*)x1 + this->block_offset * AscendC::GetBlockIdx(),
       this->block_length);
@@ -91,10 +84,67 @@ public:
   }
 
 private:
-  __aicore__ inline void ResovleTiling(
-    uint32_t total_length, uint32_t tile_num_mean, uint32_t tile_num_end,
-    uint32_t tile_length_mean, uint32_t tile_length_end, uint32_t block_length_mean,
-    uint32_t block_length_end) {
+  __aicore__ inline void ComputeHalf(AscendC::LocalTensor<half> x1_local, AscendC::LocalTensor<half> x2_local, AscendC::LocalTensor<half> y_compute) {
+    AscendC::Max(y_compute, x1_local, x2_local, this->tile_cache);
+    AscendC::Sub(y_compute, x2_local, y_compute, this->tile_cache);
+    AscendC::Abs(y_compute, y_compute, this->tile_cache);
+    AscendC::Mins(y_compute, y_compute, static_cast<half>(MIN_ACCURACY_FP16), this->tile_cache);
+    AscendC::Muls(y_compute, y_compute, static_cast<half>(MAX_MUL_FP16), this->tile_cache);
+    AscendC::Muls(y_compute, y_compute, static_cast<half>(MAX_MUL_FP16), this->tile_cache);
+    AscendC::Adds(y_compute, y_compute, static_cast<half>(NEGATIVE_ONE_FP32), this->tile_cache);
+    AscendC::Abs(y_compute, y_compute, this->tile_cache);
+  }
+
+  __aicore__ inline void ComputeFloat(AscendC::LocalTensor<float> x1_local, AscendC::LocalTensor<float> x2_local, AscendC::LocalTensor<float> y_compute) {
+    AscendC::Max(y_compute, x1_local, x2_local, this->tile_cache);
+    AscendC::Sub(y_compute, x2_local, y_compute, this->tile_cache);
+    AscendC::Abs(y_compute, y_compute, this->tile_cache);
+    AscendC::Mins(y_compute, y_compute, static_cast<float>(MIN_ACCURACY_FP32), this->tile_cache);
+    AscendC::Muls(y_compute, y_compute, static_cast<float>(MAX_MUL_1_FP32), this->tile_cache);
+    AscendC::Muls(y_compute, y_compute, static_cast<float>(MAX_MUL_1_FP32), this->tile_cache);
+    AscendC::Muls(y_compute, y_compute, static_cast<float>(MAX_MUL_2_FP32), this->tile_cache);
+    AscendC::Adds(y_compute, y_compute, static_cast<float>(NEGATIVE_ONE_FP32), this->tile_cache);
+    AscendC::Abs(y_compute, y_compute, this->tile_cache);
+  }
+
+  __aicore__ inline void ComputeInt8(AscendC::LocalTensor<half> x1_local_fp16, AscendC::LocalTensor<half> x2_local_fp16, AscendC::LocalTensor<half> y_local_fp16) {
+    AscendC::Min(y_local_fp16, x1_local_fp16, x2_local_fp16, this->tile_cache);
+    AscendC::Sub(y_local_fp16, x2_local_fp16, y_local_fp16, this->tile_cache);
+    AscendC::Mins(y_local_fp16, y_local_fp16, (half)POSITIVE_ONE_FP32, this->tile_cache);
+
+    AscendC::Sub(x1_local_fp16, x1_local_fp16, x2_local_fp16, this->tile_cache);
+    AscendC::Abs(x1_local_fp16, x1_local_fp16, this->tile_cache);
+    AscendC::Mins(x1_local_fp16, x1_local_fp16, (half)POSITIVE_ONE_FP32, this->tile_cache);
+    AscendC::Duplicate(x2_local_fp16, (half)POSITIVE_ONE_FP32, this->tile_cache);
+    AscendC::Sub(x1_local_fp16, x2_local_fp16, x1_local_fp16, this->tile_cache);
+
+    AscendC::Add(y_local_fp16, y_local_fp16, x1_local_fp16, this->tile_cache);
+  }
+
+  __aicore__ inline void ComputeInt32(AscendC::LocalTensor<int32_t> x1_local, AscendC::LocalTensor<int32_t> x2_local, AscendC::LocalTensor<int32_t> y_compute) {
+    AscendC::Min(y_compute, x1_local, x2_local, this->tile_cache);
+    AscendC::Sub(y_compute, x2_local, y_compute, this->tile_cache);
+    AscendC::Mins(y_compute, y_compute, static_cast<int32_t>(POSITIVE_ONE_I32), this->tile_cache);
+
+    AscendC::Sub(x1_local, x1_local, x2_local, this->tile_cache);
+    AscendC::Mins(x1_local, x1_local, static_cast<int32_t>(POSITIVE_ONE_I32), this->tile_cache);
+    AscendC::Maxs(x1_local, x1_local, static_cast<int32_t>(NEGATIVE_ONE_I32), this->tile_cache);
+    AscendC::Mul(x1_local, x1_local, x1_local, this->tile_cache);
+    AscendC::Duplicate(x2_local, static_cast<int32_t>(POSITIVE_ONE_I32), this->tile_cache);
+    AscendC::Sub(x1_local, x2_local, x1_local, this->tile_cache);
+
+    AscendC::Add(y_compute, y_compute, x1_local, this->tile_cache);
+  }
+
+  __aicore__ inline void ResovleTiling(const LessEqualTilingData& tiling_data) {
+    uint32_t total_length = tiling_data.totalLength;
+    uint32_t tile_num_mean = tiling_data.tileNumMean;
+    uint32_t tile_num_end = tiling_data.tileNumEnd;
+    uint32_t tile_length_mean = tiling_data.tileLengthMean;
+    uint32_t tile_length_end = tiling_data.tileLengthEnd;
+    uint32_t block_length_mean = tiling_data.blockLengthMean;
+    uint32_t block_length_end = tiling_data.blockLengthEnd;
+
     uint32_t pad32 = BLOCK_SIZE;  // 对齐32B需要的最小数据量
     this->total_length = total_length;
     if (AscendC::GetBlockNum() >= 1 && AscendC::GetBlockIdx() == (AscendC::GetBlockNum() - 1)) {
@@ -140,29 +190,14 @@ private:
     AscendC::LocalTensor<typeT> y_compute = calc_buf_1.Get<typeT>();
 
     if constexpr (std::is_same_v<typeT, half>) {
-      AscendC::Max(y_compute, x1_local, x2_local, this->tile_cache);
-      AscendC::Sub(y_compute, x2_local, y_compute, this->tile_cache);
-      AscendC::Abs(y_compute, y_compute, this->tile_cache);
-      AscendC::Mins(y_compute, y_compute, (half)MIN_ACCURACY_FP16, this->tile_cache);
-      AscendC::Muls(y_compute, y_compute, (half)MAX_MUL_FP16, this->tile_cache);
-      AscendC::Muls(y_compute, y_compute, (half)MAX_MUL_FP16, this->tile_cache);
-      AscendC::Adds(y_compute, y_compute, (half)NEGATIVE_ONE_FP32, this->tile_cache);
-      AscendC::Abs(y_compute, y_compute, this->tile_cache);
+      ComputeHalf(x1_local, x2_local, y_compute);
 
       AscendC::Cast(y_local, y_compute, AscendC::RoundMode::CAST_NONE, this->tile_cache);
     }
     else if constexpr (std::is_same_v<typeT, float>) {
       AscendC::LocalTensor<half> y_fp16 = calc_buf_2.Get<half>();
 
-      AscendC::Max(y_compute, x1_local, x2_local, this->tile_cache);
-      AscendC::Sub(y_compute, x2_local, y_compute, this->tile_cache);
-      AscendC::Abs(y_compute, y_compute, this->tile_cache);
-      AscendC::Mins(y_compute, y_compute, (float)MIN_ACCURACY_FP32, this->tile_cache);
-      AscendC::Muls(y_compute, y_compute, (float)MAX_MUL_1_FP32, this->tile_cache);
-      AscendC::Muls(y_compute, y_compute, (float)MAX_MUL_1_FP32, this->tile_cache);
-      AscendC::Muls(y_compute, y_compute, (float)MAX_MUL_2_FP32, this->tile_cache);
-      AscendC::Adds(y_compute, y_compute, (float)NEGATIVE_ONE_FP32, this->tile_cache);
-      AscendC::Abs(y_compute, y_compute, this->tile_cache);
+      ComputeFloat(x1_local, x2_local, y_compute);
 
       AscendC::Cast(y_fp16, y_compute, AscendC::RoundMode::CAST_NONE, this->tile_cache);
       AscendC::Cast(y_local, y_fp16, AscendC::RoundMode::CAST_NONE, this->tile_cache);
@@ -175,19 +210,7 @@ private:
       AscendC::Cast(x1_local_fp16, x1_local, AscendC::RoundMode::CAST_NONE, this->tile_cache);
       AscendC::Cast(x2_local_fp16, x2_local, AscendC::RoundMode::CAST_NONE, this->tile_cache);
 
-      AscendC::Min(y_local_fp16, x1_local_fp16, x2_local_fp16, this->tile_cache);
-      AscendC::Sub(y_local_fp16, x2_local_fp16, y_local_fp16, this->tile_cache);
-      AscendC::Mins(y_local_fp16, y_local_fp16, (half)POSITIVE_ONE_FP32,
-        this->tile_cache);
-
-      AscendC::Sub(x1_local_fp16, x1_local_fp16, x2_local_fp16, this->tile_cache);
-      AscendC::Abs(x1_local_fp16, x1_local_fp16, this->tile_cache);
-      AscendC::Mins(x1_local_fp16, x1_local_fp16, (half)POSITIVE_ONE_FP32,
-        this->tile_cache);
-      AscendC::Duplicate(x2_local_fp16, (half)POSITIVE_ONE_FP32, this->tile_cache);
-      AscendC::Sub(x1_local_fp16, x2_local_fp16, x1_local_fp16, this->tile_cache);
-
-      AscendC::Add(y_local_fp16, y_local_fp16, x1_local_fp16, this->tile_cache);
+      ComputeInt8(x1_local_fp16, x2_local_fp16, y_local_fp16);
 
       AscendC::Cast(y_local, y_local_fp16, AscendC::RoundMode::CAST_NONE, this->tile_cache);
     }
@@ -195,18 +218,7 @@ private:
       AscendC::LocalTensor<half> y_fp16 = calc_buf_3.Get<half>();
       AscendC::LocalTensor<float> y_fp32 = calc_buf_4.Get<float>();
 
-      AscendC::Min(y_compute, x1_local, x2_local, this->tile_cache);
-      AscendC::Sub(y_compute, x2_local, y_compute, this->tile_cache);
-      AscendC::Mins(y_compute, y_compute, (int32_t)POSITIVE_ONE_I32, this->tile_cache);
-
-      AscendC::Sub(x1_local, x1_local, x2_local, this->tile_cache);
-      AscendC::Mins(x1_local, x1_local, (int32_t)POSITIVE_ONE_I32, this->tile_cache);
-      AscendC::Maxs(x1_local, x1_local, (int32_t)NEGATIVE_ONE_I32, this->tile_cache);
-      AscendC::Mul(x1_local, x1_local, x1_local, this->tile_cache);
-      AscendC::Duplicate(x2_local, (int32_t)POSITIVE_ONE_I32, this->tile_cache);
-      AscendC::Sub(x1_local, x2_local, x1_local, this->tile_cache);
-
-      AscendC::Add(y_compute, y_compute, x1_local, this->tile_cache);
+      ComputeInt32(x1_local, x2_local, y_compute);
 
       AscendC::Cast(y_fp32, y_compute, AscendC::RoundMode::CAST_NONE, this->tile_cache);
       AscendC::Cast(y_fp16, y_fp32, AscendC::RoundMode::CAST_NONE, this->tile_cache);
@@ -241,15 +253,13 @@ private:
     tile_length, tile_length_end;
 };
 
+}
 extern "C" __global__ __aicore__ void less_equal(GM_ADDR x1, GM_ADDR x2,
   GM_ADDR y, GM_ADDR workspace,
   GM_ADDR tiling) {
   GET_TILING_DATA(tiling_data, tiling);
-  KernelLessEqual<DTYPE_X1> op;
-  op.Init(x1, x2, y, tiling_data.totalLength, tiling_data.tileNumMean,
-    tiling_data.tileNumEnd, tiling_data.tileLengthMean,
-    tiling_data.tileLengthEnd, tiling_data.blockLengthMean,
-    tiling_data.blockLengthEnd);
+  LessEqualK::KernelLessEqual<DTYPE_X1> op;
+  op.Init(x1, x2, y, tiling_data);
   op.Process();
 }
 

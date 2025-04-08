@@ -173,8 +173,8 @@ int main(int argc, char **argv)
     std::vector<uint8_t> outputYHostData(outputYShapeSize);
     size_t dataType = sizeof(float);
     size_t fileSize = 0;
-void* input1 = &inputX1HostData[0];
-void* input2 = &inputX2HostData[0];
+    void* input1 = &inputX1HostData[0];
+    void* input2 = &inputX2HostData[0];
     //读取数据
     ReadFile("../input/input_x1.bin", fileSize, input1, inputX1ShapeSize * dataType);
     ReadFile("../input/input_x2.bin", fileSize, input2, inputX1ShapeSize * dataType);
