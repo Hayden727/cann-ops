@@ -6,9 +6,6 @@
         "input_desc": [
             {
                 "format": [
-                    "ND",
-                    "ND",
-                    "ND",
                     "ND"
                 ],
                 "type": [
@@ -31,9 +28,6 @@
             },
             {
                 "format": [
-                    "ND",
-                    "ND",
-                    "ND",
                     "ND"
                 ],
                 "type": [
@@ -58,9 +52,6 @@
         "output_desc": [
             {
                 "format": [
-                    "ND",
-                    "ND",
-                    "ND",
                     "ND"
                 ],
                 "type": [

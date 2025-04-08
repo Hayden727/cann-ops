@@ -10,6 +10,6 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-def calc_expect_func(x, y, z):
-    res = x["value"] <= y["value"]
+def calc_expect_func(x1, x2, y):
+    res = x1["value"] <= x2["value"]
     return [res, ]

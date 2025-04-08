@@ -54,10 +54,10 @@ static ge::graphStatus TF(gert::TilingContext* context) {
       break;
   }
   uint32_t pad32 = BLOCK_SIZE;
-  uint32_t padMax = ((uint32_t)ubSize / bufferNum / dataSize) / ((uint32_t)2 * BLOCK_SIZE) * ((uint32_t)2 * BLOCK_SIZE);
+  uint32_t padMax = (static_cast<uint32_t>(ubSize) / bufferNum / dataSize) / (static_cast<uint32_t>(2) * BLOCK_SIZE) * (static_cast<uint32_t>(2) * BLOCK_SIZE);
   if (totalLength < pad32 * coreNum) {
     coreNum =
-        totalLength % pad32 ? totalLength / pad32 + 1 : totalLength / pad32;
+        totalLength % pad32 ? totalLength / pad32 + static_cast<uint32_t>(1) : totalLength / pad32;
   }
   context->SetBlockDim(coreNum);
   tiling.set_totalLength(totalLength);
@@ -71,8 +71,8 @@ static ge::graphStatus TF(gert::TilingContext* context) {
   if (totalLength < pad32) {
     blockLengthMean = pad32;
     blockLengthEnd = totalLength;
-    tileNumMean = (uint32_t)1;
-    tileNumEnd = (uint32_t)1;
+    tileNumMean = static_cast<uint32_t>(1);
+    tileNumEnd = static_cast<uint32_t>(1);
     tileLengthMean = totalLength;
     tileLengthEnd = totalLength;
   } else {  // 总数据至少比32B大时
@@ -92,8 +92,8 @@ static ge::graphStatus TF(gert::TilingContext* context) {
 
     if (maxBlockLength > padMax) {  // maxBlockLength大于padMax时对maxBlockLength进行判定
       uint32_t padTemp = 0;
-      for (uint32_t i = padMax / (uint32_t)2; i <= padMax; i += pad32) {
-        padTemp = maxBlockLength % i == (uint32_t)0 ? i : padTemp;
+      for (uint32_t i = padMax / static_cast<uint32_t>(2); i <= padMax; i += pad32) {
+        padTemp = maxBlockLength % i == static_cast<uint32_t>(0) ? i : padTemp;
       }
       if (padTemp) {  // 如果maxBlockLength可以被PadTemp整除，那么padTemp就是tilelength
         blockLengthMean = maxBlockLength;
