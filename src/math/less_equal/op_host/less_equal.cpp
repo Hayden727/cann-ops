@@ -25,6 +25,7 @@ constexpr uint32_t DATA_SIZE_4 = 4;
 constexpr uint32_t DATA_SIZE_2 = 2;
 constexpr uint32_t DATA_SIZE_1 = 1;
 constexpr uint32_t BLOCK_SIZE = 32;
+constexpr uint32_t TWO = 2;
 
 static uint32_t GetDataTypeSize(ge::DataType dataType) {
   switch (dataType) {
@@ -127,15 +128,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
 
   LessEqualTilingParam param;
   param.pad32 = BLOCK_SIZE;
-
-  // non zero check
-  if (bufferNum == static_cast<uint32_t>(0)) {
-    bufferNum = static_cast<uint32_t>(1);
-  }
-  if (dataSize == static_cast<uint32_t>(0)) {
-    dataSize = static_cast<uint32_t>(4);
-  }
-  constexpr uint32_t TWO = 2;
+  
+  if (dataSize == static_cast<uint32_t>(0) || bufferNum == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
   param.padMax = (static_cast<uint32_t>(ubSize) / bufferNum / dataSize) / (TWO * BLOCK_SIZE) * (TWO * BLOCK_SIZE);
   param.totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
   if (param.totalLength < param.pad32 * coreNum) {
