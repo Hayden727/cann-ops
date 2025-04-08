@@ -49,7 +49,7 @@ Spence算子实现主要分为以下步骤：
 - **参数说明：**
   
   - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、FLOAT32，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、FLOAT32，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、FLOAT32，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -77,7 +77,7 @@ Spence算子实现主要分为以下步骤：
 ## 约束与限制
 
 - x和out的数据类型支持FLOAT16、FLOAT32，数据格式只支持ND
-- 输入x和输出out的shape必须相同
+- 输入x和输出y的shape必须相同
 
 ## 算子原型
 
@@ -88,7 +88,7 @@ Spence算子实现主要分为以下步骤：
 <tr><td align="center">x</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">spence</td></tr>
 </table>
