@@ -47,34 +47,34 @@ END_TILING_DATA_DEF;
 REGISTER_TILING_DATA_CLASS(ReflectionPad3dGrad, ReflectionPad3dGradTilingData)
 
 struct Tiling4PadV3GradV2CompileInfo {
-  uint32_t coreNum;
-  uint64_t ubSizePlatForm;
-  uint32_t sysWorkspaceSize;
+    uint32_t coreNum;
+    uint64_t ubSizePlatForm;
+    uint32_t sysWorkspaceSize;
 };
 
 struct InputParamsInfo {
-  uint32_t batch = 0;
-  uint32_t channel = 0;
-  uint32_t depth = 0;
-  uint32_t height = 0;
-  uint32_t width = 0;
-  uint32_t alignDepth = 0;
-  uint32_t alignHeight = 0;
-  uint32_t alignWidth = 0;
-  uint32_t outDepth = 0;
-  uint32_t outHeight = 0;
-  uint32_t outWidth = 0;
-  uint32_t alignOutDepth = 0;
-  uint32_t alignOutHeight = 0;
-  uint32_t alignOutWidth = 0;
-  int32_t dPad1 = 0;
-  int32_t dPad2 = 0;
-  int32_t hPad1 = 0;
-  int32_t hPad2 = 0;
-  int32_t wPad1 = 0;
-  int32_t wPad2 = 0;
-  uint32_t mode = 0;
-  uint64_t tilingKey = 0;
+    uint32_t batch = 0;
+    uint32_t channel = 0;
+    uint32_t depth = 0;
+    uint32_t height = 0;
+    uint32_t width = 0;
+    uint32_t alignDepth = 0;
+    uint32_t alignHeight = 0;
+    uint32_t alignWidth = 0;
+    uint32_t outDepth = 0;
+    uint32_t outHeight = 0;
+    uint32_t outWidth = 0;
+    uint32_t alignOutDepth = 0;
+    uint32_t alignOutHeight = 0;
+    uint32_t alignOutWidth = 0;
+    int32_t dPad1 = 0;
+    int32_t dPad2 = 0;
+    int32_t hPad1 = 0;
+    int32_t hPad2 = 0;
+    int32_t wPad1 = 0;
+    int32_t wPad2 = 0;
+    uint32_t mode = 0;
+    uint64_t tilingKey = 0;
 };
 }  // namespace optiling
 #endif  // REFLECTION_PAD3D_GRAD_TILINGDATA_H

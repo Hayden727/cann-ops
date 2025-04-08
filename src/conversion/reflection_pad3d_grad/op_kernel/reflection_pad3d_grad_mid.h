@@ -17,25 +17,25 @@
 
 template <typename T>
 __aicore__ inline void ReflectionPad3dGrad<T>::MidProcess(){
-    for ( size_t loop = 0; loop < loopNC; loop++ ) {
-        for ( size_t i = 0; i < curDepth; i++ ) {
-            size_t cur_D = GetCurD(i); 
+    for (size_t loop = 0; loop < loopNC; loop++) {
+        for (size_t i = 0; i < curDepth; i++) {
+            size_t curDim = GetCurD(i); 
             bool isAtomicAdd = true;
-            MidProcessTopBottom(i, loop, cur_D, isAtomicAdd);
-            MidProcessLeftRight(i, loop, cur_D, isAtomicAdd);
-            MidProcessMid(i, loop, cur_D, isAtomicAdd);  
+            MidProcessTopBottom(i, loop, curDim, isAtomicAdd);
+            MidProcessLeftRight(i, loop, curDim, isAtomicAdd);
+            MidProcessMid(i, loop, curDim, isAtomicAdd);  
         }
     }
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::MidProcessTopBottom(size_t i,  size_t loop, uint32_t cur_D, bool isAtomicAdd) {
+__aicore__ inline void ReflectionPad3dGrad<T>::MidProcessTopBottom(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd) {
     event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
     //top
     int64_t gmXOffset = (loop * curDepth * height * width
                         + i * height * width);
     int64_t gmYOffset = (loop * curOutDepth * outHeight * outWidth 
-                        + cur_D * outHeight * outWidth
+                        + curDim * outHeight * outWidth
                         +  MAX_LINE - wPad1);
     //xGm -> ub
     CopyIn(xGm, gmXOffset, MAX_LINE, width);
@@ -55,7 +55,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessTopBottom(size_t i,  si
                 + i * height * width
                 + (height - MAX_LINE) * width);
     gmYOffset = (loop *  curOutDepth * outHeight * outWidth 
-                + cur_D *  outHeight * outWidth
+                + curDim *  outHeight * outWidth
                 + (outHeight - (MAX_LINE - hPad2)) * outWidth
                 +  MAX_LINE - wPad1);
     //xGm -> ub
@@ -73,14 +73,14 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessTopBottom(size_t i,  si
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  size_t loop, uint32_t cur_D, bool isAtomicAdd) {
+__aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd) {
     event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
     //left
     int64_t gmXOffset = (loop * curDepth * height * width
                         + i * height * width 
                         + MAX_LINE * width);
     int64_t gmYOffset = (loop * curOutDepth * outHeight * outWidth 
-                        + cur_D * outHeight * outWidth );
+                        + curDim * outHeight * outWidth );
     int64_t gmWorkSpaceOffsetTop =  gmWorkSpaceOffset1;
     int64_t gmWorkSpaceOffsetBottom =  gmWorkSpaceOffset2;
     //xGm、wGm -> ub
@@ -105,7 +105,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  si
                 + MAX_LINE * width
                 + width - MAX_LINE);
     gmYOffset = (loop * curOutDepth * outHeight * outWidth 
-                + cur_D * outHeight * outWidth 
+                + curDim * outHeight * outWidth 
                 + outWidth  - (MAX_LINE - wPad2) );
     gmWorkSpaceOffsetTop =  gmWorkSpaceOffset1 + width - MAX_LINE;
     gmWorkSpaceOffsetBottom =  gmWorkSpaceOffset2 + width - MAX_LINE;
@@ -127,7 +127,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  si
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::MidProcessMid(size_t i,  size_t loop, uint32_t cur_D, bool isAtomicAdd) {
+__aicore__ inline void ReflectionPad3dGrad<T>::MidProcessMid(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd) {
     event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
     //输入GM搬运
     for (size_t j = 0; j < gmLoop; j++) {
@@ -137,7 +137,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessMid(size_t i,  size_t l
                             + MAX_LINE
                             + j * blockHeight * width);
         int64_t gmYOffset = (loop * curOutDepth * outHeight * outWidth 
-                            + cur_D * outHeight * outWidth 
+                            + curDim * outHeight * outWidth 
                             + (MAX_LINE - hPad1) * outWidth 
                             + MAX_LINE - wPad1
                             + j * blockHeight * outWidth);

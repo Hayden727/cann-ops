@@ -17,7 +17,6 @@
 
 using namespace AscendC;
 
-
 template <typename T>
 class ReflectionPad3dGrad {
 public:
@@ -126,23 +125,23 @@ public:
         pipe.InitBuffer(inQueueX, BUFFER_NUM, (ubFactorElement * sizeof(T)));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, (ubFactorElement * sizeof(T)));
         if constexpr (std::is_same<T, bfloat16_t>::value){
-          pipe.InitBuffer(transposeBuf, (ubFactorElement * sizeof(float)) );
-          pipe.InitBuffer(float32Buf, (ubFactorElement * sizeof(float)) );
+            pipe.InitBuffer(transposeBuf, (ubFactorElement * sizeof(float)) );
+            pipe.InitBuffer(float32Buf, (ubFactorElement * sizeof(float)) );
         } else {
-          pipe.InitBuffer(transposeBuf, (ubFactorElement * sizeof(T)) );
+            pipe.InitBuffer(transposeBuf, (ubFactorElement * sizeof(T)) );
         } 
     }
 
     __aicore__ inline int GetCurD(size_t i) {
-        size_t cur_D = i;
+        size_t curDim = i;
         if(i <= dPad1) {   
-            cur_D = dPad1 - i;  
-        } else if ( i > dPad1 && i <depth - dPad2 ){ 
-            cur_D = i - dPad1;  
-        } else if ( i >= depth - dPad2 ){     
-            cur_D = ( depth - dPad2 - 1 ) - ( i - ( depth - dPad2 ) + 1 ) - dPad1;   
+            curDim = dPad1 - i;  
+        } else if (i > dPad1 && i <depth - dPad2){ 
+            curDim = i - dPad1;  
+        } else if (i >= depth - dPad2){     
+            curDim = (depth - dPad2 - 1) - ( i - (depth - dPad2) + 1 ) - dPad1;   
         }
-        return cur_D;
+        return curDim;
     }
 
     __aicore__ inline void MidProcess();
@@ -161,11 +160,11 @@ private:
     template<typename T1>
     __aicore__ inline void TransoseSmall(LocalTensor<T1>& dstLocal, LocalTensor<T1>& srcLocal, const int32_t calH, const int32_t calW);
    
-    __aicore__ inline void MidProcessTopBottom(size_t i,  size_t loop, uint32_t cur_D, bool isAtomicAdd);
+    __aicore__ inline void MidProcessTopBottom(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd);
 
-    __aicore__ inline void MidProcessLeftRight(size_t i,  size_t loop, uint32_t cur_D, bool isAtomicAdd);
+    __aicore__ inline void MidProcessLeftRight(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd);
 
-    __aicore__ inline void MidProcessMid(size_t i,  size_t loop, uint32_t cur_D, bool isAtomicAdd);
+    __aicore__ inline void MidProcessMid(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd);
 
     __aicore__ inline void CopyIn(GlobalTensor<T>& srcGm, const int64_t srcOffset, const int64_t calH, const int64_t calW);
 

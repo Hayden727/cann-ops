@@ -162,11 +162,11 @@ static const aclTensor *GetPaddingTensor(int64_t dim, const aclIntArray *padding
     for (size_t i = 2 * dim; i > 0; i -= 2) {
         if (i <= (size_t)padding->Size()) {
         // 2 and 1 indicate the element of padding is put into paddingsVector from the back to the front
-        paddingsVector.emplace_back((*padding)[i - 2]);
-        paddingsVector.emplace_back((*padding)[i - 1]);
+            paddingsVector.emplace_back((*padding)[i - 2]);
+            paddingsVector.emplace_back((*padding)[i - 1]);
         } else {
-        paddingsVector.emplace_back(0);
-        paddingsVector.emplace_back(0);
+            paddingsVector.emplace_back(0);
+            paddingsVector.emplace_back(0);
         }
     }
     // 2 is the magnification
@@ -225,9 +225,9 @@ static aclnnStatus CommonPad3dBackward(const aclTensor *gradOutput, const aclTen
             if (self->GetViewShape().GetDim(1) == 0 || self->GetViewShape().GetDim(2) == 0 ||
                 // 3, 4 are indexes
                 self->GetViewShape().GetDim(3) == 0 || self->GetViewShape().GetDim(4) == 0) {
-            OP_LOGE(ACLNN_ERR_PARAM_INVALID,
-                    "Expected 4D or 5D tensor with possibly 0 batch size and other non-zero dimentions for input.");
-            return ACLNN_ERR_PARAM_INVALID;
+                OP_LOGE(ACLNN_ERR_PARAM_INVALID,
+                        "Expected 4D or 5D tensor with possibly 0 batch size and other non-zero dimentions for input.");
+                return ACLNN_ERR_PARAM_INVALID;
             }
         }
         uniqueExecutor.ReleaseTo(executor);

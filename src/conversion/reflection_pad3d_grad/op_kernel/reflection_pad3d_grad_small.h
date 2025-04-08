@@ -22,13 +22,13 @@ __aicore__ inline void ReflectionPad3dGrad<T>::SmallProcess() {
     event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
     for ( size_t loop = 0; loop < loopNC; loop++ ) {
         for ( size_t i = 0; i < curDepth; i++ ) {
-            size_t cur_D = GetCurD(i); 
+            size_t curDim = GetCurD(i); 
             bool isAtomicAdd = true;
             //top
             gmXOffset = (loop * curDepth * height * width
                         + i * height * width);
             gmYOffset = (loop * curOutDepth * outHeight * outWidth 
-                        + cur_D * outHeight * outWidth);
+                        + curDim * outHeight * outWidth);
             CopyInSmall(gmXOffset);
             ComputeSmall();
             CopyOutSmall(gmYOffset, isAtomicAdd);
@@ -143,7 +143,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::TransoseSmall(LocalTensor<T1>& ds
 template<typename T> template<typename T1>
 __aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>& tLocal, LocalTensor<T1>& xLocal) {
     if (hPad1 > 0) {
-        for(uint32_t i = 0; i < hPad1; i++) {
+        for (uint32_t i = 0; i < hPad1; i++) {
             auto srcLocal_1 = xLocal[i * alignWidth];
             auto srcLocal_2 = xLocal[(2 * hPad1 - i)  * alignWidth];
             Add(srcLocal_2, srcLocal_2, srcLocal_1, alignWidth);
@@ -151,7 +151,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>
     }
 
     if (hPad2 > 0) {
-        for(uint32_t i = 0; i < hPad2; i++) {
+        for (uint32_t i = 0; i < hPad2; i++) {
             auto srcLocal_1 = xLocal[(height - 1 - i) * alignWidth];
             auto srcLocal_2 = xLocal[(height - 2*hPad2 - 1 + i)  * alignWidth];
             Add(srcLocal_2, srcLocal_2, srcLocal_1, alignWidth);
@@ -159,7 +159,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>
     }
     TransoseSmall<T1>(tLocal, xLocal, alignHeight, alignWidth);
     if (wPad1 > 0) {
-        for(uint32_t i = 0; i < wPad1; i++) {
+        for (uint32_t i = 0; i < wPad1; i++) {
             auto srcLocal_1 = tLocal[i * alignHeight];
             auto srcLocal_2 = tLocal[(2 * wPad1 - i) * alignHeight];
             Add(srcLocal_2, srcLocal_2, srcLocal_1, alignHeight); 
@@ -167,7 +167,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>
     }
 
     if (wPad2 > 0) {
-        for(uint32_t i = 0; i < wPad2; i++) {
+        for (uint32_t i = 0; i < wPad2; i++) {
             auto srcLocal_1 = tLocal[(width - 1 - i) * alignHeight];
             auto srcLocal_2 = tLocal[(width - 2 * wPad2 - 1 + i) * alignHeight];
             Add(srcLocal_2, srcLocal_2, srcLocal_1, alignHeight); 
