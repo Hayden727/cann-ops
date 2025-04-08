@@ -41,11 +41,11 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_mse_loss_op
+    ./execute_test_op
 )
 ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
 echo $ret
-if [ "x$ret" == "xtest pass" ]; then
+if [ "$ret" == "test pass" ]; then
     echo ""
     echo "#####################################"
     echo "INFO: you have passed the Precision!"

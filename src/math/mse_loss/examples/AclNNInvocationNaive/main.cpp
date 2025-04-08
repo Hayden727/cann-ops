@@ -168,7 +168,7 @@ int main(int argc, char **argv)
     size_t inputPredictShapeSize_1=inputPredictShape[0] * inputPredictShape[1];
     size_t inputLabelShapeSize_1=inputLabelShape[0] * inputLabelShape[1];
     size_t outputYShapeSize_1=outputYShape[0];
-    size_t dataType=2;
+
     std::vector<float> inputPredictHostData(inputPredictShape[0] * inputPredictShape[1]);
     std::vector<float> inputLabelHostData(inputLabelShape[0] * inputLabelShape[1]);
     std::vector<float> outputYHostData(outputYShape[0]);
@@ -178,8 +178,8 @@ int main(int argc, char **argv)
     void** input2=(void**)(&inputLabelHostData);
     char reduction[]  = "mean";
     //读取数据
-    ReadFile("../input/input_predict.bin", fileSize, *input1, inputPredictShapeSize_1*dataType);
-    ReadFile("../input/input_label.bin", fileSize, *input2, inputLabelShapeSize_1*dataType);
+    ReadFile("../input/input_predict.bin", fileSize, *input1, inputPredictShapeSize_1 * sizeof(float));
+    ReadFile("../input/input_label.bin", fileSize, *input2, inputLabelShapeSize_1 * sizeof(float));
     INFO_LOG("Set input success");
     // 创建inputPredict aclTensor
     ret = CreateAclTensor(inputPredictHostData, inputPredictShape, &inputPredictDeviceAddr, aclDataType::ACL_FLOAT, &inputPredict);
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void** output1=(void**)(&resultData);
     //写出数据
-    WriteFile("../output/output_y.bin", *output1, outputYShapeSize_1*dataType);
+    WriteFile("../output/output_y.bin", *output1, outputYShapeSize_1 * sizeof(float));
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改

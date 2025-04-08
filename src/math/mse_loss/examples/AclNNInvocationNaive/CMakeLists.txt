@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_mse_loss)
+project(acl_execute_test)
 
 # Compile options
 add_compile_options(-std=c++11)
@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_mse_loss_op
+add_executable(execute_test_op
     main.cpp
 )
 
-target_link_libraries(execute_mse_loss_op
+target_link_libraries(execute_test_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,4 +57,4 @@ target_link_libraries(execute_mse_loss_op
     stdc++
 )
 
-install(TARGETS execute_mse_loss_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_test_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
