@@ -15,8 +15,8 @@
 #include "aclnn_replication_pad3d_backward.h"
 #include "../../circular_pad_grad/op_host/padv3grad.h"
 #include "aclnn_kernels/contiguous.h"
-#include "squeeze.h"
-#include "unsqueeze.h"
+#include "squeeze_pad_v3_grad_replication.h"
+#include "unsqueeze_pad_v3_grad_replication.h"
 #include "aclnn_kernels/common/op_error_check.h"
 #include "aclnn_kernels/cast.h"
 #include "opdev/op_dfx.h"
@@ -90,7 +90,7 @@ inline static bool CheckFormat(const aclTensor *gradOutput, const aclTensor *sel
 }
 
 inline static bool CheckShape(const aclTensor *gradOutput, const aclTensor *self, const aclIntArray *padding,
-                            const string& mode, const aclTensor *gradInput)
+                              const string& mode, const aclTensor *gradInput)
 {
     auto selfDimnum = self->GetViewShape().GetDimNum();
     // self和gradInput的shape必须一致
@@ -102,43 +102,43 @@ inline static bool CheckShape(const aclTensor *gradOutput, const aclTensor *self
 
     // gradOutput, self, gradInput维度需要一致
     OP_CHECK(gradOutput->GetViewShape().GetDimNum() == selfDimnum &&
-            gradInput->GetViewShape().GetDimNum() == selfDimnum,
-            OP_LOGE(ACLNN_ERR_PARAM_INVALID, "gradOutput, self, gradInput dim should be same."),
-            return false);
+             gradInput->GetViewShape().GetDimNum() == selfDimnum,
+             OP_LOGE(ACLNN_ERR_PARAM_INVALID, "gradOutput, self, gradInput dim should be same."),
+             return false);
 
     // padding长度为6
     OP_CHECK(padding->Size() == 6,
-            OP_LOGE(ACLNN_ERR_PARAM_INVALID, "padding length should be 6, but got %zu.",
-                    padding->Size()),
-            return false);
+             OP_LOGE(ACLNN_ERR_PARAM_INVALID, "padding length should be 6, but got %zu.",
+                     padding->Size()),
+             return false);
 
     // reflection时padding的每一维度的数值要小于对应self的dim
     if (mode == "reflect") {
         // 0, 1, 2, 3, 4, 5 are indexes
         OP_CHECK((*padding)[0] < self->GetViewShape().GetDim(selfDimnum - 1) &&
-                (*padding)[1] < self->GetViewShape().GetDim(selfDimnum - 1) &&
-                (*padding)[2] < self->GetViewShape().GetDim(selfDimnum - 2) &&
-                (*padding)[3] < self->GetViewShape().GetDim(selfDimnum - 2) &&
-                (*padding)[4] < self->GetViewShape().GetDim(selfDimnum - 3) &&
-                (*padding)[5] < self->GetViewShape().GetDim(selfDimnum - 3),
-                OP_LOGE(ACLNN_ERR_PARAM_INVALID, "padding size should be less than the corresponding self dimention."),
-                return false);
+                 (*padding)[1] < self->GetViewShape().GetDim(selfDimnum - 1) &&
+                 (*padding)[2] < self->GetViewShape().GetDim(selfDimnum - 2) &&
+                 (*padding)[3] < self->GetViewShape().GetDim(selfDimnum - 2) &&
+                 (*padding)[4] < self->GetViewShape().GetDim(selfDimnum - 3) &&
+                 (*padding)[5] < self->GetViewShape().GetDim(selfDimnum - 3),
+                 OP_LOGE(ACLNN_ERR_PARAM_INVALID, "padding size should be less than the corresponding self dimention."),
+                 return false);
     }
 
     // check the last 2 dim value of out. 0, 1, 2, 3 are indexes
     OP_CHECK(gradOutput->GetViewShape().GetDim(selfDimnum - 2) ==
-            self->GetViewShape().GetDim(selfDimnum - 2) + (*padding)[2] + (*padding)[3] &&
-            gradOutput->GetViewShape().GetDim(selfDimnum - 1) ==
-            self->GetViewShape().GetDim(selfDimnum - 1) + (*padding)[0] + (*padding)[1] &&
-            gradOutput->GetViewShape().GetDim(selfDimnum - 3) ==
-            self->GetViewShape().GetDim(selfDimnum - 3) + (*padding)[4] + (*padding)[5],
-            OP_LOGE(ACLNN_ERR_PARAM_INVALID, "wrong gradOutput shape."),
-            return false);
+             self->GetViewShape().GetDim(selfDimnum - 2) + (*padding)[2] + (*padding)[3] &&
+             gradOutput->GetViewShape().GetDim(selfDimnum - 1) ==
+             self->GetViewShape().GetDim(selfDimnum - 1) + (*padding)[0] + (*padding)[1] &&
+             gradOutput->GetViewShape().GetDim(selfDimnum - 3) ==
+             self->GetViewShape().GetDim(selfDimnum - 3) + (*padding)[4] + (*padding)[5],
+             OP_LOGE(ACLNN_ERR_PARAM_INVALID, "wrong gradOutput shape."),
+             return false);
     return true;
 }
 
 inline static aclnnStatus CheckParams(const aclTensor *gradOutput, const aclTensor *self,
-                                    const aclIntArray *padding, const string& mode, const aclTensor *gradInput)
+                                      const aclIntArray *padding, const string& mode, const aclTensor *gradInput)
 {
     // 1. 检查参数是否为空指针
     CHECK_RET(CheckNotNull(gradOutput, self, padding, gradInput), ACLNN_ERR_PARAM_NULLPTR);
@@ -176,7 +176,7 @@ static const aclTensor *GetPaddingTensor(int64_t dim, const aclIntArray *padding
 }
 
 static aclnnStatus InputPreprocess(const aclTensor *&gradOutput, const aclTensor *&self,
-                                int64_t dimCp, aclOpExecutor *executor)
+                                   int64_t dimCp, aclOpExecutor *executor)
 {
     // 如果非连续，需要转连续
     gradOutput = l0op::Contiguous(gradOutput, executor);
@@ -199,8 +199,8 @@ static aclnnStatus InputPreprocess(const aclTensor *&gradOutput, const aclTensor
 }
 
 static aclnnStatus CommonPad3dBackward(const aclTensor *gradOutput, const aclTensor *self,
-                                    const aclIntArray *padding, const string& mode, aclTensor *gradInput,
-                                    uint64_t *workspaceSize, aclOpExecutor **executor)
+                                       const aclIntArray *padding, const string& mode, aclTensor *gradInput,
+                                       uint64_t *workspaceSize, aclOpExecutor **executor)
 {
     // 固定写法，创建OpExecutor
     auto uniqueExecutor = CREATE_EXECUTOR();
@@ -278,18 +278,19 @@ static aclnnStatus CommonPad3dBackward(const aclTensor *gradOutput, const aclTen
     return ACLNN_SUCCESS;
 }
 
-aclnnStatus aclnnReflectionPad3dBackwardGetWorkspaceSize(const aclTensor *gradOutput, const aclTensor *self,
+aclnnStatus aclnnReplicationPad3dBackwardGetWorkspaceSize(const aclTensor *gradOutput, const aclTensor *self,
     const aclIntArray *padding, aclTensor *gradInput, uint64_t *workspaceSize, aclOpExecutor **executor)
 {
     OP_CHECK_COMM_INPUT(workspaceSize, executor);
-    L2_DFX_PHASE_1(aclnnReflectionPad3dBackward, DFX_IN(gradOutput, self, padding), DFX_OUT(gradInput));
-    return CommonPad3dBackward(gradOutput, self, padding, REFLECTION_PAD_MODE, gradInput, workspaceSize, executor);
+
+    L2_DFX_PHASE_1(aclnnReplicationPad3dBackward, DFX_IN(gradOutput, self, padding), DFX_OUT(gradInput));
+    return CommonPad3dBackward(gradOutput, self, padding, REPLICATION_PAD_MODE, gradInput, workspaceSize, executor);
 }
 
-aclnnStatus aclnnReflectionPad3dBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
+aclnnStatus aclnnReplicationPad3dBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
     const aclrtStream stream)
 {
-    L2_DFX_PHASE_2(aclnnReflectionPad3dBackward);
+    L2_DFX_PHASE_2(aclnnReplicationPad3dBackward);
     // 固定写法，调用框架能力，完成计算
     return CommonOpExecutorRun(workspace, workspaceSize, executor, stream);
 }
