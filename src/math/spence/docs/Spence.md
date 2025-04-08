@@ -36,7 +36,7 @@ Spence算子实现主要分为以下步骤：
 
 每个算子分为[两段式接口](common/两段式接口.md)，必须先调用"aclnnSpenceGetWorkspaceSize"接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用"aclnnSpence"接口执行计算。
 
-* `aclnnStatus aclnnSpenceGetWorkspaceSize(const aclTensor *x, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnSpenceGetWorkspaceSize(const aclTensor *x, const aclTensor *y, uint64_t *workspaceSize, aclOpExecutor **executor)`
 * `aclnnStatus aclnnSpence(void *workspace, int64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 **说明**：
@@ -59,7 +59,7 @@ Spence算子实现主要分为以下步骤：
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、out的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnSpence
@@ -76,7 +76,7 @@ Spence算子实现主要分为以下步骤：
 
 ## 约束与限制
 
-- x和out的数据类型支持FLOAT16、FLOAT32，数据格式只支持ND
+- x和y的数据类型支持FLOAT16、FLOAT32，数据格式只支持ND
 - 输入x和输出y的shape必须相同
 
 ## 算子原型
