@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_foreach_mul_scalar.h"
+#include "aclnn_foreach_norm.h"
 
 #define SUCCESS 0
 #define FAILED 1
@@ -160,15 +160,13 @@ int main(int argc, char **argv)
     std::vector<int64_t> inputYShape = {8, 2048};
     std::vector<int64_t> outShape1 = {8, 2048};
     std::vector<int64_t> outShape2 = {8, 2048};
-    std::vector<int64_t> alphaShape = {1};
     void *inputXDeviceAddr = nullptr;
     void *inputYDeviceAddr = nullptr;
     void *outputXDeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
-    void* alphaDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     aclTensor *inputY = nullptr;
-    aclTensor *alpha = nullptr;
+    aclScalar* alpha = nullptr;
     aclTensor *outputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
@@ -178,8 +176,8 @@ int main(int argc, char **argv)
     std::vector<float> inputYHostData(inputYShape[0] * inputYShape[1]);
     std::vector<float> outputXHostData(outShape1[0] * outShape1[1]);
     std::vector<float> outputYHostData(outShape2[0] * outShape2[1]);
-    std::vector<float> alphaValueHostData = {1.2f};
     size_t dataType = sizeof(float);
+    float alphaValue = 2;
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
     void ** input2=(void **)(&inputYHostData);
@@ -194,9 +192,8 @@ int main(int argc, char **argv)
     ret = CreateAclTensor(inputYHostData, inputYShape, &inputYDeviceAddr, aclDataType::ACL_FLOAT, &inputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
-    ret = CreateAclTensor(alphaValueHostData, alphaShape, &alphaDeviceAddr, aclDataType::ACL_FLOAT, &alpha);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-
+    // 创建alpha aclScalar
+    alpha = aclCreateScalar(&alphaValue, aclDataType::ACL_FLOAT);
 
     // 创建outputZ aclTensor
     ret = CreateAclTensor(outputXHostData, outShape1, &outputXDeviceAddr, aclDataType::ACL_FLOAT, &outputX);
@@ -214,16 +211,17 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnForeachMulScalarGetWorkspaceSize(tensorListInput, alpha, tensorListOutput, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAbsGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnForeachNormGetWorkspaceSize(tensorListInput, alpha, tensorListOutput, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachNormGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return FAILED;);
     }
+    
     // 执行算子
-    ret = aclnnForeachMulScalar(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddCustom failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnForeachNorm(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachNorm failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
@@ -256,14 +254,13 @@ int main(int argc, char **argv)
     aclDestroyTensor(inputY);
     aclDestroyTensor(outputX);
     aclDestroyTensor(outputY);
-    aclDestroyTensor(alpha);
+    aclDestroyScalar(alpha);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(inputXDeviceAddr);
     aclrtFree(inputYDeviceAddr);
     aclrtFree(outputXDeviceAddr);
     aclrtFree(outputYDeviceAddr);
-    aclrtFree(alphaDeviceAddr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }

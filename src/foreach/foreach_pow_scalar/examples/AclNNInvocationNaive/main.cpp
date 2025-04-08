@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_foreach_mul_scalar.h"
+#include "aclnn_foreach_pow_scalar.h"
 
 #define SUCCESS 0
 #define FAILED 1
@@ -168,7 +168,6 @@ int main(int argc, char **argv)
     void* alphaDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     aclTensor *inputY = nullptr;
-    aclTensor *alpha = nullptr;
     aclTensor *outputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
@@ -214,16 +213,16 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnForeachMulScalarGetWorkspaceSize(tensorListInput, alpha, tensorListOutput, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAbsGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnForeachPowScalarGetWorkspaceSize(tensorListInput, alpha, tensorListOutput, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachPowScalarGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return FAILED;);
     }
     // 执行算子
-    ret = aclnnForeachMulScalar(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddCustom failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnForeachPowScalar(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachPowScalar failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
