@@ -16,7 +16,7 @@
 #include "reflection_pad3d_grad_init.h"
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::MidProcess(){
+__aicore__ inline void ReflectionPad3dGrad<T>::MidProcess() {
     for (size_t loop = 0; loop < loopNC; loop++) {
         for (size_t i = 0; i < curDepth; i++) {
             size_t curDim = GetCurD(i); 
@@ -160,14 +160,14 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessMid(size_t i,  size_t l
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::CopyIn(GlobalTensor<T>& srcGm, const int64_t srcOffset, const int64_t calH, const int64_t calW){
+__aicore__ inline void ReflectionPad3dGrad<T>::CopyIn(GlobalTensor<T>& srcGm, const int64_t srcOffset, const int64_t calH, const int64_t calW) {
     LocalTensor<T> dstLocal = inQueueX.AllocTensor<T>();
     CopyInBasic(dstLocal, srcGm, CopyInParam(0, srcOffset, calH, calW));
     inQueueX.EnQue(dstLocal);
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::CopyInBasic(LocalTensor<T>& dstLocal, GlobalTensor<T>& srcGm, CopyInParam param){
+__aicore__ inline void ReflectionPad3dGrad<T>::CopyInBasic(LocalTensor<T>& dstLocal, GlobalTensor<T>& srcGm, CopyInParam param) {
     int32_t alignCalW = CeilAlign(param.calW, perBlockCount);
     DataCopyParams copyParams = {1, 0, 0, 0};
     DataCopyPadParams padParams = {true, 0, 0, 0};
@@ -275,7 +275,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeCopy(const int32_t totalDa
 
 //K * 16 -> 16 * K
 template <typename T> template<typename T1>
-__aicore__ inline void ReflectionPad3dGrad<T>::Transose1(LocalTensor<T1>& dstLocal, LocalTensor<T1>& srcLocal, const int32_t calH){
+__aicore__ inline void ReflectionPad3dGrad<T>::Transose1(LocalTensor<T1>& dstLocal, LocalTensor<T1>& srcLocal, const int32_t calH) {
     TransDataTo5HDParams transDataParams;
     transDataParams.dstHighHalf = false;
     transDataParams.srcHighHalf = false;
@@ -352,7 +352,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeLeftGradBasic(LocalTensor<
             auto srcLocal2 = tLocal[(2 * wPad1 - i) * calH];
             Add(srcLocal2, srcLocal2, srcLocal1, calH); 
         }
-        for (uint32_t i = 0; i < MAX_LINE - wPad1; i++){
+        for (uint32_t i = 0; i < MAX_LINE - wPad1; i++) {
             auto srcLocal1 = tLocal[i * calH];
             auto srcLocal2 = tLocal[(i + wPad1) * calH];
             Muls(srcLocal1, srcLocal2, (T1)1.0, calH);

@@ -136,9 +136,9 @@ public:
         size_t curDim = i;
         if(i <= dPad1) {   
             curDim = dPad1 - i;  
-        } else if (i > dPad1 && i <depth - dPad2){ 
+        } else if (i > dPad1 && i <depth - dPad2) { 
             curDim = i - dPad1;  
-        } else if (i >= depth - dPad2){     
+        } else if (i >= depth - dPad2) {     
             curDim = (depth - dPad2 - 1) - ( i - (depth - dPad2) + 1 ) - dPad1;   
         }
         return curDim;
@@ -149,7 +149,6 @@ public:
     __aicore__ inline void SmallProcess();
 
 private:
-
     __aicore__ inline void CopyInSmall(const int64_t offset);
 
     __aicore__ inline void ComputeSmall();

@@ -2,7 +2,7 @@
 本样例通过`Ascend C`编程语言实现了`ReflectionPad3dGrad`算子。
 
 ### 算子描述
-ReplicationPad3dGrad算子是ReplicationPad3d的反向算子，Pad3d是一个在深度学习和计算机视觉中常用的函数，用于在3D张量（通常是图像或体积数据）的边界上添加填充（padding），在 pad3d 中，replicate 模式是一种特定的填充方式，它通过复制边界上的值来填充张量。具体来说，replicate 模式会将边界上的值扩展到填充区域，使得填充区域的值与边界上的值相同。
+ReflectionPad3dGrad算子是ReflectionPad3d的反向算子，Pad3d是一个在深度学习和计算机视觉中常用的函数，用于在3D张量（通常是图像或体积数据）的边界上添加填充（padding），在 pad3d 中，reflection 模式是一种特定的填充方式，它通过复制边界上的值来填充张量。具体来说，reflection 模式会将边界上的值扩展到填充区域，使得填充区域的值与边界上的值相同。
 
 ### 算子规格描述
 

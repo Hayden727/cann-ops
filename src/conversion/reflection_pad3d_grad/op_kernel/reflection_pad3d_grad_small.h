@@ -176,7 +176,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>
 
     // 平移
     if (wPad1 > 0) {
-        for (uint32_t i = 0; i < width - wPad1; i++){
+        for (uint32_t i = 0; i < width - wPad1; i++) {
             auto srcLocal_1 = tLocal[i * alignHeight];
             auto srcLocal_2 = tLocal[(i + wPad1) * alignHeight];
             Muls(srcLocal_1, srcLocal_2, (T1)1.0, alignHeight);

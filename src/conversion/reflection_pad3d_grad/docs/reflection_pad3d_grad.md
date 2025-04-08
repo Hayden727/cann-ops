@@ -4,7 +4,7 @@
 
 ## 支持的产品型号
 
-Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atlas 800I A2推理产品/
+/Atlas 800I A2推理产品/
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -37,12 +37,12 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 - **参数说明：**
   
   - gradOutput（aclTensor*，计算输入）：反向传播的输入，Device侧的aclTensor。维度支持四维或五维且与self和gradInput一致，shape、dtype需要与正向传播aclnnReplicationPad3d的输出out一致。
-    - 昇腾A2 AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT16、FLOAT32、BFLOAT16、DOUBLE、COMPLEX64、COMPLEX128。
+    - 昇腾A2 AI处理器：数据类型支持FLOAT16、FLOAT32、BFLOAT16、DOUBLE、COMPLEX64、COMPLEX128。
   - self（aclTensor*，计算输入）：正向的输入张量，Device侧的aclTensor。维度支持四维或五维且与gradOutput和gradInput一致，shape、dtype需要与gradInput一致。
-    - 昇腾A2 AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT16、FLOAT32、BFLOAT16、DOUBLE、COMPLEX64、COMPLEX128。
+    - 昇腾A2 AI处理器：数据类型支持FLOAT16、FLOAT32、BFLOAT16、DOUBLE、COMPLEX64、COMPLEX128。
   - padding（aclIntArray*，计算输入）：Device侧的aclIntArray数组，长度为6，数值依次代表左右上下前后需要填充的值。padding前两个数值需小于self最后一维度的数值，中间两个数值需小于self倒数第二维度的数值，后两个数值需小于self倒数第三维度的数值。
   - gradInput（aclTensor*，计算输出）：反向传播的输出，Device侧的aclTensor。维度支持四维或五维且与gradOutput和self一致，dtype需要与gradOutput一致。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT16、FLOAT32、BFLOAT16、DOUBLE、COMPLEX64、COMPLEX128。
+    - 昇腾A2 AI处理器：数据类型支持FLOAT16、FLOAT32、BFLOAT16、DOUBLE、COMPLEX64、COMPLEX128。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**

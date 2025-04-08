@@ -180,7 +180,7 @@ private:
 template <typename TilingData, int32_t dataTypeLen>
 void PadV3GradV2Tiling<TilingData, dataTypeLen>::GetUsedCore() {
     uint64_t nMulC = batch * channel;
-    if (!dPad1 && !dPad2){
+    if (!dPad1 && !dPad2) {
         nMulC *= depth;
     }
     if (nMulC <= coreNum) {

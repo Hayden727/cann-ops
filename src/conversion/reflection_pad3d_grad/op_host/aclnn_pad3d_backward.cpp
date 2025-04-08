@@ -282,10 +282,9 @@ aclnnStatus aclnnReflectionPad3dBackwardGetWorkspaceSize(const aclTensor *gradOu
     const aclIntArray *padding, aclTensor *gradInput, uint64_t *workspaceSize, aclOpExecutor **executor)
 {
     OP_CHECK_COMM_INPUT(workspaceSize, executor);
-
     L2_DFX_PHASE_1(aclnnReflectionPad3dBackward, DFX_IN(gradOutput, self, padding), DFX_OUT(gradInput));
     return CommonPad3dBackward(gradOutput, self, padding, REFLECTION_PAD_MODE, gradInput, workspaceSize, executor);
-    }
+}
 
 aclnnStatus aclnnReflectionPad3dBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
     const aclrtStream stream)
@@ -299,10 +298,9 @@ aclnnStatus aclnnReplicationPad3dBackwardGetWorkspaceSize(const aclTensor *gradO
     const aclIntArray *padding, aclTensor *gradInput, uint64_t *workspaceSize, aclOpExecutor **executor)
 {
     OP_CHECK_COMM_INPUT(workspaceSize, executor);
-
     L2_DFX_PHASE_1(aclnnReplicationPad3dBackward, DFX_IN(gradOutput, self, padding), DFX_OUT(gradInput));
     return CommonPad3dBackward(gradOutput, self, padding, REPLICATION_PAD_MODE, gradInput, workspaceSize, executor);
-    }
+}
 
 aclnnStatus aclnnReplicationPad3dBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
     const aclrtStream stream)

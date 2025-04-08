@@ -26,17 +26,13 @@ if ((ptr) == nullptr) {                                                         
 namespace {
 constexpr int64_t UNKNOWN_RANK_DIM_VALUE_ = -2;
 inline bool IsUnknownRank(const gert::Shape* check_shape) {
-return check_shape->GetDimNum() == 1 && check_shape->GetDim(0) == UNKNOWN_RANK_DIM_VALUE_;
+    return check_shape->GetDimNum() == 1 && check_shape->GetDim(0) == UNKNOWN_RANK_DIM_VALUE_;
 }
 inline ge::graphStatus SetUnknownRank(gert::Shape* outShape) {
-outShape->SetDimNum(0);
-outShape->AppendDim(UNKNOWN_RANK_DIM_VALUE_);
-return ge::GRAPH_SUCCESS;
+    outShape->SetDimNum(0);
+    outShape->AppendDim(UNKNOWN_RANK_DIM_VALUE_);
+    return ge::GRAPH_SUCCESS;
 }
-}  // namespace
-
-
-namespace {
 constexpr size_t INDEX_X = 0;
 constexpr size_t INDEX_PADDINGS = 1;
 constexpr size_t INDEX_Y = 0;
@@ -89,15 +85,15 @@ static ge::graphStatus InferShapeReflectionPad3dGrad(gert::InferShapeContext* co
     ge::DataType paddings_dtype = paddings_tensor->GetDataType();
     switch (paddings_dtype) {
         case ge::DT_INT32: {
-        return ReflectionPad3dGradInfershape<int32_t>(context, x_shape, paddings_tensor, y_shape);
+            return ReflectionPad3dGradInfershape<int32_t>(context, x_shape, paddings_tensor, y_shape);
         }
         case ge::DT_INT64: {
-        return ReflectionPad3dGradInfershape<int64_t>(context, x_shape, paddings_tensor, y_shape);
+            return ReflectionPad3dGradInfershape<int64_t>(context, x_shape, paddings_tensor, y_shape);
         }
         default:
-        return ge::GRAPH_FAILED;
+            return ge::GRAPH_FAILED;
     }
-    }
+}
 
     IMPL_OP_INFERSHAPE(PadV3Grad)
         .InferShape(InferShapeReflectionPad3dGrad)
