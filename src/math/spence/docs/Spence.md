@@ -88,7 +88,7 @@ Spence算子实现主要分为以下步骤：
 <tr><td align="center">x</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">spence</td></tr>
 </table>
