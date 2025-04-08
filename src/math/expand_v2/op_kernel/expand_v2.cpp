@@ -86,7 +86,11 @@ private:
     {
         AscendC::LocalTensor<DTYPE_X> xLocal = inQueueX.DeQue<DTYPE_X>();
         AscendC::LocalTensor<DTYPE_Y> yLocal = outQueueY.AllocTensor<DTYPE_Y>();
-        AscendC::DataCopy(yLocal, xLocal, length + this->dummyLength);
+        if (length == this->tileLength) {
+            AscendC::DataCopy(yLocal, xLocal, length);
+        } else {
+            AscendC::DataCopy(yLocal, xLocal, length + this->dummyLength);
+        }
 
         outQueueY.EnQue<DTYPE_Y>(yLocal);
         inQueueX.FreeTensor(xLocal);
