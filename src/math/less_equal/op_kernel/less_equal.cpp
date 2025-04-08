@@ -1,9 +1,15 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2022-2023. All rights reserved.
- *
- * Function : z = x + y
- * This sample is a very basic sample that implements vector add on Ascend
- * plaform.
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
+ * @file less_equal.cpp
  */
 #include <type_traits>
 #include "kernel_operator.h"
@@ -244,30 +250,29 @@ private:
 
 private:
   AscendC::TPipe pipe;
-  AscendC::TBuf<AscendC::TPosition::VECCALC> calc_buf_1, calc_buf_2, calc_buf_3, calc_buf_4;
-  AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> x1_inque, x2_inque;
+  AscendC::TBuf<AscendC::TPosition::VECCALC> calc_buf_1; 
+  AscendC::TBuf<AscendC::TPosition::VECCALC> calc_buf_2; 
+  AscendC::TBuf<AscendC::TPosition::VECCALC> calc_buf_3; 
+  AscendC::TBuf<AscendC::TPosition::VECCALC> calc_buf_4;
+  AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> x1_inque;
+  AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> x2_inque;
   AscendC::TQue<AscendC::QuePosition::VECOUT, BUFFER_NUM> y_outque;
-  AscendC::GlobalTensor<typeT> x1_gm, x2_gm;
+  AscendC::GlobalTensor<typeT> x1_gm;
+  AscendC::GlobalTensor<typeT> x2_gm;
   AscendC::GlobalTensor<int8_t> y_gm;
-  uint32_t total_length, block_length, block_offset, tile_num, tile_cache,
-    tile_length, tile_length_end;
+  uint32_t total_length;
+  uint32_t block_length;
+  uint32_t block_offset;
+  uint32_t tile_num;
+  uint32_t tile_cache;
+  uint32_t tile_length;
+  uint32_t tile_length_end;
 };
-
 }
-extern "C" __global__ __aicore__ void less_equal(GM_ADDR x1, GM_ADDR x2,
-  GM_ADDR y, GM_ADDR workspace,
-  GM_ADDR tiling) {
+
+extern "C" __global__ __aicore__ void less_equal(GM_ADDR x1, GM_ADDR x2, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
   GET_TILING_DATA(tiling_data, tiling);
   LessEqualK::KernelLessEqual<DTYPE_X1> op;
   op.Init(x1, x2, y, tiling_data);
   op.Process();
 }
-
-#ifndef ASCENDC_CPU_DEBUG
-// call of kernel function
-void less_equal_do(uint32_t blockDim, void* l2ctrl, void* stream, uint8_t* x1,
-  uint8_t* x2, uint8_t* y, uint8_t* workspace,
-  uint8_t* tiling) {
-  less_equal << <blockDim, l2ctrl, stream >> > (x1, x2, y, workspace, tiling);
-}
-#endif
