@@ -26,7 +26,7 @@ constexpr uint32_t DATA_SIZE_2 = 2;
 constexpr uint32_t DATA_SIZE_1 = 1;
 constexpr uint32_t BLOCK_SIZE = 32;
 
-static ge::graphStatus TF(gert::TilingContext* context) {
+static ge::graphStatus TilingFunc(gert::TilingContext* context) {
   LessEqualTilingData tiling;
   uint64_t ubSize;
   uint32_t bufferNum = 16;
@@ -97,50 +97,50 @@ static ge::graphStatus TF(gert::TilingContext* context) {
       }
       if (padTemp) {  // 如果maxBlockLength可以被PadTemp整除，那么padTemp就是tilelength
         blockLengthMean = maxBlockLength;
-        blockLengthEnd = totalLength - blockLengthMean * (coreNum - 1);
+        blockLengthEnd = totalLength - blockLengthMean * (coreNum - static_cast<uint32_t>(1));
         tileNumMean = blockLengthMean / padTemp;
         tileNumEnd = tileNumMean;
         tileLengthMean = padTemp;
-        tileLengthEnd = blockLengthEnd - padTemp * (tileNumEnd - 1);
+        tileLengthEnd = blockLengthEnd - padTemp * (tileNumEnd - static_cast<uint32_t>(1));
       } else {  // 如果maxBlockLength不能被PadTemp整除，那么padMax就是tilelength
         blockLengthMean = maxBlockLength - maxBlockLength % padMax;
-        blockLengthEnd = totalLength - blockLengthMean * (coreNum - 1);
+        blockLengthEnd = totalLength - blockLengthMean * (coreNum - static_cast<uint32_t>(1));
         tileNumMean = blockLengthMean / padMax;
         tileNumEnd = blockLengthEnd % padMax
-                         ? blockLengthEnd / padMax + 1
+                         ? blockLengthEnd / padMax + static_cast<uint32_t>(1)
                          : (blockLengthEnd /
                             padMax);  // 计算最后一个核心会不会多一个尾数块
         if (padMax >= blockLengthEnd) {
-          tileNumEnd = 1;
+          tileNumEnd = static_cast<uint32_t>(1);
         }
         tileLengthMean = padMax;
         tileLengthEnd =
             blockLengthEnd -
-            padMax * (tileNumEnd - 1);  // 计算最后一个核心的尾数块长度
+            padMax * (tileNumEnd - static_cast<uint32_t>(1));  // 计算最后一个核心的尾数块长度
       }
     } else {  // maxBlockLength小于padMax时直接取maxBlockLength中的最大Pad32倍数
       if (maxBlockLength >= pad32) {  // maxBlockLength大于pad32时
         blockLengthMean = maxBlockLength - maxBlockLength % pad32;
-        blockLengthEnd = totalLength - blockLengthMean * (coreNum - 1);
-        tileNumMean = 1;  // 只有一个tileNum
+        blockLengthEnd = totalLength - blockLengthMean * (coreNum - static_cast<uint32_t>(1));
+        tileNumMean = static_cast<uint32_t>(1);  // 只有一个tileNum
         tileNumEnd =
             blockLengthEnd % pad32
-                ? blockLengthEnd / blockLengthMean + 1
+                ? blockLengthEnd / blockLengthMean + static_cast<uint32_t>(1)
                 : blockLengthEnd /
                       blockLengthMean;  // 如果尾块不能32B对齐则多分配一个尾块
         if (blockLengthMean >= blockLengthEnd) {
-          tileNumEnd = 1;
+          tileNumEnd = static_cast<uint32_t>(1);
         }
         tileLengthMean = blockLengthMean;
         tileLengthEnd =
             blockLengthEnd -
             tileLengthMean *
-                (tileNumEnd - 1);  // 将尾数彻底分给最后一个核心的最后一个tile
+                (tileNumEnd - static_cast<uint32_t>(1));  // 将尾数彻底分给最后一个核心的最后一个tile
       } else {  // maxBlockLength小于pad32时，前面的block优先分配32B数据
         blockLengthMean = pad32;
-        blockLengthEnd = totalLength - pad32 * (coreNum - 1);
-        tileNumMean = 1;
-        tileNumEnd = 1;
+        blockLengthEnd = totalLength - pad32 * (coreNum - static_cast<uint32_t>(1));
+        tileNumMean = static_cast<uint32_t>(1);
+        tileNumEnd = static_cast<uint32_t>(1);
         tileLengthMean = pad32;
         tileLengthEnd = blockLengthEnd;
       }
@@ -196,7 +196,7 @@ class LessEqual : public OpDef {
 
     this->SetInferShape(ge::InferShape);
 
-    this->AICore().SetTiling(optiling::TF);
+    this->AICore().SetTiling(optiling::TilingFunc);
 
     this->AICore().AddConfig("ascend310p")
                   .AddConfig("ascend310b")
