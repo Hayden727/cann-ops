@@ -4,10 +4,10 @@
 ### 算子规格描述
 
 <table>  
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">spence</td></tr>  
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Spence</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td align="center">x</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>  
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">4095</td><td align="center">float16, float32</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">spence</td></tr>  
 </table>  
 
