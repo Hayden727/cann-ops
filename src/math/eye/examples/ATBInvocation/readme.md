@@ -38,20 +38,8 @@
 
 ### 功能
 
-实现两个输入张量相加
+创建一个二维矩阵 m×n，对角元素全为1，其它元素都为0
 
-### 定义
-
-```
-struct EyeAttrParam
-{
-    uint64_t num_rows;
-    uint64_t num_columns = 0;
-    std::vector<int64_t> batchShape = {1};
-    aclIntArray* batch_shape = aclCreateIntArray(batchShape.data(),batchShape.size());
-    uint64_t dtype = 0;
-};
-```
 
 ### 参数列表
 
@@ -68,13 +56,13 @@ struct EyeAttrParam
 
 | **参数** | **维度**                   | **数据类型**    | **格式** | 描述                                     |
 | -------- | -------------------------- | --------------- | -------- | ---------------------------------------- |
-| y        | [dim_0，dim_1，...，dim_n] | float16/float32 | ND       | 输出tensor。数据类型和shape与x保持一致。 |
+| y        | [dim_0，dim_1，...，dim_n] | float16/float32 | ND       | 输入tensor且为输出tensor。 
 
 ### 输出
 
 | **参数** | **维度**                   | **数据类型**    | **格式** | 描述                                     |
 | -------- | -------------------------- | --------------- | -------- | ---------------------------------------- |
-| y        | [dim_0，dim_1，...，dim_n] | float16/float32 | ND       | 输出tensor。数据类型和shape与x保持一致。 |
+| y        | [dim_0，dim_1，...，dim_n] | float16/float32 | ND       | 输入tensor且为输出tensor。 |
 
 ### 规格约束
 
