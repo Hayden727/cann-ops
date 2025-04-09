@@ -11,7 +11,6 @@
 /**
  * @file aclnn_pad3d_backward.cpp
  */
-#include "aclnn_reflection_pad3d_backward.h"
 #include "aclnn_replication_pad3d_backward.h"
 #include "../../circular_pad_grad/op_host/padv3grad.h"
 #include "aclnn_kernels/contiguous.h"

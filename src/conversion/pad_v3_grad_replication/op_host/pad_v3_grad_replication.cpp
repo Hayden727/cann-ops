@@ -76,7 +76,6 @@ public:
     void FillStructs();
     void FillValues();
     void SetPreferences();
-    void PrintTilingValues();
 private:
     gert::TilingContext *context = nullptr;
     PadV3GradReplicationTilingData tilingData;
@@ -155,7 +154,6 @@ void PadV3GradReplicationTilingHandler<T>::Run()
     FillStructs();
     FillValues();
     SetPreferences();
-    PrintTilingValues();
 }
 
 /* 计算tiling相关数值 */
