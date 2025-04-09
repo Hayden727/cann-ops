@@ -53,13 +53,10 @@ public:
         pipe_.InitBuffer(this->out_queue, BUFFER_NUM, this->tile_length * sizeof(half));
 
         pipe_.InitBuffer(less_local_buf, this->tile_length * sizeof(uint8_t));
-    
 }
 
     __aicore__ inline void process() {
-
         CopyInX2();
-        
         for (uint32_t idx=0; idx < this->end_row_idx - this->start_row_idx; idx++) {
             CopyInX1(idx);
             Compute(idx);
@@ -90,7 +87,7 @@ public:
         AscendC::LocalTensor<uint8_t> less_local = this->less_local_buf.Get<uint8_t>();
         AscendC::CompareScalar(less_local, out_local, this->t2, AscendC::CMPMODE::LT, this->tile_length);
 
-        AscendC::Muls(x1_local, out_local, static_cast<half>(2.0), this->tile_length);
+        AscendC::Muls(x1_local, out_local, half_two, this->tile_length);
         
         AscendC::Select(out_local, less_local, out_local, x1_local, AscendC::SELMODE::VSEL_CMPMASK_SPR, this->tile_length);
 
@@ -102,20 +99,17 @@ public:
         this->x1_queue.FreeTensor(x1_local);
     }
 
-
     __aicore__ inline void CopyOut(uint32_t idx) {
         AscendC::LocalTensor<half>  out_local = this->out_queue.DeQue<half>();
         DataCopy(out_buf_global_[idx * this->tile_length * this->tile_num], out_local, this->tile_length);
         this->out_queue.FreeTensor(out_local);
     }
 
-
 private:
     AscendC::TPipe pipe_;
-    AscendC::TQue<AscendC::QuePosition::VECIN, 1> x1_queue; // TODO: verify double buffer perf!
+    AscendC::TQue<AscendC::QuePosition::VECIN, 1> x1_queue;
     AscendC::TQue<AscendC::QuePosition::VECOUT, 1> out_queue;
 
-    
     AscendC::TBuf<AscendC::TPosition::VECIN> x2_buf;
     AscendC::TBuf<AscendC::TPosition::VECCALC> less_local_buf;
 
@@ -139,6 +133,8 @@ private:
     half t1;
     half t2;
     half t3; // 接收输入的3个标量
+
+    float16_t half_two = 2.0;
 };
 
     
