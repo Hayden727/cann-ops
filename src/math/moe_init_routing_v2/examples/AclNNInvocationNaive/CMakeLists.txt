@@ -2,8 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_add)
- 
+project(acl_execute_add) 
 # Compile options
 add_compile_options(-std=c++11)
 

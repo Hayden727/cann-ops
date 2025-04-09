@@ -176,6 +176,7 @@ ge::graphStatus MoeInitRoutingV2TilingBase::CheckOutShape() {
 }
 
 ge::graphStatus MoeInitRoutingV2TilingBase::GetShapeAttrsInfo() {
+	printf("===============MoeInitRoutingV2TilingBase::GetShapeAttrsInfo=============\n");
   opName = context_->GetNodeName();
 
 

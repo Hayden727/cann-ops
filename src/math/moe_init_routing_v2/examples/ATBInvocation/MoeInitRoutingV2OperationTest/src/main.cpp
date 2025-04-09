@@ -13,7 +13,7 @@
  */
 #include <acl/acl.h>
 #include "atb/atb_infer.h"
-#include "aclnn_add_operation.h"
+#include "aclnn_moe_init_routing_v2_operation.h"
 #include "securec.h"
 
 #include <fstream>
@@ -153,25 +153,34 @@ int main(int argc, const char *argv[])
     context->SetExecuteStream(stream);
     std::cout << "[INFO]: complete CreateOp!" << std::endl;
     // 算子创建
-    AddAttrParam addAttrParam;
-    AddOperation *op = new AddOperation("Add",addAttrParam);
+    MoeInitRoutingV2AttrParam moeInitRoutingV2AttrParam;    
+    moeInitRoutingV2AttrParam.active_num = 0;
+    moeInitRoutingV2AttrParam.expert_capacity = 0;
+    moeInitRoutingV2AttrParam.expert_num = 3;
+    moeInitRoutingV2AttrParam.drop_pad_mode = 0;
+    moeInitRoutingV2AttrParam.expert_tokens_count_or_cumsum_flag = 1;
+    moeInitRoutingV2AttrParam.expert_tokens_before_capacity_flag = false;
+    moeInitRoutingV2AttrParam.device_id = 0;
+    moeInitRoutingV2AttrParam.end_expertId = (moeInitRoutingV2AttrParam.device_id + 1) * moeInitRoutingV2AttrParam.expert_num - 1;
+    MoeInitRoutingV2Operation *op = new MoeInitRoutingV2Operation("MoeInitRoutingV2",moeInitRoutingV2AttrParam);
+
     // 输入描述信息设置
     atb::SVector<atb::TensorDesc> intensorDescs;
     atb::SVector<atb::TensorDesc> outtensorDescs;
     intensorDescs.resize(op->GetInputNum());
     outtensorDescs.resize(op->GetOutputNum());
     atb::TensorDesc xDesc;
-    xDesc.dtype = ACL_FLOAT16;
+    xDesc.dtype = ACL_FLOAT;
     xDesc.format = ACL_FORMAT_ND;
     xDesc.shape.dimNum = 2; // 第一个输入是个2维tensor
-    xDesc.shape.dims[0] = 8; // 第一个输入第一维是8
-    xDesc.shape.dims[1] = 2048; // 第一个输入第二维是2048
+    xDesc.shape.dims[0] = 3; // 第一个输入第一维是3
+    xDesc.shape.dims[1] = 4; // 第一个输入第二维是4
     atb::TensorDesc yDesc;
-    yDesc.dtype = ACL_FLOAT16;
+    yDesc.dtype = ACL_INT32;
     yDesc.format = ACL_FORMAT_ND;
     yDesc.shape.dimNum = 2; // 第二个输入是个2维tensor
-    yDesc.shape.dims[0] = 8; // 第二个输入第一维是8
-    yDesc.shape.dims[1] = 2048; // 第二个输入第二维是2048
+    yDesc.shape.dims[0] = 3; // 第二个输入第一维是3
+    yDesc.shape.dims[1] = 3; // 第二个输入第二维是3
     intensorDescs.at(0) = xDesc;
     intensorDescs.at(1) = yDesc;
     // 输入数据读取
