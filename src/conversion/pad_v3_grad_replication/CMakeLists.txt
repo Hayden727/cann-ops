@@ -58,7 +58,7 @@ target_include_directories(op_host_aclnnInner PRIVATE
 
 target_sources(opapi PRIVATE
         ../circular_pad_grad/op_host/padv3grad.cpp
-        op_host/aclnn_pad3d_backward.cpp
+        op_host/aclnn_pad3d_backward_replication.cpp
 )
 
 install(FILES op_kernel/pad_v3_grad_replication.cpp
