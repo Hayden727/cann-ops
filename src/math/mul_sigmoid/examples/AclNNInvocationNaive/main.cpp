@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_add_custom.h"
+#include "aclnn_mul_sigmoid.h"
 
 #define SUCCESS 0
 #define FAILED 1
@@ -105,15 +105,6 @@ bool WriteFile(const std::string &filePath, const void *buffer, size_t size)
     return true;
 }
 
-int64_t GetShapeSize(const std::vector<int64_t> &shape)
-{
-    int64_t shapeSize = 1;
-    for (auto i : shape) {
-        shapeSize *= i;
-    }
-    return shapeSize;
-}
-
 int Init(int32_t deviceId, aclrtStream *stream)
 {
     // 固定写法，acl初始化
@@ -125,6 +116,15 @@ int Init(int32_t deviceId, aclrtStream *stream)
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtCreateStream failed. ERROR: %d\n", ret); return FAILED);
 
     return SUCCESS;
+}
+
+int64_t GetShapeSize(const std::vector<int64_t> &shape)
+{
+    int64_t shapeSize = 1;
+    for (auto i : shape) {
+        shapeSize *= i;
+    }
+    return shapeSize;
 }
 
 template <typename T>
@@ -156,77 +156,76 @@ int main(int argc, char **argv)
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
-    std::vector<int64_t> inputXShape = {8, 2048};
-    std::vector<int64_t> inputYShape = {8, 2048};
-    std::vector<int64_t> outputZShape = {8, 2048};
-    void *inputXDeviceAddr = nullptr;
-    void *inputYDeviceAddr = nullptr;
-    void *outputZDeviceAddr = nullptr;
-    aclTensor *inputX = nullptr;
-    aclTensor *inputY = nullptr;
-    aclTensor *outputZ = nullptr;
-    size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
-    size_t outputZShapeSize = outputZShape[0] * outputZShape[1];
-    std::vector<aclFloat16> inputXHostData(inputXShape[0] * inputXShape[1]);
-    std::vector<aclFloat16> inputYHostData(inputYShape[0] * inputYShape[1]);
-    std::vector<aclFloat16> outputZHostData(outputZShape[0] * outputZShape[1]);
-    size_t dataType = sizeof(uint16_t);
-    size_t fileSize = 0;
-    void ** input1=(void **)(&inputXHostData);
-    void ** input2=(void **)(&inputYHostData);
-    //读取数据
-    ReadFile("../input/input_x.bin", fileSize, *input1, inputXShapeSize * dataType);
-    ReadFile("../input/input_y.bin", fileSize, *input2, inputXShapeSize * dataType);
+    size_t dataType = 2;
+    std::vector<int64_t> input_1_shape = {25, 32 * 1024};
+    size_t input_1_shape_size = input_1_shape[0] * input_1_shape[1];
+    std::vector<aclFloat16> input_1_host_data(input_1_shape_size);
+    void *input_1_device_addr = nullptr;
+    aclTensor *input_1 = nullptr;
+    void ** input1=(void **)(&input_1_host_data);
+    ReadFile("../input/input_1.bin", 0, *input1, input_1_shape_size * dataType);
 
-    INFO_LOG("Set input success");
-    // 创建inputX aclTensor
-    ret = CreateAclTensor(inputXHostData, inputXShape, &inputXDeviceAddr, aclDataType::ACL_FLOAT16, &inputX);
+    ret = CreateAclTensor(input_1_host_data, input_1_shape, &input_1_device_addr, aclDataType::ACL_FLOAT16, &input_1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
-    ret = CreateAclTensor(inputYHostData, inputYShape, &inputYDeviceAddr, aclDataType::ACL_FLOAT16, &inputY);
+
+    std::vector<int64_t> input_2_shape = {1, 256, 128};
+    size_t input_2_shape_size = input_2_shape[0] * input_2_shape[1] * input_2_shape[2];
+    std::vector<aclFloat16> input_2_host_data(input_2_shape_size);
+    void *input_2_device_addr = nullptr;
+    aclTensor *input_2 = nullptr;
+    void ** input2=(void **)(&input_2_host_data);
+    ReadFile("../input/input_2.bin", 0, *input2, input_2_shape_size * dataType);
+
+    ret = CreateAclTensor(input_2_host_data, input_2_shape, &input_2_device_addr, aclDataType::ACL_FLOAT16, &input_2);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
-    // 创建outputZ aclTensor
-    ret = CreateAclTensor(outputZHostData, outputZShape, &outputZDeviceAddr, aclDataType::ACL_FLOAT16, &outputZ);
+
+    std::vector<int64_t> output_1_shape = {25, 256, 128};
+    void *output_1_device_addr = nullptr;
+    aclTensor *output_1 = nullptr;
+    std::vector<aclFloat16> output_1_host_data(25*256*128);
+
+    ret = CreateAclTensor(output_1_host_data, output_1_shape, &output_1_device_addr, aclDataType::ACL_FLOAT16, &output_1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
     // 3. 调用CANN自定义算子库API
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnAddCustomGetWorkspaceSize(inputX, inputY, outputZ, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddCustomGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnMulSigmoidGetWorkspaceSize(input_1, input_2, 0.3, 0.1, 0.8, output_1, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulSigmoidGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return FAILED;);
     }
     // 执行算子
-    ret = aclnnAddCustom(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddCustom failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnMulSigmoid(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulSigmoid failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return FAILED);
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
-    auto size = GetShapeSize(outputZShape);
+    auto size = GetShapeSize(output_1_shape);
     std::vector<aclFloat16> resultData(size, 0);
-    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputZDeviceAddr,
+    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), output_1_device_addr,
                       size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void ** output1=(void **)(&resultData);
+    void ** output_result=(void **)(&resultData);
     //写出数据
-    WriteFile("../output/output_z.bin", *output1, outputZShapeSize * dataType);
+    WriteFile("../output/output_y.bin", *output_result, size * dataType);
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
-    aclDestroyTensor(inputX);
-    aclDestroyTensor(inputY);
-    aclDestroyTensor(outputZ);
+    aclDestroyTensor(input_1);
+    aclDestroyTensor(input_2);
+    aclDestroyTensor(output_1);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
-    aclrtFree(inputXDeviceAddr);
-    aclrtFree(inputYDeviceAddr);
-    aclrtFree(outputZDeviceAddr);
+    aclrtFree(input_1_device_addr);
+    aclrtFree(input_2_device_addr);
+    aclrtFree(output_1_device_addr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }
