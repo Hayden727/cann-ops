@@ -49,6 +49,7 @@
  constexpr int32_t ReshapeIdx = 8;
  constexpr int32_t Mul1Idx = 9;
  constexpr int32_t Mul2Idx = 10;
+ constexpr int32_t nodeListSize = 11;
  const vector<AscendString> nodeTypes = {kOpTypeMul, kOpTypeSigmoid, kOpTypeLessEqual, kOpTypeZerosLike, kOpTypeSelect, kOpTypeSub, kOpTypeStopGradient, kOpTypeAdd, kOpTypeReshape};
  const vector<tuple<int, AscendString, int, int>> edgeList = {
      make_tuple(MulIdx, kOpTypeSigmoid, SigmoidIdx, 1),
@@ -66,7 +67,7 @@
      make_tuple(ReshapeIdx, kOpTypeMul, Mul1Idx, 1),
      make_tuple(Mul1Idx, kOpTypeMul, Mul2Idx, 1),
  };
- thread_local vector<GNode> nodeList(11);
+ thread_local vector<GNode> nodeList(nodeListSize);
  REG_OP(MulSigmoid)
      .INPUT(x1, TensorType({DT_FLOAT16}))
      .INPUT(x2, TensorType({DT_FLOAT16}))

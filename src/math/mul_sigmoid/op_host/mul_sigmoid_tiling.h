@@ -1,12 +1,22 @@
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
+ * @file mul_sigmoid_tiling.h
+ */
+
 #pragma once
 #include "register/tilingdata_base.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "tiling/tiling_api.h"
-
-const uint32_t MAX_TILING_LEN = 16384;
-const uint32_t REPEAT_SIZE = 256;
-const uint32_t DTYPE_SIZE = 2; // fp16
 
 namespace optiling {
 BEGIN_TILING_DATA_DEF(MulSigmoidTilingData)
@@ -51,6 +61,9 @@ private:
   float t1;
   float t2;
   float t3;
+  uint32_t MAX_TILING_LEN = 16384;
+  uint32_t REPEAT_SIZE = 256;
+  uint32_t DTYPE_SIZE = 2; // fp16
 
 private:
 
@@ -62,12 +75,12 @@ private:
     this->row_len = x1_shape.GetDim(0);
     this->col_len = x1_shape.GetDim(1);
 
-    if (this->col_len > MAX_TILING_LEN && this->col_len != 32768) {
+    if (this->col_len > this->MAX_TILING_LEN && this->col_len != 32768) {
       std::cout <<  "mul sigmoid input x1 does not support dimension 1 that is not smaller than 16k or exactly 32k, but receives " << this->col_len << std::endl;
       return ge::GRAPH_FAILED;
     }
 
-    if (this->col_len * DTYPE_SIZE % REPEAT_SIZE) {
+    if (this->col_len * this->DTYPE_SIZE % this->REPEAT_SIZE) {
       std::cout << "mul sigmoid input x1 does not support dimension 1 that is not 256 bytes aligned (128 half)" << std::endl;
       return ge::GRAPH_FAILED;
     }
@@ -89,11 +102,11 @@ private:
     uint32_t tileLen;
     uint32_t tileNum;
     uint32_t rowLen = this->row_len;
-    if (this->col_len <= MAX_TILING_LEN) {
+    if (this->col_len <= this->MAX_TILING_LEN) {
       tileLen = this->col_len;
       tileNum = 1;
     } else {
-      tileLen = MAX_TILING_LEN;
+      tileLen = this->MAX_TILING_LEN;
       tileNum = this->col_len / tileLen;
     }
 

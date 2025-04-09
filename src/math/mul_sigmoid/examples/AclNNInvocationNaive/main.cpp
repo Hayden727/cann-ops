@@ -180,9 +180,10 @@ int main(int argc, char **argv)
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
     std::vector<int64_t> output_1_shape = {25, 256, 128};
+    size_t output_1_shape_size = output_1_shape[0] * output_1_shape[1] * output_1_shape[2];
     void *output_1_device_addr = nullptr;
     aclTensor *output_1 = nullptr;
-    std::vector<aclFloat16> output_1_host_data(25*256*128);
+    std::vector<aclFloat16> output_1_host_data(output_1_shape_size);
 
     ret = CreateAclTensor(output_1_host_data, output_1_shape, &output_1_device_addr, aclDataType::ACL_FLOAT16, &output_1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
@@ -190,8 +191,11 @@ int main(int argc, char **argv)
     // 3. 调用CANN自定义算子库API
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
+    float16_t t1 = 0.3;
+    float16_t t2 = 0.1;
+    float16_t t3 = 0.8;
     // 计算workspace大小并申请内存
-    ret = aclnnMulSigmoidGetWorkspaceSize(input_1, input_2, 0.3, 0.1, 0.8, output_1, &workspaceSize, &executor);
+    ret = aclnnMulSigmoidGetWorkspaceSize(input_1, input_2, t1, t2, t3, output_1, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulSigmoidGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {

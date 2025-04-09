@@ -16,14 +16,14 @@ import numpy as np
 def gen_golden_data_simple():
     dtype = np.float16
 
-    a1 = np.random.randn(25, 32*1024).astype(dtype)
+    a1 = np.random.randn(25, 32 * 1024).astype(dtype)
     a2 = np.random.randn(1, 256, 128).astype(dtype)
     t1 = float(0.3)
     t2 = float(0.1)
     t3 = float(0.8)
-    tmp = 1 / (1 + np.exp(-a1*t1))
+    tmp = 1 / (1 + np.exp(-a1 * t1))
     zero = mp.zeros_like(tmp)
-    sel = np.where(tmp < t2, tmp , 2 * tmp)
+    sel = np.where(tmp < t2, tmp, 2 * tmp)
     sel = sel.reshape(-1, 32 * 1024) * a2.reshape(1, 32 * 1024)
     res = sel * 3
     numpy_result = res.reshape(res.shape[0], 256, 128).astype(dtype)
