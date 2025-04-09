@@ -15,9 +15,10 @@ import numpy
 LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
 MINIMUM = 10e-10
 
-def verify_result(real_result, golden,type):
-    real_result = numpy.fromfile(real_result, dtype=type) # 从bin文件读取实际运算结果
-    golden = numpy.fromfile(golden, dtype=type) # 从bin文件读取预期运算结果
+
+def verify_result(real_result, golden, dtype):
+    real_result = numpy.fromfile(real_result, dtype=dtype) # 从bin文件读取实际运算结果
+    golden = numpy.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
     print("=" * 50, real_result[:5], golden[:5], "=" * 50, sep='\n', end='\n', file=sys.stderr)
     result = numpy.abs(real_result - golden) # 计算运算结果和预期结果偏差
     deno = numpy.maximum(numpy.abs(real_result), numpy.abs(golden))  # 获取最大值并组成新数组
@@ -32,6 +33,7 @@ def verify_result(real_result, golden,type):
 
     
 if __name__ == '__main__':
-    if verify_result(sys.argv[1],sys.argv[2],numpy.float32) and verify_result(sys.argv[3],sys.argv[4],numpy.int32) and verify_result(sys.argv[5],sys.argv[6],numpy.int32):
+    if verify_result(sys.argv[1], sys.argv[2], numpy.float32) and verify_result(sys.argv[3], sys.argv[4], numpy.int32) \
+        and verify_result(sys.argv[5], sys.argv[6], numpy.int32):
         print("Test Operation success")
     

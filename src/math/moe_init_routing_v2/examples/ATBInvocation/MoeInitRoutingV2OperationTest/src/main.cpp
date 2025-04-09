@@ -156,7 +156,7 @@ int main(int argc, const char *argv[])
     MoeInitRoutingV2AttrParam moeInitRoutingV2AttrParam;    
     moeInitRoutingV2AttrParam.active_num = 0;
     moeInitRoutingV2AttrParam.expert_capacity = 0;
-    moeInitRoutingV2AttrParam.expert_num = 3;
+    moeInitRoutingV2AttrParam.expert_num = 3; // expert_num值为3
     moeInitRoutingV2AttrParam.drop_pad_mode = 0;
     moeInitRoutingV2AttrParam.expert_tokens_count_or_cumsum_flag = 1;
     moeInitRoutingV2AttrParam.expert_tokens_before_capacity_flag = false;

@@ -172,7 +172,6 @@ atb::Status MoeInitRoutingV2Operation::Setup(const atb::VariantPack &variantPack
             workspaceSize = workspaceSize_;
         return ret;
     }
-
 }
 
 atb::Status MoeInitRoutingV2Operation::Execute(const atb::VariantPack &variantPack, uint8_t *workspace, uint64_t workspaceSize, atb::Context *context) {
@@ -204,29 +203,29 @@ atb::Status MoeInitRoutingV2Operation::InferShape(
     outTensorDesc.at(1).dtype = ACL_INT32; 
     outTensorDesc.at(1).format = inTensorDesc.at(0).format;    
     if (attrParam.drop_pad_mode > 0) {
-        outTensorDesc.at(0).shape.dimNum = 3;
+        outTensorDesc.at(0).shape.dimNum = 3; // 第一个输出是三维tensor
         outTensorDesc.at(0).shape.dims[0] = attrParam.expert_num;
         outTensorDesc.at(0).shape.dims[1] = attrParam.expert_capacity;
-        outTensorDesc.at(0).shape.dims[2] = cols;
+        outTensorDesc.at(0).shape.dims[2] = cols; // 第一个输出的第三维等于第一个输入的第二维
     }
     else{
-        outTensorDesc.at(0).shape.dimNum = 2;
+        outTensorDesc.at(0).shape.dimNum = 2; // 输出第一个tensor是2维
         outTensorDesc.at(0).shape.dims[0] = outActiveNum;
         outTensorDesc.at(0).shape.dims[1] = cols;
     }
     outTensorDesc.at(1).shape.dimNum = 1;
     outTensorDesc.at(1).shape.dims[0] = expandedRowIdxNum;
     if(attrParam.drop_pad_mode == 0 && attrParam.expert_tokens_count_or_cumsum_flag > 0){
-        outTensorDesc.at(2).dtype = ACL_INT32; 
-        outTensorDesc.at(2).format = inTensorDesc.at(0).format; 
-        outTensorDesc.at(2).shape.dimNum = 1;
-        outTensorDesc.at(2).shape.dims[0] = attrParam.expert_num;
+        outTensorDesc.at(2).dtype = ACL_INT32; // 第二个输出的类型为int32
+        outTensorDesc.at(2).format = inTensorDesc.at(0).format; // 第二个输出的格式和第一个输出相等
+        outTensorDesc.at(2).shape.dimNum = 1; // 第二个输出是一维tensor
+        outTensorDesc.at(2).shape.dims[0] = attrParam.expert_num; // 第二个输出的第一维等于expert_num
     }
-    if(attrParam.drop_pad_mode == 0 && attrParam.expert_tokens_before_capacity_flag){
-        outTensorDesc.at(2).dtype = ACL_INT32; 
-        outTensorDesc.at(2).format = inTensorDesc.at(0).format; 
-        outTensorDesc.at(2).shape.dimNum = 1;
-        outTensorDesc.at(2).shape.dims[0] = attrParam.expert_num;
+    else if(attrParam.drop_pad_mode == 0 && attrParam.expert_tokens_before_capacity_flag){
+        outTensorDesc.at(2).dtype = ACL_INT32;  // 第二个输出的类型为int32
+        outTensorDesc.at(2).format = inTensorDesc.at(0).format; // 第二个输出的格式和第一个输出相等
+        outTensorDesc.at(2).shape.dimNum = 1; // 第二个输出是一维tensor
+        outTensorDesc.at(2).shape.dims[0] = attrParam.expert_num;// 第二个输出的第一维等于expert_num
     }
 
     return atb::NO_ERROR;

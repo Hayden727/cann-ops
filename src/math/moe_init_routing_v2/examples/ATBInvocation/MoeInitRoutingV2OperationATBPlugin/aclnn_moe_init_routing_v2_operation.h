@@ -56,8 +56,8 @@ namespace common{
         atb::SVector<int64_t> GetCopyTensorStride(atb::Dims &tensorDims);
         std::shared_ptr<AclnnTensor> CreateAclnnTensor(atb::Tensor atbTensor, size_t tensorIdx);
         atb::Status UpdateAclnnVariantPack(const atb::VariantPack &variantPack);
-        static constexpr int inputNum = 2;   // 算子入参个数
-        static constexpr int outputNum = 2;  // 算子出参个数
+        static constexpr uint32_t inputNum = 2;   // 算子入参个数
+        static constexpr uint32_t outputNum = 2;  // 算子出参个数
         MoeInitRoutingV2AttrParam attrParam;
         uint32_t GetInputNum() const
         {
@@ -65,7 +65,7 @@ namespace common{
         }
         uint32_t GetOutputNum() const
         {
-            int output = outputNum;
+            uint32_t output = outputNum;
             if(attrParam.drop_pad_mode == 0 && attrParam.expert_tokens_count_or_cumsum_flag > 0){
                 output++;
             }

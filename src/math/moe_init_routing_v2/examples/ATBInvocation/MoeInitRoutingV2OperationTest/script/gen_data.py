@@ -12,18 +12,17 @@ import torch
 import os
 def gen_golden_data_simple():
     input1 = torch.tensor([0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.3, 0.3, 0.3, 0.3], dtype=torch.float32)
-    input2 = torch.tensor([1, 2, 0, 1, 0, 2, 1, 0, 2],dtype=torch.int32)
-    golden0 = torch.tensor([[0.1, 0.1, 0.1, 0.1], [0.2, 0.2, 0.2, 0.2],[0.3, 0.3, 0.3, 0.3],
-                            [0.1, 0.1, 0.1, 0.1], [0.2, 0.2, 0.2, 0.2],[0.3, 0.3, 0.3, 0.3],
-                            [0.1, 0.1, 0.1, 0.1], [0.2, 0.2, 0.2, 0.2],[0.3, 0.3, 0.3, 0.3]],dtype=torch.float32)
-    golden1 = torch.tensor([3,6,0,4,1,7,5,2,8],dtype=torch.int32)
-    golden2 = torch.tensor([3,6,9],dtype=torch.int32)
+    input2 = torch.tensor([1, 2, 0, 1, 0, 2, 1, 0, 2], dtype=torch.int32)
+    golden0 = torch.tensor([[0.1, 0.1, 0.1, 0.1], [0.2, 0.2, 0.2, 0.2], [0.3, 0.3, 0.3, 0.3],
+                            [0.1, 0.1, 0.1, 0.1], [0.2, 0.2, 0.2, 0.2], [0.3, 0.3, 0.3, 0.3],
+                            [0.1, 0.1, 0.1, 0.1], [0.2, 0.2, 0.2, 0.2], [0.3, 0.3, 0.3, 0.3]], dtype=torch.float32)
+    golden1 = torch.tensor([3, 6, 0, 4, 1, 7, 5, 2, 8], dtype=torch.int32)
+    golden2 = torch.tensor([3, 6, 9], dtype=torch.int32)
     input1.numpy().tofile('./script/input/input0.bin')
     input2.numpy().tofile('./script/input/input1.bin')
     golden0.numpy().tofile("./script/output/golden0.bin")
     golden1.numpy().tofile("./script/output/golden1.bin")
     golden2.numpy().tofile("./script/output/golden2.bin")
-    #golden.numpy().tofile("./script/output/golden0.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()
