@@ -9,19 +9,16 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-
-import tensorflow as tf
+import torch
 import numpy as np
-
+import torch.nn.functional as F
 
 def mse_loss_test(predict, label):
-    tensor_predict = tf.convert_to_tensor(predict)
-    tensor_label = tf.convert_to_tensor(label)
-    res = tf.keras.losses.mean_squared_error(
-        y_true=tensor_label,
-        y_pred=tensor_predict
-    )
-    return res.numpy()
+    predict_tensor = torch.from_numpy(predict)
+    label_etnsor = torch.from_numpy(label)
+    reduction = "mean"
+    golden = F.mse_loss(predict_tensor, label_etnsor, reduction=reduction)
+    return golden.numpy()
 
 
 def calc_expect_func(predict, label, y):
