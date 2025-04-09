@@ -9,16 +9,20 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-import torch
+import tensorflow as tf
 import numpy as np
-import torch.nn.functional as F
 
 def mse_loss_test(predict, label):
-    predict_tensor = torch.from_numpy(predict)
-    label_etnsor = torch.from_numpy(label)
-    reduction = "mean"
-    golden = F.mse_loss(predict_tensor, label_etnsor, reduction=reduction)
-    return golden.numpy()
+    predict_dtype = predict.dtype
+    if predict_dtype != np.float32:
+        predict = tf.cast(predict, tf.float32).numpy()
+    label_dtype = label.dtype
+    if label_dtype != np.float32:
+        label = tf.cast(label, tf.float32).numpy()
+    res =  np.mean((predict - label) ** 2)
+    if predict_dtype != np.float32:
+        res = tf.cast(res, predict_dtype).numpy()
+    return res
 
 
 def calc_expect_func(predict, label, y):
