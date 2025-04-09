@@ -78,6 +78,8 @@
     <th>目录</th><th>描述</th>
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Moe_init_routing_v2算子。</td>
+    </tr>
+    <tr>
         <td><a href="./examples/ATBInvocation"> ATBInvocation</td><td>通过ATB调用的方式调用Moe_init_routing_v2算子。</td>
     </tr>
 </table>
