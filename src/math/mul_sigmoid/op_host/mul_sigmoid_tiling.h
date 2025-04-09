@@ -10,7 +10,6 @@ const uint32_t DTYPE_SIZE = 2; // fp16
 
 namespace optiling {
 BEGIN_TILING_DATA_DEF(MulSigmoidTilingData)
-  // TILING_DATA_FIELD_DEF(uint32_t, coreNum); // 实际使用的核数
   TILING_DATA_FIELD_DEF(uint64_t, formerCoreNum); // 非尾核数据需要使用的核数
   TILING_DATA_FIELD_DEF(uint64_t, formerCoreRowLen); // 非尾核每个核负责的row数
   TILING_DATA_FIELD_DEF(uint64_t, tailCoreNum); // 尾核数据需要使用的核数
@@ -115,7 +114,6 @@ private:
       this->used_core_num = doubleCoreNum * tileNum;
     }
 
-    // tiling.set_coreNum(usedCoreNum);
     tiling.set_formerCoreNum(formerCoreNum);
     tiling.set_formerCoreRowLen(formerCoreRowLen);
     tiling.set_tailCoreNum(tailCoreNum);
@@ -136,16 +134,6 @@ private:
     if ((bufSize + minSize) > ubSize) {
       std::cout << "tiling length too large, ub space size unavailable" << std::endl;
     }
-
-    // std::cout << "ub size (que+buf): " << bufSize << "; min sigmoid Size " << minSize << "; max sigmoid Size " << maxSize << std::endl;
-
-    // std::cout << "usedCoreNum " << used_core_num << std::endl;
-    // std::cout << "formerCoreNum " << formerCoreNum << std::endl;
-    // std::cout << "formerCoreRowLen " << formerCoreRowLen << std::endl;
-    // std::cout << "tailCoreNum " << tailCoreNum << std::endl;
-    // std::cout << "tailCoreRowLen " << tailCoreRowLen << std::endl;
-    // std::cout << "tileLen " << tileLen << std::endl;
-    // std::cout << "tileNum " << tileNum << std::endl;
 
     return ge::GRAPH_SUCCESS;
   }
