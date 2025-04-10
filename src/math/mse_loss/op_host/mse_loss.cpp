@@ -44,7 +44,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     const char* mode2 = "sum";
     const char* mode3 = "none";
     int str_len = strlen(reduction);
-    uint32_t mode = 0;
+    uint32_t mode = static_cast<int32_t>(0);
     
     if (str_len == strlen(mode1)) {
         for (int i = 0; i < str_len; i++) {
