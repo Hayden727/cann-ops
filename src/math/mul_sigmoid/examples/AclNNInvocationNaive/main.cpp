@@ -154,6 +154,7 @@ int main(int argc, char **argv)
     aclrtStream stream;
     auto ret = Init(deviceId, &stream);
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
+    int8_t dim_2 = 2;
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     size_t dataType = 2;
@@ -162,8 +163,8 @@ int main(int argc, char **argv)
     std::vector<int64_t> output_shape = {25, 256, 128};
 
     std::vector<aclFloat16> input_1_host_data(input_1_shape[0] * input_1_shape[1]);
-    std::vector<aclFloat16> input_2_host_data(input_2_shape[0] * input_2_shape[1] * input_2_shape[2]);
-    std::vector<aclFloat16> output_host_data(output_shape[0] * output_shape[1] * output_shape[2]);
+    std::vector<aclFloat16> input_2_host_data(input_2_shape[0] * input_2_shape[1] * input_2_shape[dim_2]);
+    std::vector<aclFloat16> output_host_data(output_shape[0] * output_shape[1] * output_shape[dim_2]);
 
     ReadFile("../input/input_1.bin", 0, input_1_host_data.data(), input_1_host_data.size() * dataType);
     ReadFile("../input/input_2.bin", 0, input_2_host_data.data(), input_2_host_data.size() * dataType);
