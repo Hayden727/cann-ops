@@ -9,10 +9,9 @@
  */
 
 /**
- * \file reflection_pad3d_grad_proto.cpp
+ * \file pad_v3_grad_replication_proto.cpp
  * \brief
  */
-
 #include "register/op_def_registry.h"
 #include "experiment/metadef/common/util/error_manager/error_manager.h"
 
@@ -33,6 +32,10 @@ inline ge::graphStatus SetUnknownRank(gert::Shape* outShape) {
     outShape->AppendDim(UNKNOWN_RANK_DIM_VALUE_);
     return ge::GRAPH_SUCCESS;
 }
+}  // namespace
+
+
+namespace {
 constexpr size_t INDEX_X = 0;
 constexpr size_t INDEX_PADDINGS = 1;
 constexpr size_t INDEX_Y = 0;
@@ -44,7 +47,7 @@ constexpr size_t PAIR = 2;
 using namespace ge;
 namespace ops {
 template <typename T>
-static ge::graphStatus ReflectionPad3dGradInfershape(const gert::InferShapeContext* context, const gert::Shape* x_shape,
+static ge::graphStatus Pad3dGradReplicationInfershape(const gert::InferShapeContext* context, const gert::Shape* x_shape,
                                         const gert::Tensor* paddings_tensor, gert::Shape* y_shape)
 {
     const T* paddings_value = paddings_tensor->GetData<T>();
@@ -75,7 +78,7 @@ static ge::graphStatus ReflectionPad3dGradInfershape(const gert::InferShapeConte
     return ge::GRAPH_SUCCESS;
 }
 
-static ge::graphStatus InferShapeReflectionPad3dGrad(gert::InferShapeContext* context) {
+static ge::graphStatus InferShapePadV3GradReplication(gert::InferShapeContext* context) {
     const gert::Shape* x_shape = context->GetInputShape(INDEX_X);
     OPS_CHECK_NULL_WITH_CONTEXT(context, x_shape);
     gert::Shape* y_shape = context->GetOutputShape(INDEX_Y);
@@ -85,18 +88,17 @@ static ge::graphStatus InferShapeReflectionPad3dGrad(gert::InferShapeContext* co
     ge::DataType paddings_dtype = paddings_tensor->GetDataType();
     switch (paddings_dtype) {
         case ge::DT_INT32: {
-            return ReflectionPad3dGradInfershape<int32_t>(context, x_shape, paddings_tensor, y_shape);
+            return Pad3dGradReplicationInfershape<int32_t>(context, x_shape, paddings_tensor, y_shape);
         }
         case ge::DT_INT64: {
-            return ReflectionPad3dGradInfershape<int64_t>(context, x_shape, paddings_tensor, y_shape);
+            return Pad3dGradReplicationInfershape<int64_t>(context, x_shape, paddings_tensor, y_shape);
         }
         default:
             return ge::GRAPH_FAILED;
     }
 }
 
-IMPL_OP_INFERSHAPE(ReflectionPad3dGrad)
-    .InferShape(InferShapeReflectionPad3dGrad)
+IMPL_OP_INFERSHAPE(PadV3GradReplication)
+    .InferShape(InferShapePadV3GradReplication)
     .InputsDataDependency({INDEX_PADDINGS});
-
 } // namespace ops

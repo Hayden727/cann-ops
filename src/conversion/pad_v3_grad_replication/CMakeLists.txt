@@ -1,13 +1,14 @@
 add_ops_compile_options(
-        OP_NAME ReflectionPad3dGrad
-        OPTIONS --cce-auto-sync=on
+        OP_NAME PadV3GradReplication
+        OPTIONS --cce-auto-sync=off
                 -Wno-deprecated-declarations
                 -Werror
 )
 
-# optiling
+
+
 target_sources(optiling PRIVATE
-        op_host/reflection_pad3d_grad.cpp
+        op_host/pad_v3_grad_replication.cpp
 )
 
 target_include_directories(optiling PRIVATE
@@ -22,9 +23,8 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
 )
 
-# opproto
 target_sources(opsproto PRIVATE
-        op_host/reflection_pad3d_grad_proto.cpp
+         op_host/pad_v3_grad_replication_proto.cpp
 )
 
 target_include_directories(opsproto PRIVATE
@@ -39,9 +39,9 @@ target_include_directories(opsproto PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
 )
 
-# 手动实现的aclnn
+# 手动生成的aclnn
 target_sources(op_host_aclnnInner PRIVATE
-        op_host/reflection_pad3d_grad_def.cpp
+        op_host/pad_v3_grad_replication_def.cpp
 )
 
 target_include_directories(op_host_aclnnInner PRIVATE
@@ -58,23 +58,17 @@ target_include_directories(op_host_aclnnInner PRIVATE
 
 target_sources(opapi PRIVATE
         ../circular_pad_grad/op_host/padv3grad.cpp
-        op_host/aclnn_pad3d_backward_reflection.cpp
+        op_host/aclnn_pad3d_backward_replication.cpp
 )
 
-install(FILES op_kernel/reflection_pad3d_grad.cpp
+install(FILES op_kernel/pad_v3_grad_replication.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/reflection_pad3d_grad_init.h
+install(FILES op_kernel/pad_v3_grad_replication.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
-install(FILES op_kernel/reflection_pad3d_grad_mid.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/reflection_pad3d_grad_small.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/reflection_pad3d_grad_utils.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
+install(FILES op_host/aclnn_replication_pad3d_backward.h
+        DESTINATION ${ACLNN_INC_INSTALL_DIR} OPTIONAL)
 
 install(FILES op_host/aclnn_reflection_pad3d_backward.h
         DESTINATION ${ACLNN_INC_INSTALL_DIR} OPTIONAL)
