@@ -176,7 +176,7 @@ int main(int argc, char **argv)
     size_t fileSize = 0;
     void** input1=(void**)(&inputPredictHostData);
     void** input2=(void**)(&inputLabelHostData);
-    char reduction[]  = "mean";
+    char* reduction  = "mean";
     //读取数据
     ReadFile("../input/input_predict.bin", fileSize, *input1, inputPredictShapeSize_1 * sizeof(float));
     ReadFile("../input/input_label.bin", fileSize, *input2, inputLabelShapeSize_1 * sizeof(float));
