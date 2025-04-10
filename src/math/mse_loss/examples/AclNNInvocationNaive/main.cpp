@@ -176,7 +176,7 @@ int main(int argc, char **argv)
     size_t fileSize = 0;
     void** input1=(void**)(&inputPredictHostData);
     void** input2=(void**)(&inputLabelHostData);
-    const char* reduction  = "mean";
+    char reduction[]  = "mean";
     //读取数据
     ReadFile("../input/input_predict.bin", fileSize, *input1, inputPredictShapeSize_1 * sizeof(float));
     ReadFile("../input/input_label.bin", fileSize, *input2, inputLabelShapeSize_1 * sizeof(float));
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnMseLossGetWorkspaceSize(inputPredict, inputLabel, reduction, outputY, &workspaceSize, &executor);
+    ret = aclnnMseLossGetWorkspaceSize(inputPredict, inputLabel, "mean", outputY, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
