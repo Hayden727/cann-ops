@@ -158,34 +158,29 @@ int main(int argc, char **argv)
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     size_t dataType = 2;
     std::vector<int64_t> input_1_shape = {25, 32 * 1024};
-    size_t input_1_shape_size = input_1_shape[0] * input_1_shape[1];
-    std::vector<aclFloat16> input_1_host_data(input_1_shape_size);
-    void *input_1_device_addr = nullptr;
-    aclTensor *input_1 = nullptr;
-    void ** input1=(void **)(&input_1_host_data);
-    ReadFile("../input/input_1.bin", 0, *input1, input_1_shape_size * dataType);
-
-    ret = CreateAclTensor(input_1_host_data, input_1_shape, &input_1_device_addr, aclDataType::ACL_FLOAT16, &input_1);
-    CHECK_RET(ret == ACL_SUCCESS, return FAILED);
-
     std::vector<int64_t> input_2_shape = {1, 256, 128};
-    size_t input_2_shape_size = input_2_shape[0] * input_2_shape[1] * input_2_shape[2];
-    std::vector<aclFloat16> input_2_host_data(input_2_shape_size);
-    void *input_2_device_addr = nullptr;
+    std::vector<int64_t> output_shape = {25, 256, 128};
+
+    std::vector<aclFloat16> input_1_host_data(input_1_shape[0] * input_1_shape[1]);
+    std::vector<aclFloat16> input_2_host_data(input_2_shape[0] * input_2_shape[1] * input_2_shape[2]);
+    std::vector<aclFloat16> output_host_data(output_shape[0] * output_shape[1] * output_shape[2]);
+
+    ReadFile("../input/input_1.bin", 0, input_1_host_data.data(), input_1_host_data.size() * dataType);
+    ReadFile("../input/input_2.bin", 0, input_2_host_data.data(), input_2_host_data.size() * dataType);
+
+    aclTensor *input_1 = nullptr;
     aclTensor *input_2 = nullptr;
-    void ** input2=(void **)(&input_2_host_data);
-    ReadFile("../input/input_2.bin", 0, *input2, input_2_shape_size * dataType);
+    aclTensor *output = nullptr;
 
-    ret = CreateAclTensor(input_2_host_data, input_2_shape, &input_2_device_addr, aclDataType::ACL_FLOAT16, &input_2);
+    void *input_1_device = nullptr;
+    void *input_2_device = nullptr;
+    void *output_device = nullptr;
+
+    ret = CreateAclTensor(input_1_host_data, input_1_shape, &input_1_device, aclDataType::ACL_FLOAT16, &input_1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
-
-    std::vector<int64_t> output_1_shape = {25, 256, 128};
-    size_t output_1_shape_size = output_1_shape[0] * output_1_shape[1] * output_1_shape[2];
-    void *output_1_device_addr = nullptr;
-    aclTensor *output_1 = nullptr;
-    std::vector<aclFloat16> output_1_host_data(output_1_shape_size);
-
-    ret = CreateAclTensor(output_1_host_data, output_1_shape, &output_1_device_addr, aclDataType::ACL_FLOAT16, &output_1);
+    ret = CreateAclTensor(input_2_host_data, input_2_shape, &input_2_device, aclDataType::ACL_FLOAT16, &input_2);
+    CHECK_RET(ret == ACL_SUCCESS, return FAILED);
+    ret = CreateAclTensor(output_host_data, output_shape, &output_device, aclDataType::ACL_FLOAT16, &output);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
     // 3. 调用CANN自定义算子库API
@@ -211,25 +206,22 @@ int main(int argc, char **argv)
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return FAILED);
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
-    auto size = GetShapeSize(output_1_shape);
-    std::vector<aclFloat16> resultData(size, 0);
-    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), output_1_device_addr,
-                      size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
+    ret = aclrtMemcpy(output_host_data.data(), output_host_data.size() * dataType, output_device,
+                      output_host_data.size() * dataType, ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void ** output_result=(void **)(&resultData);
     //写出数据
-    WriteFile("../output/output_y.bin", *output_result, size * dataType);
+    WriteFile("../output/output.bin", output_host_data.data(), output_host_data.size() * dataType);
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
     aclDestroyTensor(input_1);
     aclDestroyTensor(input_2);
-    aclDestroyTensor(output_1);
+    aclDestroyTensor(output);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
-    aclrtFree(input_1_device_addr);
-    aclrtFree(input_2_device_addr);
-    aclrtFree(output_1_device_addr);
+    aclrtFree(input_1_device);
+    aclrtFree(input_2_device);
+    aclrtFree(output_device);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }
