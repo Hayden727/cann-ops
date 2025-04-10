@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_test_op
+    ./execute_mse_loss_op
 )
 ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
 echo $ret
