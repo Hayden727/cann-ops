@@ -18,7 +18,7 @@ constexpr int32_t BUFFER_NUM = 1;
 class KernelMseLoss {
 public:
     __aicore__ inline KernelMseLoss() {}
-    __aicore__ inline void Init(GM_ADDR predict, GM_ADDR label, GM_ADDR y, int32_t mode, 
+    __aicore__ inline void Init(GM_ADDR predict, GM_ADDR label, GM_ADDR y, uint32_t mode, 
                                 uint32_t totalLength, uint32_t blockLength,
                                 uint32_t tileNum, uint32_t tileLength,
                                 uint32_t lasttileLength) {
@@ -288,7 +288,7 @@ private:
     AscendC::GlobalTensor<DTYPE_Y> xGm;
     AscendC::GlobalTensor<DTYPE_Y> yGm;
     AscendC::GlobalTensor<DTYPE_Y> outGm;
-    int32_t mode;
+    uint32_t mode;
     float totalLength_f32;
     int32_t totalLength;
     uint32_t reduce_num;
