@@ -85,3 +85,5 @@ install(FILES op_kernel/gather_v3_tmpl_3.h
 
 install(FILES op_host/aclnn_index_select.h
         DESTINATION ${ACLNN_INC_INSTALL_DIR} OPTIONAL)
+
+add_subdirectory(framework)

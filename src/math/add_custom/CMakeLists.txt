@@ -23,3 +23,5 @@ target_sources(opsproto PRIVATE
 
 install(FILES op_kernel/add_custom.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
+
+add_subdirectory(framework)
