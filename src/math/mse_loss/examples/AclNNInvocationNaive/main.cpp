@@ -154,7 +154,8 @@ int main(int argc, char **argv)
     aclrtStream stream;
     auto ret = Init(deviceId, &stream);
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
-
+    char reductionOptional[] = "mean";
+    
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputPredictShape = {1024, 1024};
     std::vector<int64_t> inputLabelShape = {1024, 1024};
@@ -176,7 +177,7 @@ int main(int argc, char **argv)
     size_t fileSize = 0;
     void** input1=(void**)(&inputPredictHostData);
     void** input2=(void**)(&inputLabelHostData);
-    int64_t reduction = 3;
+    
     //读取数据
     ReadFile("../input/input_predict.bin", fileSize, *input1, inputPredictShapeSize_1 * sizeof(float));
     ReadFile("../input/input_label.bin", fileSize, *input2, inputLabelShapeSize_1 * sizeof(float));
