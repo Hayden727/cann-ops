@@ -155,7 +155,7 @@ int main(int argc, char **argv)
     auto ret = Init(deviceId, &stream);
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
     char reductionOptional[] = "mean";
-    
+
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputPredictShape = {1024, 1024};
     std::vector<int64_t> inputLabelShape = {1024, 1024};
@@ -196,7 +196,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnMseLossGetWorkspaceSize(inputPredict, inputLabel, reduction, outputY, &workspaceSize, &executor);
+    ret = aclnnMseLossGetWorkspaceSize(inputPredict, inputLabel, reductionOptional, outputY, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
