@@ -26,7 +26,7 @@ target_include_directories(optiling PRIVATE
 
 # opproto
 target_sources(opsproto PRIVATE
-        # op_host/gather_v3.cpp
+        op_host/gather_v3_def.cpp
 )
 
 target_include_directories(opsproto PRIVATE
