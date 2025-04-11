@@ -208,7 +208,7 @@ int main(int argc, char **argv)
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
     ret = aclnnForeachTanhGetWorkspaceSize(tensorListInput, tensorListOutput, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAbsGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachTanhGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
     }
     // 执行算子
     ret = aclnnForeachTanh(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddCustom failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachTanh failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);

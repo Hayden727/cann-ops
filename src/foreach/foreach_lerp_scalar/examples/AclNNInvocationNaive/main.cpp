@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_foreach_mul_scalar.h"
+#include "aclnn_foreach_lerp_scalar.h"
 
 #define SUCCESS 0
 #define FAILED 1
@@ -158,17 +158,19 @@ int main(int argc, char **argv)
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputXShape = {8, 2048};
     std::vector<int64_t> inputYShape = {8, 2048};
+    std::vector<int64_t> otherShape1 = {8, 2048};
+    std::vector<int64_t> otherShape2 = {8, 2048};
     std::vector<int64_t> outShape1 = {8, 2048};
     std::vector<int64_t> outShape2 = {8, 2048};
-    std::vector<int64_t> alphaShape = {1};
     void *inputXDeviceAddr = nullptr;
     void *inputYDeviceAddr = nullptr;
     void *outputXDeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
-    void* alphaDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     aclTensor *inputY = nullptr;
-    aclTensor *alpha = nullptr;
+    aclTensor* other1 = nullptr;
+    aclTensor* other2 = nullptr;
+    aclScalar* weight = nullptr;
     aclTensor *outputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
@@ -176,16 +178,23 @@ int main(int argc, char **argv)
     size_t outputYShapeSize = inputXShape[0] * inputXShape[1];
     std::vector<float> inputXHostData(inputXShape[0] * inputXShape[1]);
     std::vector<float> inputYHostData(inputYShape[0] * inputYShape[1]);
+    std::vector<float> other1HostData(inputYShape[0] * inputYShape[1]);
+    std::vector<float> other2HostData(inputYShape[0] * inputYShape[1]);
     std::vector<float> outputXHostData(outShape1[0] * outShape1[1]);
     std::vector<float> outputYHostData(outShape2[0] * outShape2[1]);
-    std::vector<float> alphaValueHostData = {1.2f};
     size_t dataType = sizeof(float);
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
     void ** input2=(void **)(&inputYHostData);
+
+    float weightValue = 1.2f;
+
     //读取数据
     ReadFile("../input/input_x1.bin", fileSize, *input1, inputXShapeSize * dataType);
     ReadFile("../input/input_x2.bin", fileSize, *input2, inputXShapeSize * dataType);
+
+    ReadFile("../input/input_y1.bin", fileSize, *other1, inputXShapeSize * dataType);
+    ReadFile("../input/input_y2.bin", fileSize, *other2, inputXShapeSize * dataType);
 
     INFO_LOG("Set input success");
     // 创建inputX aclTensor
@@ -194,9 +203,15 @@ int main(int argc, char **argv)
     ret = CreateAclTensor(inputYHostData, inputYShape, &inputYDeviceAddr, aclDataType::ACL_FLOAT, &inputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
-    ret = CreateAclTensor(alphaValueHostData, alphaShape, &alphaDeviceAddr, aclDataType::ACL_FLOAT, &alpha);
+    // 创建other1 aclTensor
+    ret = CreateAclTensor(other1HostData, otherShape1, &other1DeviceAddr, aclDataType::ACL_FLOAT, &other1);
+    CHECK_RET(ret == ACL_SUCCESS, return ret);
+    // 创建other2 aclTensor
+    ret = CreateAclTensor(other2HostData, otherShape2, &other2DeviceAddr, aclDataType::ACL_FLOAT, &other2);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
 
+    weight = aclCreateScalar(&weightValue, aclDataType::ACL_FLOAT);
+    CHECK_RET(weight != nullptr, return ret);
 
     // 创建outputZ aclTensor
     ret = CreateAclTensor(outputXHostData, outShape1, &outputXDeviceAddr, aclDataType::ACL_FLOAT, &outputX);
@@ -206,7 +221,8 @@ int main(int argc, char **argv)
 
     std::vector<aclTensor*> tempInput{inputX, inputY};
     aclTensorList* tensorListInput = aclCreateTensorList(tempInput.data(), tempInput.size());
-
+    std::vector<aclTensor*> tempInput2{other1, other2};
+    aclTensorList* tensorListInput2 = aclCreateTensorList(tempInput2.data(), tempInput2.size());
     std::vector<aclTensor*> tempOutput{outputX, outputY};
     aclTensorList* tensorListOutput = aclCreateTensorList(tempOutput.data(), tempOutput.size());
 
@@ -214,16 +230,16 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnForeachMulScalarGetWorkspaceSize(tensorListInput, alpha, tensorListOutput, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAbsGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnForeachLerpScalarGetWorkspaceSize(tensorListInput, tensorListInput2, weight, tensorListOutput, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachLerpScalarGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return FAILED;);
     }
     // 执行算子
-    ret = aclnnForeachMulScalar(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnAddCustom failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnForeachLerpScalar(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachLerpScalar failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
@@ -256,7 +272,7 @@ int main(int argc, char **argv)
     aclDestroyTensor(inputY);
     aclDestroyTensor(outputX);
     aclDestroyTensor(outputY);
-    aclDestroyTensor(alpha);
+    aclDestroyScalar(weight);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(inputXDeviceAddr);
