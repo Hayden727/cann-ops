@@ -13,30 +13,19 @@ import sys
 import os
 import numpy as np
 import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
-
 from npu_bridge import npu_init  # 显式导入模块
 from tensorflow.core.protobuf.rewriter_config_pb2 import RewriterConfig
-tf.enable_resource_variables()
 
-#np.allclose比较函数的相对公差参数
-ABSOLUTE_TOL = 0.001
+tf.compat.v1.disable_eager_execution()
+tf.enable_resource_variables()
+tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
+
 #np.allclose比较函数的绝对公差参数
 RELATIVE_TOL = 0.001
 
-tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
+#np.allclose比较函数的相对公差参数
+ABSOLUTE_TOL = 0.001
 
-def create_optional_input_list(input):
-    input_list = []
-    if not input is None:
-        input_list.append(input)
-    return input_list
-
-# flash_attention_score 封装函数
-def npu_gather_v3(x, indices, axis, batchDims=0, negativeIndexSupport=False):
-    output = tfOpLib.gather_v3(x=x, indices=indices, axis=axis, batchDims=batchDims, 
-        negativeIndexSupport=negativeIndexSupport)
-    return output
 
 def sess_config():
     config = tf.compat.v1.ConfigProto()
@@ -46,12 +35,20 @@ def sess_config():
     config.graph_options.rewrite_options.memory_optimization = RewriterConfig.OFF
     return config
 
+
+# flash_attention_score 封装函数
+def npu_gather_v3(x, indices, axis, batch_dims=0, negative_index_support=False):
+    output = tfOpLib.gather_v3(x=x, indices=indices, axis=axis, batchDims=batch_dims, 
+        negativeIndexSupport=negative_index_support)
+    return output
+
+
 if __name__ == '__main__':
     x_shape = [4, 2]
+    y_shape = [2, 2]
     indices_shape = [2]
     axis_shape = [1]
-    y_shape = [2, 2]
-
+    
     x_data = np.random.uniform(-2, 2, size=x_shape).astype(np.float16)
     indices_data = np.array([1, 0], dtype='int32')
     axis_data = np.array([1], dtype='int64')
@@ -61,23 +58,22 @@ if __name__ == '__main__':
     print(axis_data)
 
     x = tf.constant(x_data, tf.float16)
-    indices = tf.constant(indices_data, tf.int32)
     axis = tf.constant(axis_data, tf.int64)
-
+    indices = tf.constant(indices_data, tf.int32)
+    
     tf_gather_result_t = tf.gather(x, indices, axis=axis[0])
     gather_v3_result_t = npu_gather_v3(x, indices, axis)
-
-    with tf.compat.v1.Session(config=sess_config()) as sess:
-        sess.run(tf.compat.v1.global_variables_initializer())
-        tf_gather_result = sess.run(tf_gather_result_t)
         
-
     with tf.compat.v1.Session(config=sess_config()) as sess:
         sess.run(tf.compat.v1.global_variables_initializer())
         gather_v3_result = sess.run(gather_v3_result_t)
+        print("gather_v3_result:\n", gather_v3_result)
+    
+    with tf.compat.v1.Session(config=sess_config()) as sess:
+        sess.run(tf.compat.v1.global_variables_initializer())
+        tf_gather_result = sess.run(tf_gather_result_t)
+        print("tf_gather_result:\n", tf_gather_result)
         
-    print("tf_gather_result:\n", tf_gather_result)
-    print("gather_v3_result:\n", gather_v3_result)
     # 通过np.allclose函数比较TensorFlow和Ascend C的输出是否一致
     cmp_result = np.allclose(tf_gather_result, gather_v3_result, atol=ABSOLUTE_TOL, rtol=RELATIVE_TOL)
     if cmp_result:

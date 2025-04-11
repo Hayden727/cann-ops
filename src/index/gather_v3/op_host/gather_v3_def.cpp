@@ -17,6 +17,7 @@
 #define OP_LOGD(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__); std::printf("\n")
 #define OP_LOGE(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__); std::printf("\n")
 
+namespace ge {
 // input
 constexpr int64_t X_INDEX = 0;
 constexpr int64_t INDICES_INDEX = 1;
@@ -25,7 +26,6 @@ constexpr int64_t AXIS_INDEX = 2;
 // output
 constexpr int64_t Y_INDEX = 0;
 
-namespace ge {
 struct GatherInfo {
     int64_t axis;
     int64_t index_batch_dims;

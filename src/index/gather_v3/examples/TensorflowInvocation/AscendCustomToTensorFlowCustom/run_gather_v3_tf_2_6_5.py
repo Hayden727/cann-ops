@@ -13,30 +13,25 @@ import sys
 import os
 import numpy as np
 import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
-
 import npu_device
-from npu_device.compat.v1.npu_init import *
-npu_device.compat.enable_v1()
+from npu_device.compat.v1.npu_init import enable_v1
+
+tf.compat.v1.disable_eager_execution()
+enable_v1()
+tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
 
 #np.allclose比较函数的相对公差参数
 ABSOLUTE_TOL = 0.001
 #np.allclose比较函数的绝对公差参数
 RELATIVE_TOL = 0.001
 
-tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
-
-def create_optional_input_list(input):
-    input_list = []
-    if not input is None:
-        input_list.append(input)
-    return input_list
 
 # flash_attention_score 封装函数
-def npu_gather_v3(x, indices, axis, batchDims=0, negativeIndexSupport=False):
-    output = tfOpLib.gather_v3(x=x, indices=indices, axis=axis, batchDims=batchDims, 
-        negativeIndexSupport=negativeIndexSupport)
+def npu_gather_v3(x, indices, axis, batch_dims=0, negative_index_support=False):
+    output = tfOpLib.gather_v3(x=x, indices=indices, axis=axis, batchDims=batch_dims, 
+        negativeIndexSupport=negative_index_support)
     return output
+
 
 def sess_config():
     config = tf.compat.v1.ConfigProto()
@@ -45,6 +40,7 @@ def sess_config():
     config.graph_options.rewrite_options.remapping = RewriterConfig.OFF
     config.graph_options.rewrite_options.memory_optimization = RewriterConfig.OFF
     return config
+
 
 if __name__ == '__main__':
     x_shape = [4, 2]
