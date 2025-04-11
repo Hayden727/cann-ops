@@ -44,7 +44,7 @@ cmake --build build -j
     ./execute_mul_sigmoid_op
 )
 
-ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
+ret=`python3 verify_result.py output/output.bin output/golden.bin`
 echo $ret
 if [ "x$ret" == "xtest pass" ]; then
     echo ""
