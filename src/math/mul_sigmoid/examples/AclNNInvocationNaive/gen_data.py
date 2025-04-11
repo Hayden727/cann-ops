@@ -21,7 +21,7 @@ def gen_golden_data_simple():
     t2 = float(0.1)
     t3 = float(0.8)
     tmp = 1 / (1 + np.exp(-a1 * t1))
-    zero = mp.zeros_like(tmp)
+    zero = np.zeros_like(tmp)
     sel = np.where(tmp < t2, tmp, 2 * tmp)
     sel = sel.reshape(-1, 32 * 1024) * a2.reshape(1, 32 * 1024)
     res = sel * 3
