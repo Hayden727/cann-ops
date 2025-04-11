@@ -55,8 +55,8 @@ private:
   int64_t inputPointTileNum;
   int64_t atomicAddNum;
 
-  Shape inputShape;
-  Shape outputShape;
+  AdaAvgPool3DShape inputShape;
+  AdaAvgPool3DShape outputShape;
 
   int64_t indexBufLen;
   IndexBuffer indexBuf;
@@ -68,8 +68,8 @@ private:
 template <typename T, int32_t QUEUE_DEPTH>
 __aicore__ inline void KernelAdaptiveAvgPool3dSplitW<T, QUEUE_DEPTH>::InitTiling(
     const AdaptiveAvgPool3dTilingData* tiling) {
-  inputShape = Shape(tiling->inD, tiling->inH, tiling->inW);
-  outputShape = Shape(tiling->outD, tiling->outH, tiling->outW);
+  inputShape = AdaAvgPool3DShape(tiling->inD, tiling->inH, tiling->inW);
+  outputShape = AdaAvgPool3DShape(tiling->outD, tiling->outH, tiling->outW);
 
   numPerBlock = GetDataBlockSizeInBytes() / sizeof(T);
   cLength = tiling->dimC;

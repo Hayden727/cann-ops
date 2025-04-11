@@ -20,7 +20,7 @@
 
 using namespace AscendC;
 
-struct Shape {
+struct AdaAvgPool3DShape {
   int64_t d;
   int64_t h;
   int64_t w;
@@ -29,9 +29,9 @@ struct Shape {
   int64_t hstride;
   int64_t wstride;
 
-  __aicore__ inline Shape() {}
+  __aicore__ inline AdaAvgPool3DShape() {}
 
-  __aicore__ inline Shape(int64_t d, int64_t h, int64_t w)
+  __aicore__ inline AdaAvgPool3DShape(int64_t d, int64_t h, int64_t w)
     : d(d), h(h), w(w), nstride(d * h * w), dstride(h * w), hstride(w), wstride(1) {}
 };
 
@@ -70,12 +70,12 @@ __aicore__ inline int64_t EndIndex(int64_t idx, int64_t osize, int64_t isize) {
   return 1 + ((idx + 1) * isize - 1) / osize;
 }
 
-__aicore__ inline int64_t StartIndexToOffset(const Index& index, const Shape& shape) {
+__aicore__ inline int64_t StartIndexToOffset(const Index& index, const AdaAvgPool3DShape& shape) {
   return index.dstart * shape.dstride + index.hstart * shape.hstride + index.wstart * shape.wstride;
 }
 
 __aicore__ inline void OutputOffsetToInputIndex(
-    int64_t offset, const Shape& outputShape, const Shape& inputShape, Index& index) {
+    int64_t offset, const AdaAvgPool3DShape& outputShape, const AdaAvgPool3DShape& inputShape, Index& index) {
   int64_t od = offset % outputShape.nstride / outputShape.dstride;
   int64_t oh = offset % outputShape.dstride / outputShape.hstride;
   int64_t ow = offset % outputShape.hstride / outputShape.wstride;
@@ -88,7 +88,7 @@ __aicore__ inline void OutputOffsetToInputIndex(
   index.wend = EndIndex(ow, outputShape.w, inputShape.w);
 }
 
-__aicore__ inline void CalculateIndex(IndexBuffer& indexBuf, Shape& inputShape, Shape& outputShape,
+__aicore__ inline void CalculateIndex(IndexBuffer& indexBuf, AdaAvgPool3DShape& inputShape, AdaAvgPool3DShape& outputShape,
                                       int64_t offset, int64_t len) {
   LocalTensor<int64_t> startDIndexLocal = indexBuf.startDIndexBuf.Get<int64_t>();
   LocalTensor<int64_t> endDIndexLocal = indexBuf.endDIndexBuf.Get<int64_t>();
