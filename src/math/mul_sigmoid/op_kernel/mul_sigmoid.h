@@ -14,8 +14,6 @@
 
 #include "kernel_operator.h"
 
-constexpr uint32_t BUFFER_NUM = 1;
-
 class MulSigmoid {
 public:
     __aicore__ MulSigmoid(){};
@@ -23,6 +21,7 @@ public:
     __aicore__ inline void init(GM_ADDR x1, GM_ADDR x2, GM_ADDR out_buf,
                                     GM_ADDR workspace, const MulSigmoidTilingData& tiling) {
         ASSERT(AscendC::GetBlockNum() != 0 && "useful core num can not be zero!!!")
+        uint32_t BUFFER_NUM = 1;
         this->core_id = AscendC::GetBlockIdx();
 
         this->former_num = tiling.formerCoreNum; // 大块核使用的核数

@@ -10,7 +10,6 @@
 # ======================================================================================================================
 
 import os
-import tensorflow as tf
 import numpy as np
 
 def gen_golden_data_simple():
