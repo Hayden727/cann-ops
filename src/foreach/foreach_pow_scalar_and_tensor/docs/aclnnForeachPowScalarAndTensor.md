@@ -2,9 +2,7 @@
 
 ## 支持的产品型号
 
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器
-
+- Atlas A2训练系列产品
 ## 接口原型
 
 每个算子分为两段式接口，必须先调用“aclnnForeachPowScalarAndTensorGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnForeachPowScalarAndTensor”接口执行计算。
