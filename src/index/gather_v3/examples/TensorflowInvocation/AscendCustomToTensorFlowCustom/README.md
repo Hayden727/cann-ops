@@ -11,10 +11,6 @@ REGISTER_CUSTOM_OP("GatherV3")
   .OriginOpType("GatherV3")      // name in tf module
   .ParseParamsByOperatorFn(AutoMappingByOpFn);
 ```
-还需要修改cann-ops/src/index/gather_v3/CMakeLists.txt，在结尾加上一行：
-```
-add_subdirectory(framework)
-```
 
 ### 2.TensorFlow调用的方式调用样例运行
 

@@ -12,10 +12,6 @@ REGISTER_CUSTOM_OP("AddCustom")
   .OriginOpType("AddCustom")      // name in tf module
   .ParseParamsByOperatorFn(AutoMappingByOpFn);
 ```
-还需要修改src/math/add_custom/CMakeLists.txt，在结尾加上一行：
-```
-add_subdirectory(framework)
-```
 
 ### 2.TensorFlow调用的方式调用样例运行
 

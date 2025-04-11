@@ -50,7 +50,8 @@
 2. 拷贝一份示例算子src/math/add_custom到src/math下，将add_custom重命名为sqrt，命名风格统一用全小写且下划线分割。
 3. 单算子工程目录和本仓算子目录下包含同名的op_host、op_kernel目录，直接用单算子工程这两个目录下的内容替换本仓算子目录下的内容，然后删除op_host和op_kernel目录下的CMakeLists.txt文件。
 4. 打开src/math/sqrt/CMakeLists文件，将其中的`add_custom.cpp`修改成`sqrt.cpp`
-5. 参考[算子工程说明文档中的算子包编译部署章节](../../src/math/add_custom/README.md#算子包编译部署)完成算子包编译部署
+5. 将src/math/add_custom/framework/tf_plugin/CMakeLists.txt中的`cust_tf_parsers`改成不重名的库名如`sqrt_tf_parsers`
+6. 参考[算子工程说明文档中的算子包编译部署章节](../../src/math/add_custom/README.md#算子包编译部署)完成算子包编译部署
 
 ### aclnn接口自验证（必须）
 

@@ -36,9 +36,10 @@
 2. 修改src/math/sqrt/op_host目录下的文件名，将add_custom.cpp修改成sqrt.cpp，将add_custom_tiling.h修改成sqrt_tiling.h，并将这两个文件中的算子名`AddCustom`替换成`Sqrt`
 3. 修改src/math/sqrt/op_kernel目录下的文件名，将add_custom.cpp修改成sqrt.cpp，并将这个文件中的kernel入口函数名`add_custom`替换成`sqrt`，`add_custom_do`替换成`sqrt_do`
 4. 打开src/math/sqrt/CMakeLists文件，将其中的`add_custom.cpp`修改成`sqrt.cpp`
-5. 完成算子host侧代码开发
-6. 完成算子kernel侧代码开发
-7. 参考[算子工程说明文档中的算子包编译部署章节](../../src/math/add_custom/README.md#算子包编译部署)完成算子包编译部署，可在步骤4完成后提前编译一把保证和框架相关的代码修改没问题
+5. 将src/math/add_custom/framework/tf_plugin/CMakeLists.txt中的`cust_tf_parsers`改成不重名的库名如`sqrt_tf_parsers`
+6. 完成算子host侧代码开发
+7. 完成算子kernel侧代码开发
+8. 参考[算子工程说明文档中的算子包编译部署章节](../../src/math/add_custom/README.md#算子包编译部署)完成算子包编译部署，可在步骤4完成后提前编译一把保证和框架相关的代码修改没问题
 
 ### aclnn接口自验证（必须）
 
