@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     aclFloat16 t2 = 0.1;
     aclFloat16 t3 = 0.8;
     // 计算workspace大小并申请内存
-    ret = aclnnMulSigmoidGetWorkspaceSize(input_1, input_2, t1, t2, t3, output_1, &workspaceSize, &executor);
+    ret = aclnnMulSigmoidGetWorkspaceSize(input_1, input_2, t1, t2, t3, output, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulSigmoidGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
