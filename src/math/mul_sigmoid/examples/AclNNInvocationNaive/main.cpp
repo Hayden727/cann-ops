@@ -187,9 +187,9 @@ int main(int argc, char **argv)
     // 3. 调用CANN自定义算子库API
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
-    aclFloat16 t1 = 0.3;
-    aclFloat16 t2 = 0.1;
-    aclFloat16 t3 = 0.8;
+    double t1 = 0.3;
+    double t2 = 0.1;
+    double t3 = 0.8;
     // 计算workspace大小并申请内存
     ret = aclnnMulSigmoidGetWorkspaceSize(input_1, input_2, t1, t2, t3, output, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulSigmoidGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);

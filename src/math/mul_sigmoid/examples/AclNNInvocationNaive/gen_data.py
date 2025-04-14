@@ -24,7 +24,7 @@ def gen_golden_data_simple():
     zero = np.zeros_like(tmp)
     sel = np.where(tmp < t2, tmp, 2 * tmp)
     sel = sel.reshape(-1, 32 * 1024) * a2.reshape(1, 32 * 1024)
-    res = sel * 3
+    res = sel * t3
     numpy_result = res.reshape(res.shape[0], 256, 128).astype(dtype)
 
     os.system("mkdir -p input")
