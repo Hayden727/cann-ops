@@ -14,10 +14,10 @@ import os
 import numpy as np
 import tensorflow as tf
 import npu_device
-from npu_device.compat.v1.npu_init import enable_v1
+from npu_device.compat.v1.npu_init import RewriterConfig
 
 tf.compat.v1.disable_eager_execution()
-enable_v1()
+npu_device.compat.enable_v1()
 tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
 
 #np.allclose比较函数的相对公差参数
