@@ -15,7 +15,6 @@
 #include "cube_util.h"
 #include "graph/utils/type_utils.h"
 #include "exe_graph/runtime/infer_shape_context.h"
-#include "aclnn/opdev/op_log.h"
 #include "register/op_impl_registry.h"
 
 namespace {
@@ -24,6 +23,7 @@ constexpr size_t kConv3DPadsIdx = 1;
 constexpr size_t kConv3DPaddingIdx = 6;
 constexpr size_t ATTR_GROUP_INDEX = 3;
 using gert::InferShapeContext;
+#define OP_LOGE(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__); std::printf("\n")
 #define OPS_CHECK_NULL_WITH_CONTEXT(context, ptr)      \
   if (ptr == nullptr) {                                \
     std::printf("nullptr error!");                     \
