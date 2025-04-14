@@ -106,11 +106,9 @@ namespace optiling {
         tiling.set_tailBlockNum((uint32_t)tailBlockNum);
     
         const gert::RuntimeAttrs *attrs = context->GetAttrs();
-        // printf("host input attr num: %d\n", attrs->GetAttrNum());
-        // printf("host input value: %f\n", *attrs->GetFloat(0));
         const float *value = attrs->GetAttrPointer<float>(0);
         tiling.set_value(*value);
-    
+    `
         // 设置核心数和 Tiling 数据
         context->SetBlockDim(coreNum);
         tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
@@ -121,15 +119,6 @@ namespace optiling {
     }
     }
     
-    namespace ge {
-    static ge::graphStatus InferShape(gert::InferShapeContext* context)
-    {
-        const gert::Shape* x_shape = context->GetInputShape(0);
-        gert::Shape* y_shape = context->GetOutputShape(0);
-        *y_shape = *x_shape;
-        return GRAPH_SUCCESS;
-    }
-    }
 namespace ge {
 static ge::graphStatus InferShape(gert::InferShapeContext* context)
 {
@@ -147,24 +136,24 @@ public:
     {
         this->Input("x")
             .ParamType(REQUIRED)
-            .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64,ge::DT_COMPLEX32, ge::DT_COMPLEX64})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND});
+            .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64, ge::DT_COMPLEX64})
+            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND})
+            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND});
 
         this->Attr("value").AttrType(REQUIRED).Float(1.0);
 
         this->Output("y")
             .ParamType(REQUIRED)
-            .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64,ge::DT_COMPLEX32, ge::DT_COMPLEX64})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND});
+            .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64, ge::DT_COMPLEX64})
+            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND})
+            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND});
 
 
         this->SetInferShape(ge::InferShape);
 
         this->AICore()
             .SetTiling(optiling::TilingFunc);
-        this->AICore().AddConfig("ascend310b")
+        this->AICore().AddConfig("ascend310p")
             .AddConfig("ascend910b");
 
     }
@@ -172,4 +161,3 @@ public:
 
 OP_ADD(Muls);
 }
-
