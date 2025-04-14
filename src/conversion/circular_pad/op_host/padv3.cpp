@@ -51,8 +51,7 @@ inline static bool IsAiCoreSupport(const aclTensor *self, const std::string& mod
         if (self->GetViewShape().GetDimNum() > AI_CORE_CONSTANT_PAD_DIM_BOUND) {
             return false;
         }
-        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B ||
-            GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93) {
+        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B) {
             return CheckType(self->GetDataType(), CONSTANT_PAD_ASCEND910B_AICORE_DTYPE_SUPPORT_LIST);
         }
         return CheckType(self->GetDataType(), CONSTANT_PAD_AICORE_DTYPE_SUPPORT_LIST);
@@ -60,8 +59,7 @@ inline static bool IsAiCoreSupport(const aclTensor *self, const std::string& mod
         if (self->GetViewShape().GetDimNum() > AI_CORE_REPLICATION_PAD_DIM_BOUND) {
             return false;
         }
-        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B ||
-            GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93) {
+        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B) {
             return CheckType(self->GetDataType(), REPLICATION_PAD_ASCEND910B_AICORE_DTYPE_SUPPORT_LIST);
         }
         return CheckType(self->GetDataType(), REPLICATION_PAD_AICORE_DTYPE_SUPPORT_LIST);
