@@ -36,7 +36,7 @@ public:
         this->t2 = static_cast<half>(tiling.t2);
         this->t3 = static_cast<half>(tiling.t3);
         
-        if (core_id < this->former_num * this->tile_num) { // 大块核
+        if (tghis->core_id < this->former_num * this->tile_num) { // 大块核
             this->start_row_idx = this->core_id / this->tile_num * this->former_length * this->tile_num + this->core_id % this->tile_num;
             this->end_row_idx = this->start_row_idx + this->former_length;
         } else { // 小块核
@@ -122,11 +122,11 @@ private:
     int32_t former_length; // 大块核每个核负责的行数
     int32_t tail_length; // 小块核每个核负责的行数
 
-    uint32_t tile_num; // 每个核每次循环的次数，tile_num * tile_length == 8192
-    uint32_t tile_length; // 每个核每次循环的列数，先暂定1024
+    int32_t tile_num; // 每个核每次循环的次数，tile_num * tile_length == 8192
+    int32_t tile_length; // 每个核每次循环的列数，先暂定1024
 
-    uint32_t start_row_idx;
-    uint32_t end_row_idx;
+    int32_t start_row_idx;
+    int32_t end_row_idx;
 
     int32_t core_id;
     half t1;
