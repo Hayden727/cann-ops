@@ -13,11 +13,8 @@
  * \brief
  */
 #include "mat_mul_v3_l2_cache.h"
-// #include "cube/util/math_util.h" // 将实现迁移到common.h中
 #include "tiling/tiling_type.h"
-// using namespace optiling::cachetiling;
 using namespace optiling::matmul_v3;
-
 
 namespace optiling {
 namespace matmul_v3 {
