@@ -237,7 +237,7 @@ int main(int argc, const char *argv[])
     ret = aclrtSynchronizeStream(stream);
     std::cout << "[INFO]: Operation execute success" << std::endl;
     for(size_t i = 0; i < op->GetOutputNum(); i++){
-        CheckAcl(aclrtMemcpy(variantPack.outTensors.at(i).hostData, variantPack.outTensors.at(i).dataSize, variantPack.outTensors.at(0).deviceData,
+        CheckAcl(aclrtMemcpy(variantPack.outTensors.at(i).hostData, variantPack.outTensors.at(i).dataSize, variantPack.outTensors.at(i).deviceData,
         variantPack.outTensors.at(i).dataSize, ACL_MEMCPY_DEVICE_TO_HOST));
         SaveMemoryToBinFile(variantPack.outTensors.at(i).hostData,variantPack.outTensors.at(i).dataSize,i);
     }

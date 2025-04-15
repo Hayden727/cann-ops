@@ -37,7 +37,7 @@ Atlas A2 训练系列产品/Atlas 800I A2推理产品
 
 ## 实现原理
 
-调用`Ascend C`的`API`接口`ExpandV2`进行实现。
+调用`Ascend C`的`API`接口`DataCopy`进行实现。
 
 ## 算子执行接口
 
