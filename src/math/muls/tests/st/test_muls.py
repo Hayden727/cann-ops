@@ -12,7 +12,6 @@ import numpy as np
 def muls_test(x, value):
     x_tensor = tf.convert_to_tensor(x)
     dtype = x_tensor.dtype
-    
     # 新增对复数类型的处理 <button class="citation-flag" data-index="3"><button class="citation-flag" data-index="5">
     if dtype in [tf.complex64, tf.complex128]:
         float_num = tf.constant(value, dtype=tf.float32)
@@ -30,7 +29,5 @@ def muls_test(x, value):
     return res.numpy()
 
 def calc_expect_func(x, y, value):
-    print(x)
-    print(value)
     res = muls_test(x["value"], value)
     return [res]

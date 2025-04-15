@@ -23,8 +23,5 @@ class ReduceGenerator(CaseGenerator):
         '''
         dim = len(case_config.inputs[0].shape)  
         range_is_null = case_config.inputs[0].is_range_null()  
-        print(case_config.inputs[0])
-        print(case_config.inputs[1])
         case_config.inputs[1].shape = [1]
-        print(case_config.inputs[1])
         return case_config  
