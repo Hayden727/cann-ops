@@ -26,7 +26,7 @@
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MSELoss</th></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLoss</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="3" align="center">算子输入</td>
