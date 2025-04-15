@@ -12,6 +12,7 @@ from atk.configs.dataset_config import InputDataset
 from atk.tasks.api_execute import register
 from atk.tasks.api_execute.base_api import BaseApi
 
+
 @register("aclnn_cpu_muls")
 class FunctionApi(BaseApi):
     def __call__(self, input_data: InputDataset, with_output: bool = False):

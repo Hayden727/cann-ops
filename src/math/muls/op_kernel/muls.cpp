@@ -129,11 +129,17 @@ class KernelMulsComplex32
 {
 public:
     __aicore__ inline KernelMulsComplex32() {}
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, uint32_t smallCoreDataNum,
-                                uint32_t bigCoreDataNum, uint32_t finalBigTileNum,
-                                uint32_t finalSmallTileNum, uint32_t tileDataNum,
-                                uint32_t smallTailDataNum, uint32_t bigTailDataNum,
-                                uint32_t tailBlockNum, float value)
+    __aicore__ inline void Init(GM_ADDR x,
+        GM_ADDR y, 
+        uint32_t smallCoreDataNum,
+        uint32_t bigCoreDataNum, 
+        uint32_t finalBigTileNum,
+        uint32_t finalSmallTileNum, 
+        uint32_t tileDataNum,
+        uint32_t smallTailDataNum, 
+        uint32_t bigTailDataNum,
+        uint32_t tailBlockNum, 
+        float value)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
@@ -227,7 +233,7 @@ private:
     {
         LocalTensor<float> yLocal = outQueueY.DeQue<float>();
 
-        DataCopy(yGm[progress * this->tileDataNum * 2], yLocal, this->processDataNum * 2);
+        DataCopy(yGm[progress * this->tileDataNum * BUFFER_NUM], yLocal, this->processDataNum * BUFFER_NUM);
         outQueueY.FreeTensor(yLocal);
     }
 private:
@@ -236,7 +242,10 @@ private:
     TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueY;
     GlobalTensor<float> xGm;
     GlobalTensor<float> yGm;
-    TBuf<QuePosition::VECCALC> tBufXReal, tBufXImag, tBufRealOffset, tBufImagOffset;
+    TBuf<QuePosition::VECCALC> tBufXReal;
+    TBuf<QuePosition::VECCALC> tBufXImag;
+    TBuf<QuePosition::VECCALC> tBufRealOffset;
+    TBuf<QuePosition::VECCALC> tBufImagOffset;
     uint32_t coreDataNum;
     uint32_t tileNum;
     uint32_t tileDataNum;
@@ -248,14 +257,19 @@ private:
 template <typename TYPE_X>
 class KernelMulsComplex64
 {
-
 public:
     __aicore__ inline KernelMulsComplex64() {}
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, uint32_t smallCoreDataNum,
-                                uint32_t bigCoreDataNum, uint32_t finalBigTileNum,
-                                uint32_t finalSmallTileNum, uint32_t tileDataNum,
-                                uint32_t smallTailDataNum, uint32_t bigTailDataNum,
-                                uint32_t tailBlockNum, float value)
+    __aicore__ inline void Init(GM_ADDR x,
+        GM_ADDR y, 
+        uint32_t smallCoreDataNum,
+        uint32_t bigCoreDataNum, 
+        uint32_t finalBigTileNum,
+        uint32_t finalSmallTileNum, 
+        uint32_t tileDataNum,
+        uint32_t smallTailDataNum, 
+        uint32_t bigTailDataNum,
+        uint32_t tailBlockNum, 
+        float value)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
@@ -305,7 +319,7 @@ private:
     {
         LocalTensor<float> xLocal = inQueueX.AllocTensor<float>();
 
-        DataCopy(xLocal, xGm[progress * this->tileDataNum * 2], this->processDataNum * 2);
+        DataCopy(xLocal, xGm[progress * this->tileDataNum * BUFFER_NUM], this->processDataNum * BUFFER_NUM);
 
         inQueueX.EnQue(xLocal);
     }
@@ -357,7 +371,10 @@ private:
     TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueY;
     GlobalTensor<float> xGm;
     GlobalTensor<float> yGm;
-    TBuf<QuePosition::VECCALC> tBufXReal, tBufXImag, tBufRealOffset, tBufImagOffset;
+    TBuf<QuePosition::VECCALC> tBufXReal;
+    TBuf<QuePosition::VECCALC> tBufXImag;
+    TBuf<QuePosition::VECCALC> tBufRealOffset;
+    TBuf<QuePosition::VECCALC> tBufImagOffset;
     uint32_t coreDataNum;
     uint32_t tileNum;
     uint32_t tileDataNum;
@@ -365,19 +382,14 @@ private:
     uint32_t processDataNum;
     float value;
 };
-extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling)
+extern "C" __global__ __aicore__ void muls( GM_ADDR x,
+      GM_ADDR y, 
+      GM_ADDR workspace, 
+      GM_ADDR tiling)
 {
     GET_TILING_DATA(tiling_data, tiling);
-    uint32_t TILING_KEY_BF16 = 0;
-    uint32_t TILING_KEY_FP16 = 1;
-    uint32_t TILING_KEY_FP32 = 2;
-    uint32_t TILING_KEY_INT16 = 3;
-    uint32_t TILING_KEY_INT32 = 4;
-    uint32_t TILING_KEY_INT64 = 5;
-    uint32_t TILING_KEY_COMPLEX32 = 6;
-    uint32_t TILING_KEY_COMPLEX64 = 7;
     #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
-    if(TILING_KEY_IS(TILING_KEY_BF16)){
+    if(TILING_KEY_IS(0)){
         KernelMuls<bfloat16_t> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -385,7 +397,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_FP16)){
+    }else if(TILING_KEY_IS(1)){
         KernelMuls<float16_t> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -393,7 +405,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_FP32)){
+    }else if(TILING_KEY_IS(2)){
         KernelMuls<float32_t> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -401,7 +413,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_INT16)){
+    }else if(TILING_KEY_IS(3)){
         KernelMuls<int16_t> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -409,7 +421,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_INT32)){
+    }else if(TILING_KEY_IS(4)){
         KernelMuls<int32_t> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -417,7 +429,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_INT64)){
+    }else if(TILING_KEY_IS(5)){
         KernelMuls<int64_t> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -425,7 +437,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_COMPLEX32)){
+    }else if(TILING_KEY_IS(6)){
         KernelMulsComplex32<float> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -433,7 +445,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
             tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum,tiling_data.value);
         op.Process();
-    }else if(TILING_KEY_IS(TILING_KEY_COMPLEX64)){
+    }else if(TILING_KEY_IS(7)){
         KernelMulsComplex64<float> op;
         op.Init(x, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
@@ -446,9 +458,13 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,  GM_ADDR y, GM_ADDR works
 }
 #ifndef ASCENDC_CPU_DEBUG
 // call of kernel function
-void muls_do(uint32_t blockDim, void *l2ctrl, void *stream,
-                   uint8_t *x,  uint8_t *y,
-                   uint8_t *workspace, uint8_t *tiling)
+void muls_do(uint32_t blockDim,
+    void *l2ctrl,
+    void *stream,
+    uint8_t *x,
+    uint8_t *y,
+    uint8_t *workspace,
+    uint8_t *tiling)
 {
     muls<<<blockDim, l2ctrl, stream>>>(x, y, workspace, tiling);
 }

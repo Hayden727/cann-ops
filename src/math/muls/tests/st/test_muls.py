@@ -9,6 +9,7 @@
 import tensorflow as tf
 import numpy as np
 
+
 def muls_test(x, value):
     x_tensor = tf.convert_to_tensor(x)
     dtype = x_tensor.dtype
@@ -27,6 +28,7 @@ def muls_test(x, value):
         res = x_tensor * value
     
     return res.numpy()
+
 
 def calc_expect_func(x, y, value):
     res = muls_test(x["value"], value)

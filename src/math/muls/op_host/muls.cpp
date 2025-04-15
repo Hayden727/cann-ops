@@ -20,7 +20,6 @@ const uint32_t BLOCK_SIZE = 32;
 const uint32_t BUFFER_NUM = 2;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
     MulsTilingData tiling;
     // 获取硬件信息（UB 内存大小、核心数、SOC版本）
     uint64_t ubSize;
@@ -30,40 +29,36 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto socVersion = ascendcPlatform.GetSocVersion();
     //获取输入数据量的大小
     uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-
     // 获取输入数据的类型长度（如 float16=2, float32=4）
     uint32_t typeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
     //获取输入长度以及输入类型
     uint64_t inputLength = inputNum * typeLength;
-    uint64_t inputBytes = inputLength / inputNum;//inputBytes=typeLength
+    uint64_t inputBytes = 0;//inputBytes=typeLength
+    if(inputNum != 0){
+        inputBytes = inputLength / inputNum;//inputBytes=typeLength
+    }else{
+        return ge::GRAPH_FAILED;
+    }
     //在上面部分，complex和其他数据类型是相同的处理方式，但在下面具体核分配中，要分流处理，先获取数据类型
     uint32_t dataType = context->GetInputDesc(0)->GetDataType();
-    uint32_t TILING_KEY_BF16 = 0;
-    uint32_t TILING_KEY_FP16 = 1;
-    uint32_t TILING_KEY_FP32 = 2;
-    uint32_t TILING_KEY_INT16 = 3;
-    uint32_t TILING_KEY_INT32 = 4;
-    uint32_t TILING_KEY_INT64 = 5;
-    uint32_t TILING_KEY_COMPLEX32 = 6;
-    uint32_t TILING_KEY_COMPLEX64 = 7;
     //根据不同的数据类型来这设置tilingkey
     if (dataType == ge::DT_BF16) {
-        context->SetTilingKey(TILING_KEY_BF16);
+        context->SetTilingKey(0);
     }else if(dataType == ge::DT_FLOAT16){
-        context->SetTilingKey(TILING_KEY_FP16);
+        context->SetTilingKey(1);
     }else if(dataType == ge::DT_FLOAT){
-        context->SetTilingKey(TILING_KEY_FP32);
+        context->SetTilingKey(2);
     }else if(dataType == ge::DT_INT16){
-        context->SetTilingKey(TILING_KEY_INT16);
+        context->SetTilingKey(3);
     }else if(dataType == ge::DT_INT32){
-        context->SetTilingKey(TILING_KEY_INT32);
+        context->SetTilingKey(4);
     }else if(dataType == ge::DT_INT64){
-        context->SetTilingKey(TILING_KEY_INT64);
+        context->SetTilingKey(5);
     }else if(dataType == ge::DT_COMPLEX32){
-        context->SetTilingKey(TILING_KEY_COMPLEX32);
+        context->SetTilingKey(6);
     }else if(dataType == ge::DT_COMPLEX64){
-        context->SetTilingKey(TILING_KEY_COMPLEX64);
+        context->SetTilingKey(7);
     }
     // 计算每个核心可处理的数据块大小（考虑 UB 内存限制）
     //ubDataNumber需要根据数据类型进行变动，其中complex为特殊数据，需要进行特殊处理
@@ -82,9 +77,15 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     coreNum = (coreNum < inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
     uint32_t MIN_CORE_NUM = 1;
     coreNum = (coreNum >= MIN_CORE_NUM) ? coreNum : MIN_CORE_NUM;
+    uint64_t everyCoreInputBlockNum = 0;
+    uint64_t tailBlockNum = 0;
     // 计算大核和小核的分块参数
-    uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
-    uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
+    if(BLOCK_SIZE!=0 && coreNum!=0){
+        everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
+        tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
+    }else{
+        return ge::GRAPH_FAILED;
+    }
     // 小核参数（处理较少数据）
     uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / typeLength;
     uint64_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
@@ -157,4 +158,3 @@ public:
 };
 OP_ADD(Muls);
 }
-
