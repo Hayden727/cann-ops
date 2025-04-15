@@ -22,7 +22,6 @@
 #include "tiling/tiling_type.h"
 #include "cube_tiling_runtime.h"
 #include "graph/utils/type_utils.h"
-// #include "op_log.h"
 #include "register/op_impl_registry.h"
 #include "quant_batch_matmul_info_factory.h"
 

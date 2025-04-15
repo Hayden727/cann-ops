@@ -20,6 +20,7 @@
 #include "cube/algorithm/hash/tiling_cache.h"
 #include "register/tilingdata_base.h"
 #include "tiling/tiling_api.h"
+#include "op_util.h"
 
 #define OP_LOGI(nodeName, fmt, ...) do {std::printf(fmt, ##__VA_ARGS__); std::printf("\n"); } while(0)
 #define OP_LOGD(nodeName, fmt, ...) do {std::printf(fmt, ##__VA_ARGS__); std::printf("\n"); } while(0)
@@ -56,7 +57,16 @@ namespace optiling {
   } while (0)
 }  // namespace optiling
 
-
+namespace optiling {
+#define CUBE_INNER_ERR_REPORT(op_name, err_msg, ...) std::printf(err_msg, ##__VA_ARGS__)
+#define OP_TILING_CHECK(cond, log_func, expr) \
+  do {                                        \
+    if (cond) {                               \
+      log_func;                               \
+      expr;                                   \
+    }                                         \
+  } while (0)
+}  // namespace optiling
 
 namespace optiling {
 

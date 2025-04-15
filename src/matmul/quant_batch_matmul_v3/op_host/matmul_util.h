@@ -20,9 +20,7 @@ const int32_t FP16_BF16_FLAG = 1;
 const int32_t FP32_FLAG = 0;
 const int32_t HF32_FLAG = 64;
 const std::string SOC_B3 = "Ascend910B3";
-const std::string SOC_C3 = "Ascend910_9372";
 const std::string SOC_B4 = "Ascend910B4";
-const std::string SOC_C4 = "Ascend910_9382";
 
 struct OpBaseInfo {
   op::DataType self_dtype;

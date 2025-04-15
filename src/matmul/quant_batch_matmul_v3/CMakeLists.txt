@@ -5,16 +5,23 @@ add_ops_compile_options(
                 -Werror
 )
 
+file(GLOB_RECURSE EXTRA_SRC_FILES
+    "../common_mm/op_tiling/*.cc"
+)
 # optiling
 target_sources(optiling PRIVATE
         op_host/quant_batch_matmul_v3_tiling.cpp
         op_host/quant_batch_matmul_v3_basic_tiling.cpp
         op_host/quant_batch_matmul_v3_tiling_cache.cpp
+        ${EXTRA_SRC_FILES}
 )
 
 
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling
+        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling/aoe/op_tuning_tiling
+        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling/cube/util
         ${CMAKE_SOURCE_DIR}/src/common/inc
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
@@ -23,16 +30,13 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
-        ${CMAKE_CURRENT_SOURCE_DIR}/op_host/op_tiling
-        ${CMAKE_CURRENT_SOURCE_DIR}/op_host/op_tiling/aoe/op_tuning_tiling
-        ${CMAKE_CURRENT_SOURCE_DIR}/op_host/op_tiling/cube/util
 )
 
 target_compile_options(optiling PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17)
 
 # opproto
 target_sources(opsproto PRIVATE
-         op_host/quant_batch_matmul_v3_proto.cpp
+         ../mat_mul_v3/op_host/mat_mul_v3_proto.cpp
 )
 
 target_include_directories(opsproto PRIVATE
@@ -68,12 +72,10 @@ target_include_directories(op_host_aclnnInner PRIVATE
 include(FetchContent)
 FetchContent_Declare(
   json
-  GIT_REPOSITORY https://gitee.com/mirrors_to_compile/nlohmann_json.git
-  GIT_TAG v3.11.2  # 可选，固定版本
+  GIT_REPOSITORY https://gitee.com/rueenov/nlohmann_json.git
+  GIT_TAG develop  # 可选，固定版本
 )
-
 FetchContent_MakeAvailable(json)
-
 target_link_libraries(optiling PRIVATE nlohmann_json::nlohmann_json)
 
 target_sources(opapi PRIVATE
