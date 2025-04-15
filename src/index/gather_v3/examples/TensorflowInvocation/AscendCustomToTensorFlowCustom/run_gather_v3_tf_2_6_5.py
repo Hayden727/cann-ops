@@ -18,7 +18,7 @@ from npu_device.compat.v1.npu_init import RewriterConfig
 
 tf.compat.v1.disable_eager_execution()
 npu_device.compat.enable_v1()
-tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
+tfOpLib = tf.load_op_library(os.path.join("./../../../../../../output/libcustom_ops.so"))
 
 #np.allclose比较函数的相对公差参数
 ABSOLUTE_TOL = 0.001

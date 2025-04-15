@@ -18,7 +18,7 @@ from tensorflow.core.protobuf.rewriter_config_pb2 import RewriterConfig
 
 tf.compat.v1.disable_eager_execution()
 tf.enable_resource_variables()
-tfOpLib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so"))
+tfOpLib = tf.load_op_library(os.path.join("./../../../../../../output/libcustom_ops.so"))
 
 #np.allclose比较函数的绝对公差参数
 RELATIVE_TOL = 0.001
