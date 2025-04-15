@@ -1,0 +1,97 @@
+[
+    {
+        "case_name": "Test_ScatterMax_001",
+        "op": "ScatterMax",
+        "calc_expect_func_file": "test_scatter_max.py:calc_expect_func",
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float",
+                    "float16",
+                    "int32",
+                    "int8"
+                ],
+                "shape": [256],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "var"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32",
+                    "int32",
+                    "int32",
+                    "int32"
+                ],
+                "shape": [5],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "indices"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float",
+                    "float16",
+                    "int32",
+                    "int8"
+                ],
+                "shape": [5],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "updates"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float",
+                    "float16",
+                    "int32",
+                    "int8"
+                ],
+                "shape": [256],
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "use_locking",
+                "type": "bool",
+                "value": false
+            }
+        ]
+    }
+]
