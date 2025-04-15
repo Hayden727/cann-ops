@@ -387,6 +387,7 @@ bool WeightQuantBatchMatmulV2WeightNz::AnalyzeAttrs()
                                         "group antiquant is not supported, current group size: [%ld]", *groupSizePtr),
         return false);
 
+    // OP_LOG_FULL(DLOG_WARN, inputParams_.opName, "current attr param num is [%lu]", attrs->GetAttrNum());
     inputParams_.transA = transposeX != nullptr && *transposeX;
     inputParams_.transB = transposeWeight != nullptr && *transposeWeight;
 

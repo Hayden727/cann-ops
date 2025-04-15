@@ -16,7 +16,6 @@
 #include <map>
 #include <numeric>
 
-#include "cube/util/math_util.h"
 #include "cube_tiling_runtime.h"
 #include "graph/utils/type_utils.h"
 #include "op_tiling_util.h"

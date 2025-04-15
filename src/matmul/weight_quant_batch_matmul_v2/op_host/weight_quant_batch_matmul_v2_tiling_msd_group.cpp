@@ -217,3 +217,4 @@ bool WeightQuantBatchMatmulV2TilingMsdGroup::GetMatMulTiling()
 }
 
 }  // namespace optiling
+

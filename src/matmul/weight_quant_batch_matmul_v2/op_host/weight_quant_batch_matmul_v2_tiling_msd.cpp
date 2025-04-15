@@ -339,7 +339,8 @@ ge::graphStatus WeightQuantBatchMatmulV2Msd::DoMSDGroupSplitKOpTiling()
     uint64_t groupPack = matmulInfoPtr_->groupSize == 128 ? 8 : 16;
     uint64_t v1BaseK =
         ops::CeilAlign(ops::CeilDiv(matmulInfoPtr_->kSize, kBlockNum), groupPack * matmulInfoPtr_->groupSize);
-    // 65535最大规格满足切分6份，继续增加切分份数导致后处理数据量过多，根据ub切分，最大支持的规格为12 * 1024
+    // 65535最大规格满足切分6份，继续增加切分份数导致后处理数据量过多，根据ub切分，最大支持的规格为12
+    // * 1024
     for (; kBlockNum <= 6 && v1BaseK * v1BaseM > 12 * 1024; kBlockNum++) {
         v1BaseK = ops::CeilAlign(ops::CeilDiv(matmulInfoPtr_->kSize, kBlockNum), groupPack * matmulInfoPtr_->groupSize);
     }

@@ -111,3 +111,4 @@ IMPL_OP_OPTILING(WeightQuantBatchMatmulV2)
     .Tiling(WeightQuantBatchMatmulV2TilingFunc)
     .TilingParse<WeightQuantBatchMatmulV2CompileInfo>(TilingParseForWeightQuantBatchMatmulV2);  // 向框架注册入口函数
 } // namespace optiling
+

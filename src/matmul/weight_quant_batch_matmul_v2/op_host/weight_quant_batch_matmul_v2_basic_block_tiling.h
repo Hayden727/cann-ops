@@ -22,7 +22,7 @@
 #include <map>
 #include <tuple>
 #include <vector>
-
+#include "register/op_def_registry.h"
 #include "weight_quant_batch_matmul_v2_basic_block_table.h"
 #include "weight_quant_batch_matmul_v2_tiling.h"
 

@@ -86,3 +86,4 @@ REGISTER_TILING_DATA_CLASS(WeightQuantBatchMatmulV2, WeightQuantBatchMatmulV2Til
 REGISTER_TILING_DATA_CLASS(WeightQuantBatchMatmulV2TilingDataOp, WeightQuantBatchMatmulV2TilingData)
 }  // namespace optiling
 #endif  // WEIGHT_QUANT_BATCH_MATMUL_V2_TILING_DATA_H
+

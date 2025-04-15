@@ -116,3 +116,4 @@ protected:
 
 }  // namespace optiling
 #endif  // WEIGHT_QUANT_BATCH_MATMUL_V2_TILING_MSD_GROUP_H
+

@@ -79,3 +79,4 @@ private:
 };
 }  // namespace optiling
 #endif  // WEIGHT_QUANT_BATCH_MATMUL_V2_COMPUTE_MATMUL_TILING_H
+

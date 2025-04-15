@@ -21,6 +21,7 @@
 #include "tiling/tiling_api.h"
 #include "op_tiling.h"
 #include "register/op_def_registry.h"
+#include "op_util.h"
 
 #define OP_LOGI(nodeName, fmt, ...) do {std::printf(fmt, ##__VA_ARGS__); std::printf("\n"); } while(0)
 #define OP_LOGD(nodeName, fmt, ...) do {std::printf(fmt, ##__VA_ARGS__); std::printf("\n"); } while(0)
@@ -89,91 +90,6 @@ namespace optiling {
     return ge::GRAPH_FAILED;                                                                     \
   }
 }  // namespace optiling
-
-namespace ops {
-/**
- * if y is 0, return x
- */
-template <typename T>
-typename std::enable_if <std::is_signed<T>::value, T>::type CeilDiv(T x, T y) {
-  if (y != 0 && x != 0) {
-    const T quotient = x / y;
-    return (x % y != 0 && ((x ^ y) >= 0)) ? (quotient + 1) : quotient;
-  }
-
-  return x;
-}
-
-/**
- * if y is 0, return x
- */
-template <typename T>
-typename std::enable_if <std::is_unsigned<T>::value, T>::type CeilDiv(T x, T y) {
-  if (y != 0 && x != 0) {
-    const T quotient = x / y;
-    return (x % y != 0) ? (quotient + 1) : quotient;
-  }
-
-  return x;
-}
-
-
-/**
- * if y is 0, return x
- */
-template <typename T>
-typename std::enable_if <std::is_integral<T>::value, T>::type FloorDiv(T x, T y) {
-  return y == 0 ? x : x / y;
-}
-
-/**
- * if align is 0, return 0
- */
-template <typename T>
-typename std::enable_if <std::is_integral<T>::value, T>::type CeilAlign(T x, T align) {
-  return CeilDiv(x, align) * align;
-}
-
-/**
- * if align is 0, return 0
- */
-template <typename T>
-typename std::enable_if <std::is_integral<T>::value, T>::type FloorAlign(T x, T align) {
-  return align == 0 ? 0 : x / align * align;
-}
-
-/*
- * @brief: get datatype string from enum
- * @param [in] type: enum datatype
- * @return string: datatype string
- */
-std::string ToString(const ge::DataType& type);
-
-/*
- * @brief: get format string from enum
- * @param [in] format: enum format
- * @return string: format string
- */
-std::string ToString(const ge::Format& format);
-
-/*
- * @brief: get shape string from gert::Shape, for debug
- * @param [in] shape: reference of gert::Shape
- * @return string: shape string
- */
-std::string ToString(const gert::Shape& shape);
-
-/*
- * @brief: get shape string from gert::Shape, for debug
- * @param [in] shape: ptr of gert::Shape
- * @return string: shape string
- */
-std::string ToString(const gert::Shape* shape);
-
-std::string ToString(const std::vector<int64_t>& shape);
-std::string ToString(const std::vector<gert::Shape>& shapes);
-
-}
 
 namespace optiling {
 

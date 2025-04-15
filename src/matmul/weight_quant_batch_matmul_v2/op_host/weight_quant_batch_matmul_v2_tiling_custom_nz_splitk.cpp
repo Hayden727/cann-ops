@@ -204,7 +204,7 @@ void WeightQuantBatchMatmulV2CustomNzSplitK::GetMatMulTiling()
         std::min(ops::CeilDiv(tilingData_->get_kSizeAlign(), singleCoreK), static_cast<uint64_t>(compileInfoPtr_->aicNum));
     singleCoreK = ops::CeilAlign(ops::CeilDiv(tilingData_->get_kSizeAlign(), cubeBlockDimK), DEFAULT_SINGLE_CORE_SIZE);
     cubeBlockDimK = ops::CeilDiv(tilingData_->get_kSizeAlign(), singleCoreK);
-    // L1的一半空间256K用来载入A矩阵,256K=256*1024
+    // L1的一半空间256K用来载入A矩阵
     if (matmulInfoPtr_->mSize * singleCoreK * GetSizeByDataType(matmulInfoPtr_->aDtype) <= 256 * 1024) {
         al1FullLoad_ = true;
     }
@@ -239,3 +239,4 @@ void WeightQuantBatchMatmulV2CustomNzSplitK::GetMatMulTiling()
 }
 
 }  // namespace optiling
+
