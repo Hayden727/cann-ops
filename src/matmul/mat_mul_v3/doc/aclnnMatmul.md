@@ -5,7 +5,6 @@
 - 昇腾310P AI处理器。
 - 昇腾910 AI处理器。
 - 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
 
 ## 接口原型
 
@@ -30,24 +29,24 @@
 
   - self（aclTensor*，计算输入）：表示矩阵乘的第一个矩阵，公式中的self，Device侧aclTensor。数据类型需要与mat2满足数据类型推导规则（参见[互推导关系](./互推导关系.md)和[约束与限制](#约束与限制)）。数据格式支持ND。shape维度支持1维到6维，并且需要与mat2满足broadcast关系。支持非连续的Tensor。
     - 昇腾910 AI处理器、昇腾310P AI处理器：数据类型支持FLOAT16、FLOAT32。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
+    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
   - mat2（aclTensor*，计算输入）：表示矩阵乘的第二个矩阵，公式中的mat2，Device侧的aclTensor，数据类型需要与self满足数据类型推导规则（参见[互推导关系](./互推导关系.md)和[约束与限制](#约束与限制)）。数据格式支持ND。shape维度支持1维到6维，并且需要与self满足broadcast关系。支持非连续的Tensor。mat2的Reduce维度需要与self的Reduce维度大小相等。
     - 昇腾910 AI处理器、昇腾310P AI处理器：数据类型支持FLOAT16、FLOAT32。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
+    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
   - out（aclTensor*，计算输出）：表示矩阵乘的输出矩阵，公式中的out，Device侧aclTensor。数据类型需要与self与mat2推导之后的数据类型保持一致（参见[互推导关系](./互推导关系.md)和[约束与限制](#约束与限制)）。数据格式支持ND。shape维度支持1维到6维。
     - 昇腾910 AI处理器、昇腾310P AI处理器：数据类型支持FLOAT16、FLOAT32。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
+    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
   - cubeMathType（INT8，计算输入）：用于指定Cube单元的计算逻辑，Host侧的整型。数据类型支持INT8。注意：如果输入的数据类型存在互推导关系，该参数默认对互推导后的数据类型进行处理。支持的枚举值如下：
     * 0：KEEP_DTYPE，保持输入的数据类型进行计算。
       * 昇腾910 AI处理器、昇腾310P AI处理器：当输入数据类型为FLOAT32时不支持该选项。
     * 1：ALLOW_FP32_DOWN_PRECISION，支持将输入数据降精度计算。
       * 昇腾910 AI处理器、昇腾310P AI处理器：当输入数据类型为FLOAT32时，会转换为FLOAT16计算。当输入为其他数据类型时不做处理。
-      * 昇腾910B AI处理器、昇腾910_93 AI处理器：当输入数据类型为FLOAT32时，会转换为HFLOAT32计算。当输入为其他数据类型时不做处理。
+      * 昇腾910B AI处理器：当输入数据类型为FLOAT32时，会转换为HFLOAT32计算。当输入为其他数据类型时不做处理。
     * 2：USE_FP16，支持将输入降精度至FLOAT16计算。
-      * 昇腾910B AI处理器、昇腾910_93 AI处理器：当输入数据类型为BFLOAT16时不支持该选项。
+      * 昇腾910B AI处理器：当输入数据类型为BFLOAT16时不支持该选项。
     * 3：USE_HF32，支持将输入降精度至数据类型HFLOAT32计算。
       * 昇腾910 AI处理器、昇腾310P AI处理器：不支持该选项。
-      * 昇腾910B AI处理器、昇腾910_93 AI处理器：当输入数据类型为FLOAT32时，会转换为HFLOAT32计算。当输入为其他数据类型时不支持该选项。
+      * 昇腾910B AI处理器：当输入数据类型为FLOAT32时，会转换为HFLOAT32计算。当输入为其他数据类型时不支持该选项。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
 
@@ -78,7 +77,7 @@
 aclnnStatus：返回状态码。
 
 ## 约束与限制
-- 昇腾910B AI处理器、昇腾910_93 AI处理器：不支持两个输入分别为BFLOAT16和FLOAT16的数据类型推导。不支持两个输入分别为BFLOAT16和FLOAT32的数据类型推导。
+- 昇腾910B AI处理器：不支持两个输入分别为BFLOAT16和FLOAT16的数据类型推导。不支持两个输入分别为BFLOAT16和FLOAT32的数据类型推导。
 - self和mat2都是1维时，cubeMathType不生效。
 
 ## 调用示例

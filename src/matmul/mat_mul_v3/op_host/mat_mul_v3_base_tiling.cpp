@@ -14,11 +14,9 @@
  */
 #include "mat_mul_v3_base_tiling.h"
 #include "mat_mul_v3_l2_cache.h"
-// #include "cube/util/math_util.h" // 将实现迁移到common.h中
 #include "tiling/tiling_type.h"
 #include "aoe/runtime_kb/runtime_bank_manager.h"
 #include "cache_tiling.h"
-// using namespace optiling::cachetiling;
 typedef float float32_t;
 using namespace optiling::matmul_v3;
 
