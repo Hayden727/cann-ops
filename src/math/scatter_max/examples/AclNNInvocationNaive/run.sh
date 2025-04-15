@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
@@ -41,7 +40,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_unalign_add_op
+    ./execute_scatter_max_op
 )
 
 ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
