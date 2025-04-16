@@ -4,7 +4,7 @@
 
 ## 支持的产品型号
 
-Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atlas 800I A2推理产品/Atlas 200I/500 A2推理产品
+Atlas A2训练系列产品/Atlas 800I A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -15,9 +15,11 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
   
   $$
   out_1 = 1 / (1 + e ^ (-(x1 * t1)))
-  for out_1_num in out_1:
-    if out_1_num < t2:
-      out_1_num * 2
+  $$
+  $$
+  out_1 = [i * 2 if i < t2 else i for i in out_1]
+  $$
+  $$
   out = out_1 * x2 * t3
   $$
   
@@ -50,9 +52,9 @@ MulSigmoid由Mul + Sigmoid操作组成，计算过程只有2步：
   
   - x1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x1，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - x2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入s2，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - t1（aclTensor\*，计算输入）：必选属性，标量，公式中的输入t1，数据类型支持FLOAT16。
-  - t2（aclTensor\*，计算输入）：必选属性，标量，公式中的输入t2，数据类型支持FLOAT16。
-  - t3（aclTensor\*，计算输入）：必选属性，标量，公式中的输入t3，数据类型支持FLOAT16。
+  - t1（Scalar\*，计算输入）：必选属性，标量，公式中的输入t1，数据类型支持FLOAT32。
+  - t2（Scalar\*，计算输入）：必选属性，标量，公式中的输入t2，数据类型支持FLOAT32。
+  - t3（Scalar\*，计算输入）：必选属性，标量，公式中的输入t3，数据类型支持FLOAT32。
   - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出out，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
@@ -82,13 +84,16 @@ MulSigmoid由Mul + Sigmoid操作组成，计算过程只有2步：
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MulSigmoid</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">25 * 32768</td><td align="center">float16</td><td align="center">ND</td></tr>
 <tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="3" align="center">属性输入</td><td align="center">t1</td><td align="center">1</td><td align="center">float</td></tr>
+<tr><td align="center">t2</td><td align="center">1</td><td align="center">float</td></tr>
+<tr><td align="center">t3</td><td align="center">1</td><td align="center">float</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mul_sigmoid</td></tr>
 </table>
 
 ## 调用示例
