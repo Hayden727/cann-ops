@@ -6,7 +6,7 @@ add_ops_compile_options(
 )
 
 file(GLOB_RECURSE EXTRA_SRC_FILES
-    "../common_mm/op_tiling/*.cc"
+    "../../common/op_host/op_tiling/*.cc"
 )
 # optiling
 target_sources(optiling PRIVATE
@@ -24,15 +24,14 @@ target_sources(optiling PRIVATE
         op_host/weight_quant_batch_matmul_v2_tiling_tool.cpp
         op_host/weight_quant_batch_matmul_v2_tiling.cpp
         op_host/weight_quant_batch_matmul_v2_weight_nz_tiling.cpp
-        # ../common_mm/op_tiling/cube_tiling_runtime.cpp
         ${EXTRA_SRC_FILES}
 )
 
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
-        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling
-        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling/aoe/op_tuning_tiling
-        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling/cube/util
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling/aoe/op_tuning_tiling
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling/cube/util
         ${CMAKE_SOURCE_DIR}/src/common/inc
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
