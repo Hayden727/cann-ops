@@ -1,21 +1,28 @@
 /**
  * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
- * This file is a part of the CANN Open Software.
- * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
- * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-/**
- * @file mse_loss.cpp
+/*!
+ * \file mse_loss.cpp
+ * \brief
  */
+#include <string.h>
 #include "mse_loss_tiling.h"
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <string.h>
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 32;
@@ -43,7 +50,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     const char* mode1 = "mean";
     const char* mode2 = "sum";
     const char* mode3 = "none";
-    int str_len = strlen(reduction);
+    size_t str_len = strlen(reduction);
     uint32_t mode = static_cast<int32_t>(0);
     
     if (str_len == strlen(mode1)) {
@@ -133,7 +140,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 }
 }
 
-
 namespace ge {
 static ge::graphStatus InferShape(gert::InferShapeContext* context)
 {
@@ -143,7 +149,6 @@ static ge::graphStatus InferShape(gert::InferShapeContext* context)
     return GRAPH_SUCCESS;
 }
 }
-
 
 namespace ops {
 class MseLoss : public OpDef {

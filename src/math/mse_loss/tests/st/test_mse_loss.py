@@ -11,6 +11,7 @@
 # ======================================================================================================================
 import numpy as np
 
+
 def mse_loss_test(predict, label):
     res = np.mean((predict - label) ** 2)
     return res
