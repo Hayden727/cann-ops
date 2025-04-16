@@ -4,8 +4,6 @@
 
 ## 支持的产品型号
 
-- Atlas 训练系列产品
-- Atlas 推理系列产品
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
@@ -38,7 +36,7 @@
 
 每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnScatterMaxGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnScatterMax”接口执行计算。
 
-* `aclnnStatus aclnnScatterMaxGetWorkspaceSize(const aclTensor *var, const aclTensor *indice, const alcTensor *updates, uint64_t workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnScatterMaxGetWorkspaceSize(const aclTensor *var, const aclTensor *indice, const alcTensor *updates, bool use_locking, uint64_t workspaceSize, aclOpExecutor **executor)`
 * `aclnnStatus aclnnScatterMax(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
@@ -53,6 +51,7 @@
   - var（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入var，数据类型支持FLOAT32\FLOAT16\INT32\INT8，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - indice（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入indice，数据类型支持INT32，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - updates（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入updates，数据类型支持FLOAT32\FLOAT16\INT32\INT8，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - use_locking（bool\*，计算输入）：Device侧的属性，公式中的输入use_locking，数据类型支持bool，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -62,7 +61,7 @@
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y、out的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：var、indice、update、use_locking的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnScatterMax

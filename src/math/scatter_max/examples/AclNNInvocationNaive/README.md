@@ -21,7 +21,7 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnScatterMaxGetWorkspaceSize(const aclTensor *var, const aclTensor *indice, const alcTensor *updates, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnScatterMaxGetWorkspaceSize(const aclTensor *var, const aclTensor *indice, const alcTensor *updates, bool use_locking, uint64_t workspaceSize, aclOpExecutor **executor);
 // 执行算子
 aclnnStatus aclnnScatterMax(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
 ```
