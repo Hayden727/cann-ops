@@ -12,9 +12,9 @@
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x1</td><td align="center">tensor</td><td align="center">float16</td><td align="center">ND</td></tr>
 <tr><td align="center">x2</td><td align="center">tensor</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td rowspan="3" align="center">属性输入</td><td align="center">t1</td><td align="center">scalar</td><td align="center">float</td></tr>
-<tr><td align="center">t2</td><td align="center">scalar</td><td align="center">float</td></tr>
-<tr><td align="center">t3</td><td align="center">scalar</td><td align="center">float</td></tr>
+<tr><td rowspan="3" align="center">属性输入</td><td align="center">t1</td><td align="center">scalar</td><td align="center">float</td><td align="center"></td></tr>
+<tr><td align="center">t2</td><td align="center">scalar</td><td align="center">float</td><td align="center"></td></tr>
+<tr><td align="center">t3</td><td align="center">scalar</td><td align="center">float</td><td align="center"></td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">tensor</td><td align="center">float16</td><td align="center">ND</td></tr>

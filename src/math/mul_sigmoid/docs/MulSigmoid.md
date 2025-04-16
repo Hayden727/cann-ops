@@ -73,7 +73,7 @@ MulSigmoid由Mul + Sigmoid操作组成，计算过程只有2步：
 
 ## 约束与限制
 
-- x，y，out的数据类型只支持FLOAT16，数据格式只支持ND
+- x1，x2，out的数据类型只支持FLOAT16，数据格式只支持ND
 
 ## 算子原型
 
@@ -81,14 +81,14 @@ MulSigmoid由Mul + Sigmoid操作组成，计算过程只有2步：
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MulSigmoid</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">25 * 32768</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td rowspan="3" align="center">属性输入</td><td align="center">t1</td><td align="center">1</td><td align="center">float</td></tr>
-<tr><td align="center">t2</td><td align="center">1</td><td align="center">float</td></tr>
-<tr><td align="center">t3</td><td align="center">1</td><td align="center">float</td></tr>
+<tr><td align="center">x1</td><td align="center">25 * 32768</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td align="center">x2</td><td align="center">1 * 128 * 256</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="3" align="center">属性输入</td><td align="center">t1</td><td align="center">1</td><td align="center">float</td><td align="center"></td></tr>
+<tr><td align="center">t2</td><td align="center">1</td><td align="center">float</td><td align="center"></td></tr>
+<tr><td align="center">t3</td><td align="center">1</td><td align="center">float</td><td align="center"></td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">25 * 128 * 256</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mul_sigmoid</td></tr>
 </table>
