@@ -16,9 +16,7 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
   $$
   out_1 = 1 / (1 + e ^ (-(x1 * t1)))
   $$
-  $$
   out_1 = [i * 2 if i < t2 else i for i in out_1]
-  $$
   $$
   out = out_1 * x2 * t3
   $$
