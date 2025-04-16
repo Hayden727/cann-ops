@@ -28,13 +28,13 @@ __aicore__ inline int64_t Min(int64_t a, int64_t b) {
   return a < b ? a : b;
 }
 
-struct Shape {
+struct ShapeAvgPool3d {
   int64_t N, C, D, H, W;
   int64_t strideN, strideC, strideD, strideH, strideW;
 
-  __aicore__ inline Shape() {}
+  __aicore__ inline ShapeAvgPool3d() {}
 
-  __aicore__ inline Shape(int64_t N, int64_t C, int64_t D, int64_t H, int64_t W)
+  __aicore__ inline ShapeAvgPool3d(int64_t N, int64_t C, int64_t D, int64_t H, int64_t W)
     : N(N), C(C), D(D), H(H), W(W),
       strideN(C * D * H * W), strideC(D * H * W), strideD(H * W), strideH(W), strideW(1) {}
 };
@@ -137,8 +137,8 @@ struct IndexBuffer {
   KernelInfoBuffer H;
   KernelInfoBuffer W;
 
-  Shape outputShape;
-  Shape inputShape;
+  ShapeAvgPool3d outputShape;
+  ShapeAvgPool3d inputShape;
   PoolParameter pool;
 
   __aicore__ inline IndexBuffer() {}
@@ -149,7 +149,7 @@ struct IndexBuffer {
     W.Init(pipe, bufLen);
   }
 
-  __aicore__ inline void SetComputeParameter(const Shape& outShape, const Shape& inShape,
+  __aicore__ inline void SetComputeParameter(const ShapeAvgPool3d& outShape, const ShapeAvgPool3d& inShape,
                                              const PoolParameter& poolParam) {
     outputShape = outShape;
     inputShape = inShape;

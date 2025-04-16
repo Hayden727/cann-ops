@@ -271,7 +271,6 @@ public:
         this->Attr("aligned").AttrType(OPTIONAL).Bool(true);
         this->Attr("clockwise").AttrType(OPTIONAL).Bool(false);
         this->AICore().AddConfig("ascend910b");
-        this->AICore().AddConfig("ascend910_93");
         this->AICore().AddConfig("ascend310p");
     }
 };

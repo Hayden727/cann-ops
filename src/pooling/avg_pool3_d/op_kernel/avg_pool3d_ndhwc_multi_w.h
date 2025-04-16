@@ -58,8 +58,8 @@ private:
   int64_t outputPointOffset;
   int64_t windowWNum;
 
-  Shape inputShape;
-  Shape outputShape;
+  ShapeAvgPool3d inputShape;
+  ShapeAvgPool3d outputShape;
 
   int64_t indexBufLen;
   IndexBuffer indexBuf;
@@ -74,8 +74,8 @@ private:
 
 template <typename T, int32_t QUEUE_DEPTH>
 __aicore__ inline void KernelAvgPool3dMultiW<T, QUEUE_DEPTH>::InitTiling(const AvgPool3DTilingData* tiling) {
-  inputShape = Shape(tiling->inN, tiling->inC, tiling->inD, tiling->inH, tiling->inW);
-  outputShape = Shape(tiling->inN, tiling->inC, tiling->outD, tiling->outH, tiling->outW);
+  inputShape = ShapeAvgPool3d(tiling->inN, tiling->inC, tiling->inD, tiling->inH, tiling->inW);
+  outputShape = ShapeAvgPool3d(tiling->inN, tiling->inC, tiling->outD, tiling->outH, tiling->outW);
 
   poolParam = PoolParameter(tiling->kD, tiling->kH, tiling->kW, tiling->dD, tiling->dH, tiling->dW,
                             tiling->pD, tiling->pH, tiling->pW, tiling->divisorOverride, tiling->countIncludePad);

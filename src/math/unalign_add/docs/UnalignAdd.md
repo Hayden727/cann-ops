@@ -36,7 +36,7 @@ UnalignAdd由Add操作组成，计算过程只有1步：
 
 ## 算子执行接口
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnAddGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAdd”接口执行计算。
+每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnUnalignAddGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnUnalignAdd”接口执行计算。
 
 * `aclnnStatus aclnnUnalignAddGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
 * `aclnnStatus aclnnUnalignAdd(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
@@ -70,7 +70,7 @@ UnalignAdd由Add操作组成，计算过程只有1步：
 - **参数说明：**
   
   - workspace（void\*，入参）：在Device侧申请的workspace内存起址。
-  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnAddGetWorkspaceSize获取。
+  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnUnalignAddGetWorkspaceSize获取。
   - executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**
