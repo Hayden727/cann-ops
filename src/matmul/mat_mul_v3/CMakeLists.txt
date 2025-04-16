@@ -6,23 +6,21 @@ add_ops_compile_options(
 )
 
 file(GLOB_RECURSE EXTRA_SRC_FILES
-    "../common_mm/op_tiling/*.cc"
+    "../../common/op_host/op_tiling/*.cc"
 )
 # optiling
 target_sources(optiling PRIVATE
         op_host/mat_mul_v3_tiling.cpp
         op_host/mat_mul_v3_base_tiling.cpp
         op_host/mat_mul_v3_l2_cache.cpp
-        # ../common_mm/op_tiling/cube_tiling_runtime.cpp
         ${EXTRA_SRC_FILES}
 )
 
-
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
-        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling
-        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling/aoe/op_tuning_tiling
-        ${CMAKE_CURRENT_SOURCE_DIR}/../common_mm/op_tiling/cube/util
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling/aoe/op_tuning_tiling
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling/cube/util
         ${CMAKE_SOURCE_DIR}/src/common/inc
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
@@ -32,8 +30,6 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
 )
-
-# target_compile_options(optiling PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17)
 
 # opproto
 target_sources(opsproto PRIVATE
