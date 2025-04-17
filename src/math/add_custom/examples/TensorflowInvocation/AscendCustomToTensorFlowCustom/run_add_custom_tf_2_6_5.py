@@ -19,14 +19,14 @@ from tensorflow.core.protobuf.rewriter_config_pb2 import RewriterConfig
 npu_device.compat.enable_v1()
 tf.compat.v1.enable_resource_variables()
 
-#np.allclose比较函数的相对公差参数
-ABSOLUTE_TOL = 0.001
 #np.allclose比较函数的绝对公差参数
 RELATIVE_TOL = 0.001
+#np.allclose比较函数的相对公差参数
+ABSOLUTE_TOL = 0.001
 
 
 def main(unused_argv):
-    custom_op_lib = tf.load_op_library(os.path.join("./outputs/libcustom_ops.so")) # 加载自定义算子库
+    custom_op_lib = tf.load_op_library(os.path.join("./../../../../../../output/libcustom_ops.so")) # 加载自定义算子库
     # 定义输入数据
     shape_params = (8, 2048)
     dtype_params = np.float16

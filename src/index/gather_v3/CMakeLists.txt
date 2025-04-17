@@ -26,7 +26,7 @@ target_include_directories(optiling PRIVATE
 
 # opproto
 target_sources(opsproto PRIVATE
-        # op_host/gather_v3.cpp
+        op_host/gather_v3_def.cpp
 )
 
 target_include_directories(opsproto PRIVATE
@@ -85,3 +85,5 @@ install(FILES op_kernel/gather_v3_tmpl_3.h
 
 install(FILES op_host/aclnn_index_select.h
         DESTINATION ${ACLNN_INC_INSTALL_DIR} OPTIONAL)
+
+add_subdirectory(framework)

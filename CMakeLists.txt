@@ -566,3 +566,11 @@ set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
 set(CPACK_EXTERNAL_PACKAGE_SCRIPT ${ASCEND_CMAKE_DIR}/makeself.cmake)
 set(CPACK_EXTERNAL_BUILT_PACKAGES ${CPACK_PACKAGE_DIRECTORY}/_CPack_Packages/Linux/External/${CPACK_PACKAGE_FILE_NAME}/${CPACK_PACKAGE_FILE_NAME})
 include(CPack)
+
+
+# generate npu_supported_ops.json
+add_npu_support_target(TARGET npu_supported_ops
+        OPS_INFO_DIR ${ASCEND_AUTOGEN_PATH}
+        OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/tbe/op_info_cfg/ai_core
+        INSTALL_DIR packages/vendors/${vendor_name}/framework/${ASCEND_FRAMEWORK_TYPE}
+)

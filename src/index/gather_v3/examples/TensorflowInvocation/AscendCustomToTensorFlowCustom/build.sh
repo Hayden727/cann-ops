@@ -11,7 +11,6 @@
 
 SCRIPT_DIR=$(dirname "(realpath "$0")")
 cd $SCRIPT_DIR || exit
-
 OUTPUT_DIR="../../../../../../output"
 if [ -n "${OUTPUT_DIR}" ];then
     rm -rf ${OUTPUT_DIR}
