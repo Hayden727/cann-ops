@@ -30,7 +30,7 @@ namespace Ascend
         __aicore__ inline void Init(GM_ADDR predict, GM_ADDR label, GM_ADDR y, uint32_t mode, 
                                     uint32_t totalLength, uint32_t blockLength,
                                     uint32_t tileNum, uint32_t tileLength,
-                                    uint32_t lasttileLength) {
+                                    uint32_t lastTileLength) {
             ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
 
             // 该算子有两种策略：NONE模式与其他模式
@@ -41,13 +41,13 @@ namespace Ascend
             this->mode = static_cast<int32_t>(mode);
             this->totalLength = static_cast<int32_t>(totalLength);
             this->totalLength_f32 = static_cast<float>(this->totalLength);
-            int32_t BUFFER_NUM = 1;
+            uint32_t BUFFER_NUM = 1;
             if (this->mode == 3) {
                 this->blockLength = blockLength;
                 this->tileNum =
                     tileNum ASSERT(tileNum != 0 && "tile num can not be zero!");
                 this->tileLength = tileLength / BUFFER_NUM;
-                this->lasttileLength = lasttileLength;
+                this->lastTileLength = lastTileLength;
 
                 xGm.SetGlobalBuffer((__gm__ DTYPE_Y*)predict + this->blockLength * AscendC::GetBlockIdx(),
                                     this->blockLength);
@@ -61,7 +61,7 @@ namespace Ascend
                 this->tileNum =
                     tileNum ASSERT(tileNum != 0 && "tile num can not be zero!");
                 this->tileLength = tileLength / BUFFER_NUM;
-                this->lasttileLength = lasttileLength;
+                this->lastTileLength = lastTileLength;
 
                 xGm.SetGlobalBuffer((__gm__ DTYPE_Y*)predict + this->blockLength * AscendC::GetBlockIdx(),
                                     this->blockLength);
@@ -75,12 +75,12 @@ namespace Ascend
             uint32_t reduce_align = (this->reduce_num + 31) / 32 * 32;
 
             if (this->mode == 3) {
-                pipe.InitBuffer(inQueueIN, BUFFER_NUM, this->tileLength * 2 * sizeof(DTYPE_Y));
-                pipe.InitBuffer(outQueueOUT, BUFFER_NUM, this->tileLength * sizeof(DTYPE_Y));
+                pipe.InitBuffer(this->inQueueIN, BUFFER_NUM, this->tileLength * 2 * sizeof(DTYPE_Y));
+                pipe.InitBuffer(this->outQueueOUT, BUFFER_NUM, this->tileLength * sizeof(DTYPE_Y));
             } 
             else if (this->mode == 1 || this->mode == 2) {
-                pipe.InitBuffer(inQueueIN, BUFFER_NUM, this->tileLength * 2 * sizeof(DTYPE_Y));
-                pipe.InitBuffer(tempBuf, reduce_align * sizeof(DTYPE_Y));
+                pipe.InitBuffer(this->inQueueIN, BUFFER_NUM, this->tileLength * 2 * sizeof(DTYPE_Y));
+                pipe.InitBuffer(this->tempBuf, reduce_align * sizeof(DTYPE_Y));
             }
         }
 
@@ -98,8 +98,8 @@ namespace Ascend
                     CopyIn_Strategy_2(i);
                     Compute_Strategy_2(i);
                 }
-                AscendC::LocalTensor<DTYPE_Y> temp1 = tempBuf.Get<DTYPE_Y>();
-                AscendC::LocalTensor<DTYPE_Y> temp2 = inQueueIN.AllocTensor<DTYPE_Y>();
+                AscendC::LocalTensor<DTYPE_Y> temp1 = this->tempBuf.Get<DTYPE_Y>();
+                AscendC::LocalTensor<DTYPE_Y> temp2 = this->inQueueIN.AllocTensor<DTYPE_Y>();
 
                 AscendC::Duplicate(temp2, (DTYPE_Y)0, this->tileLength);
                 AscendC::ReduceSum<DTYPE_Y>(temp1, temp1, temp2, this->reduce_num);
@@ -110,13 +110,13 @@ namespace Ascend
                     AscendC::Div(temp1, temp1, temp2, 1);
                 }
                 outGm.SetValue(0, temp1.GetValue(0));
-                inQueueIN.FreeTensor(temp2);
+                this->inQueueIN.FreeTensor(temp2);
             }
         }
 
         private:
         __aicore__ inline void CopyIn_Strategy_1(int32_t progress) {
-            AscendC::LocalTensor<DTYPE_Y> inLocal = inQueueIN.AllocTensor<DTYPE_Y>();
+            AscendC::LocalTensor<DTYPE_Y> inLocal = this->inQueueIN.AllocTensor<DTYPE_Y>();
 
             if (BUFFER_NUM == 1) {
                 if (progress == this->tileNum - 1) {
@@ -126,14 +126,14 @@ namespace Ascend
                         AscendC::DataCopy(inLocal[this->tileLength], yGm[0], this->tileLength);
                     } 
                     else {
-                        //将最后一个分块的起始地址向前移动tileLength-lasttileLength
+                        //将最后一个分块的起始地址向前移动tileLength-lastTileLength
                         AscendC::DataCopy(
                             inLocal[0],
-                            xGm[(progress - 1) * this->tileLength + this->lasttileLength],
+                            xGm[(progress - 1) * this->tileLength + this->lastTileLength],
                             this->tileLength);
                         AscendC::DataCopy(
                             inLocal[this->tileLength],
-                            yGm[(progress - 1) * this->tileLength + this->lasttileLength],
+                            yGm[(progress - 1) * this->tileLength + this->lastTileLength],
                             this->tileLength);
                     }
                 } 
@@ -151,14 +151,14 @@ namespace Ascend
                 if ((progress == (this->tileNum * BUFFER_NUM - 2)) ||
                     (progress == (this->tileNum * BUFFER_NUM - 1))) {
                     //分块大小变为tileLength的一半
-                    //倒数第2个分块数据的起始地址向前移动（tileLength-lasttileLength)，最后一个分块的起始地址以此为基础进行移动
+                    //倒数第2个分块数据的起始地址向前移动（tileLength-lastTileLength)，最后一个分块的起始地址以此为基础进行移动
                     AscendC::DataCopy(
                         inLocal[0],
-                        xGm[(progress - 2) * (this->tileLength) + this->lasttileLength],
+                        xGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
                         (this->tileLength));
                     AscendC::DataCopy(
                         inLocal[this->tileLength],
-                        yGm[(progress - 2) * (this->tileLength) + this->lasttileLength],
+                        yGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
                         (this->tileLength));
                 }
                 else {
@@ -168,26 +168,26 @@ namespace Ascend
                             this->tileLength);
                 }
             }
-            inQueueIN.EnQue(inLocal);
+            this->inQueueIN.EnQue(inLocal);
         }
 
         __aicore__ inline void Compute_Strategy_1(int32_t progress) {
-            AscendC::LocalTensor<DTYPE_Y> inLocal = inQueueIN.DeQue<DTYPE_Y>();
+            AscendC::LocalTensor<DTYPE_Y> inLocal = this->inQueueIN.DeQue<DTYPE_Y>();
             AscendC::LocalTensor<DTYPE_Y> xLocal = inLocal;
             AscendC::LocalTensor<DTYPE_Y> yLocal = inLocal[this->tileLength];
 
-            AscendC::LocalTensor<DTYPE_Y> outLocal = outQueueOUT.AllocTensor<DTYPE_Y>();
+            AscendC::LocalTensor<DTYPE_Y> outLocal = this->outQueueOUT.AllocTensor<DTYPE_Y>();
 
             AscendC::Sub(outLocal, xLocal, yLocal, this->tileLength);
             AscendC::Mul(outLocal, outLocal, outLocal, this->tileLength);
             
-            outQueueOUT.EnQue<DTYPE_Y>(outLocal);
+            this->outQueueOUT.EnQue<DTYPE_Y>(outLocal);
 
-            inQueueIN.FreeTensor(inLocal);
+            this->inQueueIN.FreeTensor(inLocal);
         }
 
         __aicore__ inline void CopyOut_Strategy_1(int32_t progress) {
-            AscendC::LocalTensor<DTYPE_Y> outLocal = outQueueOUT.DeQue<DTYPE_Y>();
+            AscendC::LocalTensor<DTYPE_Y> outLocal = this->outQueueOUT.DeQue<DTYPE_Y>();
 
             if (BUFFER_NUM == 1) {
                 if (progress == this->tileNum - 1) {
@@ -196,9 +196,9 @@ namespace Ascend
                         AscendC::DataCopy(outGm[0], outLocal, this->tileLength);
                     } 
                     else {
-                        //将最后一个分块的起始地址向前移动tileLength-lasttileLength
+                        //将最后一个分块的起始地址向前移动tileLength-lastTileLength
                         AscendC::DataCopy(
-                            outGm[(progress - 1) * this->tileLength + this->lasttileLength],
+                            outGm[(progress - 1) * this->tileLength + this->lastTileLength],
                             outLocal, this->tileLength);
                     }
                 } 
@@ -213,20 +213,20 @@ namespace Ascend
                 if ((progress == (this->tileNum * BUFFER_NUM - 2)) ||
                     (progress == (this->tileNum * BUFFER_NUM - 1))) {
                     //分块大小变为tileLength的一半
-                    //倒数第2个分块数据的起始地址向前移动（tileLength-lasttileLength)，最后一个分块的起始地址以此为基础进行移动
+                    //倒数第2个分块数据的起始地址向前移动（tileLength-lastTileLength)，最后一个分块的起始地址以此为基础进行移动
                     AscendC::DataCopy(
-                        outGm[(progress - 2) * (this->tileLength) + this->lasttileLength],
+                        outGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
                         outLocal, (this->tileLength));
                 }
                 else {
                     AscendC::DataCopy(outGm[progress * (this->tileLength)], outLocal, this->tileLength);
                 }
             }
-            outQueueOUT.FreeTensor(outLocal);
+            this->outQueueOUT.FreeTensor(outLocal);
         }
 
         __aicore__ inline void CopyIn_Strategy_2(int32_t progress) {
-            AscendC::LocalTensor<DTYPE_Y> inLocal = inQueueIN.AllocTensor<DTYPE_Y>();
+            AscendC::LocalTensor<DTYPE_Y> inLocal = this->inQueueIN.AllocTensor<DTYPE_Y>();
 
             // 对于不同BUFFER_NUM的处理同CopyIn_Strategy_1
             if (BUFFER_NUM == 1) {
@@ -238,11 +238,11 @@ namespace Ascend
                     else {
                         AscendC::DataCopy(
                             inLocal[0],
-                            xGm[(progress - 1) * this->tileLength + this->lasttileLength],
+                            xGm[(progress - 1) * this->tileLength + this->lastTileLength],
                             this->tileLength);
                         AscendC::DataCopy(
                             inLocal[this->tileLength],
-                            yGm[(progress - 1) * this->tileLength + this->lasttileLength],
+                            yGm[(progress - 1) * this->tileLength + this->lastTileLength],
                             this->tileLength);
                     }
                 } 
@@ -258,11 +258,11 @@ namespace Ascend
                     (progress == (this->tileNum * BUFFER_NUM - 1))) {
                     AscendC::DataCopy(
                         inLocal[0],
-                        xGm[(progress - 2) * (this->tileLength) + this->lasttileLength],
+                        xGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
                         (this->tileLength));
                     AscendC::DataCopy(
                         inLocal[this->tileLength],
-                        yGm[(progress - 2) * (this->tileLength) + this->lasttileLength],
+                        yGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
                         (this->tileLength));
                 }
                 else {
@@ -272,11 +272,11 @@ namespace Ascend
                             this->tileLength);
                 }
             }
-            inQueueIN.EnQue(inLocal);
+            this->inQueueIN.EnQue(inLocal);
         }
 
         __aicore__ inline void Compute_Strategy_2(int32_t progress) {
-            AscendC::LocalTensor<DTYPE_Y> inLocal = inQueueIN.DeQue<DTYPE_Y>();
+            AscendC::LocalTensor<DTYPE_Y> inLocal = this->inQueueIN.DeQue<DTYPE_Y>();
             AscendC::LocalTensor<DTYPE_Y> xLocal = inLocal;
             AscendC::LocalTensor<DTYPE_Y> yLocal = inLocal[this->tileLength];
             AscendC::LocalTensor<DTYPE_Y> temp1 = tempBuf.Get<DTYPE_Y>();
@@ -286,7 +286,7 @@ namespace Ascend
             AscendC::ReduceSum<DTYPE_Y>(yLocal, yLocal, xLocal, this->tileLength);
             temp1.SetValue(progress, yLocal.GetValue(0));
             
-            inQueueIN.FreeTensor(inLocal);
+            this->inQueueIN.FreeTensor(inLocal);
         }
 
     private:
@@ -304,7 +304,7 @@ namespace Ascend
         uint32_t blockLength;
         uint32_t tileNum;
         uint32_t tileLength;
-        uint32_t lasttileLength;
+        uint32_t lastTileLength;
     };
 }
 
@@ -316,7 +316,7 @@ extern "C" __global__ __aicore__ void mse_loss(GM_ADDR predict, GM_ADDR label, G
     {
         Ascend::MseLoss op;
         op.Init(predict, label, y, tiling_data.mode, tiling_data.totalLength, tiling_data.blockLength,
-                tiling_data.tileNum, tiling_data.tileLength, tiling_data.lasttileLength);
+                tiling_data.tileNum, tiling_data.tileLength, tiling_data.lastTileLength);
         op.Process();
     }
 }
