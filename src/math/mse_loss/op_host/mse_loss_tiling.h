@@ -40,7 +40,6 @@ BEGIN_TILING_DATA_DEF(MseLossTilingData)
 END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(MseLoss, MseLossTilingData)
-}  // namespace optiling
 
 class MseLossTiling{
   public:
@@ -183,6 +182,7 @@ class MseLossTiling{
 
       return ge::GRAPH_SUCCESS;
     }
+  };
 }
 
 #endif // MSE_LOSS_TILING_H
