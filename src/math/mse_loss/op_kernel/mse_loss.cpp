@@ -25,6 +25,9 @@
 namespace Ascend
 {
     constexpr int32_t BUFFER_NUM = 1;
+    constexpr int MODE_ONE = 1;
+    constexpr int MODE_TWO = 2;
+    constexpr int MODE_THREE = 3;
     class MseLoss {
         public:
         __aicore__ MseLoss() {}
@@ -42,7 +45,7 @@ namespace Ascend
             this->mode = static_cast<int32_t>(mode);
             this->totalLength = static_cast<int32_t>(totalLength);
             this->totalLength_f32 = static_cast<float>(this->totalLength);
-            if (this->mode == 3) {
+            if (this->mode == MODE_THREE) {
                 this->blockLength = blockLength;
                 this->tileNum =
                     tileNum ASSERT(tileNum != 0 && "tile num can not be zero!");
@@ -74,11 +77,11 @@ namespace Ascend
             this->reduce_num = this->tileNum * BUFFER_NUM;
             uint32_t reduce_align = (this->reduce_num + 31) / 32 * 32;
 
-            if (this->mode == 3) {
+            if (this->mode == MODE_THREE) {
                 pipe.InitBuffer(this->inQueueIN, BUFFER_NUM, this->tileLength * 2 * sizeof(DTYPE_Y));
                 pipe.InitBuffer(this->outQueueOUT, BUFFER_NUM, this->tileLength * sizeof(DTYPE_Y));
             } 
-            else if (this->mode == 1 || this->mode == 2) {
+            else if (this->mode == MODE_ONE || this->mode == MODE_TWO) {
                 pipe.InitBuffer(this->inQueueIN, BUFFER_NUM, this->tileLength * 2 * sizeof(DTYPE_Y));
                 pipe.InitBuffer(this->tempBuf, reduce_align * sizeof(DTYPE_Y));
             }
@@ -86,14 +89,14 @@ namespace Ascend
 
         __aicore__ inline void Process() {
             int32_t loopCount = this->tileNum * BUFFER_NUM;
-            if (this->mode == 3) {
+            if (this->mode == MODE_THREE) {
                 for (int32_t i = 0; i < loopCount; i++) {
                     CopyIn_Strategy_1(i);
                     Compute_Strategy_1(i);
                     CopyOut_Strategy_1(i);
                 }
             }
-            else if (this->mode == 1 || this->mode == 2) {
+            else if (this->mode == MODE_ONE || this->mode == MODE_TWO) {
                 for (int32_t i = 0; i < loopCount; i++) {
                     CopyIn_Strategy_2(i);
                     Compute_Strategy_2(i);
@@ -104,7 +107,7 @@ namespace Ascend
                 AscendC::Duplicate(temp2, (DTYPE_Y)0, this->tileLength);
                 AscendC::ReduceSum<DTYPE_Y>(temp1, temp1, temp2, this->reduce_num);
 
-                if (this->mode == 1) {
+                if (this->mode == MODE_ONE) {
                     DTYPE_Y len = static_cast<DTYPE_Y>(this->totalLength_f32);
                     temp2.SetValue(0, len);
                     AscendC::Div(temp1, temp1, temp2, 1);
@@ -152,13 +155,14 @@ namespace Ascend
                     (progress == (this->tileNum * BUFFER_NUM - 1))) {
                     //分块大小变为tileLength的一半
                     //倒数第2个分块数据的起始地址向前移动（tileLength-lastTileLength)，最后一个分块的起始地址以此为基础进行移动
+                    const int secondLastTileStartIndex = (progress - 2) * (this->tileLength) + this->lastTileLength;
                     AscendC::DataCopy(
                         inLocal[0],
-                        xGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
+                        xGm[secondLastTileStartIndex],
                         (this->tileLength));
                     AscendC::DataCopy(
                         inLocal[this->tileLength],
-                        yGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
+                        yGm[secondLastTileStartIndex],
                         (this->tileLength));
                 }
                 else {

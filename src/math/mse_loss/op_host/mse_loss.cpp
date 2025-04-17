@@ -24,7 +24,7 @@ namespace optiling {
 }
 
 namespace ge {
-    static ge::graphStatus InferShape(gert::InferShapeContext* context)
+    static ge::graphStatus MseLossInferShape(gert::InferShapeContext* context)
     {
         const gert::Shape* x1_shape = context->GetInputShape(0);
         gert::Shape* y_shape = context->GetOutputShape(0);
@@ -54,7 +54,7 @@ namespace ops {
                 .Format({ge::FORMAT_ND, ge::FORMAT_ND})
                 .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
             this->Attr("reduction").AttrType(OPTIONAL).String("mean");
-            this->SetInferShape(ge::InferShape);
+            this->SetInferShape(ge::MseLossInferShape);
             this->AICore().SetTiling(optiling::MseLossTilingFunc);
             this->AICore().AddConfig("ascend310b")
                           .AddConfig("ascend910b");

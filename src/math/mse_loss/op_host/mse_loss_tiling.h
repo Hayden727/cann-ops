@@ -95,7 +95,7 @@ class MseLossTiling{
               if (reduction[i] != mode1[i]) {
                   break;
               }
-              if (i == str_len-1) {
+              if (i + 1 == str_len) {
                   mode = 1;
               }
           }
@@ -105,7 +105,7 @@ class MseLossTiling{
               if (reduction[i] != mode2[i]) {
                   break;
               }
-              if (i == str_len-1) {
+              if (i + 1 == str_len) {
                   mode = 2;
               }
           }
@@ -115,7 +115,7 @@ class MseLossTiling{
               if (reduction[i] != mode3[i]) {
                   break;
               }
-              if (i == str_len-1) {
+              if (i + 1 == str_len) {
                   mode = 3;
               }
           }
