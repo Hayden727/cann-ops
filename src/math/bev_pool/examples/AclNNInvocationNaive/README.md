@@ -1,6 +1,6 @@
 ## 概述
 
-通过aclnn调用的方式调用BevPool算子。
+通过aclnn调用的方式调用BevPool算子，输入为float16类型。
 
 ## 目录结构介绍
 
@@ -48,7 +48,7 @@ aclnnStatus aclnnBevPool(void *workspace, int64_t workspaceSize, aclOpExecutor *
   - 样例执行
     
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
-    
+
     ```bash
     mkdir -p build
     cd build
@@ -61,6 +61,18 @@ aclnnStatus aclnnBevPool(void *workspace, int64_t workspaceSize, aclOpExecutor *
     ```bash
     bash run.sh
     ```
+  - 样例修改
+    
+    可通过修改main.cpp和gen_data.py文件设置不同的输入形状
+    
+    ```bash
+    #define CASE_NUM 50
+    ```
+
+    ```bash
+    case_num = 50
+    ```
+
 
 ## 更新说明
 

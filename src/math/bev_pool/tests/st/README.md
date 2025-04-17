@@ -1,8 +1,10 @@
 ## 目录结构介绍
 ```
-├── msopst.ini                      // st测试配置文件 
-├── BevPool_case_all_type.json    // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
-└── test_bev_pool.py              // 算子期望数据生成脚本
+├── msopst.ini                   // st测试配置文件 
+├── BevPool_float_type.json      // float32输入测试用例定义文件示例(8.0.RC3.alpha003版本生成)
+├── BevPool_half_type.json       // float16输入测试用例定义文件示例(8.0.RC3.alpha003版本生成)
+├── test_bev_pool_float.py       // float32输入算子期望数据生成脚本
+└── test_bev_pool_half.py        // float16输入算子期望数据生成脚本
 ```
 
 ## ST测试介绍
@@ -41,7 +43,8 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./BevPool_case_all_type.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./BevPool_float_type.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./BevPool_half_type.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明
