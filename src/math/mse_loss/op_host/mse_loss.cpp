@@ -55,7 +55,7 @@ namespace ops {
                 .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
             this->Attr("reduction").AttrType(OPTIONAL).String("mean");
             this->SetInferShape(ge::InferShape);
-            this->AICore().SetTiling(optiling::TilingFunc);
+            this->AICore().SetTiling(optiling::MseLossTilingFunc);
             this->AICore().AddConfig("ascend310b")
                           .AddConfig("ascend910b");
         }

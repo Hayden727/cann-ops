@@ -65,6 +65,8 @@ class MseLossTiling{
     uint32_t tileLength = 0;
     uint32_t lastTileLength = 0;
     uint32_t ub_block_num = 1024;
+    uint32_t tile_num;
+
   private:
     ge::graphStatus TilingFunc()
     {
@@ -75,9 +77,7 @@ class MseLossTiling{
       }
   
       uint32_t ALIGN_NUM = BLOCK_SIZE / size_of_data_type;
-      
-      uint32_t tile_num;
-  
+
       if (ub_block_num % 2 != 0) {
           ub_block_num = ub_block_num - 1;
       }
