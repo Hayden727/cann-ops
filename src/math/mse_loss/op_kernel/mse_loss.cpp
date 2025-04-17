@@ -24,6 +24,7 @@
 
 namespace Ascend
 {
+    constexpr int32_t BUFFER_NUM = 1;
     class MseLoss {
         public:
         __aicore__ MseLoss() {}
@@ -41,7 +42,6 @@ namespace Ascend
             this->mode = static_cast<int32_t>(mode);
             this->totalLength = static_cast<int32_t>(totalLength);
             this->totalLength_f32 = static_cast<float>(this->totalLength);
-            uint32_t BUFFER_NUM = 1;
             if (this->mode == 3) {
                 this->blockLength = blockLength;
                 this->tileNum =
