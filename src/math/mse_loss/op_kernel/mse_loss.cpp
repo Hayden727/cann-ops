@@ -218,8 +218,9 @@ namespace Ascend
                     (progress == (this->tileNum * BUFFER_NUM - 1))) {
                     //分块大小变为tileLength的一半
                     //倒数第2个分块数据的起始地址向前移动（tileLength-lastTileLength)，最后一个分块的起始地址以此为基础进行移动
+                    const int outGmStartIndex = (progress - 2) * (this->tileLength) + this->lastTileLength;
                     AscendC::DataCopy(
-                        outGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
+                        outGm[outGmStartIndex],
                         outLocal, (this->tileLength));
                 }
                 else {
@@ -240,13 +241,14 @@ namespace Ascend
                         AscendC::DataCopy(inLocal[this->tileLength], yGm[0], this->tileLength);
                     } 
                     else {
+                        const int gmStartIndex = (progress - 1) * this->tileLength + this->lastTileLength;
                         AscendC::DataCopy(
                             inLocal[0],
-                            xGm[(progress - 1) * this->tileLength + this->lastTileLength],
+                            xGm[gmStartIndex],
                             this->tileLength);
                         AscendC::DataCopy(
                             inLocal[this->tileLength],
-                            yGm[(progress - 1) * this->tileLength + this->lastTileLength],
+                            yGm[gmStartIndex],
                             this->tileLength);
                     }
                 } 
@@ -260,13 +262,14 @@ namespace Ascend
             if (BUFFER_NUM == 2) {
                 if ((progress == (this->tileNum * BUFFER_NUM - 2)) ||
                     (progress == (this->tileNum * BUFFER_NUM - 1))) {
+                    const int gmStartIndex = (progress - 2) * (this->tileLength) + this->lastTileLength;
                     AscendC::DataCopy(
                         inLocal[0],
-                        xGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
+                        xGm[gmStartIndex],
                         (this->tileLength));
                     AscendC::DataCopy(
                         inLocal[this->tileLength],
-                        yGm[(progress - 2) * (this->tileLength) + this->lastTileLength],
+                        yGm[gmStartIndex],
                         (this->tileLength));
                 }
                 else {
@@ -315,12 +318,8 @@ namespace Ascend
 
 extern "C" __global__ __aicore__ void mse_loss(GM_ADDR predict, GM_ADDR label, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    
-    if(TILING_KEY_IS(1))
-    {
-        Ascend::MseLoss op;
-        op.Init(predict, label, y, tiling_data.mode, tiling_data.totalLength, tiling_data.blockLength,
+    Ascend::MseLoss op;
+    op.Init(predict, label, y, tiling_data.mode, tiling_data.totalLength, tiling_data.blockLength,
                 tiling_data.tileNum, tiling_data.tileLength, tiling_data.lastTileLength);
-        op.Process();
-    }
+    op.Process();
 }
