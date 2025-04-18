@@ -11,11 +11,8 @@
 /**
  * @file mul_sigmoid_mul_add_custom.cpp
  */
- #include "kernel_operator.h"
+#include "kernel_operator.h"
 using namespace AscendC;
-
-/* 测试输出，将中间步骤数据打印出来 */
-#define OUT_PUT_LEN 1
 
 namespace AscendC {
 template <typename T>
@@ -29,7 +26,6 @@ public:
         this->mulScalar2 = *((__gm__ T*)mulScalar2);
         this->addScalar3 = *((__gm__ T*)addScalar3);
 
-
         this->blockIdx = AscendC::GetBlockIdx();
 
         this->completeTileNum = tiling.completeTileNum;
@@ -37,7 +33,6 @@ public:
         this->completeTileLen = tiling.completeTileLen;
         this->partTileLen = tiling.partTileLen;
         this->totalTileNum = tiling.totalTileNum;
-
 
         /* 前面block分配tile小，后面block分配tile多 */
         if (blockIdx < tiling.frontBlockNum) {
@@ -57,14 +52,13 @@ public:
             this->blockLen = (this->tileNumInBlock - 1) * tiling.completeTileLen + tiling.partTileLen;
         }
 
-
         /* SetGlobalBuffer接口中，bufferSize单位为sizeof(T)，不需要再乘以sizeof(T) */
         inputGlobal.SetGlobalBuffer((__gm__ T*)input + this->startPosInBlock, this->blockLen);
-        outputGlobal.SetGlobalBuffer((__gm__ T*)output + this->startPosInBlock * OUT_PUT_LEN, this->blockLen * OUT_PUT_LEN);
+        outputGlobal.SetGlobalBuffer((__gm__ T*)output + this->startPosInBlock * this->out_put_len, this->blockLen * this->out_put_len);
 
         /*  分配内存块的个数。double buffer功能通过该参数开启：num设置为1，表示不开启double buffer；num设置为2，表示开启double buffer。*/
         pipe.InitBuffer(inQueueInput, 2, this->completeTileLen * sizeof(T));
-        pipe.InitBuffer(outQueueOutput, 2, this->completeTileLen * sizeof(T) * OUT_PUT_LEN);
+        pipe.InitBuffer(outQueueOutput, 2, this->completeTileLen * sizeof(T) * this->out_put_len);
 
         /* T_Buf，每次使用2块buf，2PP */
         pipe.InitBuffer(calcDataBuf, 2 * 2 * this->completeTileLen * sizeof(T));
@@ -92,13 +86,12 @@ private:
     __aicore__ inline void CopyOut(int32_t tileIdx, int32_t tileLen)
     {
         LocalTensor<T> outputLocal = outQueueOutput.DeQue<T>();
-        DataCopy(outputGlobal[tileIdx * tileLen], outputLocal, tileLen * OUT_PUT_LEN);
+        DataCopy(outputGlobal[tileIdx * tileLen], outputLocal, tileLen * this->out_put_len);
         outQueueOutput.FreeTensor(outputLocal);
     }
 
     __aicore__ inline void Compute(int32_t tileIdx, int32_t tileLen)
     {       
-        /* TODO:对于变量，是否需要指定多维行列信息 */
         /* 输入输出 */
         LocalTensor<T> inputLocal = inQueueInput.DeQue<T>();
         LocalTensor<T> outputLocal = outQueueOutput.AllocTensor<T>();
@@ -154,6 +147,9 @@ private:
     T mulScalar1;
     T mulScalar2;
     T addScalar3;
+
+    /* 测试输出，将中间步骤数据打印出来 */
+    uint32_t out_put_len = 1;
 };
 }
 

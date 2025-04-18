@@ -198,7 +198,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnMulSigmoidMulAddCustomGetWorkspaceSize(input_1, input_2, input_3, input_4, output_1, &workspaceSize, &executor);
+    ret = aclnnMulSigmoidMulAddCustomGetWorkspaceSize(input_1, input_2, input_3, input_4, output, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulSigmoidMulAddCustomGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {

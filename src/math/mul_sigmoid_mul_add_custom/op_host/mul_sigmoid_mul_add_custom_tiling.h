@@ -12,6 +12,8 @@
  * @file mul_sigmoid_mul_add_custom_tiling.h
  */
 
+#ifndef MUL_SIGMOID_MUL_ADD_CUSTOM_TILING_H
+#define MUL_SIGMOID_MUL_ADD_CUSTOM_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -31,4 +33,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(MulSigmoidMulAddCustom, MulSigmoidMulAddCustomTilingData)
 }
-
+#endif // MUL_SIGMOID_MUL_ADD_CUSTOM_TILING_H

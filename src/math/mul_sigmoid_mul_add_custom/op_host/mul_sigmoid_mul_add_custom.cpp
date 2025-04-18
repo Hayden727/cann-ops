@@ -13,14 +13,9 @@
  */
 #include "mul_sigmoid_mul_add_custom_tiling.h"
 #include "register/op_def_registry.h"
-
 #include "tiling/platform/platform_ascendc.h"
 
-#define TILE_LEN 4096
-#define OUT_PUT_LEN 1
-
 namespace optiling {
-
 static int64_t CeilDivision(int64_t num1, int64_t num2) {
   if (num2 == 0) {
     return 0;
@@ -35,7 +30,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     /* 计算输入数据总长度 */
     uint32_t totalLen = x1_shape->GetStorageShape().GetShapeSize();
-    uint32_t maxTileLen = TILE_LEN;
+    uint32_t maxTileLen = 4096;
 
     /* 先计算分块的大小和block大小 */
     uint32_t totalTileNum = CeilDivision(totalLen, maxTileLen);
@@ -108,7 +103,7 @@ static ge::graphStatus InferShape(gert::InferShapeContext* context)
     gert::Shape* y_shape = context->GetOutputShape(0);
     *y_shape = *x1_shape;
 
-    y_shape->SetDim(0, x1_shape->GetDim(1) * OUT_PUT_LEN);
+    y_shape->SetDim(0, x1_shape->GetDim(1) * 1);
     return GRAPH_SUCCESS;
 }
 

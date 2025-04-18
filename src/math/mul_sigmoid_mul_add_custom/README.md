@@ -56,7 +56,7 @@
   - 部署算子包
 
     ```bash
-    bash build_out/CANN-mul_sigmoid_mul_add_custom-<cann_version>-linux.<arch>.run
+    bash build_out/CANN-cann-ops-<cann_version>-linux.<arch>.run
     ```
 ### 算子调用
 <table>
