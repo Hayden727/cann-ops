@@ -17,16 +17,16 @@
 
 namespace ge
 {
-    static ge::graphStatus CheckInputDim(gert::TilingContext *context,
+    static ge::graphStatus CheckInputDimAndInit(gert::TilingContext *context,
                             int32_t addInput0Dim0Length,
                             int32_t addInput0Dim1Length,
                             int32_t addInput0Dim2Length,
-                            int32_t addInput0Dim3Length,
-                            int32_t addInput0Dim4Length,
-                            int32_t addInput0Dim1234Length,
-                            int32_t addInput0Dim14Length,
-                            int32_t addInput0Dim23Length,
-                            int32_t addInput0Dim234Length)
+                            int32_t &addInput0Dim3Length,
+                            int32_t &addInput0Dim4Length,
+                            int32_t &addInput0Dim1234Length,
+                            int32_t &addInput0Dim14Length,
+                            int32_t &addInput0Dim23Length,
+                            int32_t &addInput0Dim234Length)
     {
         int32_t num_2 = 2;
         int32_t dim_3 = 3;
@@ -77,16 +77,16 @@ namespace ge
                                 int32_t addInput0Dim1234Length,
                                 int32_t addInput0Dim14Length,
                                 int32_t addInput0Dim23Length,
-                                int32_t formerCoreNum,
-                                int32_t formerCoreLength,
-                                int32_t formerTileNum,
-                                int32_t formerTileLength,
-                                int32_t formerLastTileLength,
-                                int32_t tailCoreNum,
-                                int32_t tailCoreLength,
-                                int32_t tailTileNum,
-                                int32_t tailTileLength,
-                                int32_t tailLastTileLength)
+                                int32_t &formerCoreNum,
+                                int32_t &formerCoreLength,
+                                int32_t &formerTileNum,
+                                int32_t &formerTileLength,
+                                int32_t &formerLastTileLength,
+                                int32_t &tailCoreNum,
+                                int32_t &tailCoreLength,
+                                int32_t &tailTileNum,
+                                int32_t &tailTileLength,
+                                int32_t &tailLastTileLength)
     {
         if (aivNum == 0) {
             return ge::GRAPH_FAILED;
@@ -210,7 +210,7 @@ namespace optiling
        int32_t tailTileLength = 0;
        int32_t tailLastTileLength = 0; 
        
-       ge::CheckInputDim(context, addInput0Dim0Length, addInput0Dim1Length, 
+       ge::CheckInputDimAndInit(context, addInput0Dim0Length, addInput0Dim1Length, 
            addInput0Dim2Length, addInput0Dim3Length, addInput0Dim4Length, 
            addInput0Dim1234Length, addInput0Dim14Length, addInput0Dim23Length, addInput0Dim234Length);
 
