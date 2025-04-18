@@ -22,8 +22,7 @@ def gen_golden_data_simple():
     mul_res = a1 * a2
     sigmoid_res = 1 / (1 + np.exp(-mul1_res))
     mul_2_res = sigmoid_res * a3
-    add_result = mul_2_res + a4
-    numpy_res = add_result.numpy()
+    result = mul_2_res + a4
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
@@ -31,7 +30,7 @@ def gen_golden_data_simple():
     a2.astype(dtype).tofile("./input/input_2.bin")
     a3.astype(dtype).tofile("./input/input_3.bin")
     a4.astype(dtype).tofile("./input/input_4.bin")
-    numpy_res.tofile("./output/golden.bin")
+    result.tofile("./output/golden.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()
