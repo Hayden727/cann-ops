@@ -26,7 +26,7 @@ export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
 export COMPUTE_TYPE=int32
 
 # Loop through all test cases from 1 to 50
-for case_id in {50..50}; do
+for case_id in {1..50}; do
     rm -rf $HOME/ascend/log/*
     rm ./input/*.bin
     rm ./output/*.bin
