@@ -15,9 +15,9 @@ import numpy as np
 def gen_golden_data_simple():
     dtype = np.float16
     a1 = np.random.randn(32, 32).astype(dtype)
-    a2 = np.arrary([1.2]).astype(dtype)
-    a3 = np.arrary([1.3]).astype(dtype)
-    a4 = np.arrary([1.4]).astype(dtype)
+    a2 = np.array([1.2]).astype(dtype)
+    a3 = np.array([1.3]).astype(dtype)
+    a4 = np.array([1.4]).astype(dtype)
 
     mul_res = a1 * a2
     sigmoid_res = 1 / (1 + np.exp(-mul1_res))
