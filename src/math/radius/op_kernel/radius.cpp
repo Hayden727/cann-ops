@@ -160,7 +160,8 @@ public:
             }
         }
         shapeOutGm.SetValue(0, (uint64_t)2);
-        shapeOutGm.SetValue(1, (uint64_t)totalCount);
+        shapeOutGm.SetValue(1, (uint64_t)2);
+        shapeOutGm.SetValue(2, (uint64_t)totalCount);
     }
 
 private:
