@@ -41,7 +41,7 @@ public:
         xGm.SetGlobalBuffer((__gm__ TYPE_X *)x);
         yGm.SetGlobalBuffer((__gm__ TYPE_X *)y);
         outGm.SetGlobalBuffer((__gm__ TYPE_X *)out, maxSize * 2);
-        shapeOutGm.SetGlobalBuffer((__gm__ uint64_t *)shape_out, 2);
+        shapeOutGm.SetGlobalBuffer((__gm__ uint64_t *)shape_out, 3);
         if(ptrXLen!=0){
             ptrXGm.SetGlobalBuffer((__gm__ int32_t *)ptr_x, ptrXLen);
         }
