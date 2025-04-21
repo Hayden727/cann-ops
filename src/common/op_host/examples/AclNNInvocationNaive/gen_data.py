@@ -1,6 +1,7 @@
 import os
 import torch
 import torch.nn.functional as F
+import tensorflow as tf
 import numpy as np
 
 def gen_golden_data_simple():
