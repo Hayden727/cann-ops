@@ -19,7 +19,7 @@ def gen_golden_data_simple():
     a3 = np.array([1.3]).astype(dtype)
     a4 = np.array([1.4]).astype(dtype)
 
-    mul_res = a1 * a2
+    mul1_res = a1 * a2
     sigmoid_res = 1 / (1 + np.exp(-mul1_res))
     mul_2_res = sigmoid_res * a3
     result = mul_2_res + a4
