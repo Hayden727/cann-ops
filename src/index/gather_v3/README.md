@@ -63,9 +63,13 @@
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用GatherV3算子。</td>
     </tr>
+    <tr>
+        <td><a href="./examples/TensorflowInvocation/AscendCustomToTensorFlowCustom"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用GatherV3算子。</td>
+    </tr>
 </table>
 
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
 | 2025/01/06 | 新增本readme |
+| 2025/04/21 | 新增tensorflow调用方式 |
