@@ -18,7 +18,7 @@ else
         _ASCEND_INSTALL_PATH=/usr/local/Ascend/ascend-toolkit/latest
     fi
 fi
-# source $_ASCEND_INSTALL_PATH/bin/setenv.bash
+source $_ASCEND_INSTALL_PATH/bin/setenv.bash
 export DDK_PATH=$_ASCEND_INSTALL_PATH
 echo $NPU_HOST_LIB
 export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
