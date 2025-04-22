@@ -129,7 +129,7 @@ private:
         
         AscendC::WholeReduceSum<aType>(sumLocal, expLocal, 60, 1, 1, 1, 4);
         AscendC::BroadCast<aType, 2, 1>(sumBroadLocal, sumLocal, dstShape, srcShape);
-        Div(cLocal, expLocal, sumBroadLocal, (int32_t)expLocal.GetSzie());
+        Div(cLocal, expLocal, sumBroadLocal, (int32_t)expLocal.GetSize());
 
         tmpQueue1.FreeTensor(expLocal);
         tmpQueue2.FreeTensor(sumLocal);
