@@ -81,7 +81,7 @@ private:
     }
 
 private:
-    TPipe *pipe;
+    TPipe pipe;
     TQue<QuePosition::VECIN, BUFFER_NUM> inQueueInput;
     TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueOutput;
 
