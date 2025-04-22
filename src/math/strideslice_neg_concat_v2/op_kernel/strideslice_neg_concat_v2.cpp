@@ -21,9 +21,8 @@ class StridesliceNegConcatV2 {
 public:
     __aicore__ inline StridesliceNegConcatV2(){}
 
-    __aicore__ inline void Init(GM_ADDR input, GM_ADDR output, const StridesliceNegConcatV2Tiling &tiling_data, TPipe *tmpPipe)
+    __aicore__ inline void Init(GM_ADDR input, GM_ADDR output, const StridesliceNegConcatV2Tiling &tiling_data)
     {
-        pipe = tmpPipe;
         this->blockLength = tiling_data.totalLength / AscendC::GetBlockNum();
         this->tileNumAverage = tiling_data.tileNumAverage;
         this->tileNumLast = tiling_data.tileNumLast;
@@ -99,7 +98,6 @@ private:
 extern "C" __global__ __aicore__ void strideslice_neg_concat_v2(GM_ADDR input, GM_ADDR output, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
     StridesliceNegConcatV2<half> op;
-    TPipe pipe;
-    op.Init(input, output, tiling_data, &pipe);
+    op.Init(input, output, tiling_data);
     op.Process();
 }
