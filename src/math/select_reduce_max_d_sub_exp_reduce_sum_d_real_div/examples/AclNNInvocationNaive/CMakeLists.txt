@@ -49,7 +49,7 @@ add_executable(execute_select_reduce_op
     main.cpp
 )
 
-target_link_libraries(execute_select_op
+target_link_libraries(execute_select_reduce_op
     ascendcl
     cust_opapi
     acl_op_compiler
