@@ -3,7 +3,7 @@
 
 ## 运行样例算子
 ### 1.编译部署自定义算子
-参考[编译算子工程](../../README.md#编译部署自定义算子)。
+参考[编译算子工程](../../../README.md#编译部署自定义算子)。
 需修改插件代码cann-ops/src/index/gather_v3/framework/GatherV3/framework/tf_plugin/tensorflow_gather_v3_plugin.cc中的TensorFlow调用算子名称OriginOpType为"GatherV3"，如下所示：
 ```c++
 REGISTER_CUSTOM_OP("GatherV3")
