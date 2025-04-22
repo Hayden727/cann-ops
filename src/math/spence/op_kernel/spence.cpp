@@ -200,9 +200,11 @@ private:
     uint32_t tileNum;  
     uint32_t tileLength;  
 };  
+namespace {
 extern "C" __global__ __aicore__ void spence(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {  
     GET_TILING_DATA(tiling_data, tiling);  
     KernelSpence<DTYPE_X, DTYPE_Y> op;  
     op.Init(x, y, tiling_data.totalLength, tiling_data.ALIGN_NUM, tiling_data.block_size, tiling_data.core_size, tiling_data.core_remain);  
     op.Process();  
 }  
+}
