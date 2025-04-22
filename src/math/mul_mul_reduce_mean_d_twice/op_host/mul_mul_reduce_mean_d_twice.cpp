@@ -21,7 +21,6 @@ namespace optiling {
 const uint32_t BLOCK_DIM = 48;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
     MulMulReduceMeanDTwiceTilingData tiling;
     const gert::StorageShape* x1_shape = context->GetInputShape(0); 
     int32_t data_sz = 1;
@@ -66,7 +65,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 }
 }
 
-
 namespace ge {
     static ge::graphStatus InferShape(gert::InferShapeContext* context)
     {
@@ -82,7 +80,6 @@ namespace ge {
         return GRAPH_SUCCESS;
     }
 }
-
 
 namespace ops {
 class MulMulReduceMeanDTwice : public OpDef {
@@ -131,7 +128,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 

@@ -12,16 +12,6 @@
 import os
 import numpy as np
 
-def mul_mul_reduce_mean_d_twice(mul0input0, mul0input1, mul1input0, addy, gamma, beta):
-    mul_res = mul0input0 * mul0input1 * mul1input0
-    reduce_mean_0 = np.mean(mul_res, axis=1, keepdims=True)
-    diff = mul_res - reduce_mean_0
-    muld_res = diff * diff
-    x2 = np.mean(muld_res, axis=1, keepdims=True)
-    reduce_mean_1 = gamma / np.sqrt(x2 + addy)
-    output = beta - reduce_mean_1 * reduce_mean_0 + reduce_mean_1 * mul_res
-    return output
-
 def gen_golden_data_simple():
     tf.compat.v1.disable_eager_execution()
 
@@ -32,7 +22,13 @@ def gen_golden_data_simple():
     gamma = np.random.rand(1, 1024).astype(np.float16)
     beta = np.random.rand(1, 1024).astype(np.float16)
 
-    golden = mul_mul_reduce_mean_d_twice(mul0input0, mul0input1, mul1input0, addy, gamma, beta)
+    mul_res = mul0input0 * mul0input1 * mul1input0
+    reduce_mean_0 = np.mean(mul_res, axis=1, keepdims=True)
+    diff = mul_res - reduce_mean_0
+    muld_res = diff * diff
+    x2 = np.mean(muld_res, axis=1, keepdims=True)
+    reduce_mean_1 = gamma / np.sqrt(x2 + addy)
+    output = beta - reduce_mean_1 * reduce_mean_0 + reduce_mean_1 * mul_res
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

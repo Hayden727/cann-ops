@@ -67,7 +67,6 @@ public:
 
      __aicore__ inline void Process()
     {
-        
         gamma_local = gamma_buf.Get<T>();
         beta_local = beta_buf.Get<T>();
         DataCopy(gamma_local, gamma_global, tile_length);
