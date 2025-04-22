@@ -34,7 +34,7 @@
 #include "gemm/estimate/cache_tiling_cycle_model.h"
 #include "gemm/estimate/cache_tiling_est.h"
 #include "gemm/estimate/cache_tiling_est_mgr.h"
-#include "../../mathutil.h"
+#include "mathutil.h"
 
 #define OP_LOGD(nodeName, fmt, ...) do {std::printf(fmt, ##__VA_ARGS__); std::printf("\n"); } while(0)
 
