@@ -17,10 +17,10 @@ def gen_golden_data_simple():
 
     input0 = np.random.randn(1, 128, 1, 128).astype(dtype)
 
-    N,H,W,C = input0.shape
-    mid_col = C // 2
+    batch_size, height, width, channels = input0.shape
+    mid_col = channels // 2
     result = input.copy()
-    result[:,:,:,mid_col:] = -input0[:,:,:,mid_col:]
+    result[:, :, :, mid_col:] = -input0[:, :, :, mid_col:]
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
