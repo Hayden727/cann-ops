@@ -24,7 +24,7 @@ def gen_golden_data_simple():
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
-    a1.astype(dtype).tofile("./input/input_1.bin")
+    input0.astype(dtype).tofile("./input/input_1.bin")
     result.tofile("./output/golden.bin")
 
 if __name__ == "__main__":
