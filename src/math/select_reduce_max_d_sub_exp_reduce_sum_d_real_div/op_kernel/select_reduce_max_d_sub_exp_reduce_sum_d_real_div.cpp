@@ -96,7 +96,7 @@ private:
 
         AscendC::SelectWithBytesMask(aLocal, scalar, aLocal, condLocal, sel0TmpTensor, shapeInfo);
         AscendC::SelectWithBytesMask(bLocal, bLocal, scalar, condLocal, sel1TmpTensor, shapeInfo);
-        cLocal = aLocal + bLocal;
+        Div(cLocal, aLocal, bLocal, (int32_t)bLocal.GetSize());
 
         tmpQueue0.FreeTensor(tmpTensor);
         sel0TmpQueue.FreeTensor(sel0TmpTensor);
