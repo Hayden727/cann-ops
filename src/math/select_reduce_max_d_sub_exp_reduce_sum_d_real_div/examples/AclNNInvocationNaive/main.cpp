@@ -158,10 +158,10 @@ int main(int argc, char **argv)
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     size_t dataType = 2;
-    std::vector<int64_t> input_1_shape = {40, 1, 60};
-    std::vector<int64_t> input_2_shape = {40, 1, 60};
-    std::vector<int64_t> input_3_shape = {40, 1, 60};
-    std::vector<int64_t> output_shape = {40, 1, 60};
+    std::vector<int64_t> input_1_shape = {64, 1, 60};
+    std::vector<int64_t> input_2_shape = {64, 1, 60};
+    std::vector<int64_t> input_3_shape = {64, 1, 60};
+    std::vector<int64_t> output_shape = {64, 1, 60};
 
     std::vector<uint8_t> input_1_host_data(input_1_shape[0] * input_1_shape[1] * input_1_shape[dim_2]);
     std::vector<aclFloat16> input_2_host_data(input_2_shape[0] * input_2_shape[1] * input_2_shape[dim_2]);
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
     void *input_3_device = nullptr;
     void *output_device = nullptr;
 
-    ret = CreateAclTensor(input_1_host_data, input_1_shape, &input_1_device, aclDataType::ACL_FLOAT16, &input_1);
+    ret = CreateAclTensor(input_1_host_data, input_1_shape, &input_1_device, aclDataType::ACL_BOOL, &input_1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     ret = CreateAclTensor(input_2_host_data, input_2_shape, &input_2_device, aclDataType::ACL_FLOAT16, &input_2);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);

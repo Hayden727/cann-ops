@@ -32,7 +32,7 @@ def gen_golden_data_simple():
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
-    sel.astype(dtype).tofile("./input/input_1.bin")
+    sel.tofile("./input/input_1.bin")
     input1.astype(dtype).tofile("./input/input_2.bin")
     input2.astype(dtype).tofile("./input/input_3.bin")
     result.tofile("./output/golden.bin")
