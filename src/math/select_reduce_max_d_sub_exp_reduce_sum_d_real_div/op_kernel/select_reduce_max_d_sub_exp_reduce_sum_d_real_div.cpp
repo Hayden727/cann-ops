@@ -96,7 +96,7 @@ private:
 
         AscendC::SelectWithBytesMask(aLocal, scalar, aLocal, condLocal, sel0TmpTensor, shapeInfo);
         AscendC::SelectWithBytesMask(bLocal, bLocal, scalar, condLocal, sel1TmpTensor, shapeInfo);
-        Div(cLocal, aLocal, bLocal, (int32_t)bLocal.GetSize());
+        cLocal = aLocal + bLocal;
 
         tmpQueue0.FreeTensor(tmpTensor);
         sel0TmpQueue.FreeTensor(sel0TmpTensor);
@@ -129,7 +129,7 @@ private:
         
         AscendC::WholeReduceSum<aType>(sumLocal, expLocal, 60, 1, 1, 1, 4);
         AscendC::BroadCast<aType, 2, 1>(sumBroadLocal, sumLocal, dstShape, srcShape);
-        cLocal = expLocal / sumBroadLocal;
+        Div(cLocal, expLocal, sumBroadLocal, (int32_t)expLocal.GetSzie());
 
         tmpQueue1.FreeTensor(expLocal);
         tmpQueue2.FreeTensor(sumLocal);
