@@ -29,7 +29,7 @@
 namespace optiling {
 namespace cachetiling {
 constexpr uint32_t kMaxTilingCacheEntryNum = 500;
-
+#define OP_LOGI(nodeName, fmt, ...) do {std::printf(fmt, ##__VA_ARGS__); std::printf("\n"); } while(0)
 struct MatmulBitField {
   // 4 Bytes aligned
   uint16_t binary_mode_flag : 1;
