@@ -44,11 +44,15 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 
 ## 实现原理
 
-MulSigmoid由Mul + Sigmoid操作组成，计算过程只有2步：
+MulMulReduceMeanDTwice由Mul、第一次mean、平方差、第二次mean等操作组成，计算过程：
 
-1. out_mul = Sigmoid(x1[offset] * t1)
-2. out_mul = where(tmp < t2, tmp, tmp *2)
-3. out = Mul(out_mul, x2[offset]) * t3
+1. mul_res = mul0input0 * mul0input1 * mul1input0
+2. reduce_mean_0 = np.mean(mul_res, axis=1, keepdims=True)
+3. diff = mul_res - reduce_mean_0
+4. muld_res = diff * diff
+5. x2 = np.mean(muld_res, axis=1, keepdims=True)
+6. reduce_mean_1 = gamma / np.sqrt(x2 + addy)
+7. output = beta - reduce_mean_1 * reduce_mean_0 + reduce_mean_1 * mul_res
 
 ## 算子执行接口
 
