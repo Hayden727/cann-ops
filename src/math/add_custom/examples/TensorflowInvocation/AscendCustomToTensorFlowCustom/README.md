@@ -3,7 +3,7 @@
 
 ## 运行样例算子
 ### 1.编译部署自定义算子
-参考[编译算子工程](../../README.md#编译部署自定义算子)。
+参考[编译算子工程](../../../README.md#编译部署自定义算子)。
 需注意插件代码适配，路径为： samples/operator/AddCustomSample/FrameworkLaunch/AddCustom/framework/tf_plugin/tensorflow_add_custom_plugin.cc
 需修改插件代码src/math/add_custom/framework/tf_plugin/tensorflow_add_custom_plugin.cc中的TensorFlow调用算子名称OriginOpType为"AddCustom"，如下所示：
 ```c++
