@@ -221,11 +221,13 @@ int main(int argc, char **argv)
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
     aclDestroyTensor(input_1);
     aclDestroyTensor(input_2);
+    aclDestroyTensor(input_3);
     aclDestroyTensor(output);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(input_1_device);
     aclrtFree(input_2_device);
+    aclrtFree(input_3_device);
     aclrtFree(output_device);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);

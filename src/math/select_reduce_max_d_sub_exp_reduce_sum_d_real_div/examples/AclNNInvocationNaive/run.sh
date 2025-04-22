@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_select_reduce_op
+    ./execute_select_reduce_max_d_sub_exp_reduce_sum_d_real_div_op
 )
 
 ret=`python3 verify_result.py output/output.bin output/golden.bin`

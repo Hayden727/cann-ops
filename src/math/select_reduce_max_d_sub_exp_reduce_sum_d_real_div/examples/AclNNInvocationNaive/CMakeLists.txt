@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_select_reduce)
+project(acl_execute_select_reduce_max_d_sub_exp_reduce_sum_d_real_div)
 
 # Compile options
 add_compile_options(-std=c++11)
@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_select_reduce_op
+add_executable(execute_select_reduce_max_d_sub_exp_reduce_sum_d_real_div_op
     main.cpp
 )
 
-target_link_libraries(execute_select_reduce_op
+target_link_libraries(execute_select_reduce_max_d_sub_exp_reduce_sum_d_real_div_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,5 +57,5 @@ target_link_libraries(execute_select_reduce_op
     stdc++
 )
 
-install(TARGETS execute_select_reduce_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_select_reduce_max_d_sub_exp_reduce_sum_d_real_div_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
