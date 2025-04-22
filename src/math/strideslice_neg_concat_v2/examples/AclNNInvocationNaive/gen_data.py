@@ -19,7 +19,7 @@ def gen_golden_data_simple():
 
     batch_size, height, width, channels = input0.shape
     mid_col = channels // 2
-    result = input.copy()
+    result = input0.copy()
     result[:, :, :, mid_col:] = -input0[:, :, :, mid_col:]
 
     os.system("mkdir -p input")
