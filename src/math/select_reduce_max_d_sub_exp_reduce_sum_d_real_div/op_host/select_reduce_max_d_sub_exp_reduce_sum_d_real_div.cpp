@@ -25,6 +25,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t totalLength = x1_shape->GetStorageShape().GetShapeSize();
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto aivNum = ascendcPlatform.GetCoreNumAiv();
+    if (aivNum == 0) {
+        return ge::GRAPH_FAILED;
+    }
     uint32_t dimNum = x1_shape->GetStorageShape().GetDimNum();
     uint32_t rowDim = x1_shape->GetStorageShape().GetDim(0);
     uint32_t srcLastDim = x1_shape->GetStorageShape().GetDim(dimNum - 1);
@@ -33,7 +36,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         aivNum = rowDim;
     }
     else {
-        aivNum = rowDim / ((rowDim-1)/aivNum + 1);
+        aivNum = rowDim / ((rowDim-1) / aivNum + 1);
     }
     tiling.set_totalLength(totalLength);
     tiling.set_tileNum(tileNum);
