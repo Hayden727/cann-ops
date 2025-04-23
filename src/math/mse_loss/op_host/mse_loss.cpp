@@ -98,11 +98,18 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t tileLength = 0;
     uint32_t lastTileLength = 0;
 
-    blockLength = totalLengthAligned / block_dim;
+    if (block_dim != 0)
+    {
+        blockLength = totalLengthAligned / block_dim;
+    }
+    else
+    {
+        blockLength = 0;
+    }
     tile_num = blockLength / ALIGN_NUM / ub_block_num;
 
     // 数据切分策略： 由于为单核环境，则将tileLength设置得尽可能大，最后单独处理剩余数据
-    if ((totalLengthAligned / block_dim / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0) {  
+    if (ub_block_num != 0 && ((totalLengthAligned / block_dim / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {  
         if (tile_num == 0) {
             tile_num = 1;
         } 
