@@ -22,6 +22,7 @@
     ```bash
     export DDK_PATH=${INSTALL_DIR}
     export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/devlib
+    export IGNORE_INFER_ERROR=1
     ```
 
   - 进入到测试用例目录
@@ -39,10 +40,10 @@
     ```
     打印的表格中Name列即为Soc Version
 
-  - 执行测试用例
+  - 执行测试用例(如需更改测试用例的类型，请更改`fuzz.py`文件的`compute_dtype`以及json文件中输入输出的type字段)
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Radius_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Radius_all_case.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明

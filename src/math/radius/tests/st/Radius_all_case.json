@@ -1,0 +1,5862 @@
+[
+    {
+        "case_name": "Test_Radius_001",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_001",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_002",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_002",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_003",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_003",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_004",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_004",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_005",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_005",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_006",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_006",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_007",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_007",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_008",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_008",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_009",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_009",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_010",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_010",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_011",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_011",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_012",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_012",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_013",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_013",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_014",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_014",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_015",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_015",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_016",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_016",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_017",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_017",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_018",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_018",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_019",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_019",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_020",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_020",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED"
+                ],
+                "shape": [],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_021",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_021",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_022",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_022",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_023",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_023",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_024",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_024",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_025",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_025",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_026",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_026",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_027",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_027",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_028",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_028",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_029",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_029",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_030",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_030",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_031",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_031",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_032",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_032",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_033",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_033",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_034",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_034",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_035",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_035",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_036",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_036",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_037",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_037",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_038",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_038",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_039",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_039",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_040",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_040",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_041",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_041",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_042",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_042",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_043",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_043",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_044",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_044",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_045",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_045",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_046",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_046",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_047",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_047",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_048",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_048",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_049",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_049",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    },
+    {
+        "case_name": "Test_Radius_050",
+        "op": "Radius",
+        "calc_expect_func_file": "test_radius.py:calc_expect_func",
+        "fuzz_impl": "fuzz.py:fuzz_branch_050",
+        "fuzz_case_num": 1,
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "y",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_x",
+                "value": "fuzz"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "int32"
+                ],
+                "shape": "fuzz",
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "ptr_y",
+                "value": "fuzz"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float"
+                ],
+                "shape": "fuzz",
+                "name": "out"
+            }
+        ],
+        "attr": [
+            {
+                "name": "r",
+                "type": "float",
+                "value": "fuzz"
+            },
+            {
+                "name": "max_num_neighbors",
+                "type": "int",
+                "value": "fuzz"
+            },
+            {
+                "name": "ignore_same_index",
+                "type": "bool",
+                "value": "fuzz"
+            }
+        ]
+    }
+]
