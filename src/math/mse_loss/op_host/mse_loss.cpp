@@ -21,6 +21,76 @@
 
 namespace optiling {
     const uint32_t BLOCK_SIZE = 32;
+
+    uint32_t GetSizeOfDataType(gert::TilingContext* context);
+    size_t GetReductionMode(gert::TilingContext* context);
+    uint32_t AlignTotalLength(uint32_t totalLength, uint32_t ALIGN_NUM);
+    uint32_t CalculateBlockLength(uint32_t totalLengthAligned, uint32_t block_dim);
+    uint32_t CalculateTileNum(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num);
+    void CalculateTileLengths(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num, uint32_t tile_num, uint32_t& tileLength, uint32_t& lastTileLength);
+    void SaveTilingData(MseLossTilingData& tiling, gert::TilingContext* context); 
+
+    static ge::graphStatus TilingFunc(gert::TilingContext* context)
+    {
+        MseLossTilingData tiling;  
+        uint32_t sizeOfDataType = GetSizeOfDataType(context);
+        uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
+        uint32_t ub_block_num = 1024;
+        if (ub_block_num % 2 != 0) {
+            ub_block_num = ub_block_num - 1;
+        }
+        size_t mode = GetReductionMode(context);
+        tiling.set_mode(mode);
+
+        uint32_t totalLengthAligned = AlignTotalLength(totalLength, ALIGN_NUM);
+        tiling.set_totalLength(totalLength);
+
+        context->SetBlockDim(1);
+        uint32_t block_dim = context->GetBlockDim();
+        uint32_t blockLength = CalculateBlockLength(totalLengthAligned, block_dim);
+        uint32_t tile_num = CalculateTileNum(blockLength, ALIGN_NUM, ub_block_num);
+        uint32_t tileLength = 0;
+        uint32_t lastTileLength = 0;
+
+        CalculateTileLengths(blockLength, ALIGN_NUM, ub_block_num, tile_num, tileLength, lastTileLength);
+
+        tiling.set_blockLength(blockLength);
+        tiling.set_tileNum(tile_num);
+        tiling.set_tileLength(tileLength);
+        tiling.set_lastTileLength(lastTileLength);
+
+        SaveTilingData(tiling, context); 
+
+        size_t* currentWorkspace = context->GetWorkspaceSizes(1);
+        currentWorkspace[0] = 0;
+        return ge::GRAPH_SUCCESS;
+    }
+
+    uint32_t GetSizeOfDataType(gert::TilingContext* context)
+    {
+        auto dt = context->GetInputDesc(0)->GetDataType();
+        return (dt == 1) ? 2 : 1;
+    }
+
+    size_t GetReductionMode(gert::TilingContext* context)
+    {
+        const char* reduction = context->GetAttrs()->GetStr(0);
+        const char* mode1 = "mean";
+        const char* mode2 = "sum";
+        const char* mode3 = "none";
+        size_t mode = 0;
+
+        if (strcmp(reduction, mode1) == 0) {
+            mode = 1;
+        } else if (strcmp(reduction, mode2) == 0) {
+            mode = 2;
+        } else if (strcmp(reduction, mode3) == 0) {
+            mode = 3;
+        }
+        return mode;
+    }
+
     uint32_t AlignTotalLength(uint32_t totalLength, uint32_t ALIGN_NUM)
     {
         return (totalLength % ALIGN_NUM != 0) ? ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM : totalLength;
@@ -55,74 +125,11 @@ namespace optiling {
         }
     }
 
-    void SaveTilingData(const MseLossTilingData& tiling, gert::TilingContext* context)
+    void SaveTilingData(MseLossTilingData& tiling, gert::TilingContext* context)  // 修改为非const
     {
         tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
         context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     }
-
-    static ge::graphStatus TilingFunc(gert::TilingContext* context)
-    {
-        MseLossTilingData tiling;
-        uint32_t sizeOfDataType = GetSizeOfDataType(context);
-        uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
-        uint32_t ub_block_num = 1024;
-        if (ub_block_num % 2 != 0) {
-            ub_block_num = ub_block_num - 1;
-        }
-        size_t mode = GetReductionMode(context);
-        tiling.set_mode(mode);
-
-        uint32_t totalLengthAligned = AlignTotalLength(totalLength, ALIGN_NUM);
-        tiling.set_totalLength(totalLength);
-
-        context->SetBlockDim(1);
-        uint32_t block_dim = context->GetBlockDim();
-        uint32_t blockLength = CalculateBlockLength(totalLengthAligned, block_dim);
-        uint32_t tile_num = CalculateTileNum(blockLength, ALIGN_NUM, ub_block_num);
-        uint32_t tileLength = 0;
-        uint32_t lastTileLength = 0;
-
-        CalculateTileLengths(blockLength, ALIGN_NUM, ub_block_num, tile_num, tileLength, lastTileLength);
-
-        tiling.set_blockLength(blockLength);
-        tiling.set_tileNum(tile_num);
-        tiling.set_tileLength(tileLength);
-        tiling.set_lastTileLength(lastTileLength);
-
-        SaveTilingData(tiling, context);
-
-        size_t* currentWorkspace = context->GetWorkspaceSizes(1);
-        currentWorkspace[0] = 0;
-        return ge::GRAPH_SUCCESS;
-    }
-
-    uint32_t GetSizeOfDataType(gert::TilingContext* context)
-    {
-        auto dt = context->GetInputDesc(0)->GetDataType();
-        return (dt == 1) ? 2 : 1;
-    }
-
-    size_t GetReductionMode(gert::TilingContext* context)
-    {
-        const char* reduction = context->GetAttrs()->GetStr(0);
-        const char* mode1 = "mean";
-        const char* mode2 = "sum";
-        const char* mode3 = "none";
-        size_t mode = 0;
-
-        if (strcmp(reduction, mode1) == 0) {
-            mode = 1;
-        } else if (strcmp(reduction, mode2) == 0) {
-            mode = 2;
-        } else if (strcmp(reduction, mode3) == 0) {
-            mode = 3;
-        }
-
-        return mode;
-    }
-    
 }
 
 
