@@ -162,7 +162,7 @@ private:
         currentWorkspace[0] = 0;
         return ge::GRAPH_SUCCESS;
     }
-}
+};
 }
 
 
