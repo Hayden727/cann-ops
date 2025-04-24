@@ -31,16 +31,16 @@ namespace optiling {
         uint32_t sizeOfDataType = GetSizeOfDataType(context);
         uint32_t totalLengthAligned;
         uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
         if (sizeOfDataType == 0) {
             return ge::GRAPH_FAILED;
         }
+        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
         uint32_t ub_block_num = 1024;
         uint32_t tile_num;
         if (ub_block_num % 2 != 0) {
             ub_block_num = ub_block_num - 1;
         }
-        size_t mode = GetReductionMode(context);
+        int mode = GetReductionMode(context);
         tiling.set_mode(mode);
 
         if (totalLength % ALIGN_NUM != 0) {  
@@ -104,14 +104,14 @@ namespace optiling {
         return (dt == 1) ? 2 : 1;
     }
 
-    size_t GetReductionMode(gert::TilingContext* context)
+    int GetReductionMode(gert::TilingContext* context)
     {
         const char* reduction = context->GetAttrs()->GetStr(0);
         const char* mode1 = "mean";
         const char* mode2 = "sum";
         const char* mode3 = "none";
         size_t str_len = strlen(reduction);
-        size_t mode = 0;
+        int mode = 0;
 
         if (str_len == strlen(mode1)) {
             for (size_t i = 0; i < str_len; i++) {
