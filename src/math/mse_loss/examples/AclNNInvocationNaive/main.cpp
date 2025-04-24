@@ -157,8 +157,8 @@ int main(int argc, char **argv)
     char reductionOptional[] = "mean";
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
-    std::vector<int64_t> inputPredictShape = {1024, 1024};
-    std::vector<int64_t> inputLabelShape = {1024, 1024};
+    std::vector<int64_t> inputPredictShape = {100, 100};
+    std::vector<int64_t> inputLabelShape = {100, 100};
     std::vector<int64_t> outputYShape = {1};
     void *inputPredictDeviceAddr = nullptr;
     void *inputLabelDeviceAddr = nullptr;

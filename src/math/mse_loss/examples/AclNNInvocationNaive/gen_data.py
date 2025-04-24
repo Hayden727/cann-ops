@@ -15,8 +15,8 @@ import numpy as np
 import torch.nn as nn
 
 def gen_golden_data_simple():
-    input_predict = np.random.uniform(-10, 10, [1024, 1024]).astype(np.float32)
-    input_label = np.random.uniform(-10, 10, [1024, 1024]).astype(np.float32)
+    input_predict = np.random.uniform(-1, 1, [100, 100]).astype(np.float32)
+    input_label = np.random.uniform(-1, 1, [100, 100]).astype(np.float32)
     # 初始化损失函数
     mse_loss = nn.MSELoss(reduction='mean')
 

@@ -12,7 +12,7 @@
                     "float",
                     "float16"
                 ],
-                "shape": [1024, 1024],
+                "shape": [100, 100],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -32,7 +32,7 @@
                     "float",
                     "float16"
                 ],
-                "shape": [1024, 1024],
+                "shape": [100, 100],
                 "data_distribute": [
                     "uniform"
                 ],
