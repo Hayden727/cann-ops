@@ -23,7 +23,7 @@ namespace optiling {
     const uint32_t BLOCK_SIZE = 32;
 
     uint32_t GetSizeOfDataType(gert::TilingContext* context);
-    size_t GetReductionMode(gert::TilingContext* context);
+    int GetReductionMode(gert::TilingContext* context);
 
     static ge::graphStatus TilingFunc(gert::TilingContext* context)
     {
