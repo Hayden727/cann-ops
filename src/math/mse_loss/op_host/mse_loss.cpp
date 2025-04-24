@@ -24,118 +24,95 @@ namespace optiling {
 
     uint32_t GetSizeOfDataType(gert::TilingContext* context)
     {
+        uint32_t sizeOfDataType;
         auto dt = context->GetInputDesc(0)->GetDataType();
-        return (dt == 1) ? 2 : 1;
+        if (dt == 1) {
+            sizeOfDataType = 2;
+        }
+        return sizeOfDataType;
     }
 
-    static ge::graphStatus TilingFunc(gert::TilingContext* context)
-    {
-        MseLossTilingData tiling;  
-        uint32_t sizeOfDataType = GetSizeOfDataType(context);
-        uint32_t totalLengthAligned;
-        uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-        if (sizeOfDataType == 0) {
-            return ge::GRAPH_FAILED;
-        }
-        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
-        uint32_t ub_block_num = 1024;
-        uint32_t tile_num;
-        if (ub_block_num % 2 != 0) {
-            ub_block_num = ub_block_num - 1;
-        }
-        const char* reduction = context->GetAttrs()->GetStr(0);
-        const char* mode1 = "mean";
-        const char* mode2 = "sum";
-        const char* mode3 = "none";
-        size_t str_len = strlen(reduction);
-        int mode = 0;
+    int DetermineReductionMode(const char* reduction) {
+        if (strcmp(reduction, "mean") == 0) return 1;
+        if (strcmp(reduction, "sum") == 0) return 2;
+        if (strcmp(reduction, "none") == 0) return 3;
+        return 0;
+    }
 
-        if (str_len == strlen(mode1)) {
-            for (size_t i = 0; i < str_len; i++) {
-                if (reduction[i] != mode1[i]) {
-                    break;
-                }
-                if (i == str_len-1) {
-                    mode = 1;
-                }
-            }
-        }
-        if (str_len == strlen(mode2)) {
-            for (size_t i = 0; i < str_len; i++) {
-                if (reduction[i] != mode2[i]) {
-                    break;
-                }
-                if (i == str_len-1) {
-                    mode = 2;
-                }
-            }
-        }
-        if (str_len == strlen(mode3)) {
-            for (size_t i = 0; i < str_len; i++) {
-                if (reduction[i] != mode3[i]) {
-                    break;
-                }
-                if (i == str_len-1) {
-                    mode = 3;
-                }
-            }
-        }
-        tiling.set_mode(mode);
+    uint32_t CalculateAlignedLength(uint32_t totalLength, uint32_t ALIGN_NUM) {
+        return (totalLength % ALIGN_NUM != 0) 
+            ? ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM
+            : totalLength;
+    }
 
-        if (totalLength % ALIGN_NUM != 0) {  
-            totalLengthAligned =
-                ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
-        } else {
-            totalLengthAligned = totalLength;
-        }
-        tiling.set_totalLength(totalLength);
+    void CalculateTileParameters(uint32_t totalLengthAligned, uint32_t block_dim,
+    uint32_t ALIGN_NUM, uint32_t ub_block_num,
+    uint32_t& blockLength, uint32_t& tile_num,
+    uint32_t& tileLength, uint32_t& lastTileLength) {
+    blockLength = (block_dim != 0) ? totalLengthAligned / block_dim : 0;
 
-        context->SetBlockDim(1);
-        auto block_dim = context->GetBlockDim();
-        uint32_t blockLength = 0;
-        uint32_t tileLength = 0;
-        uint32_t lastTileLength = 0;
-        if (block_dim != 0)
-        {
-            blockLength = totalLengthAligned / block_dim;
-        }
-        else
-        {
-            blockLength = 0;
-        }
-        tile_num = blockLength / ALIGN_NUM / ub_block_num;
-        if (ub_block_num != 0 && ((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
-            if (tile_num == 0) {
-                tile_num = 1;
-            }
+    if (blockLength == 0) {
+        tile_num = 0;
+        tileLength = 0;
+        lastTileLength = 0;
+        return;
+    }
+
+    tile_num = blockLength / ALIGN_NUM / ub_block_num;
+
+    if (ub_block_num != 0 && ((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
+        tile_num = (tile_num == 0) ? 1 : tile_num;
             if (blockLength < ub_block_num * ALIGN_NUM) {
-                if (ALIGN_NUM != 0) {
-                    tileLength = ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM;
-                } else {
-                    tileLength = 0;
-                }
+                tileLength = (ALIGN_NUM != 0) ? ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM : 0;
             } else {
                 tileLength = ub_block_num * ALIGN_NUM;
             }
-            lastTileLength = tileLength;
-        } else {
-            tile_num = tile_num + 1;
-            tileLength = ub_block_num * ALIGN_NUM;
-            lastTileLength = blockLength - (tile_num - 1) * tileLength;
-        }
-
-        tiling.set_blockLength(blockLength);
-        tiling.set_tileNum(tile_num);
-        tiling.set_tileLength(tileLength);
-        tiling.set_lastTileLength(lastTileLength);
-
-        tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
-        context->GetRawTilingData()->GetCapacity());
-        context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-        size_t* currentWorkspace = context->GetWorkspaceSizes(1);
-        currentWorkspace[0] = 0;
-        return ge::GRAPH_SUCCESS;
+        lastTileLength = tileLength;
+    } else {
+        tile_num += 1;
+        tileLength = ub_block_num * ALIGN_NUM;
+        lastTileLength = blockLength - (tile_num - 1) * tileLength;
     }
+}
+
+static ge::graphStatus TilingFunc(gert::TilingContext* context) {
+    MseLossTilingData tiling;
+
+    uint32_t sizeOfDataType = GetSizeOfDataType(context);
+    if (sizeOfDataType == 0) {
+    return ge::GRAPH_FAILED;
+    }
+
+    uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+    uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
+    uint32_t ub_block_num = (1024 % 2 != 0) ? 1023 : 1024;
+
+    const char* reduction = context->GetAttrs()->GetStr(0);
+    tiling.set_mode(DetermineReductionMode(reduction));
+
+    uint32_t totalLengthAligned = CalculateAlignedLength(totalLength, ALIGN_NUM);
+    tiling.set_totalLength(totalLength);
+
+    context->SetBlockDim(1);
+    auto block_dim = context->GetBlockDim();
+
+    uint32_t blockLength, tile_num, tileLength, lastTileLength;
+    CalculateTileParameters(totalLengthAligned, block_dim, ALIGN_NUM, 
+        ub_block_num, blockLength, tile_num, 
+        tileLength, lastTileLength);
+
+    tiling.set_blockLength(blockLength);
+    tiling.set_tileNum(tile_num);
+    tiling.set_tileLength(tileLength);
+    tiling.set_lastTileLength(lastTileLength);
+
+    tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
+        context->GetRawTilingData()->GetCapacity());
+    context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
+    size_t* currentWorkspace = context->GetWorkspaceSizes(1);
+    currentWorkspace[0] = 0;
+    return ge::GRAPH_SUCCESS;
+}
 }
 
 
