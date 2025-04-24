@@ -24,7 +24,7 @@ namespace Ascend
     class MseLoss {
         public:
         __aicore__ MseLoss() {}
-        __aicore__ inline void Init(GM_ADDR predict, GM_ADDR label, GM_ADDR y, int mode, 
+        __aicore__ inline void Init(GM_ADDR predict, GM_ADDR label, GM_ADDR y, uint32_t mode, 
                                     uint32_t totalLength, uint32_t blockLength,
                                     uint32_t tileNum, uint32_t tileLength,
                                     uint32_t lastTileLength) {
@@ -35,7 +35,7 @@ namespace Ascend
             // 其他模式(mode=1,2)： 首先需要计算(xi - yi) ^ 2，此后进行一个规约计算(sum/mean)
             // 考虑到空间限制的问题，采取的策略是将每一次tiling计算(xi - yi) ^ 2后就进行一次规约操作，并将该结果存入一个变量里（在tempBuf里） 
             // 最后在tiling结束后对这些数量为reduce_num的数据再进行最后一次规约操作得到最终结果
-            this->mode = mode;
+            this->mode = static_cast<int>(mode);
             this->totalLength = static_cast<int32_t>(totalLength);
             this->totalLength_f32 = static_cast<float>(this->totalLength);
             if (this->mode == MODE_THREE) {
@@ -246,7 +246,7 @@ namespace Ascend
         AscendC::GlobalTensor<DTYPE_Y> xGm;
         AscendC::GlobalTensor<DTYPE_Y> yGm;
         AscendC::GlobalTensor<DTYPE_Y> outGm;
-        int mode;
+        uint32_t mode;
         float totalLength_f32;
         int32_t totalLength;
         uint32_t reduce_num;

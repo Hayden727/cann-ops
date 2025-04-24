@@ -20,7 +20,7 @@
 
 namespace optiling {
 BEGIN_TILING_DATA_DEF(MseLossTilingData)
-  TILING_DATA_FIELD_DEF(int, mode); 
+  TILING_DATA_FIELD_DEF(uint32_t, mode); 
   TILING_DATA_FIELD_DEF(uint32_t, totalLength);
   TILING_DATA_FIELD_DEF(uint32_t, blockLength);
   TILING_DATA_FIELD_DEF(uint32_t, tileNum);

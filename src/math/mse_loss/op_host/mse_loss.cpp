@@ -32,7 +32,7 @@ namespace optiling {
         return sizeOfDataType;
     }
 
-    int DetermineReductionMode(const char* reduction) {
+    uint32_t DetermineReductionMode(const char* reduction) {
         if (strcmp(reduction, "mean") == 0) {
             return 1;
         }
