@@ -19,7 +19,7 @@
 #include "tiling/tiling_api.h"
 #include "mse_loss_tiling.h"
 
-
+namespace optiling {
 class MseLossTiling{
 public:
     explicit MseLossTiling(gert::TilingContext* context) : context_(context) {}
@@ -162,7 +162,7 @@ private:
         return ge::GRAPH_SUCCESS;
     }
 }
-
+}
 
 namespace optiling {
     static ge::graphStatus TilingFunc(gert::TilingContext* context)
