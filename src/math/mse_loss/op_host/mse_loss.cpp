@@ -36,6 +36,7 @@ namespace optiling {
             return ge::GRAPH_FAILED;
         }
         uint32_t ub_block_num = 1024;
+        uint32_t tile_num;
         if (ub_block_num % 2 != 0) {
             ub_block_num = ub_block_num - 1;
         }
