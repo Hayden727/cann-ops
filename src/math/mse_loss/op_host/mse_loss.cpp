@@ -33,13 +33,22 @@ namespace optiling {
     }
 
     int DetermineReductionMode(const char* reduction) {
-        if (strcmp(reduction, "mean") == 0) return 1;
-        if (strcmp(reduction, "sum") == 0) return 2;
-        if (strcmp(reduction, "none") == 0) return 3;
+        if (strcmp(reduction, "mean") == 0) {
+            return 1;
+        }
+        if (strcmp(reduction, "sum") == 0) {
+            return 2;
+        }
+        if (strcmp(reduction, "none") == 0) {
+            return 3;
+        }
         return 0;
     }
 
     uint32_t CalculateAlignedLength(uint32_t totalLength, uint32_t ALIGN_NUM) {
+        if (ALIGN_NUM == 0) {
+            return totalLength;
+        }
         return (totalLength % ALIGN_NUM != 0) 
             ? ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM
             : totalLength;
@@ -58,17 +67,19 @@ namespace optiling {
         return;
     }
 
-    tile_num = blockLength / ALIGN_NUM / ub_block_num;
+    if (ub_block_num != 0) {
+        tile_num = blockLength / ALIGN_NUM / ub_block_num;
 
-    if (ub_block_num != 0 && ((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
-        tile_num = (tile_num == 0) ? 1 : tile_num;
+        if (((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
+            tile_num = (tile_num == 0) ? 1 : tile_num;
             if (blockLength < ub_block_num * ALIGN_NUM) {
                 tileLength = (ALIGN_NUM != 0) ? ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM : 0;
             } else {
                 tileLength = ub_block_num * ALIGN_NUM;
             }
-        lastTileLength = tileLength;
-    } else {
+            lastTileLength = tileLength;
+        }
+    }else {
         tile_num += 1;
         tileLength = ub_block_num * ALIGN_NUM;
         lastTileLength = blockLength - (tile_num - 1) * tileLength;
