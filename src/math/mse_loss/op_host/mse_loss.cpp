@@ -19,19 +19,10 @@
 #include "tiling/tiling_api.h"
 #include "mse_loss_tiling.h"
 
-namespace optiling {
-const uint32_t BLOCK_SIZE = 32;
-static ge::graphStatus TilingFunc(gert::TilingContext* context)
-{
-    MseLossTilingData tiling;
-    auto ret = tiling.DoTiling();
 
-    return ret;
-}
-
-class TilingFunc{
-    public:
-    explicit TilingFunc(gert::TilingContext* context) : context_(context) {}
+class MseLossTiling{
+public:
+    explicit MseLossTiling(gert::TilingContext* context) : context_(context) {}
 
     ge::graphStatus DoTiling()
     {
@@ -50,9 +41,9 @@ class TilingFunc{
 private:
     gert::TilingContext* context_;
     MseLossTilingData tiling;
+    const uint32_t BLOCK_SIZE = 32;
     uint32_t sizeOfDataType;
     uint32_t totalLengthAligned;
-    uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
     uint32_t ub_block_num = 1024;  
     uint32_t tile_num;
     const char* mode1 = "mean";
@@ -114,6 +105,7 @@ private:
 
     ge::graphStatus SetTilingData()
     {
+        uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
         if (totalLength % ALIGN_NUM != 0) {  
             totalLengthAligned =
                 ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
@@ -168,6 +160,17 @@ private:
         size_t* currentWorkspace = context_->GetWorkspaceSizes(1);
         currentWorkspace[0] = 0;
         return ge::GRAPH_SUCCESS;
+    }
+}
+
+
+namespace optiling {
+    static ge::graphStatus TilingFunc(gert::TilingContext* context)
+    {
+        MseLossTiling tiling;
+        auto ret = tiling.DoTiling();
+
+        return ret;
     }
 }
 
