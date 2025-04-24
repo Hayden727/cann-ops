@@ -21,6 +21,46 @@
 
 namespace optiling {
     const uint32_t BLOCK_SIZE = 32;
+    uint32_t AlignTotalLength(uint32_t totalLength, uint32_t ALIGN_NUM)
+    {
+        return (totalLength % ALIGN_NUM != 0) ? ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM : totalLength;
+    }
+
+    uint32_t CalculateBlockLength(uint32_t totalLengthAligned, uint32_t block_dim)
+    {
+        return (block_dim != 0) ? totalLengthAligned / block_dim : 0;
+    }
+
+    uint32_t CalculateTileNum(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num)
+    {
+        return (blockLength / ALIGN_NUM / ub_block_num == 0) ? 1 : blockLength / ALIGN_NUM / ub_block_num;
+    }
+
+    void CalculateTileLengths(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num, uint32_t tile_num, uint32_t& tileLength, uint32_t& lastTileLength)
+    {
+        if (ub_block_num != 0 && ((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
+            if (tile_num == 0) {
+                tile_num = 1;
+            }
+            if (blockLength < ub_block_num * ALIGN_NUM) {
+                tileLength = ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM;
+            } else {
+                tileLength = ub_block_num * ALIGN_NUM;
+            }
+            lastTileLength = tileLength;
+        } else {
+            tile_num = tile_num + 1;
+            tileLength = ub_block_num * ALIGN_NUM;
+            lastTileLength = blockLength - (tile_num - 1) * tileLength;
+        }
+    }
+
+    void SaveTilingData(const MseLossTilingData& tiling, gert::TilingContext* context)
+    {
+        tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
+        context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
+    }
+
     static ge::graphStatus TilingFunc(gert::TilingContext* context)
     {
         MseLossTilingData tiling;
@@ -82,45 +122,7 @@ namespace optiling {
 
         return mode;
     }
-    uint32_t AlignTotalLength(uint32_t totalLength, uint32_t ALIGN_NUM)
-    {
-        return (totalLength % ALIGN_NUM != 0) ? ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM : totalLength;
-    }
-
-    uint32_t CalculateBlockLength(uint32_t totalLengthAligned, uint32_t block_dim)
-    {
-        return (block_dim != 0) ? totalLengthAligned / block_dim : 0;
-    }
-
-    uint32_t CalculateTileNum(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num)
-    {
-        return (blockLength / ALIGN_NUM / ub_block_num == 0) ? 1 : blockLength / ALIGN_NUM / ub_block_num;
-    }
-
-    void CalculateTileLengths(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num, uint32_t tile_num, uint32_t& tileLength, uint32_t& lastTileLength)
-    {
-        if (ub_block_num != 0 && ((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
-            if (tile_num == 0) {
-                tile_num = 1;
-            }
-            if (blockLength < ub_block_num * ALIGN_NUM) {
-                tileLength = ((blockLength / ALIGN_NUM) + 1) / 2 * 2 * ALIGN_NUM;
-            } else {
-                tileLength = ub_block_num * ALIGN_NUM;
-            }
-            lastTileLength = tileLength;
-        } else {
-            tile_num = tile_num + 1;
-            tileLength = ub_block_num * ALIGN_NUM;
-            lastTileLength = blockLength - (tile_num - 1) * tileLength;
-        }
-    }
-
-    void SaveTilingData(const MseLossTilingData& tiling, gert::TilingContext* context)
-    {
-        tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
-        context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-    }
+    
 }
 
 
