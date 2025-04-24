@@ -49,9 +49,7 @@ private:
     const char* mode1 = "mean";
     const char* mode2 = "sum";
     const char* mode3 = "none";
-    size_t str_len = strlen(reduction);
     size_t mode = 0;
-    auto block_dim = context_->GetBlockDim();
     uint32_t blockLength = 0;
     uint32_t tileLength = 0;
     uint32_t lastTileLength = 0;
@@ -69,6 +67,7 @@ private:
         }
         // 获取reduction的值，并设置传入kernel的mode值
         const char* reduction = context_->GetAttrs()->GetStr(0);
+        size_t str_len = strlen(reduction);
         if (str_len == strlen(mode1)) {
             for (size_t i = 0; i < str_len; i++) {
                 if (reduction[i] != mode1[i]) {
@@ -105,7 +104,9 @@ private:
 
     ge::graphStatus SetTilingData()
     {
+        uint32_t totalLength = context_->GetInputShape(0)->GetStorageShape().GetShapeSize();
         uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
+        auto block_dim = context_->GetBlockDim();
         if (totalLength % ALIGN_NUM != 0) {  
             totalLengthAligned =
                 ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
@@ -163,6 +164,7 @@ private:
     }
 }
 }
+
 
 namespace optiling {
     static ge::graphStatus TilingFunc(gert::TilingContext* context)
