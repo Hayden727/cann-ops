@@ -246,7 +246,7 @@ namespace Ascend
         AscendC::GlobalTensor<DTYPE_Y> xGm;
         AscendC::GlobalTensor<DTYPE_Y> yGm;
         AscendC::GlobalTensor<DTYPE_Y> outGm;
-        uint32_t mode;
+        int mode;
         float totalLength_f32;
         int32_t totalLength;
         uint32_t reduce_num;
