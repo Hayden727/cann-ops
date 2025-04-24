@@ -24,14 +24,12 @@ namespace optiling {
 
     uint32_t GetSizeOfDataType(gert::TilingContext* context);
     size_t GetReductionMode(gert::TilingContext* context);
-    uint32_t AlignTotalLength(uint32_t totalLength, uint32_t ALIGN_NUM);
-    uint32_t CalculateBlockLength(uint32_t totalLengthAligned, uint32_t block_dim);
-    uint32_t CalculateTileNum(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num);
 
     static ge::graphStatus TilingFunc(gert::TilingContext* context)
     {
         MseLossTilingData tiling;  
         uint32_t sizeOfDataType = GetSizeOfDataType(context);
+        uint32_t totalLengthAligned;
         uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
         uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
         if (sizeOfDataType == 0) {
@@ -44,16 +42,28 @@ namespace optiling {
         size_t mode = GetReductionMode(context);
         tiling.set_mode(mode);
 
-        uint32_t totalLengthAligned = AlignTotalLength(totalLength, ALIGN_NUM);
+        if (totalLength % ALIGN_NUM != 0) {  
+            totalLengthAligned =
+                ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
+        } else {
+            totalLengthAligned = totalLength;
+        }
         tiling.set_totalLength(totalLength);
 
         context->SetBlockDim(1);
-        uint32_t block_dim = context->GetBlockDim();
-        uint32_t blockLength = CalculateBlockLength(totalLengthAligned, block_dim);
-        uint32_t tile_num = CalculateTileNum(blockLength, ALIGN_NUM, ub_block_num);
+        auto block_dim = context->GetBlockDim();
+        uint32_t blockLength = 0;
         uint32_t tileLength = 0;
         uint32_t lastTileLength = 0;
-
+        if (block_dim != 0)
+        {
+            blockLength = totalLengthAligned / block_dim;
+        }
+        else
+        {
+            blockLength = 0;
+        }
+        tile_num = blockLength / ALIGN_NUM / ub_block_num;
         if (ub_block_num != 0 && ((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0)) {
             if (tile_num == 0) {
                 tile_num = 1;
@@ -99,6 +109,7 @@ namespace optiling {
         const char* mode1 = "mean";
         const char* mode2 = "sum";
         const char* mode3 = "none";
+        size_t str_len = strlen(reduction);
         size_t mode = 0;
 
         if (str_len == strlen(mode1)) {
@@ -132,24 +143,6 @@ namespace optiling {
             }
         }
         return mode;
-    }
-
-    uint32_t AlignTotalLength(uint32_t totalLength, uint32_t ALIGN_NUM)
-    {
-        if (ALIGN_NUM == 0) {
-        return totalLength;
-        }
-        return (totalLength % ALIGN_NUM != 0) ? ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM : totalLength;
-    }
-
-    uint32_t CalculateBlockLength(uint32_t totalLengthAligned, uint32_t block_dim)
-    {
-        return (ub_block_num == 0) ? 1 : (blockLength / ALIGN_NUM / ub_block_num == 0) ? 1 : blockLength / ALIGN_NUM / ub_block_num;
-    }
-
-    uint32_t CalculateTileNum(uint32_t blockLength, uint32_t ALIGN_NUM, uint32_t ub_block_num)
-    {
-        return (ub_block_num == 0) ? 1 : (blockLength / ALIGN_NUM / ub_block_num == 0) ? 1 : blockLength / ALIGN_NUM / ub_block_num;
     }
 }
 
