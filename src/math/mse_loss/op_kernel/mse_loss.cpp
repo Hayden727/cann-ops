@@ -84,14 +84,15 @@ namespace Ascend
             int32_t loopCount = this->tileNum * BUFFER_NUM;
             if (this->mode == MODE_THREE) {
                 for (int32_t i = 0; i < loopCount; i++) {
-                    CopyIn_Strategy_1(i);
+                    CopyIn_Strategy(i);
                     Compute_Strategy_1(i);
                     CopyOut_Strategy_1(i);
                 }
             }
             else if (this->mode == MODE_ONE || this->mode == MODE_TWO) {
                 for (int32_t i = 0; i < loopCount; i++) {
-                    CopyIn_Strategy_2(i);
+                    // MODE_ONE和MODE_TWO的CopyIn_Strategy与MODE_THREE相同
+                    CopyIn_Strategy(i);
                     Compute_Strategy_2(i);
                 }
                 AscendC::LocalTensor<DTYPE_Y> temp1 = this->tempBuf.Get<DTYPE_Y>();
@@ -111,7 +112,7 @@ namespace Ascend
         }
 
         private:
-        __aicore__ inline void CopyIn_Strategy_1(int32_t progress) {
+        __aicore__ inline void CopyIn_Strategy(int32_t progress) {
             AscendC::LocalTensor<DTYPE_Y> inLocal = this->inQueueIN.AllocTensor<DTYPE_Y>();
 
             if (BUFFER_NUM == 1) {
@@ -221,58 +222,6 @@ namespace Ascend
                 }
             }
             this->outQueueOUT.FreeTensor(outLocal);
-        }
-
-        __aicore__ inline void CopyIn_Strategy_2(int32_t progress) {
-            AscendC::LocalTensor<DTYPE_Y> inLocal = this->inQueueIN.AllocTensor<DTYPE_Y>();
-
-            // 对于不同BUFFER_NUM的处理同CopyIn_Strategy_1
-            if (BUFFER_NUM == 1) {
-                if (progress == this->tileNum - 1) {
-                    if (progress == 0) {
-                        AscendC::DataCopy(inLocal[0], xGm[0], this->tileLength);
-                        AscendC::DataCopy(inLocal[this->tileLength], yGm[0], this->tileLength);
-                    } 
-                    else {
-                        const int gmStartIndex = (progress - 1) * this->tileLength + this->lastTileLength;
-                        AscendC::DataCopy(
-                            inLocal[0],
-                            xGm[gmStartIndex],
-                            this->tileLength);
-                        AscendC::DataCopy(
-                            inLocal[this->tileLength],
-                            yGm[gmStartIndex],
-                            this->tileLength);
-                    }
-                } 
-                else {
-                    AscendC::DataCopy(inLocal[0], xGm[progress * this->tileLength],
-                            this->tileLength);
-                    AscendC::DataCopy(inLocal[this->tileLength], yGm[progress * this->tileLength],
-                            this->tileLength);
-                }
-            }
-            if (BUFFER_NUM == 2) {
-                if ((progress == (this->tileNum * BUFFER_NUM - 2)) ||
-                    (progress == (this->tileNum * BUFFER_NUM - 1))) {
-                    const int gmStartIndex = (progress - 2) * (this->tileLength) + this->lastTileLength;
-                    AscendC::DataCopy(
-                        inLocal[0],
-                        xGm[gmStartIndex],
-                        (this->tileLength));
-                    AscendC::DataCopy(
-                        inLocal[this->tileLength],
-                        yGm[gmStartIndex],
-                        (this->tileLength));
-                }
-                else {
-                    AscendC::DataCopy(inLocal[0], xGm[progress * (this->tileLength)],
-                            (this->tileLength));
-                    AscendC::DataCopy(inLocal[this->tileLength], yGm[progress * this->tileLength],
-                            this->tileLength);
-                }
-            }
-            this->inQueueIN.EnQue(inLocal);
         }
 
         __aicore__ inline void Compute_Strategy_2(int32_t progress) {
