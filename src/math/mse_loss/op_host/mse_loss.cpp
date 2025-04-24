@@ -169,7 +169,7 @@ private:
 namespace optiling {
     static ge::graphStatus TilingFunc(gert::TilingContext* context)
     {
-        MseLossTiling tiling;
+        MseLossTiling tiling(context);
         auto ret = tiling.DoTiling();
 
         return ret;
