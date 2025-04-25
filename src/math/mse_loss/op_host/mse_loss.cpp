@@ -67,7 +67,7 @@ namespace optiling {
         return;
     }
 
-    if (ub_block_num != 0) {
+    if (ub_block_num != 0 && ALIGN_NUM != 0) {
         tile_num = blockLength / ALIGN_NUM / ub_block_num;
 
         if (ALIGN_NUM != 0 && ub_block_num != 0 && (((blockLength / ALIGN_NUM) % ub_block_num == 0 || tile_num == 0))) {
