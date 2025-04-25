@@ -70,44 +70,26 @@ namespace ge {
   
 static graphStatus InferShapeForConvBackprop(InferShapeContext *context, size_t const_tensor_idx,
                                              const char *const_tensor_name, size_t dim_num) {
-//   OP_CHECK(context == nullptr, CUBE_INNER_ERR_REPORT("", "Get %s failed", "context"),
-    // return GRAPH_FAILED);
   const auto op_name = context->GetNodeName();
   auto y_shape = context->GetOutputShape(0);
-//   OP_CHECK(y_shape == nullptr, CUBE_INNER_ERR_REPORT("", "Get %s failed", "y shape"),
-    // return GRAPH_FAILED);
-
   auto const_tensor = context->GetInputTensor(const_tensor_idx);
-//   OP_CHECK(const_tensor == nullptr, CUBE_INNER_ERR_REPORT(op_name, "get null %s tensor", const_tensor_name),
-        // return GRAPH_FAILED);
   size_t const_tensor_dim_num = static_cast<size_t>(const_tensor->GetOriginShape().GetShapeSize());
-//   OP_CHECK(const_tensor_dim_num != dim_num,
-        // CUBE_INNER_ERR_REPORT(op_name, "%s dim num %zu invalid", const_tensor_name, const_tensor_dim_num),
-        // return GRAPH_FAILED);
   y_shape->SetDimNum(dim_num);
-
   auto dtype = const_tensor->GetDataType();
   if (dtype == ge::DT_INT32) {
     auto tensor_data = const_tensor->GetData<int32_t>();
-    // OP_CHECK(tensor_data == nullptr, CUBE_INNER_ERR_REPORT(op_name, "get null %s tensor data", const_tensor_name),
-    //       return GRAPH_FAILED);
     for (size_t idx = 0; idx < const_tensor_dim_num; ++idx) {
       y_shape->SetDim(idx, tensor_data[idx]);
     }
   } else if (dtype == ge::DT_INT64) {
     auto tensor_data = const_tensor->GetData<int64_t>();
-    // OP_CHECK(tensor_data == nullptr, CUBE_INNER_ERR_REPORT(op_name, "get null %s tensor data", const_tensor_name),
-    //       return GRAPH_FAILED);
     for (size_t idx = 0; idx < const_tensor_dim_num; ++idx) {
       y_shape->SetDim(idx, tensor_data[idx]);
     }
   } else {
-    // CUBE_INNER_ERR_REPORT(op_name, "tensor %s not support dtype %s", const_tensor_name,
-                        //   ge::TypeUtils::DataTypeToAscendString(dtype).GetString());
     return GRAPH_FAILED;
   }
 
-//   OP_LOGD(context->GetNodeName(), "y_shape: %s", ge::Shape2String(*y_shape).c_str());
   return ge::GRAPH_SUCCESS;
 }
 
@@ -116,11 +98,7 @@ static graphStatus InferShapeForConv3DBackpropFilter(InferShapeContext *context)
 }
 
 static ge::graphStatus InferDataTypeForConv3DBackpropFilterV2(gert::InferDataTypeContext *context) {
-//   OP_LOGD(context->GetNodeName(), "InferDataTypeForConv3DBackpropFilterV2 enter");
   ge::graphStatus ret = context->SetOutputDataType(0, ge::DT_FLOAT);
-//   OP_CHECK(ret != ge::GRAPH_SUCCESS, CUBE_INNER_ERR_REPORT(context->GetNodeName(), "[InferDataType] Failed."), 
-                                                                    // return ge::GRAPH_FAILED);
-//   OP_LOGD(context->GetNodeName(), "InferDataTypeForConv3DBackpropFilterV2 enter");
   return ge::GRAPH_SUCCESS;
 }
 
