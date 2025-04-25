@@ -14,7 +14,7 @@ import numpy as np
 import tensorflow as tf
 
 
-def scatter_max_test(x_np, indices_np, updates_np):
+def scatter_max_test(x_np, indices_np, updates_np, use_locking):
     # 转换为TensorFlow张量（保持原始数据类型）
     x_tensor = tf.convert_to_tensor(x_np)
     indices_tensor = tf.convert_to_tensor(indices_np, dtype=tf.int32)
@@ -34,11 +34,12 @@ def scatter_max_test(x_np, indices_np, updates_np):
     
     return result_tensor.numpy()
 
-def calc_expect_func(x, indices, updates, out):
+def calc_expect_func(x, indices, updates, out, use_locking=False):
     """calc_expect_func"""
     res = scatter_max_test(
         x["value"],
         indices["value"],
-        updates["value"]
+        updates["value"],
+        use_locking
     )
     return [res, ]
