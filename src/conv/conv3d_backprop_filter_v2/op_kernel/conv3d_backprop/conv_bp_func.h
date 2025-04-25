@@ -27,9 +27,9 @@
 #include "kernel_operator.h"
 
 #if __CCE_AICORE__ == 220
-#include "dav_v220/conv_bp_sub_func.h"
+#include "impl/dav_v220/conv_bp_sub_func.h"
 #elif defined(__DAV_C310__)
-#include "dav_v310/conv_bp_sub_func.h"
+#include "impl/dav_v310/conv_bp_sub_func.h"
 #endif
 
 DECLARE_CHECK_IMPL(Init);

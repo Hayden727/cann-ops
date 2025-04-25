@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "acl/acl.h"
-// #include "/home/luwang/work/04102/cann-ops/src/conv/conv3d_backprop_filter_v2/op_host/aclnn_convolution_backward.h"
 #include "aclnnop/aclnn_convolution_backward.h"
 
 #define CHECK_RET(cond, return_expr) \
@@ -328,9 +327,6 @@ int aclnnConvolutionBackwardTest(int32_t deviceId, aclrtStream &stream)
     CHECK_FREE_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret);
                    return ret);
     
-    // for (int64_t i = 0; i < size; i++) {
-    //     LOG_PRINT("gradBiasResult[%ld] is: %f\n", i, gradBiasResult[i]);
-    // }
     return ACL_SUCCESS;
 }
 

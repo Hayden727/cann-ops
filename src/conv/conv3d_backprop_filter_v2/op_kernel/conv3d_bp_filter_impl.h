@@ -23,9 +23,9 @@
 #define CONV3D_BP_FILTER_IMPL_H
 
 #include "conv3d_bp_filter_config.h"
-#include "conv_bp_impl_base.h"
-#include "conv_bp_func.h"
-#include "conv_bp_util.h"
+#include "conv3d_backprop/conv_bp_impl_base.h"
+#include "conv3d_backprop/conv_bp_func.h"
+#include "conv3d_backprop/conv_bp_util.h"
 #include "kernel_utils.h"
 
 namespace ConvolutionBackprop {
