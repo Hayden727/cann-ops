@@ -16,35 +16,34 @@ target_sources(opapi PRIVATE
         op_host/aclnn_convolution_backward.cpp
 )
 
-file(GLOB_RECURSE CUBE_CACHE_TILING_SRC_FILES 
-        "../../common/op_host/op_tiling/cube/*.cc")
-
-file(GLOB_RECURSE AOE_SRC_FILES 
-        "../../common/op_host/op_tiling/aoe/*.cc")
-
-file(GLOB_RECURSE GEMM_CACHE_TILING_FILES 
-        "../../common/op_host/op_tiling/gemm/*.cc")
 
 file(GLOB_RECURSE EXTRA_SRC_FILES
     "../../common/op_host/op_tiling/*.cc"
 )
 
-
-file(GLOB_RECURSE EXTRA_SRC_FILES
-    "../../common/op_host/op_tiling/*.cc"
-)
 # optiling
-
 target_sources(optiling PRIVATE
         op_host/conv3_d_backprop_filter_v2.cpp
         ${EXTRA_SRC_FILES}
 )
 
 
+target_sources(opsproto PRIVATE
+        op_host/conv3_d_backprop_filter_v2_def.cpp
+)
+
+file(GLOB KERNEL_FILES
+        op_kernel/*.cpp
+        op_kernel/*.h
+)
+
+install(FILES ${KERNEL_FILES}
+        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic
+)
+
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
-        /home/luwang/1205/Ascend/CANN-7.7/aarch64-linux/include/exe_graph/runtime
         ${CMAKE_SOURCE_DIR}/src/conv/common
         ${CMAKE_SOURCE_DIR}/src/common/op_host
         ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
@@ -63,34 +62,6 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/mmpa
 )
 
-target_sources(opsproto PRIVATE
-        op_host/conv3_d_backprop_filter_v2_def.cpp
-)
-
-
-install(FILES op_kernel/conv3d_backprop_filter_v2.cpp
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_backprop_filter_v2_init_output.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_backprop_filter_v2.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_bp_filter_config.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_bp_filter_impl.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_bp_filter_intf.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_bp_filter.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/conv3d_dw_v2_basic_block.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
 target_include_directories(opapi PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host

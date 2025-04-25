@@ -21,12 +21,12 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnAngleV2CustomGetWorkspaceSize(const aclTensor *x, const aclTensor *y, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnConvolutionBackwardGetWorkspaceSize(const aclTensor *gradOutput, const aclTensor *input, const aclTensor *weight, const aclIntArray *biasSizes, const aclIntArray *stride, const aclIntArray *padding, const aclIntArray *dilation, bool transposed, const aclIntArray *outputPadding, int groups, const aclBoolArray *outputMask, int8_t cubeMathType, aclTensor *gradInput, aclTensor *gradWeight, aclTensor *gradBias, uint64_t *workspaceSize, aclOpExecutor **executor);
 // 执行算子
-aclnnStatus aclnnAngleV2(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
+aclnnStatus aclnnConvolutionBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, const aclrtStream stream);
 ```
 
-其中aclnnAngleV2CustomGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnAngleV2执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
+其中aclnnConvolutionBackwardGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnConvolutionBackward执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
 ## 运行样例算子
   **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
@@ -34,7 +34,7 @@ aclnnStatus aclnnAngleV2(void *workspace, int64_t workspaceSize, aclOpExecutor *
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/conv2d_backprop_filter_v2/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/math/conv3d_backprop_filter_v2/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
@@ -53,9 +53,9 @@ aclnnStatus aclnnAngleV2(void *workspace, int64_t workspaceSize, aclOpExecutor *
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_conv2d_backprop_filter_v2_op
+    ./execute_conv3d_backprop_filter_v2_op
     cd ..
-    python3 verify_result.py output/output_y.bin output/golden.bin
+    python3 verify_result.py output/output_y.bin output/output.bin
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。

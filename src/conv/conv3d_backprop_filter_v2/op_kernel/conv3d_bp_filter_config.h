@@ -22,7 +22,7 @@
 #ifndef CONV3D_BP_FILTER_CONFIG_H
 #define CONV3D_BP_FILTER_CONFIG_H
 
-#include "conv_bp_config_base.h"
+#include "conv3d_backprop/conv_bp_config_base.h"
 
 namespace ConvolutionBackprop {
 

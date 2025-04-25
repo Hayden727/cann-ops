@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_conv2d_backprop_filter_v2_op
+add_executable(execute_conv3d_backprop_filter_v2_op
     main.cpp
 )
 
-target_link_libraries(execute_conv2d_backprop_filter_v2_op
+target_link_libraries(execute_conv3d_backprop_filter_v2_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,5 +57,5 @@ target_link_libraries(execute_conv2d_backprop_filter_v2_op
     stdc++
 )
 
-install(TARGETS execute_conv2d_backprop_filter_v2_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_conv3d_backprop_filter_v2_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 

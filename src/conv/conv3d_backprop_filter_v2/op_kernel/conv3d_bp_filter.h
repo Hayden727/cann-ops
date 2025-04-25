@@ -22,7 +22,7 @@
 #ifndef CONV3D_BP_FILTER_H
 #define CONV3D_BP_FILTER_H
 
-#include "conv_bp_register.h"
+#include "conv3d_backprop/conv_bp_register.h"
 #include "conv3d_bp_filter_config.h"
 #include "conv3d_bp_filter_impl.h"
 #include "conv3d_bp_filter_intf.h"

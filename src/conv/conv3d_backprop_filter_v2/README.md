@@ -1,47 +1,32 @@
-## AngleV2自定义算子样例说明 
-本样例通过Ascend C编程语言实现了AngleV2算子，并按照不同的算子调用方式分别给出了对应的端到端实现。
-
-## 算子描述
-计算给定输入张量的幅角（以弧度为单位）
-
-- 当输入x为复数时，其中x.real和x.imag分别代表x的实部和虚部
-  $$y = \left\{
-    \begin{array}{rcl}
-    &atan(\frac{x.imag}{x.real}) & x.real \gt 0 \\
-    &\frac{\pi}{2} & x.real = 0 \&\& x.imag \ge 0 \\
-    &0 & x.real = 0 \&\& x.imag = 0 \\
-    &-\frac{\pi}{2} & x.real = 0 \&\& x.imag \lt 0 \\
-    &\pi + atan(\frac{x.imag}{x.real}) & x.real \lt 0 \&\& x.imag \ge 0 \\
-    &-\pi + atan(\frac{x.imag}{x.real}) & x.real \lt 0 \&\& x.imag \lt 0\\
-    &sign(x.imag) \times \pi & x.real = -\inf \&\& 0 \lt abs(x.imag) \lt \inf\\
-    &0 & x.real = \inf \&\& 0 \lt abs(x.imag) \lt \inf\\
-    &sign(x.imag) \times \frac{\pi}{4} & x.real = \inf \&\& abs(x.imag) = \inf\\
-    &sign(x.imag) \times \frac{3\pi}{4} & x.real = -\inf \&\& abs(x.imag) = \inf\\
-    &sign(x.imag) \times \frac{\pi}{2} & abs(x.real) \lt \inf \&\& abs(x.imag) = \inf\\
-    \end{array}
-    \right.
-  $$
-
-- 当输入x为实数时
-  $$y = \left\{
-    \begin{array}{rcl}
-    &0 & x \ge 0 \\
-    &\pi & x \lt 0 \\
-    \end{array}
-    \right.
-  $$
+## Conv3DBackpropFilterV2自定义算子样例说明 
+本样例通过Ascend C编程语言实现了Conv3DBackpropFilterV2算子，并按照不同的算子调用方式分别给出了对应的端到端实现。
 
 
 ## 算子规格描述
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Conv2DBackpropFilterV2</th></tr>
-<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Conv3DBackpropFilterV2</th></tr>
+<tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
 
-<tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16, complex64, bool, uint8, int8, int16, int32, int64</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
 
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32, float16</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">filter_size</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td><td align="center">\</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">conv2d_backprop_filter_v2</td></td></tr>
+<tr><td align="center">out_backprop</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
+
+<tr><td align="center">stride</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td><td align="center">\</td></tr>
+
+<tr><td align="center">pads</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td><td align="center">\</td></tr>
+
+<tr><td align="center">dilations</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td><td align="center">\</td></tr>
+
+<tr><td align="center">groups</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td><td align="center">\</td></tr>
+
+<tr><td align="center">data_format</td><td align="center">list</td><td align="center">string</td><td align="center">-</td><td align="center">\</td></tr>
+
+
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32</td><td align="center">ND</td><td align="center">\</td></tr>
+
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">conv3d_backprop_filter_v2</td></td></tr>
 </table>
 
 
@@ -86,7 +71,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AngleV2算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Conv3DBackpropFilterV2算子。</td>
     </tr>
 </table>
 
