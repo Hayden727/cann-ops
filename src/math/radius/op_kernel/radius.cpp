@@ -41,18 +41,17 @@ public:
         xGm.SetGlobalBuffer((__gm__ TYPE_X *)x, xSize * itemLength);
         yGm.SetGlobalBuffer((__gm__ TYPE_X *)y, ySize * itemLength);
         outGm.SetGlobalBuffer((__gm__ TYPE_X *)out, maxSize * 2);
-        // shapeOutGm.SetGlobalBuffer((__gm__ uint64_t *)shape_out, 9);
         if(ptrXLen!=0){
             ptrXGm.SetGlobalBuffer((__gm__ int32_t *)ptr_x, ptrXLen);
         }
         if(ptrYLen!=0){
             ptrYGm.SetGlobalBuffer((__gm__ int32_t *)ptr_y, ptrYLen);
         }
-        pipe.InitBuffer(itemBuf, AlignUp(this->itemLength * sizeof(TYPE_X)));
-        pipe.InitBuffer(xItemBuf, AlignUp(this->itemLength * sizeof(TYPE_X)));
-        pipe.InitBuffer(xItemFpBuf, AlignUp(this->itemLength * sizeof(float)));
-        pipe.InitBuffer(itemFpBuf, AlignUp(this->itemLength * sizeof(float)));
-        pipe.InitBuffer(resBuf, AlignUp(this->itemLength * sizeof(int8_t)));
+        pipe.InitBuffer(itemBuf, AlignUp(this->itemLength) * sizeof(TYPE_X));
+        pipe.InitBuffer(xItemBuf, AlignUp(this->itemLength) * sizeof(TYPE_X));
+        pipe.InitBuffer(xItemFpBuf, AlignUp(this->itemLength) * sizeof(float));
+        pipe.InitBuffer(itemFpBuf, AlignUp(this->itemLength) * sizeof(float));
+        pipe.InitBuffer(resBuf, AlignUp(this->itemLength) * sizeof(int8_t));
     }
     __aicore__ inline int AlignUp(int x){
         return (x + 31) / 32 * 32;
@@ -87,7 +86,7 @@ public:
                 for(int j = 0; j < itemLength; j ++){
                     itemLocal.SetValue(j, (TYPE_X)yGm.GetValue(i * itemLength + j));
                 }
-                int32_t count = 0;
+                int32_t count = 0, offset = totalCount;
 
                 for(int j = xStart; j < xEnd; j++){
                     LocalTensor<TYPE_X> xItemLocal = xItemBuf.Get<TYPE_X>();
@@ -108,7 +107,7 @@ public:
                         int8_t value = resLocal.GetValue(0);
                         if(value & 0b00000001){
                             outGm.SetValue(totalCount, (TYPE_X)j);
-                            outGm.SetValue(maxSize + totalCount, (TYPE_X)i);
+                            outGm.SetValue(totalCount + maxSize, (TYPE_X)i);
                             count++;
                             totalCount++;
                             
@@ -124,7 +123,7 @@ public:
                         int8_t value = resLocal.GetValue(0);
                         if(value & 0b00000001){
                             outGm.SetValue(totalCount, (float)j);
-                            outGm.SetValue(maxSize + totalCount, (float)i);
+                            outGm.SetValue(totalCount + maxSize, (float)i);
                             count++;
                             totalCount++;
                             if(count == maxNumNeighbors){
@@ -143,7 +142,7 @@ public:
                         int8_t value = resLocal.GetValue(0);
                         if(value & 0b00000001){
                             outGm.SetValue(totalCount, (TYPE_X)j);
-                            outGm.SetValue(maxSize + totalCount, (TYPE_X)i);
+                            outGm.SetValue(totalCount + maxSize, (TYPE_X)i);
                             count++;
                             totalCount++;
                             if(count == maxNumNeighbors){
@@ -153,7 +152,6 @@ public:
                     }
                     
                 }
-                
             }
         }
         
@@ -162,16 +160,12 @@ public:
                 outGm.SetValue(totalCount + i, (TYPE_X)outGm.GetValue(maxSize + i));
             }
         }
-        // shapeOutGm.SetValue(0, (uint64_t)2);
-        // shapeOutGm.SetValue(1, (uint64_t)2);
-        // shapeOutGm.SetValue(2, (uint64_t)totalCount);
     }
 
 private:
     TPipe pipe;
     GlobalTensor<TYPE_X> xGm, yGm, outGm;
     GlobalTensor<int32_t> ptrXGm, ptrYGm;
-    // GlobalTensor<uint64_t> shapeOutGm;
     TBuf<QuePosition::VECCALC> itemBuf, xItemBuf, itemFpBuf, xItemFpBuf, resBuf;
     float r;
     uint32_t ignoreSameIndex, maxNumNeighbors;
@@ -181,7 +175,7 @@ private:
 extern "C" __global__ __aicore__ void radius(GM_ADDR x, GM_ADDR y, GM_ADDR ptr_x, GM_ADDR ptr_y, GM_ADDR out, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
     KernelRadius<DTYPE_X> op;
-    op.Init(x, y, ptr_x, ptr_y, out, 
+    op.Init(x, y, ptr_x, ptr_y, out,
         tiling_data.r, tiling_data.ignore_same_index, tiling_data.max_num_neighbors,
         tiling_data.xSize, tiling_data.ySize, tiling_data.itemLength, tiling_data.ptrXLen, tiling_data.ptrYLen);  
     op.Process();

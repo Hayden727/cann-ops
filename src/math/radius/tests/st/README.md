@@ -1,5 +1,6 @@
 ## 目录结构介绍
 ```
+├── fuzz.py                     // 生成各个测试用例对应的数据 
 ├── msopst.ini                  // st测试配置文件 
 ├── Radius_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
 └── test_radius.py               // 算子期望数据生成脚本
@@ -22,7 +23,6 @@
     ```bash
     export DDK_PATH=${INSTALL_DIR}
     export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/devlib
-    export IGNORE_INFER_ERROR=1
     ```
 
   - 进入到测试用例目录
@@ -43,7 +43,7 @@
   - 执行测试用例(如需更改测试用例的类型，请更改`fuzz.py`文件的`compute_dtype`以及json文件中输入输出的type字段)
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Radius_all_case.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${DDK_PATH}/python/site-packages/bin/msopst run -i ./Radius_all_case.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明

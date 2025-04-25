@@ -60,9 +60,12 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 namespace ge {
 static ge::graphStatus InferShape(gert::InferShapeContext* context)
 {
-    const gert::Shape* x1_shape = context->GetInputShape(0);
-    gert::Shape* y_shape = context->GetOutputShape(0);
-    *y_shape = *x1_shape;
+    return GRAPH_SUCCESS;
+}
+static ge::graphStatus InferDataType(gert::InferDataTypeContext *context)
+{
+    const ge::DataType x1_dtype = context->GetInputDataType(0);
+    context->SetOutputDataType(0, x1_dtype);
     return GRAPH_SUCCESS;
 }
 }
@@ -98,12 +101,11 @@ public:
             .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_INT32})
             .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-            // .OutputShapeDependOnCompute();
         this->Attr("r").Float();
         this->Attr("max_num_neighbors").Int();
         this->Attr("ignore_same_index").Bool();
 
-        this->SetInferShape(ge::InferShape);
+        this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 
         this->AICore()
             .SetTiling(optiling::TilingFunc);
