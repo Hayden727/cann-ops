@@ -13,15 +13,15 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 - 算子功能：实现了数据select + reduce + max + sub + exp + reduce_sum_d + div，返回结果的功能。
 - 计算公式：
   
-  $$\text{input1_sel} &= \text{input1} \cdot \text{sel} $$
-  $$\text{input2_sel} &= \text{input2} \cdot (\neg \text{sel}) $$
-  $$\text{add_res} &= \text{input1_sel} + \text{input2_sel} $$
-  $$\text{max_res} &= \max(\text{add_res}, \text{axis}=-1) $$
-  $$\text{sub_res} &= \text{add_res} - \text{max_res} $$
-  $$\text{exp_res} &= e^{\text{sub_res}} $$
-  $$\text{sum_res} &= \sum(\text{exp_res}, \text{axis}=-1) $$
-  $$\text{result} &= \frac{\text{exp_res}}{\text{sum_res}} $$
-  $$\text{output}_1 &= \frac{1}{1 + e^{-(\text{sub_res} \cdot 1)}} $$
+  $$\text{input1_sel} = \text{input1} \cdot \text{sel} $$
+  $$\text{input2_sel} = \text{input2} \cdot (\neg \text{sel}) $$
+  $$\text{add_res} = \text{input1_sel} + \text{input2_sel} $$
+  $$\text{max_res} = \max(\text{add_res}, \text{axis}=-1) $$
+  $$\text{sub_res} = \text{add_res} - \text{max_res} $$
+  $$\text{exp_res} = e^{\text{sub_res}} $$
+  $$\text{sum_res} = \sum(\text{exp_res}, \text{axis}=-1) $$
+  $$\text{result} = \frac{\text{exp_res}}{\text{sum_res}} $$
+  $$\text{output}_1 = \frac{1}{1 + e^{-(\text{sub_res} \cdot 1)}} $$
   
   **说明：**
   无。
