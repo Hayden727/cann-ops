@@ -13,9 +13,6 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 - 算子功能：实现了数据select + reduce + max + sub + exp + reduce_sum_d + div，返回结果的功能。
 - 计算公式：
   
-  $$\text{input1} &\sim \text{Uniform}(0.0, 1.0) $$
-  $$\text{input2} &\sim \text{Uniform}(0.0, 1.0) $$
-  $$\text{sel} &\sim \text{Bernoulli}(0.5) $$
   $$\text{input1_sel} &= \text{input1} \cdot \text{sel} $$
   $$\text{input2_sel} &= \text{input2} \cdot (\neg \text{sel}) $$
   $$\text{add_res} &= \text{input1_sel} + \text{input2_sel} $$
@@ -89,7 +86,7 @@ SelectReduceMaxDSubExpReduceSumDRealDiv由select + reduce + max + sub + exp + re
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">SelectReduceMaxDSubExpReduceSumDRealDiv</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">sel</td><td align="center">64 * 1 * 60</td><td align="center">bool</td><td align="center">ND</td></tr>
 <tr><td align="center">input1</td><td align="center">64 * 1 * 60</td><td align="center">float16/float32/bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">input2</td><td align="center">64 * 1 * 60</td><td align="center">float16/float32/bfloat16</td><td align="center">ND</td></tr>

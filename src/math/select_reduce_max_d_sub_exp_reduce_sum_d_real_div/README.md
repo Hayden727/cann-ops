@@ -9,7 +9,7 @@
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">SelectReduceMaxDSubExpReduceSumDRealDiv</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">sel</td><td align="center">64 * 1 * 60</td><td align="center">bool</td><td align="center">ND</td></tr>
 <tr><td align="center">input1</td><td align="center">64 * 1 * 60</td><td align="center">float16/float32/bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">input2</td><td align="center">64 * 1 * 60</td><td align="center">float16/float32/bfloat16</td><td align="center">ND</td></tr>
