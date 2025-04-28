@@ -38,7 +38,7 @@ def gen_golden_data_simple():
         gradTarget = gradTarget.masked_fill(target==0, 0)
 
     if reduction == 1:
-        gradTarget = gradTarget * (1 / target.numel())
+        gradTarget = gradTarget / target.numel()
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

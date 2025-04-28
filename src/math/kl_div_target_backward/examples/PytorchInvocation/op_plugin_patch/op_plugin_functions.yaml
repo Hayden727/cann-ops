@@ -1,0 +1,2 @@
+  - func: npu_kl_div_target_backward(Tensor grad_output, Tensor self, Tensor target, int reduction, bool log_target) -> Tensor
+    op_api: all_version

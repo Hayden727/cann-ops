@@ -177,7 +177,7 @@ std::string Shape2String(const T& shape) {
     return oss.str();
 }
 
-static ge::graphStatus InferShape(gert::InferShapeContext* context)
+static graphStatus InferShape(gert::InferShapeContext* context)
 {
     int64_t numshapes0 = context->GetInputTensor(GRAD_OUTPUT_IDX)->GetOriginShape().GetShapeSize();
     int64_t numshapes1 = context->GetInputTensor(SELF_IDX)->GetOriginShape().GetShapeSize();
@@ -216,7 +216,13 @@ static ge::graphStatus InferShape(gert::InferShapeContext* context)
     for (int64_t i = 0; i < maxShapeDim; i++) {
         yShape->SetDim(i, shapefull[i]);
     }
-    OP_LOGD(context->GetNodeName(), "yShape: %s", ge::Shape2String(*yShape).c_str());
+    OP_LOGD(context->GetNodeName(), "yShape: %s", Shape2String(*yShape).c_str());
+    return GRAPH_SUCCESS;
+}
+static graphStatus InferDataType(gert::InferDataTypeContext *context)
+{
+    const auto inputDataType = context->GetInputDataType(0);
+    context->SetOutputDataType(0, inputDataType);
     return GRAPH_SUCCESS;
 }
 }
@@ -250,7 +256,7 @@ public:
         this->Attr("reduction").Int();
         this->Attr("log_target").Bool();
 
-        this->SetInferShape(ge::InferShape);
+        this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 
         this->AICore()
             .SetTiling(optiling::TilingFunc);
