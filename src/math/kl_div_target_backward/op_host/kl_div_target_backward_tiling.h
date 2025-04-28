@@ -1,0 +1,26 @@
+
+#include "register/tilingdata_base.h"
+
+namespace optiling {
+  BEGIN_TILING_DATA_DEF(KlDivTargetBackwardTilingData)
+  TILING_DATA_FIELD_DEF(int64_t, smallCoreDataNum);
+  TILING_DATA_FIELD_DEF(int64_t, bigCoreDataNum);
+  TILING_DATA_FIELD_DEF(int64_t, finalBigTileNum);
+  TILING_DATA_FIELD_DEF(int64_t, finalSmallTileNum);
+  TILING_DATA_FIELD_DEF(int64_t, tileDataNum);
+  TILING_DATA_FIELD_DEF(int64_t, smallTailDataNum);
+  TILING_DATA_FIELD_DEF(int64_t, bigTailDataNum);
+  TILING_DATA_FIELD_DEF(int64_t, tailBlockNum);
+  TILING_DATA_FIELD_DEF(int64_t, gradOutputLen);
+  TILING_DATA_FIELD_DEF(int64_t, selfLen);
+  TILING_DATA_FIELD_DEF(int64_t, targetLen);
+  TILING_DATA_FIELD_DEF(uint32_t, reduction);
+  TILING_DATA_FIELD_DEF(uint32_t, logTarget);
+  TILING_DATA_FIELD_DEF(int64_t, maxShapeDim);
+  TILING_DATA_FIELD_DEF(int64_t, inputNum);
+  TILING_DATA_FIELD_DEF_ARR(int64_t, 24, shape);
+  TILING_DATA_FIELD_DEF_ARR(int64_t, 8, shapefull);
+END_TILING_DATA_DEF;
+
+REGISTER_TILING_DATA_CLASS(KlDivTargetBackward, KlDivTargetBackwardTilingData)
+}
