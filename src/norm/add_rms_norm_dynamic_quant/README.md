@@ -2,19 +2,27 @@
 本样例通过`Ascend C`编程语言实现了`AddRmsNormDynamicQuant`算子。
 
 ### 算子描述
-`AddRmsNormDynamicQuant`DynamicQuant算子则是为输入张量进行对称动态量化的算子。AddRmsNormDynamicQuant 算子将 RmsNorm 前的 Add 算子和 RmsNorm 归一化输出给到的 1 个或 2 个 DynamicQuant 算子融合起来，减少搬入搬出操作。
+将 RmsNorm 前的 Add 算子和 RmsNorm 归一化输出给到的 1 个或 2 个 DynamicQuant 算子融合起来，减少搬入搬出操作。
 
 ### 算子规格描述
 
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddRmsNormDynamicQuant</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="7" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x1</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
+<tr><td align="center">x2</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
+<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
+<tr><td align="center">smooth_scale1</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
+<tr><td align="center">smooth_scale2</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
+<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="5" align="center">算子输出</td><td align="center">y1</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
+<tr><td align="center">y2</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
+<tr><td align="center">scale1</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td align="center">scale2</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_rms_norm_dynamic_quant</td></tr>
 </table>
@@ -31,7 +39,6 @@
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
 ├── op_host                     // host目录
 ├── op_kernel                   // kernel目录
 ├── opp_kernel_aicpu            // aicpu目录
@@ -70,4 +77,4 @@
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/06 | 新增本readme |
+| 2025/04/06 | 新增本readme |

@@ -2,19 +2,22 @@
 本样例通过`Ascend C`编程语言实现了`RmsNormGrad`算子。
 
 ### 算子描述
-`RmsNormGrad`算子[aclnnRmsNorm](aclnnRmsNorm.md)的反向计算。
+RmsNorm的反向计算。
 
 ### 算子规格描述
 
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">RmsNormGrad</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">dy</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">rstd</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="2" align="center">算子输出</td><td align="center">dx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">dgamma</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">rms_norm_grad</td></tr>
 </table>
@@ -31,7 +34,6 @@
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
 ├── op_host                     // host目录
 ├── op_kernel                   // kernel目录
 ├── opp_kernel_aicpu            // aicpu目录
@@ -70,4 +72,4 @@
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/06 | 新增本readme |
+| 2025/04/06 | 新增本readme |
