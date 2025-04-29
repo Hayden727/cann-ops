@@ -179,9 +179,9 @@ std::string Shape2String(const T& shape) {
 
 static graphStatus InferShape(gert::InferShapeContext* context)
 {
-    int64_t numshapes0 = context->GetInputTensor(GRAD_OUTPUT_IDX)->GetOriginShape().GetShapeSize();
-    int64_t numshapes1 = context->GetInputTensor(SELF_IDX)->GetOriginShape().GetShapeSize();
-    int64_t numshapes2 = context->GetInputTensor(TARGET_IDX)->GetOriginShape().GetShapeSize();
+    int64_t numshapes0 = context->GetInputTensor(GRAD_OUTPUT_IDX)->GetOriginShape().GetDimNum();
+    int64_t numshapes1 = context->GetInputTensor(SELF_IDX)->GetOriginShape().GetDimNum();
+    int64_t numshapes2 = context->GetInputTensor(TARGET_IDX)->GetOriginShape().GetDimNum();
     // 广播后维度数
     int64_t maxShapeDim = std::max(numshapes0, std::max(numshapes1, numshapes2));
     // 记录每个输入原始shape
@@ -191,7 +191,7 @@ static graphStatus InferShape(gert::InferShapeContext* context)
     for (int64_t i = 0; i < INPUT_VAR_NUM; i++) {
         int64_t *ss = &shape[i * MAX_SHAPE_DIM];
         auto inputshape = context->GetInputTensor(i);
-        int64_t dim_num =  inputshape->GetOriginShape().GetShapeSize();
+        int64_t dim_num =  inputshape->GetOriginShape().GetDimNum();
         for (int64_t j = 0; j < maxShapeDim; j++) {
             if(j < maxShapeDim - dim_num){
                 ss[j] = 1;
@@ -200,17 +200,18 @@ static graphStatus InferShape(gert::InferShapeContext* context)
             }
         }
     }
-    for (int64_t j = 0; j < maxShapeDim; j++) {
+    for (int64_t i = 0; i < maxShapeDim; i++) {
         int64_t maxDim = 1;
         int64_t *sf = &shapefull[0];
-        for (int64_t i = 0; i < INPUT_VAR_NUM; i++) {
-            int64_t *ss = &shape[i * MAX_SHAPE_DIM];
-            if (ss[j] > maxDim) {
-                maxDim = ss[j];
+        for (int64_t j = 0; j < INPUT_VAR_NUM; j++) {
+            int64_t *ss = &shape[j * MAX_SHAPE_DIM];
+            if (ss[i] > maxDim) {
+                maxDim = ss[i];
             }
         }
-        sf[j] = maxDim;  // 广播后的形状
+        sf[i] = maxDim;  // 广播后的形状
     }
+    const gert::Shape *x1_shape = context->GetInputShape(0);
     gert::Shape* yShape = context->GetOutputShape(0);
     yShape->SetDimNum(maxShapeDim);
     for (int64_t i = 0; i < maxShapeDim; i++) {
@@ -219,6 +220,7 @@ static graphStatus InferShape(gert::InferShapeContext* context)
     OP_LOGD(context->GetNodeName(), "yShape: %s", Shape2String(*yShape).c_str());
     return GRAPH_SUCCESS;
 }
+
 static graphStatus InferDataType(gert::InferDataTypeContext *context)
 {
     const auto inputDataType = context->GetInputDataType(0);
@@ -226,7 +228,6 @@ static graphStatus InferDataType(gert::InferDataTypeContext *context)
     return GRAPH_SUCCESS;
 }
 }
-
 
 namespace ops {
 class KlDivTargetBackward : public OpDef {

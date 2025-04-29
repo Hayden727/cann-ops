@@ -66,7 +66,7 @@ function main() {
         sed -i "/custom:/r   $FUNCTION_REGISTE_FIELD" $FUNCTION_REGISTE_FILE
     fi
 
-    4. 编译PTA插件并安装
+    # 4. 编译PTA插件并安装
     cp -rf op_plugin_patch/*.cpp ${PYTORCH_DIR}/third_party/op-plugin/op_plugin/ops/opapi
     export DISABLE_INSTALL_TORCHAIR=FALSE
     cd ${PYTORCH_DIR}
@@ -81,13 +81,13 @@ function main() {
         return 1
     fi
     echo "INFO: Ascend C KlDivTargetBackward SUCCESS"
-    # # 6. 执行测试文件
-    # python3 test_ops_custom_register_in_graph.py
-    # if [ $? -ne 0 ]; then
-    #     echo "ERROR: run KlDivTargetBackward op in graph failed!"
-    #     return 1
-    # fi
-    # echo "INFO: Ascend C KlDivTargetBackward  in torch.compile graph SUCCESS"
+    # 6. 执行测试文件
+    python3 test_ops_custom_register_in_graph.py
+    if [ $? -ne 0 ]; then
+        echo "ERROR: run KlDivTargetBackward op in graph failed!"
+        return 1
+    fi
+    echo "INFO: Ascend C KlDivTargetBackward  in torch.compile graph SUCCESS"
 
 }
 main

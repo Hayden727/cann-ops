@@ -18,25 +18,28 @@ import torchair
 from torch_npu.testing.testcase import TestCase, run_tests
 from torchair import register_fx_node_ge_converter
 from torchair.ge import Tensor
-from torch_npu.meta._meta_registrations import m
+from torch.library import Library
+m = Library("npu", "IMPL", "Meta")
 
 
 @impl(m, "npu_kl_div_target_backward")
-def npu_kl_div_target_backward_meta(grad_output, self, target, reduction, log_target):
+def npu_kl_div_target_backward_meta(gradOutput, selfX, target, reduction, logTarget):
     return torch.empty_like(target)
 
 
 # 注意： meta_outputs形参名为固定写法，若写错会影响ge节点的输出dtype与shape推导
 @register_fx_node_ge_converter(torch.ops.npu.npu_kl_div_target_backward.default)
-def convert_npu_kl_div_target_backward(grad_output: Tensor, self: Tensor, target: Tensor, reduction: Int, log_target: Bool, grad_target: Tensor = None, meta_outputs: Any = None):
+def convert_npu_kl_div_target_backward(gradOutput: Tensor, selfX: Tensor, target: Tensor, reduction: int, logTarget: bool, grad_target: Tensor = None, meta_outputs: Any = None):
     return torchair.ge.custom_op(
         "KlDivTargetBackward",
         inputs={
-            "grad_output": grad_output,
-            "self": self,
+            "grad_output": gradOutput,
+            "self": selfX,
             "target": target,
-            "reduction": reduction,
-            "log_target": log_target,
+        },
+        attrs={
+            "reduction": torchair.ge.attr.Int(reduction),
+            "log_target": torchair.ge.attr.Bool(logTarget),
         },
         outputs=['grad_target']
     )
@@ -48,10 +51,12 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
         from torchair.configs.compiler_config import CompilerConfig
         config = CompilerConfig()
         npu_backend = torchair.get_npu_backend(compiler_config=config)
-        length = [8, 2048]
+        length = [10, 10, 8, 20, 48]
+        length1 = [8, 1, 48]
+        length2 = [48]
         gradOutput = torch.rand(length, device='cpu', dtype=torch.float16)
-        selfX = torch.rand(length, device='cpu', dtype=torch.float16)
-        target = torch.rand(length, device='cpu', dtype=torch.float16)
+        selfX = torch.rand(length1, device='cpu', dtype=torch.float16)
+        target = torch.rand(length2, device='cpu', dtype=torch.float16)
         reduction = 0
         logTarget = False
         print(gradOutput, '\n', selfX, '\n', target)
@@ -78,7 +83,7 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
             def forward(self, gradOutput, selfX, target, reduction, logTarget):
                 return torch_npu.npu_kl_div_target_backward(gradOutput, selfX, target, reduction, logTarget)
         mod = torch.compile(Module().npu(), backend=npu_backend)
-        output = mod(gradOutput, selfX, target, reduction, logTarget)
+        output = mod(gradOutput.npu(), selfX.npu(), target.npu(), reduction, logTarget).cpu()
         print(output)
         self.assertRtolEqual(output, gradTarget)
 

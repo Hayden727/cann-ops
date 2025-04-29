@@ -21,34 +21,34 @@ class TestCustomKlDivTargetBackward(TestCase):
 
     def test_kl_div_target_backward(self):
         length = [8, 2048]
-        gradOutput = torch.rand(length, device='cpu', dtype=torch.float16)
-        selfX = torch.rand(length, device='cpu', dtype=torch.float16)
+        grad_output = torch.rand(length, device='cpu', dtype=torch.float16)
+        self_x = torch.rand(length, device='cpu', dtype=torch.float16)
         target = torch.rand(length, device='cpu', dtype=torch.float16)
         reduction = 0
-        logTarget = False
-        print(gradOutput, '\n', selfX, '\n', target)
-        if logTarget:
-            gradTarget = target + 1
-            gradTarget = gradTarget - selfX
+        log_target = False
+        print(grad_output, '\n', self_x, '\n', target)
+        if log_target:
+            grad_target = target + 1
+            grad_target = grad_target - self_x
             tmp = torch.exp(target)
-            gradTarget = gradTarget * tmp
-            gradTarget = gradOutput * gradTarget
+            grad_target = grad_target * tmp
+            grad_target = grad_output * grad_target
         else:
             tmp = torch.log(target)
-            gradTarget = tmp + 1
-            gradTarget = gradTarget - selfX
-            gradTarget = gradOutput * gradTarget
-            gradTarget = gradTarget.masked_fill(target==0, 0)
+            grad_target = tmp + 1
+            grad_target = grad_target - self_x
+            grad_target = grad_output * grad_target
+            grad_target = grad_target.masked_fill(target==0, 0)
 
         if reduction == 1:
-            gradTarget = gradTarget / target.numel()
+            grad_target = grad_target / target.numel()
 
         torch.npu.synchronize()
-        output = torch_npu.npu_kl_div_target_backward(gradOutput.npu(), selfX.npu(), target.npu(), reduction, logTarget).cpu()
+        output = torch_npu.npu_kl_div_target_backward(grad_output.npu(), self_x.npu(), target.npu(), reduction, log_target).cpu()
         torch.npu.synchronize()
 
         print(output)
-        self.assertRtolEqual(output, gradTarget)
+        self.assertRtolEqual(output, grad_target)
 
 
 if __name__ == "__main__":

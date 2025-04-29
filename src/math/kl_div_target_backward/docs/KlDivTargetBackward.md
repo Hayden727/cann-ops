@@ -10,16 +10,24 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 
 ## 功能描述
 
-- 算子功能：实现了两个数据相加，返回相加结果的功能。
+- 算子功能：实现了计算KL散度在反向传播过程中目标张量的梯度的功能，返回目标张量的梯度。
 - 计算公式：
   
-  $$
-  tmp={█(gradOutput*[(target+1-self)*e^target ]                     if      logTarget=true@■(gradOutput*(ln^target+1-self)         if      logTarget=false and target>0@0                                                                      if      logTarget=false and target=0))┤
-  gradTarget={█(tmp/(target.size(0))           if      reduction=1@tmp                                       else)┤
-  $$
+  $$tmp = \left\{ \begin{array}{r}
+  gradOutput*\left\lbrack (target + 1 - self)*e^{target} \right\rbrack\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ \ \ \ \ \ logTarget = true \\
+  \begin{matrix}
+  gradOutput*\left( \ln^{target} + 1 - self \right)\ \ \ \ \ \ \ \ if\ \ \ \ \ \ logTarget = false\ and\ target > 0 \\
+  0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ \ \ \ \ \ logTarget = false\ and\ target = 0
+  \end{matrix}
+  \end{array} \right.\ $$
+
+  $$gradTarget = \left\{ \begin{array}{r}
+  \frac{tmp}{target.size(0)}\ \ \ \ \ \ \ \ \ \ if\ \ \ \ \ \ reduction = 1 \\
+  tmp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else
+  \end{array} \right.\ $$
   
   **说明：**
-  无。
+  gradOutput表示梯度输出，self是输入张量，target是目标张量，reduction指定KL散度正向计算完loss之后的操作，logTarget表示target的数据是否已经做过log操作, gradTarget是输出的target的梯度。
 
 ## 实现原理
 
@@ -42,12 +50,12 @@ const aclTensor *target, int64_t reduction, bool logTarget, const aclTensor *out
 
 - **参数说明：**
   
-  - gradOutput（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入gradOutput，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
-  - self（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入self，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
-  - target（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入target，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
+  - gradOutput（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入gradOutput，表示输入张量的梯度，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
+  - self（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入self，表示输入张量，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
+  - target（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入target，表示目标张量，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
   - reduction（int64_t，入参）：指定KL散度正向计算完loss之后的操作，数据类型支持INT64。
   - logTarget（bool，入参）：target的数据是否已经做过log操作，数据类型支持BOOL。
-  - gradTarget（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出gradTarget，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
+  - gradTarget（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出gradTarget，表示目标张量的梯度，数据类型支持FLOAT16、FLOAT32、BFLOAT16，数据格式支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**

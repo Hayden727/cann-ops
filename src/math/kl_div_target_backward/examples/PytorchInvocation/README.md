@@ -48,7 +48,7 @@
     from torch_npu.meta._meta_registrations import m
     from torch.library import impl
     @impl(m, "npu_kl_div_target_backward")
-    def npu_kl_div_target_backward_meta(grad_output, self, target, reduction, log_target):
+    def npu_kl_div_target_backward_meta(grad_output, self_x, target, reduction, log_target):
         return torch.empty_like(target)
     ```
 
@@ -57,7 +57,7 @@
     KlDivTargetBackward的REG_OP原型为：
     ```cpp
     REG_OP(KlDivTargetBackward)
-        .INPUT(gradOutput, ge::TensorType::ALL())
+        .INPUT(grad_output, ge::TensorType::ALL())
         .INPUT(self, ge::TensorType::ALL())
         .INPUT(target, ge::TensorType::ALL())
         .OUTPUT(z, ge::TensorType::ALL())
@@ -71,15 +71,17 @@
     from torchair import register_fx_node_ge_converter
     from torchair.ge import Tensor
     @register_fx_node_ge_converter(torch.ops.npu.npu_kl_div_target_backward.default)
-    def convert_npu_kl_div_target_backward(grad_output: Tensor, self: Tensor, target: Tensor, reduction: Int, log_target: Bool, grad_target: Tensor = None, meta_outputs: Any = None):
+    def convert_npu_kl_div_target_backward(grad_output: Tensor, self_x: Tensor, target: Tensor, reduction: int, log_target: bool, grad_target: Tensor = None, meta_outputs: Any = None):
         return torchair.ge.custom_op(
             "KlDivTargetBackward",
             inputs={
                 "grad_output": grad_output,
-                "self": self,
+                "self": self_x,
                 "target": target,
-                "reduction": reduction,
-                "log_target": log_target,
+            },
+            attrs={
+                "reduction": torchair.ge.attr.Int(reduction),
+                "log_target": torchair.ge.attr.Bool(log_target),
             },
             outputs=['grad_target']
         )

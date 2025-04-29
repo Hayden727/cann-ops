@@ -2,14 +2,14 @@
 本样例通过`Ascend C`编程语言实现了`KlDivTargetBackward`算子。
 
 ### 算子描述
-`KlDivTargetBackward`算子返回两个数据相加的结果。
+`KlDivTargetBackward`算子返回KL散度在反向传播过程中目标张量的梯度。
 
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">KlDivTargetBackward</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">KlDivTargetGrad</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="6" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">gradOutput</td><td align="center">1-8维</td><td align="center">float16、float32、bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">self</td><td align="center">1-8维</td><td align="center">float16、float32、bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">target</td><td align="center">1-8维</td><td align="center">float16、float32、bfloat16</td><td align="center">ND</td></tr>
@@ -64,6 +64,8 @@
     <th>目录</th><th>描述</th>
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用KlDivTargetBackward算子。</td>
+    </tr>
+    <tr>
         <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用KlDivTargetBackward算子。</td>
     </tr>
     </tr>
