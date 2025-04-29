@@ -1,3 +1,13 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
 import torch
 
 from atk.common.log import Logger
@@ -10,41 +20,35 @@ from atk.tasks.api_execute.base_api import BaseApi
 class FunctionApi(BaseApi):
     def __call__(self, input_data: InputDataset, with_output: bool = False):
         if self.device == "cpu" or self.device == "npu":
-            gradOutput = input_data.kwargs['grad_output']
-            selfX = input_data.kwargs['self']
+            grad_output = input_data.kwargs['grad_output']
+            self_x = input_data.kwargs['self']
             target = input_data.kwargs['target']
             reduction = input_data.kwargs['reduction']
-            logTarget = input_data.kwargs['log_target']
+            log_target = input_data.kwargs['log_target']
             if target.numel() == 0:
                 return target
-            # print(gradOutput)
-            # print(selfX)
-            # print(target)
-            # print(reduction)
-            # print(logTarget)
-            compute_dtype = gradOutput.dtype
-            gradTarget = gradOutput
+            compute_dtype = grad_output.dtype
+            grad_target = grad_output
             if compute_dtype == torch.bfloat16:
-                gradOutput = gradOutput.to(torch.float)
-                selfX = selfX.to(torch.float)
+                grad_output = grad_output.to(torch.float)
+                self_x = self_x.to(torch.float)
                 target = target.to(torch.float)
 
-            if logTarget:
-                gradTarget = target + 1
-                gradTarget = gradTarget - selfX
+            if log_target:
+                grad_target = target + 1
+                grad_target = grad_target - self_x
                 tmp = torch.exp(target)
-                gradTarget = gradTarget * tmp
-                gradTarget = gradOutput * gradTarget
+                grad_target = grad_target * tmp
+                grad_target = grad_output * grad_target
             else:
                 tmp = torch.log(target)
-                gradTarget = tmp + 1
-                gradTarget = gradTarget - selfX
-                gradTarget = gradOutput * gradTarget
-                gradTarget = gradTarget.masked_fill(target==0, 0)
+                grad_target = tmp + 1
+                grad_target = grad_target - self_x
+                grad_target = grad_output * grad_target
+                grad_target = grad_target.masked_fill(target==0, 0)
 
             if reduction == 1:
-                gradTarget = gradTarget / target.numel()
-            output = gradTarget.to(compute_dtype)
-            # print(output)
+                grad_target = grad_target / target.numel()
+            output = grad_target.to(compute_dtype)
         return output           
         

@@ -19,33 +19,33 @@ def gen_golden_data_simple():
     input1_shape = [1, 400]
     output_shape = [4, 400]
     reduction = 0
-    logTarget = True
+    log_target = True
 
-    gradOutput = torch.from_numpy(np.random.uniform(-1, 1, input_shape).astype(dtype))
-    selfX = torch.from_numpy(np.random.uniform(-1, 1, input1_shape).astype(dtype))
+    grad_output = torch.from_numpy(np.random.uniform(-1, 1, input_shape).astype(dtype))
+    self_x = torch.from_numpy(np.random.uniform(-1, 1, input1_shape).astype(dtype))
     target = torch.from_numpy(np.random.uniform(-1, 1, input_shape).astype(dtype))
-    if logTarget:
-        gradTarget = target + 1
-        gradTarget = gradTarget - selfX
+    if log_target:
+        grad_target = target + 1
+        grad_target = grad_target - self_x
         tmp = torch.exp(target)
-        gradTarget = gradTarget * tmp
-        gradTarget = gradOutput * gradTarget
+        grad_target = grad_target * tmp
+        grad_target = grad_output * grad_target
     else:
         tmp = torch.log(target)
-        gradTarget = tmp + 1
-        gradTarget = gradTarget - selfX
-        gradTarget = gradOutput * gradTarget
-        gradTarget = gradTarget.masked_fill(target==0, 0)
+        grad_target = tmp + 1
+        grad_target = grad_target - self_x
+        grad_target = grad_output * grad_target
+        grad_target = grad_target.masked_fill(target == 0, 0)
 
     if reduction == 1:
-        gradTarget = gradTarget / target.numel()
+        grad_target = grad_target / target.numel()
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
-    gradOutput.numpy().astype(dtype).tofile("./input/input_x0.bin")
-    selfX.numpy().astype(dtype).tofile("./input/input_x1.bin")
+    grad_output.numpy().astype(dtype).tofile("./input/input_x0.bin")
+    self_x.numpy().astype(dtype).tofile("./input/input_x1.bin")
     target.numpy().astype(dtype).tofile("./input/input_x2.bin")
-    gradTarget.numpy().astype(dtype).tofile("./output/golden.bin")
+    grad_target.numpy().astype(dtype).tofile("./output/golden.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()

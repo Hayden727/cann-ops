@@ -1,6 +1,14 @@
-
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
 import random
-
 
 from atk.case_generator.generator.generate_types import GENERATOR_REGISTRY
 from atk.case_generator.generator.base_generator import CaseGenerator
@@ -18,10 +26,10 @@ class ReduceGenerator(CaseGenerator):
         '''
         dim = len(case_config.inputs[0].shape)  # 获取第一个tensor参数shape最大dim值
         range_is_null = case_config.inputs[0].is_range_null()  # 判断是否为空tensor
-        dtype=case_config.inputs[0].dtype
-        case_config.inputs[1].dtype=dtype
-        case_config.inputs[2].dtype=dtype
-        shape=case_config.inputs[0].shape
-        case_config.inputs[1].shape=shape
-        case_config.inputs[2].shape=shape
+        dtype = case_config.inputs[0].dtype
+        case_config.inputs[1].dtype = dtype
+        case_config.inputs[2].dtype = dtype
+        shape = case_config.inputs[0].shape
+        case_config.inputs[1].shape = shape
+        case_config.inputs[2].shape = shape
         return case_config  # 返回修改和符合参数约束的用例
