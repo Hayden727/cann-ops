@@ -294,7 +294,6 @@ private:
 extern "C" __global__ __aicore__ void kl_div_target_backward(GM_ADDR grad_output, GM_ADDR self, GM_ADDR target,
     GM_ADDR grad_target, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    // TODO: user kernel impl
     
     TileVar tilevar; 
     tilevar.gradOutputLen = tiling_data.gradOutputLen;

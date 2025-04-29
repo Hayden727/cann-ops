@@ -102,7 +102,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
 
     // 因为kernel用到了CompareScalar指令要求输入按256B对齐
-    int64_t tileBlockNum = (ubSize / BLOCK_SIZE / BUFFER_NUM) / ubDataNumber / ALIGNED_BLOCK_NUM * ALIGNED_BLOCK_NUM;
+    int64_t tileBlockNum = (static_cast<int64_t>(ubSize) / BLOCK_SIZE / BUFFER_NUM) /
+        ubDataNumber / ALIGNED_BLOCK_NUM * ALIGNED_BLOCK_NUM;
     int64_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
 
     // Input data for 32B alignment

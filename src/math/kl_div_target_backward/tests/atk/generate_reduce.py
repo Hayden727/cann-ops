@@ -17,7 +17,6 @@ from atk.configs.case_config import CaseConfig
 
 @GENERATOR_REGISTRY.register("reduce")  # reduce为注册的生成器名称，对应yaml中的generate参数
 class ReduceGenerator(CaseGenerator):
-
     def after_case_config(self, case_config: CaseConfig) -> CaseConfig:
         '''
         用例参数约束修改入口
