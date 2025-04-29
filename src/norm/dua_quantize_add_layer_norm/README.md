@@ -2,19 +2,32 @@
 本样例通过`Ascend C`编程语言实现了`DuaQuantizeAddLayerNorm`算子。
 
 ### 算子描述
-`DuaQuantizeAddLayerNorm`算子是大模型常用的标准化操作，相比LayerNorm算子，其去掉了减去均值的部分。AddRmsNormQuant算子将RmsNorm前的Add算子以及RmsNorm后的Quantize算子融合起来，减少搬入搬出操作。
+是大模型常用的混合算子，它结合了三个核心操作：量化 (Quantize)、加法 (Add) 和层归一化 (Layer Normalization)。
 
 ### 算子规格描述
 
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">DuaQuantizeAddLayerNorm</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="14" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x1</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">x2</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">beta</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">bias</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">scales1</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">scales2</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">zero_points1</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">zero_points2</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">dtype</td><td align="center">attr</td><td align="center">int</td><td align="center">-</td></tr>
+<tr><td align="center">axis</td><td align="center">attr</td><td align="center">int</td><td align="center">-</td></tr>
+<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">additional_output</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="3" align="center">算子输出</td><td align="center">y1</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
+<tr><td align="center">y2</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_rms_norm_quant</td></tr>
 </table>
@@ -31,7 +44,6 @@
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
 ├── op_host                     // host目录
 ├── op_kernel                   // kernel目录
 ├── opp_kernel_aicpu            // aicpu目录
@@ -63,11 +75,11 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用DuaQuantizeAddLayerNorm算子。</td>
+        <td><a href="./tests/st"> st</td><td>通过GEIR调用的方式调用DuaQuantizeAddLayerNorm算子。</td>
     </tr>
 </table>
 
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/06 | 新增本readme |
+| 2025/04/06 | 新增本readme |

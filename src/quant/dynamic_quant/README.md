@@ -2,21 +2,21 @@
 本样例通过`Ascend C`编程语言实现了`DynamicQuant`算子。
 
 ### 算子描述
-`DynamicQuant`算子对由多个输入通道组成的输入信号应用2D双三次上采样。
+为输入张量进行per-token对称动态量化。
 
 ### 算子规格描述
 
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">DynamicQuant</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">float16,bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">smooth_scales</td><td align="center">tensor</td><td align="center">float16,bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">group_index</td><td align="center">tensor</td><td align="center">int32</td><td align="center">ND</td></tr>
 <tr><td align="center">dst_type</td><td align="center">scalar</td><td align="center">int8</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="2" align="center">算子输出</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="3" align="center">算子输出</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">y</td><td align="center">tensor</td><td align="center">int8,int4</td><td align="center">ND</td></tr>
 <tr><td align="center">scale</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
@@ -35,7 +35,6 @@
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
 ├── op_host                     // host目录
 ├── op_kernel                   // kernel目录
 ├── opp_kernel_aicpu            // aicpu目录
@@ -69,24 +68,9 @@
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用DynamicQuant算子。</td>
     </tr>
-    <tr>
-        <td><a href="./examples/AclOfflineModel"> AclOfflineModel</td><td>通过aclopExecuteV2调用的方式调用DynamicQuant算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用DynamicQuant算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用DynamicQuant算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用DynamicQuant算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用DynamicQuant算子。</td>
-    </tr>
 </table>
 
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/06 | 新增本readme |
+| 2025/04/06 | 新增本readme |
