@@ -45,7 +45,7 @@ class FunctionApi(BaseApi):
                 grad_target = tmp + 1
                 grad_target = grad_target - self_x
                 grad_target = grad_output * grad_target
-                grad_target = grad_target.masked_fill(target==0, 0)
+                grad_target = grad_target.masked_fill(target == 0, 0)
 
             if reduction == 1:
                 grad_target = grad_target / target.numel()

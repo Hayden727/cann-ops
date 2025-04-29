@@ -23,23 +23,24 @@ m = Library("npu", "IMPL", "Meta")
 
 
 @impl(m, "npu_kl_div_target_backward")
-def npu_kl_div_target_backward_meta(gradOutput, selfX, target, reduction, logTarget):
+def npu_kl_div_target_backward_meta(grad_output, self_x, target, reduction, log_target):
     return torch.empty_like(target)
 
 
 # 注意： meta_outputs形参名为固定写法，若写错会影响ge节点的输出dtype与shape推导
 @register_fx_node_ge_converter(torch.ops.npu.npu_kl_div_target_backward.default)
-def convert_npu_kl_div_target_backward(gradOutput: Tensor, selfX: Tensor, target: Tensor, reduction: int, logTarget: bool, grad_target: Tensor = None, meta_outputs: Any = None):
+def convert_npu_kl_div_target_backward(grad_output: Tensor, self_x: Tensor, target: Tensor,
+    reduction: int, log_target: bool, grad_target: Tensor = None, meta_outputs: Any = None):
     return torchair.ge.custom_op(
         "KlDivTargetBackward",
         inputs={
-            "grad_output": gradOutput,
-            "self": selfX,
+            "grad_output": grad_output,
+            "self": self_x,
             "target": target,
         },
         attrs={
             "reduction": torchair.ge.attr.Int(reduction),
-            "log_target": torchair.ge.attr.Bool(logTarget),
+            "log_target": torchair.ge.attr.Bool(log_target),
         },
         outputs=['grad_target']
     )
@@ -54,38 +55,38 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
         length = [10, 10, 8, 20, 48]
         length1 = [8, 1, 48]
         length2 = [48]
-        gradOutput = torch.rand(length, device='cpu', dtype=torch.float16)
-        selfX = torch.rand(length1, device='cpu', dtype=torch.float16)
+        grad_output = torch.rand(length, device='cpu', dtype=torch.float16)
+        self_x = torch.rand(length1, device='cpu', dtype=torch.float16)
         target = torch.rand(length2, device='cpu', dtype=torch.float16)
         reduction = 0
-        logTarget = False
-        print(gradOutput, '\n', selfX, '\n', target)
-        if logTarget:
-            gradTarget = target + 1
-            gradTarget = gradTarget - selfX
+        log_target = False
+        print(grad_output, '\n', self_x, '\n', target)
+        if log_target:
+            grad_target = target + 1
+            grad_target = grad_target - self_x
             tmp = torch.exp(target)
-            gradTarget = gradTarget * tmp
-            gradTarget = gradOutput * gradTarget
+            grad_target = grad_target * tmp
+            grad_target = grad_output * grad_target
         else:
             tmp = torch.log(target)
-            gradTarget = tmp + 1
-            gradTarget = gradTarget - selfX
-            gradTarget = gradOutput * gradTarget
-            gradTarget = gradTarget.masked_fill(target==0, 0)
+            grad_target = tmp + 1
+            grad_target = grad_target - self_x
+            grad_target = grad_output * grad_target
+            grad_target = grad_target.masked_fill(target == 0, 0)
 
         if reduction == 1:
-            gradTarget = gradTarget / target.numel()
+            grad_target = grad_target / target.numel()
         
         class Module(torch.nn.Module):
             def __init__(self):
                 super().__init__()
 
-            def forward(self, gradOutput, selfX, target, reduction, logTarget):
-                return torch_npu.npu_kl_div_target_backward(gradOutput, selfX, target, reduction, logTarget)
+            def forward(self, grad_output, self_x, target, reduction, log_target):
+                return torch_npu.npu_kl_div_target_backward(grad_output, self_x, target, reduction, log_target)
         mod = torch.compile(Module().npu(), backend=npu_backend)
-        output = mod(gradOutput.npu(), selfX.npu(), target.npu(), reduction, logTarget).cpu()
+        output = mod(grad_output.npu(), self_x.npu(), target.npu(), reduction, log_target).cpu()
         print(output)
-        self.assertRtolEqual(output, gradTarget)
+        self.assertRtolEqual(output, grad_target)
 
 
 if __name__ == "__main__":

@@ -89,7 +89,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto coreNum = ascendcPlatform.GetCoreNum();
     
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
-    // uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t typeLength = 0;
     auto dtype = context->GetInputDesc(0)->GetDataType();
     ge::TypeUtils::GetDataTypeLength(dtype, typeLength);
@@ -133,7 +132,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto attrs = context->GetAttrs();
     uint32_t reduction = static_cast<uint32_t>(*attrs->GetAttrPointer<int32_t>(0));
     uint32_t logTarget = static_cast<uint32_t>(*attrs->GetAttrPointer<bool>(1));
-
     
     tiling.set_smallCoreDataNum(smallCoreDataNum);
     tiling.set_bigCoreDataNum(bigCoreDataNum);
@@ -168,7 +166,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     return ge::GRAPH_SUCCESS;
 }
 }
-
 
 namespace ge {
 template <typename T>
@@ -270,7 +267,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 

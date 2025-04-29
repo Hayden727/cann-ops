@@ -38,13 +38,14 @@ class TestCustomKlDivTargetBackward(TestCase):
             grad_target = tmp + 1
             grad_target = grad_target - self_x
             grad_target = grad_output * grad_target
-            grad_target = grad_target.masked_fill(target==0, 0)
+            grad_target = grad_target.masked_fill(target == 0, 0)
 
         if reduction == 1:
             grad_target = grad_target / target.numel()
 
         torch.npu.synchronize()
-        output = torch_npu.npu_kl_div_target_backward(grad_output.npu(), self_x.npu(), target.npu(), reduction, log_target).cpu()
+        output = torch_npu.npu_kl_div_target_backward(
+            grad_output.npu(), self_x.npu(), target.npu(), reduction, log_target).cpu()
         torch.npu.synchronize()
 
         print(output)
