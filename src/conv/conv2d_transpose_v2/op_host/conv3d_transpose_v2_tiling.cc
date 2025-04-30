@@ -19,7 +19,7 @@
  * \brief
  */
 
-#include "conv3d_backprop_input_v2/conv3d_backprop_input_v2_tiling.h"
+#include "conv3d_backprop_input_v2_tiling.h"
 
 #include "op_log.h"
 #include "tiling/tiling_templates_registry.h"
