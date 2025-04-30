@@ -46,6 +46,48 @@
         printf(message, ##__VA_ARGS__); \
     } while (0)
 
+bool CheckForNullptrs(const void* inputX, 
+        const void* inputY, 
+        const void* inputGamma, 
+        const void* inputBeta, 
+        const void* outputZ, 
+        const size_t* workspaceSize, 
+        const void* executor, 
+        std::string& error_msg) {
+// 检查每个参数是否为 nullptr，并记录具体错误信息
+if (inputX == nullptr) {
+error_msg = "inputX is nullptr";
+return false;
+}
+if (inputY == nullptr) {
+error_msg = "inputY is nullptr";
+return false;
+}
+if (inputGamma == nullptr) {
+error_msg = "inputGamma is nullptr";
+return false;
+}
+if (inputBeta == nullptr) {
+error_msg = "inputBeta is nullptr";
+return false;
+}
+if (outputZ == nullptr) {
+error_msg = "outputZ is nullptr";
+return false;
+}
+if (workspaceSize == nullptr) {
+error_msg = "workspaceSize is nullptr";
+return false;
+}
+if (executor == nullptr) {
+error_msg = "executor is nullptr";
+return false;
+}
+// 所有参数均非空
+error_msg.clear();
+return true;
+}
+
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
     struct stat sBuf;
@@ -239,8 +281,14 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
+    std::string error_msg;
+    if (!CheckForNullptrs(inputX, inputY, inputGamma, inputBeta, 
+                         outputZ, workspaceSize, executor, error_msg)) {
+        std::cerr << "参数校验失败: " << error_msg << std::endl;
+        return -1;
+    }
     ret = aclnnPreLayerNormGetWorkspaceSize(inputX, inputY, inputGamma, inputBeta, eps, outputZ, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnClipByValueGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnPreLayerNormGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
@@ -248,7 +296,7 @@ int main(int argc, char **argv)
     }
     // 执行算子
     ret = aclnnPreLayerNorm(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnClipByValue failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnPreLayerNorm failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
