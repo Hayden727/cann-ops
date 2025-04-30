@@ -49,7 +49,8 @@ class FunctionApi(BaseApi):
                 grad_target = grad_target.masked_fill(target == 0, 0)
 
             if reduction == 1:
-                grad_target = grad_target / target.numel()
+                max_len = max(max(grad_output.numel(), self_x.numel()), target.numel())
+                grad_target = grad_target / max_len
             output = grad_target.to(compute_dtype)
         return output           
         

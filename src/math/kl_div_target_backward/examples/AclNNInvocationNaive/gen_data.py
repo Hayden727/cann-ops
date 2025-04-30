@@ -38,7 +38,8 @@ def gen_golden_data_simple():
         grad_target = grad_target.masked_fill(target == 0, 0)
 
     if reduction == 1:
-        grad_target = grad_target / target.numel()
+        max_len = max(max(grad_output.numel(), self_x.numel()), target.numel())
+        grad_target = grad_target / max_len
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

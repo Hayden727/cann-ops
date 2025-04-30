@@ -41,7 +41,8 @@ class TestCustomKlDivTargetBackward(TestCase):
             grad_target = grad_target.masked_fill(target == 0, 0)
 
         if reduction == 1:
-            grad_target = grad_target / target.numel()
+            max_len = max(max(grad_output.numel(), self_x.numel()), target.numel())
+            grad_target = grad_target / max_len
 
         torch.npu.synchronize()
         output = torch_npu.npu_kl_div_target_backward(

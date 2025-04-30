@@ -329,3 +329,12 @@ extern "C" __global__ __aicore__ void kl_div_target_backward(GM_ADDR grad_output
     }
     return;
 }
+
+#ifndef ASCENDC_CPU_DEBUG
+// call of kernel function
+void kl_div_target_backward_do(uint32_t blockDim, void *l2ctrl, void *stream, uint8_t *grad_output,
+    uint8_t *self, uint8_t *target, uint8_t *grad_target, uint8_t *workspace, uint8_t *tiling)
+{
+    kl_div_target_backward<<<blockDim, l2ctrl, stream>>>(grad_output, self, target, grad_target, workspace, tiling);
+}
+#endif

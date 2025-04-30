@@ -52,14 +52,14 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
         from torchair.configs.compiler_config import CompilerConfig
         config = CompilerConfig()
         npu_backend = torchair.get_npu_backend(compiler_config=config)
-        length = [10, 10, 8, 20, 48]
-        length1 = [8, 1, 48]
-        length2 = [48]
+        length = [1]
+        length1 = [1, 7, 16, 1]
+        length2 = [16, 1]
         grad_output = torch.rand(length, device='cpu', dtype=torch.float16)
         self_x = torch.rand(length1, device='cpu', dtype=torch.float16)
         target = torch.rand(length2, device='cpu', dtype=torch.float16)
-        reduction = 0
-        log_target = False
+        reduction = 1
+        log_target = True
         print(grad_output, '\n', self_x, '\n', target)
         if log_target:
             grad_target = target + 1
@@ -75,7 +75,8 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
             grad_target = grad_target.masked_fill(target == 0, 0)
 
         if reduction == 1:
-            grad_target = grad_target / target.numel()
+            max_len = max(max(grad_output.numel(), self_x.numel()), target.numel())
+            grad_target = grad_target / max_len
         
         class Module(torch.nn.Module):
             def __init__(self):
