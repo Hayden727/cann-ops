@@ -209,9 +209,8 @@ ge::graphStatus ParseCubeCompileInfo(gert::TilingParseContext *context) {
   fe::PlatFormInfos *platform_info = context->GetPlatformInfo();
   OP_TILING_CHECK(compile_info == nullptr || json_str == nullptr || platform_info == nullptr,
                   CUBE_INNER_ERR_REPORT(op_name, "compile_info/json/PlatFormInfos is null"), return ge::GRAPH_FAILED);
-  compile_info->ParseRuntimePlatformInfo(op_name, *platform_info);
-  OP_TILING_CHECK(!compile_info->AnalyzeCompileInfo(op_name, json_str),
-                  CUBE_INNER_ERR_REPORT(op_name, "failed to analyze compile info"), return ge::GRAPH_FAILED);
+  // OP_TILING_CHECK(!compile_info->AnalyzeCompileInfo(op_name, json_str),
+  //                 CUBE_INNER_ERR_REPORT(op_name, "failed to analyze compile info"), return ge::GRAPH_FAILED);
   OP_TILING_CHECK(!compile_info->CheckRangeSize(range_size),
                   CUBE_INNER_ERR_REPORT(op_name, "repo_range/repo_seeds/cost_range invalid"), return ge::GRAPH_FAILED);
 
