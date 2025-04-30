@@ -1,19 +1,20 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Copyright 2022-2023 Huawei Technologies Co., Ltd
-import numpy as np
+
 import os
 import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 
-def gen_golden_data_simple(CaseId):
-    if CaseId == "case1":
+def gen_golden_data_simple(caseId):
+    if caseId == "case1":
         x_shape = (4980, 4, 2048)
         eps = 1e-5
-    elif CaseId == "case2":
+    elif caseId == "case2":
         x_shape = (512, 4, 20480)
         eps = 1e-7
     else:
@@ -26,8 +27,8 @@ def gen_golden_data_simple(CaseId):
     gamma = nn.Parameter(torch.randn(x_shape[2], dtype=dtype, device=device))
     beta = nn.Parameter(torch.randn(x_shape[2], dtype=dtype, device=device))
     normalized_shape = (x_shape[-1],)
-    add = torch.add(x,y)
-    res = F.layer_norm(add,normalized_shape, gamma, beta, eps)
+    add = torch.add(x, y)
+    res = F.layer_norm(add, normalized_shape, gamma, beta, eps)
     input_x = x.detach().numpy().astype(np.float32)
     input_y = y.detach().numpy().astype(np.float32)
     input_gamma = gamma.detach().numpy().astype(np.float32)

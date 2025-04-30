@@ -24,6 +24,7 @@ def layer_norm_test(x, y, gamma, beta, epsilon):
     res = torch.nn.functional.layer_norm(x_tensor, x_tensor.shape[-1:], gamma_tensor, beta_tensor, eps)
     return res.numpy()
 
+
 def calc_expect_func(x, y, gamma, beta, res_out, epsilon):
     """
     calc_expect_func

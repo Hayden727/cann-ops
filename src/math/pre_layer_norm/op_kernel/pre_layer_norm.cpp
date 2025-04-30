@@ -294,7 +294,6 @@ extern "C" __global__ __aicore__ void pre_layer_norm(
     GM_ADDR x, GM_ADDR y, GM_ADDR gamma, GM_ADDR beta, GM_ADDR res_out,
     GM_ADDR workspace, GM_ADDR tiling) {
   GET_TILING_DATA(tiling_data, tiling);
-  // TODO: user kernel impl
 
   KernelLayerNorm op;
   op.Init(x, y, gamma, beta, res_out, tiling_data.lastDim,

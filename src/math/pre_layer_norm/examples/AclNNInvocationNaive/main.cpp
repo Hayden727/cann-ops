@@ -68,7 +68,6 @@ bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t
 
     std::filebuf *buf = file.rdbuf();
     size_t size = buf->pubseekoff(0, std::ios::end, std::ios::in);
-
     if (size == 0) {
         ERROR_LOG("file size is 0");
         file.close();
