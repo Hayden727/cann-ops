@@ -10,15 +10,15 @@ import torch.nn.functional as F
 import numpy as np
 
 
-def gen_golden_data(caseId):
-    if caseId == "case1":
+def gen_golden_data(case_id):
+    if case_id == "case1":
         x_shape = (4980, 4, 2048)
         eps = 1e-5
-    elif caseId == "case2":
+    elif case_id == "case2":
         x_shape = (512, 4, 20480)
         eps = 1e-7
     else:
-        print("[ERROR] The caseId is error, please input [case1 / case2]")
+        print("[ERROR] The case_id error, please input [case1 / case2]")
         exit(1)
     dtype = torch.float32
     device = "cpu"

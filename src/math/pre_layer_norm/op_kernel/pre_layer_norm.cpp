@@ -1,3 +1,16 @@
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
+ * @file pre_layer_norm.cpp
+ */
 #include "kernel_operator.h"
 
 constexpr float epsilon = 1e-5f;
@@ -134,7 +147,7 @@ class KernelLayerNorm {
     AscendC::LocalTensor<float> workspace = tempBuf3.Get<float>();
     AscendC::LocalTensor<float> workspace1 = tempBuf4.Get<float>();
     AscendC::ReduceSum<float>(mean, x, workspace, length);
-    float meanValue = mean.GetValue(0) / length + epsilon;
+    float meanValue = mean.GetValue(0) / length;
     mean.SetValue(0, meanValue);
     float negativeMean = -meanValue;
     AscendC::Adds(workspace, x, negativeMean, length);
