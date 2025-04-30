@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_conv2d_backprop_filter_v2_op
+    ./execute_conv3d_backprop_filter_v2_op
 )
 
 ret=`python3 verify_result.py output/output_y.bin output/output.bin`

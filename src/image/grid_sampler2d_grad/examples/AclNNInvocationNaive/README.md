@@ -53,7 +53,7 @@ aclnnStatus aclnnGridSampler2DBackward(void* workspace, uint64_t workspaceSize, 
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_add_op
+    ./execute_test_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。

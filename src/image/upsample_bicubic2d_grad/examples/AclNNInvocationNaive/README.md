@@ -34,7 +34,7 @@ aclnnStatus aclnnUpsampleBicubic2dGrad(void *workspace, uint64_t workspaceSize, 
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/image/upsample__bicubic2d_grad/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/image/upsample_bicubic2d_grad/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
