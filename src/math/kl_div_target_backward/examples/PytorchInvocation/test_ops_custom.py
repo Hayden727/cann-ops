@@ -18,7 +18,6 @@ torch.npu.config.allow_internal_format = False
 
 
 class TestCustomKlDivTargetBackward(TestCase):
-
     def test_kl_div_target_backward(self):
         length = [8, 2048]
         grad_output = torch.rand(length, device='cpu', dtype=torch.float16)

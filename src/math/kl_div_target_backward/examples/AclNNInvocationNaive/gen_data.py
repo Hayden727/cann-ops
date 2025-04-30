@@ -13,6 +13,7 @@ import os
 import torch
 import numpy as np
 
+
 def gen_golden_data_simple():
     dtype = np.float16
     input_shape = [4, 400]
@@ -47,6 +48,7 @@ def gen_golden_data_simple():
     self_x.numpy().astype(dtype).tofile("./input/input_x1.bin")
     target.numpy().astype(dtype).tofile("./input/input_x2.bin")
     grad_target.numpy().astype(dtype).tofile("./output/golden.bin")
+
 
 if __name__ == "__main__":
     gen_golden_data_simple()

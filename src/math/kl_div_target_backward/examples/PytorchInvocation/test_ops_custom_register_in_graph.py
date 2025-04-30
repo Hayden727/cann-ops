@@ -47,7 +47,6 @@ def convert_npu_kl_div_target_backward(grad_output: Tensor, self_x: Tensor, targ
 
 
 class TestTorchCompileCustomKlDivTargetBackward(TestCase):
-
     def test_kl_div_target_backward(self):
         from torchair.configs.compiler_config import CompilerConfig
         config = CompilerConfig()
