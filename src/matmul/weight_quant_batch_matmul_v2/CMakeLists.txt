@@ -29,6 +29,7 @@ target_sources(optiling PRIVATE
 
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host
         ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling
         ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling/aoe/op_tuning_tiling
         ${CMAKE_CURRENT_SOURCE_DIR}/../../common/op_host/op_tiling/cube/util
