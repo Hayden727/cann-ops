@@ -12,8 +12,8 @@ target_sources(op_host_aclnnInner PRIVATE
 )
 
 target_sources(opapi PRIVATE
-        op_host/convolutionbackward.cpp
-        op_host/aclnn_convolution_backward.cpp
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn/convolutionbackward.cpp
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn/aclnn_convolution_backward.cpp
 )
 
 

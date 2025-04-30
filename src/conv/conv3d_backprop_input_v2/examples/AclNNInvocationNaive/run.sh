@@ -41,10 +41,10 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_conv3d_backprop_filter_v2_op
+    ./execute_conv3d_backprop_input_v2_op
 )
 
-ret=`python3 verify_result.py output/output_y.bin output/output.bin`
+ret=`python3 verify_result.py output/grad_input_npu.bin output/grad_input_cpu.bin`
 echo $ret
 if [ "x$ret" == "xtest pass" ]; then
     echo ""
