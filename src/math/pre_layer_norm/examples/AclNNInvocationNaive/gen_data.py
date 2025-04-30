@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import numpy as np
 
 
-def gen_golden_data_simple(caseId):
+def gen_golden_data(caseId):
     if caseId == "case1":
         x_shape = (4980, 4, 2048)
         eps = 1e-5
@@ -43,4 +43,4 @@ def gen_golden_data_simple(caseId):
     golden.tofile("./output/golden.bin")
 
 if __name__ == "__main__":
-    gen_golden_data_simple(sys.argv[1])
+    gen_golden_data(sys.argv[1])

@@ -8,20 +8,14 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-# 新增参数校验
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 [case1|case2]"
-    exit 1
-fi
+# ????case??
+case_name=${1:-"case1"}  # ???????case1
 
-case_name=$1
-
-# 新增参数合法性校验
+# ???????????case1/case2?
 if [[ "$case_name" != "case1" && "$case_name" != "case2" ]]; then
     echo "ERROR: Invalid case name! Only case1 or case2 allowed."
     exit 1
 fi
-
 
 if [ -n "$ASCEND_INSTALL_PATH" ]; then
     _ASCEND_INSTALL_PATH=$ASCEND_INSTALL_PATH
