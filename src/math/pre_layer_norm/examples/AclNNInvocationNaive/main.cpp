@@ -286,7 +286,7 @@ int main(int argc, char **argv)
     // 计算workspace大小并申请内存
     std::string error_msg;
     if (!ValidateAclParameters(inputX, inputY, inputGamma, inputBeta, 1e-5, 
-        outputZ, &workspaceSize, executor, error_msg)) {
+        outputZ, &workspaceSize, &executor, error_msg)) {
         std::cerr << "参数校验失败: " << error_msg << std::endl;
     }
 
