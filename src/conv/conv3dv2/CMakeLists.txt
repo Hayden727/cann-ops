@@ -65,8 +65,8 @@ target_include_directories(op_host_aclnnInner PRIVATE
 )
 
 target_sources(opapi PRIVATE
-        op_host/convolution_l0.cpp
-        op_host/aclnn_convolution.cpp
+        ../conv2d_transpose_v2/op_host/convolution.cpp
+        ../conv2d_transpose_v2/op_host/aclnn_convolution.cpp
 )
 
 # install kernel侧源码和aclnn头文件
