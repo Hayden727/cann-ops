@@ -65,6 +65,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t ALIGN_NUM = BLOCK_SIZE / sizeOfDataType;
     uint32_t ub_block_num = 256;
+    uint32_t tile_num;
     if (ub_block_num % 2 != 0) {
         ub_block_num = ub_block_num - 1;
     }
