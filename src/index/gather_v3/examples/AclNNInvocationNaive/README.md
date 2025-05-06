@@ -35,7 +35,7 @@ aclnnStatus aclnnGatherV3(void *workspace, uint64_t workspaceSize, aclOpExecutor
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/gather_v3/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/index/gather_v3/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
