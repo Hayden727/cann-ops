@@ -9,7 +9,10 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
+
 import numpy as np
+
+
 def calc_expect_func(a, b, bias, c):
     res = np.matmul(a["value"].astype(np.float32), b["value"].astype(np.float32)) + bias["value"]
     return [res, ]

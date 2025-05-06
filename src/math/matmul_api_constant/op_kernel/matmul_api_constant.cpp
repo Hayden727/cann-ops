@@ -1,11 +1,15 @@
 /**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
  * @file matmul_api_constant.cpp
- *
- * Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 #include "kernel_operator.h"
 #include "lib/matmul_intf.h"
@@ -14,6 +18,9 @@ using namespace matmul;
 
 __aicore__ inline uint32_t Ceiling(uint32_t a, uint32_t b)
 {
+    if(b == 0) {
+        return 0;
+    } 
     return (a + b - 1) / b;
 }
 
@@ -35,10 +42,10 @@ public:
     __aicore__ inline void CalcOffset(int32_t blockIdx, const TCubeTiling &tiling, int32_t &offsetA, int32_t &offsetB,
                                       int32_t &offsetC, int32_t &offsetBias);
 
-    typedef MatmulType<AscendC::TPosition::GM, CubeFormat::ND, aType> aMatmulType;
-    typedef MatmulType<AscendC::TPosition::GM, CubeFormat::ND, bType> bMatmulType;
-    typedef MatmulType<AscendC::TPosition::GM, CubeFormat::ND, cType> cMatmulType;
-    typedef MatmulType<AscendC::TPosition::GM, CubeFormat::ND, biasType> biasMatmulType;
+    using aMatmulType = MatmulType<AscendC::TPosition::GM, CubeFormat::ND, aType>;
+    using bMatmulType = MatmulType<AscendC::TPosition::GM, CubeFormat::ND, bType>;
+    using cMatmulType =  MatmulType<AscendC::TPosition::GM, CubeFormat::ND, cType>;
+    using biasMatmulType = MatmulType<AscendC::TPosition::GM, CubeFormat::ND, biasType>;
 
     constexpr static MatmulShapeParams shapeParams = {singleCoreM, singleCoreN, singleCoreK, baseM, baseN, baseK};
     constexpr static MatmulConfig mmConfig = GetMMConfig<MatmulConfigMode::CONFIG_NORM>(shapeParams);
