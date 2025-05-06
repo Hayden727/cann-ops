@@ -289,6 +289,7 @@ int main(int argc, char **argv)
     if (!ValidateAclParameters(x, y, gamma, beta, 1e-5, 
         out, &workspaceSize, executor, error_msg)) {
     std::cerr << "参数校验失败: " << error_msg << std::endl;
+}
     // 释放资源（示例中仅为演示）
 
     ret = aclnnPreLayerNormGetWorkspaceSize(inputX, inputY, inputGamma, inputBeta, eps, outputZ, &workspaceSize, &executor);
