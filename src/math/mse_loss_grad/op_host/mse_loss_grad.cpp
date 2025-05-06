@@ -22,7 +22,7 @@
 namespace optiling {
     const uint32_t BLOCK_SIZE = 32;
 
-    uint32_t GetSizeOfDataType(gert::TilingContext* context)
+    uint32_t MLGGetSizeOfDataType(gert::TilingContext* context)
     {
         uint32_t sizeOfDataType;
         auto dt = context->GetInputDesc(0)->GetDataType();
@@ -32,7 +32,7 @@ namespace optiling {
         return sizeOfDataType;
     }
 
-    uint32_t DetermineReductionMode(const char* reduction) {
+    uint32_t MLGDetermineReductionMode(const char* reduction) {
         if (strcmp(reduction, "mean") == 0) {
             return 1;
         }
@@ -45,7 +45,7 @@ namespace optiling {
         return 0;
     }
 
-    uint32_t CalculateAlignedLength(uint32_t totalLength, uint32_t ALIGN_NUM) {
+    uint32_t MLGCalculateAlignedLength(uint32_t totalLength, uint32_t ALIGN_NUM) {
         if (ALIGN_NUM == 0) {
             return totalLength;
         }
@@ -57,7 +57,7 @@ namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     MseLossGradTilingData tiling;
 
-    uint32_t sizeOfDataType = GetSizeOfDataType(context);
+    uint32_t sizeOfDataType = MLGGetSizeOfDataType(context);
     if (sizeOfDataType == 0) {
     return ge::GRAPH_FAILED;
     }
@@ -71,9 +71,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     }
 
     const char* reduction = context->GetAttrs()->GetStr(0);
-    tiling.set_mode(DetermineReductionMode(reduction));
+    tiling.set_mode(MLGDetermineReductionMode(reduction));
 
-    uint32_t totalLengthAligned = CalculateAlignedLength(totalLength, ALIGN_NUM);
+    uint32_t totalLengthAligned = MLGCalculateAlignedLength(totalLength, ALIGN_NUM);
     tiling.set_totalLength(totalLength);
 
     context->SetBlockDim(1);
