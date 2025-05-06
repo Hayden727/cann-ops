@@ -54,7 +54,7 @@ namespace Ascend
         }
     
         __aicore__ inline void Process() {
-            int32_t loopCount = static_cast<int32_t>(this->tileNum) * BUFFER_NUM;
+            int32_t loopCount = this->tileNum * BUFFER_NUM;
             for (int32_t i = 0; i < loopCount; i++) {
                 CopyIn(i);
                 Compute(i);
@@ -148,6 +148,7 @@ namespace Ascend
             outQueueOUT.FreeTensor(outLocal);
         }
     
+    
     private:
         AscendC::TPipe pipe;
         AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> inQueueIN;
@@ -171,7 +172,7 @@ namespace Ascend
 
 extern "C" __global__ __aicore__ void mse_loss_grad(GM_ADDR predict, GM_ADDR label, GM_ADDR dout, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    KernelMseLossGrad op;
+    Ascend::KernelMseLossGrad op;
     uint32_t tilingKey = 1;
     if (TILING_KEY_IS(1)) {
         tilingKey = 1;
