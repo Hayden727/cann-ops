@@ -210,7 +210,6 @@ int main(int argc, char **argv)
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
-    // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputXShape;
     std::vector<int64_t> inputYShape;
     float eps;
@@ -286,11 +285,11 @@ int main(int argc, char **argv)
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
     std::string error_msg;
-    if (!ValidateAclParameters(x, y, gamma, beta, 1e-5, 
-        out, &workspaceSize, executor, error_msg)) {
-    std::cerr << "参数校验失败: " << error_msg << std::endl;
-}
-    // 释放资源（示例中仅为演示）
+    if (!ValidateAclParameters(inputX, inputY, inputGamma, inputBeta, 1e-5, 
+        outputZ, &workspaceSize, executor, error_msg)) {
+        std::cerr << "参数校验失败: " << error_msg << std::endl;
+    }
+
 
     ret = aclnnPreLayerNormGetWorkspaceSize(inputX, inputY, inputGamma, inputBeta, eps, outputZ, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnPreLayerNormGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
