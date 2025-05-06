@@ -24,7 +24,7 @@ def layer_norm_test(x, y, gamma, beta, epsilon):
     return res.numpy()
 
 
-def calc_expect_func(x, y, gamma, beta, res_out, epsilon):
+def calc_expect_func(x, y, gamma, beta, epsilon):
     """
     calc_expect_func
     """

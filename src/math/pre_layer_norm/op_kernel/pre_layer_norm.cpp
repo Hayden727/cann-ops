@@ -147,7 +147,9 @@ class KernelLayerNorm {
     AscendC::LocalTensor<float> workspace = tempBuf3.Get<float>();
     AscendC::LocalTensor<float> workspace1 = tempBuf4.Get<float>();
     AscendC::ReduceSum<float>(mean, x, workspace, length);
-    float meanValue = mean.GetValue(0) / length;
+    if (length != 0){
+      float meanValue = mean.GetValue(0) / length;
+    }
     mean.SetValue(0, meanValue);
     float negativeMean = -meanValue;
     AscendC::Adds(workspace, x, negativeMean, length);

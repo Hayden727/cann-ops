@@ -46,52 +46,7 @@
         printf(message, ##__VA_ARGS__); \
     } while (0)
 
-    bool ValidateAclParameters(
-        const aclTensor* x,
-        const aclTensor* y,
-        const aclTensor* gamma,
-        const aclTensor* beta,
-        double epsilon,          // 非指针参数无需校验
-        const aclTensor* out,
-        uint64_t* workspaceSize,
-        aclOpExecutor** executor,
-        std::string& error_msg
-    ) {
-        // 检查所有指针参数是否为 nullptr
-        if (x == nullptr) {
-            error_msg = "x (input tensor) is nullptr";
-            return false;
-        }
-        if (y == nullptr) {
-            error_msg = "y (input tensor) is nullptr";
-            return false;
-        }
-        if (gamma == nullptr) {
-            error_msg = "gamma (scale tensor) is nullptr";
-            return false;
-        }
-        if (beta == nullptr) {
-            error_msg = "beta (shift tensor) is nullptr";
-            return false;
-        }
-        if (out == nullptr) {
-            error_msg = "out (output tensor) is nullptr";
-            return false;
-        }
-        if (workspaceSize == nullptr) {
-            error_msg = "workspaceSize pointer is nullptr";
-            return false;
-        }
-        if (executor == nullptr || *executor == nullptr) {
-            error_msg = "executor is invalid (nullptr)";
-            return false;
-        }
-        
-        // 所有参数均合法
-        error_msg.clear();
-        return true;
-    }
-
+    
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
     struct stat sBuf;
@@ -284,13 +239,6 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    std::string error_msg;
-    if (!ValidateAclParameters(inputX, inputY, inputGamma, inputBeta, 1e-5, 
-        outputZ, &workspaceSize, &executor, error_msg)) {
-        std::cerr << "参数校验失败: " << error_msg << std::endl;
-    }
-
-
     ret = aclnnPreLayerNormGetWorkspaceSize(inputX, inputY, inputGamma, inputBeta, eps, outputZ, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnPreLayerNormGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
