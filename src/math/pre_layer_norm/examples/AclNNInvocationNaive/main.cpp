@@ -46,47 +46,51 @@
         printf(message, ##__VA_ARGS__); \
     } while (0)
 
-bool CheckForNullptrs(const void* inputX, 
-        const void* inputY, 
-        const void* inputGamma, 
-        const void* inputBeta, 
-        const void* outputZ, 
-        const size_t* workspaceSize, 
-        const void* executor, 
-        std::string& error_msg) {
-// 检查每个参数是否为 nullptr，并记录具体错误信息
-if (inputX == nullptr) {
-error_msg = "inputX is nullptr";
-return false;
-}
-if (inputY == nullptr) {
-error_msg = "inputY is nullptr";
-return false;
-}
-if (inputGamma == nullptr) {
-error_msg = "inputGamma is nullptr";
-return false;
-}
-if (inputBeta == nullptr) {
-error_msg = "inputBeta is nullptr";
-return false;
-}
-if (outputZ == nullptr) {
-error_msg = "outputZ is nullptr";
-return false;
-}
-if (workspaceSize == nullptr) {
-error_msg = "workspaceSize is nullptr";
-return false;
-}
-if (executor == nullptr) {
-error_msg = "executor is nullptr";
-return false;
-}
-// 所有参数均非空
-error_msg.clear();
-return true;
-}
+    bool ValidateAclParameters(
+        const aclTensor* x,
+        const aclTensor* y,
+        const aclTensor* gamma,
+        const aclTensor* beta,
+        double epsilon,          // 非指针参数无需校验
+        const aclTensor* out,
+        uint64_t* workspaceSize,
+        aclOpExecutor** executor,
+        std::string& error_msg
+    ) {
+        // 检查所有指针参数是否为 nullptr
+        if (x == nullptr) {
+            error_msg = "x (input tensor) is nullptr";
+            return false;
+        }
+        if (y == nullptr) {
+            error_msg = "y (input tensor) is nullptr";
+            return false;
+        }
+        if (gamma == nullptr) {
+            error_msg = "gamma (scale tensor) is nullptr";
+            return false;
+        }
+        if (beta == nullptr) {
+            error_msg = "beta (shift tensor) is nullptr";
+            return false;
+        }
+        if (out == nullptr) {
+            error_msg = "out (output tensor) is nullptr";
+            return false;
+        }
+        if (workspaceSize == nullptr) {
+            error_msg = "workspaceSize pointer is nullptr";
+            return false;
+        }
+        if (executor == nullptr || *executor == nullptr) {
+            error_msg = "executor is invalid (nullptr)";
+            return false;
+        }
+        
+        // 所有参数均合法
+        error_msg.clear();
+        return true;
+    }
 
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
@@ -282,11 +286,11 @@ int main(int argc, char **argv)
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
     std::string error_msg;
-    if (!CheckForNullptrs(inputX, inputY, inputGamma, inputBeta, 
-                         outputZ, workspaceSize, executor, error_msg)) {
-        std::cerr << "参数校验失败: " << error_msg << std::endl;
-        return -1;
-    }
+    if (!ValidateAclParameters(x, y, gamma, beta, 1e-5, 
+        out, &workspaceSize, executor, error_msg)) {
+    std::cerr << "参数校验失败: " << error_msg << std::endl;
+    // 释放资源（示例中仅为演示）
+
     ret = aclnnPreLayerNormGetWorkspaceSize(inputX, inputY, inputGamma, inputBeta, eps, outputZ, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnPreLayerNormGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;

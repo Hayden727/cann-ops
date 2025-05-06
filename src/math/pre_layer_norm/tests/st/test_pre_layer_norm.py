@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-# coding=utf-8
-#
+# -*- coding:utf-8 -*-
 # Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
