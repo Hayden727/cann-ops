@@ -260,8 +260,12 @@ public:
             .DataType({ge::DT_FLOAT16, ge::DT_FLOAT, ge::DT_BF16})
             .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Attr("reduction").Int();
-        this->Attr("log_target").Bool();
+        this->Attr("reduction")
+            .AttrType(OPTIONAL)
+            .Int(0);
+        this->Attr("log_target")
+            .AttrType(OPTIONAL)
+            .Bool(false);
 
         this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 

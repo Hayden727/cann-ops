@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputXShape = {4, 400};
-    std::vector<int64_t> inputX1Shape = {1, 400};
+    std::vector<int64_t> inputX1Shape = {4, 400};
     std::vector<int64_t> outputZShape = {4, 400};
     void *inputX0DeviceAddr = nullptr;
     void *inputX1DeviceAddr = nullptr;
