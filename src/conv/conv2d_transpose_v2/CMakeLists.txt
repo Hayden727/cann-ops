@@ -29,7 +29,7 @@ target_sources(optiling PRIVATE
         op_host/base/context_maker/kernel_run_context_maker.cc
         ../conv3d_backprop_input_v2/op_host/conv3_d_backprop_input_v2.cpp
         ../conv3d_backprop_input_v2/op_host/conv3d_backprop_input.cpp
-        op_host/conv3d_transpose_v2_tiling.cc
+        ../conv3d_transpose_v2/op_host/conv3_d_transpose_v2_tiling.cpp
         ${EXTRA_SRC_FILES}
 )
 
