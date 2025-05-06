@@ -19,17 +19,17 @@
 
 
 namespace optiling {
-BEGIN_TILING_DATA_DEF(MseLossGradTilingData)
+BEGIN_TILING_DATA_DEF(MseLossGradTilingDataV1)
   TILING_DATA_FIELD_DEF(uint32_t, mode); 
   TILING_DATA_FIELD_DEF(uint32_t, remain_start);
   TILING_DATA_FIELD_DEF(uint32_t, totalLength);
   TILING_DATA_FIELD_DEF(uint32_t, blockLength);
   TILING_DATA_FIELD_DEF(uint32_t, tileNum);
   TILING_DATA_FIELD_DEF(uint32_t, tileLength);
-  TILING_DATA_FIELD_DEF(uint32_t, lasttileLength);
+  TILING_DATA_FIELD_DEF(uint32_t, lastTileLength);
 END_TILING_DATA_DEF;
 
-REGISTER_TILING_DATA_CLASS(MseLossGrad, MseLossGradTilingData)
+REGISTER_TILING_DATA_CLASS(MseLossGrad, MseLossGradTilingDataV1)
 }
 
 #endif // MSE_LOSS_GRAD_TILING_H
