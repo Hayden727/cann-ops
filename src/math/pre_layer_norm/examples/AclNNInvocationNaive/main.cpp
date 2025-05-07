@@ -167,7 +167,7 @@ int main(int argc, char **argv)
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputXShape;
     std::vector<int64_t> inputYShape;
-    float eps;
+    double eps;
     if (strcmp(argv[1], "case1") == 0) {
         inputXShape = {4980, 4, 2048};  // case1的原始shapeX
         inputYShape = {4980, 4, 2048};  // case1的原始shapeY

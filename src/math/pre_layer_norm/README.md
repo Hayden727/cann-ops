@@ -1,5 +1,5 @@
-## `LayerNorm`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`LayerNorm`算子。
+## `PreLayerNorm`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`PreLayerNorm`算子。
 
 PreLayerNorm是Add和LayerNorm的融合算子，Add算子的输出作为LayerNorm算子的第一个输入。对输入x, y先相加得到的数据，根据系数beta 和偏置gamma使其Add(x, y)的值收敛到固定区间。  
 Add对应的数学表达式为：
@@ -20,16 +20,18 @@ $$ Var[ z_{ij}]= \frac{{\textstyle \sum_{k=1}^{N}}(  z_{ijk}-E[ z_{ij}])^{2}  }{
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">PreLayerNorm</td></tr>
 </tr>
-<tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">gamma</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">beta</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
+<tr><td align="center">x</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">y</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">gamma</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">beta</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">pre_layer_norm_custom</td></tr>
+<tr><td rowspan="1" align="center">attr属性</td><td align="center">epsilon</td><td align="center">\</td><td align="center">double</td><td align="center">\</td><td align="center">1e-5</td></tr>
+</tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">pre_layer_norm</td></tr>
 </table>
 
 ### 支持的产品型号

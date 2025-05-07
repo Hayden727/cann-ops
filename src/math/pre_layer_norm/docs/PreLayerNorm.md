@@ -35,11 +35,11 @@ double epsilon, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **e
 
 - **参数说明：**
   
-  - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、FLOAT32、INT32，数据格式支持ND。
-  - y（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入y，数据类型支持FLOAT16、FLOAT32、INT32，数据格式支持ND。
-  - gamma（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入gamma，数据类型支持FLOAT16、FLOAT32、INT32，数据格式支持ND。
-  - beta（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入beta，数据类型支持FLOAT16、FLOAT32、INT32，数据格式支持ND。
-  - epsilon（double\*，计算输入）：可选参数，公式中的输入epsilon，默认值1e-5。
+  - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT，数据格式支持ND。
+  - y（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入y，数据类型支持FLOAT，数据格式支持ND。
+  - gamma（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入gamma，数据类型支持FLOAT，数据格式支持ND。
+  - beta（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入beta，数据类型支持FLOAT，数据格式支持ND。
+  - epsilon（double\*，计算输入）：可选参数，公式中的输入epsilon，数据类型支持DOUBLE，默认值1e-5。
   - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出z，数据类型支持FLOAT16，FLOAT，INT32，数据格式支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
@@ -71,20 +71,21 @@ double epsilon, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **e
 - x，y, gamma，beta，out的数据类型支持FLOAT，数据格式支持ND
 
 ## 算子原型
-
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">PreLayerNorm</td></tr>
 </tr>
-<tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">gamma</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">beta</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
+<tr><td align="center">x</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">y</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">gamma</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">beta</td><td align="center">2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">4980 * 4 * 2048</td><td align="center">float</td><td align="center">ND</td><td align="center">\</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">pre_layer_norm_custom</td></tr>
+<tr><td rowspan="1" align="center">attr属性</td><td align="center">epsilon</td><td align="center">\</td><td align="center">double</td><td align="center">\</td><td align="center">1e-5</td></tr>
+</tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">pre_layer_norm</td></tr>
 </table>
 
 ## 调用示例
