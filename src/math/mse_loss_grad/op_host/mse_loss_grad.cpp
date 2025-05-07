@@ -66,7 +66,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
             }
         }
     }
-
     tiling.set_mode(mode);
 
     // 输入向量满足32字节对齐
@@ -75,12 +74,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     } else {
         totalLengthAligned = totalLength;
     }
-
     tiling.set_totalLength(totalLength);
-
     // 环境为单核环境，故直接设置为1个核
     context->SetBlockDim(1);
-
     auto block_dim = context->GetBlockDim();
     uint32_t blockLength = 0;
     uint32_t tileLength = 0;
@@ -110,13 +106,11 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     // remain_start为lasttileLength向下32对齐的长度
     uint32_t remain_start = lasttileLength / 32 * 32;
-
     tiling.set_remain_start(remain_start);
     tiling.set_blockLength(blockLength);
     tiling.set_tileNum(tile_num);
     tiling.set_tileLength(tileLength);
     tiling.set_lasttileLength(lasttileLength);
-
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
                         context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
@@ -164,16 +158,12 @@ public:
             .Format({ge::FORMAT_ND, ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
         this->Attr("reduction").AttrType(OPTIONAL).String("mean");
-
         this->SetInferShape(ge::InferShape);
-
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b")
                         .AddConfig("ascend910b");
-
     }
 };
-
 OP_ADD(MseLossGrad);
 }
