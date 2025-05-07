@@ -145,7 +145,6 @@ namespace Ascend
             this->outQueueOUT.FreeTensor(outLocal);
         }
     
-    
     private:
         AscendC::TPipe pipe;
         AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> inQueueIN;
