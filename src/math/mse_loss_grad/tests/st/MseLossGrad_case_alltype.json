@@ -74,7 +74,7 @@
                     "float",
                     "float16"
                 ],
-                "shape": [1],
+                "shape": [100, 100],
                 "name": "y"
             }
         ],
