@@ -12,8 +12,8 @@
 
 namespace domi {
 // register op info to GE
-REGISTER_CUSTOM_OP("AddCustom")
+REGISTER_CUSTOM_OP("MatmulApiConstant")
     .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
-    .OriginOpType("AddCustom")      // name in tf module
+    .OriginOpType("MatmulApiConstant")      // name in tf module
     .ParseParamsByOperatorFn(AutoMappingByOpFn);
 }  // namespace domi

@@ -14,7 +14,7 @@ MatmulApiConstant算子在调用Matmul API实现矩阵乘法时，通过使用�
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Matmul</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatmulApiConstant</td></tr>
 </tr>
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">a</td><td align="center">M * K</td><td align="center">float16</td><td align="center">ND</td></tr>

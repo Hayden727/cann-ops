@@ -83,7 +83,7 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 
 算子MatmulApiConstant注册的原型如下，支持的shape为：M = 1024, N = 640, K = 256。
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Matmul</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatmulApiConstant</td></tr>
 </tr>
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">a</td><td align="center">M * K</td><td align="center">float16</td><td align="center">ND</td></tr>
