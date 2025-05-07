@@ -117,8 +117,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
                         context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
+    auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
+    size_t systemWorkspaceSize = ascendcPlatform.GetLibApiWorkSpaceSize();
     size_t* currentWorkspace = context->GetWorkspaceSizes(1);
-    currentWorkspace[0] = 0;
+    currentWorkspace[0]= systemWorkspaceSize;
     return ge::GRAPH_SUCCESS;
 }
 }
