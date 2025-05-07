@@ -22,7 +22,7 @@ namespace optiling {
 const uint32_t BLOCK_SIZE = 32;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-    MseLossGradTilingData tiling;
+    MseLossGradTilingDataV1 tiling;
     uint32_t sizeofdatatype;
     uint32_t totalLengthAligned;
     uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
