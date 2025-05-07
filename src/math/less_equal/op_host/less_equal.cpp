@@ -129,8 +129,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
   LessEqualTilingParam param;
   param.pad32 = BLOCK_SIZE;
   
-  if (dataSize == static_cast<uint32_t>(0) || bufferNum == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
-  param.padMax = (static_cast<uint32_t>(ubSize) / bufferNum / dataSize) / (TWO * BLOCK_SIZE) * (TWO * BLOCK_SIZE);
+  if (dataSize == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
+  param.padMax = static_cast<uint32_t>(ubSize) / bufferNum;
+  if (bufferNum == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
+  param.padMax = param.padMax / dataSize;
+  constexpr uint32_t TWO_BLOCKSIZE = TWO * BLOCK_SIZE;
+  if (TWO_BLOCKSIZE == static_cast<uint32_t>(0) ) return ge::GRAPH_FAILED;// non zero check
+  param.padMax = param.padMax / TWO_BLOCKSIZE * TWO_BLOCKSIZE;
   param.totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
   if (param.totalLength < param.pad32 * coreNum) {
     coreNum =param.totalLength % param.pad32 ? param.totalLength / param.pad32 + static_cast<uint32_t>(1) : param.totalLength / param.pad32;
