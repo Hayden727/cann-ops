@@ -405,7 +405,7 @@ void Conv3DDWV2BasicBlockTiling::ShrinkBlockBaseMN()
     }
     int32_t hiCal = (hoCal - 1) * runInfo_.stride_h + (runInfo_.kh - 1) * runInfo_.dilation_h + 1;
     // 与K方向减小采用同样思路, 做线性化处理
-    uint64_t deltaBl1PerC0 = CeilDiv(static_cast<uint64_t>(hiCal) * runInfo_.wi * fractalSize0 * dtypeByte_, kernelHW);
+    uint64_t deltaBl1PerC0 = ops::CeilDiv(static_cast<uint64_t>(hiCal) * runInfo_.wi * fractalSize0 * dtypeByte_, kernelHW);
     uint64_t deltaL1LoadSize = CalculateL1SizeGap();
     uint32_t c0ShrinkCount = ops::CeilDiv(deltaL1LoadSize, deltaAl1PerC0 + deltaBl1PerC0);
     if (static_cast<uint64_t>(blockTiling_.blockBaseM) < (c0ShrinkCount + 1) * fractalSize0) {
@@ -583,7 +583,7 @@ void Conv3DDWV2BasicBlockTiling::PrintBasickBlockTilingData()
         << " singleCoreK: " << tiling.get_singleCoreK() << " coreBindOrder: " << tiling.get_coreBindOrder()
         << " usedCoreNum: " << tiling.get_usedCoreNum();
 
-    OP_LOG_FULL(DLOG_DEBUG, opName_, "api basic block tiling: %s", ss.str().c_str());
+    // OP_LOG_FULL(DLOG_DEBUG, opName_, "api basic block tiling: %s", ss.str().c_str());
 }
 
 REGISTER_TILING_TEMPLATE("Conv3DBackpropFilterV2", Conv3DDWV2BasicBlockTiling, 0);
