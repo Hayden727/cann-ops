@@ -64,7 +64,7 @@ aclnnStatus aclnnPreLayerNorm(void *workspace, int64_t workspaceSize, aclOpExecu
     bash run.sh {case-id}
     ```
     
-    参数case-id可选 case1 和 case2 ，分别构造shape为(4980, 4, 2048)和(512, 4, 20480)的测试数据用于算子aclnn调用测试
+    参数case-id可选 case1 和 case2 ，分别构造shape为(4980, 4, 2048)和(512, 4, 20480)的测试数据用于算子aclnn调用测试，默认使用case1。
 
 ## 更新说明
 

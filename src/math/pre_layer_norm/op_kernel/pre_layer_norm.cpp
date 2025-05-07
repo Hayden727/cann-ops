@@ -16,9 +16,9 @@
 constexpr float epsilon = 1e-5f;
 constexpr int32_t BUFFER_NUM = 1;
 
-class KernelLayerNorm {
+class KernelPreLayerNorm {
  public:
-  __aicore__ inline KernelLayerNorm() {}
+  __aicore__ inline KernelPreLayerNorm() {}
   __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR gamma, GM_ADDR beta,
                               GM_ADDR z, uint32_t lastDim, uint32_t tileNum) {
     this->lastDim = lastDim;
@@ -311,7 +311,7 @@ extern "C" __global__ __aicore__ void pre_layer_norm(
     GM_ADDR workspace, GM_ADDR tiling) {
   GET_TILING_DATA(tiling_data, tiling);
 
-  KernelLayerNorm op;
+  KernelPreLayerNorm op;
   op.Init(x, y, gamma, beta, res_out, tiling_data.lastDim,
           tiling_data.tileNum);
   if (TILING_KEY_IS(1)) {

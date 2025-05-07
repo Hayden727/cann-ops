@@ -1,6 +1,6 @@
 声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 
-# LayerNorm
+# PreLayerNorm
 
 ## 支持的产品型号
 
@@ -16,7 +16,7 @@
 
 ## 实现原理
 
-给定两个输入张量`x`和`y`，对输入`x`, `y`先相加得到的数据，根据系数`beta`和偏置`gamma`使其`Add(x, y)`的值收敛到固定区间。
+给定两个输入张量`x`和`y`，对输入`x`, `y`先相加得到的数据，根据系数`beta`和偏置`gamma`使`Add(x, y)`的值收敛到固定区间。
 
 ## 算子执行接口
 
@@ -61,8 +61,9 @@ double epsilon, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **e
   - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnPreLayerNormGetWorkspaceSize获取。
   - executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
+
 - **返回值：**
-  
+
   返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
 
 ## 约束与限制
@@ -88,4 +89,4 @@ double epsilon, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **e
 
 ## 调用示例
 
-详见[ClipByValue自定义算子样例说明算子调用章节](../README.md#算子调用)
+详见[PreLayerNorm自定义算子样例说明算子调用章节](../README.md#算子调用)
