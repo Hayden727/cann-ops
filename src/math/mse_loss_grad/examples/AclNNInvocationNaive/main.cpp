@@ -160,7 +160,7 @@ int main(int argc, char **argv)
     std::vector<int64_t> inputPredictShape = {100, 100};
     std::vector<int64_t> inputLabelShape = {100, 100};
     std::vector<int64_t> inputDoutShape = {100, 100};
-    std::vector<int64_t> outputYShape = {1};
+    std::vector<int64_t> outputYShape = {100, 100};
     void *inputPredictDeviceAddr = nullptr;
     void *inputLabelDeviceAddr = nullptr;
     void *inputDoutDeviceAddr = nullptr;
@@ -172,12 +172,12 @@ int main(int argc, char **argv)
     size_t inputPredictShapeSize_1=inputPredictShape[0] * inputPredictShape[1];
     size_t inputLabelShapeSize_1=inputLabelShape[0] * inputLabelShape[1];
     size_t inputDoutShapeSize_1=inputDoutShape[0] * inputDoutShape[1];
-    size_t outputYShapeSize_1=outputYShape[0];
+    size_t outputYShapeSize_1=outputYShape[0] * outputYShape[1];
 
     std::vector<float> inputPredictHostData(inputPredictShape[0] * inputPredictShape[1]);
     std::vector<float> inputLabelHostData(inputLabelShape[0] * inputLabelShape[1]);
     std::vector<float> inputDoutHostData(inputDoutShape[0] * inputDoutShape[1]);
-    std::vector<float> outputYHostData(outputYShape[0]);
+    std::vector<float> outputYHostData(outputYShape[0] * outputYShape[1]);
 
     size_t fileSize = 0;
     void** input1=(void**)(&inputPredictHostData);
