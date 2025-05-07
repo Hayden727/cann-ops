@@ -24,7 +24,7 @@ public:
     __aicore__ inline void Init(GM_ADDR predict, GM_ADDR label, GM_ADDR dout, GM_ADDR y,
                                 uint32_t remain_start, uint32_t mode, uint32_t totalLength, 
                                 uint32_t blockLength, uint32_t tileNum, uint32_t tileLength,
-                                uint32_t lasttileLength, uint32_t tilingKey) {
+                                uint32_t lastTileLength, uint32_t tilingKey) {
         ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
         this->compute_mode = static_cast<int>(mode);
         this->totalLength = static_cast<int32_t>(totalLength);
@@ -36,7 +36,7 @@ public:
         this->tileNum =
             tileNum ASSERT(tileNum != 0 && "tile num can not be zero!");
         this->tileLength = tileLength / BUFFER_NUM;
-        this->lasttileLength = lasttileLength;
+        this->lastTileLength = lastTileLength;
 
         xGm.SetGlobalBuffer((__gm__ DTYPE_Y*)predict + this->blockLength * AscendC::GetBlockIdx(),
                             this->blockLength);
@@ -64,21 +64,21 @@ private:
     __aicore__ inline void CopyIn(int32_t progress) {
         AscendC::LocalTensor<DTYPE_Y> inLocal = inQueueIN.AllocTensor<DTYPE_Y>();
         if (this->tiling_mode == 1) {
-            AscendC::DataCopy(inLocal[0], xGm[0], this->lasttileLength);
-            AscendC::DataCopy(inLocal[this->tileLength], yGm[0], this->lasttileLength);
-            AscendC::DataCopy(inLocal[2 * (this->tileLength)], zGm[0], this->lasttileLength);
-            for (int32_t index = remain_start; index < this->lasttileLength; index++) {
+            AscendC::DataCopy(inLocal[0], xGm[0], this->lastTileLength);
+            AscendC::DataCopy(inLocal[this->tileLength], yGm[0], this->lastTileLength);
+            AscendC::DataCopy(inLocal[2 * (this->tileLength)], zGm[0], this->lastTileLength);
+            for (int32_t index = remain_start; index < this->lastTileLength; index++) {
                 inLocal.SetValue(index, xGm.GetValue(index));
                 inLocal.SetValue(index + this->tileLength, yGm.GetValue(index));
                 inLocal.SetValue(index + this->tileLength + this->tileLength, zGm.GetValue(index));
             }
         } 
         else if (this->tiling_mode == 2) {
-            if (progress == this->tileNum - 1 && this->lasttileLength != 0) {
-                AscendC::DataCopy(inLocal[0], xGm[progress * this->tileLength], this->lasttileLength);
-                AscendC::DataCopy(inLocal[this->tileLength], yGm[progress * this->tileLength], this->lasttileLength);
-                AscendC::DataCopy(inLocal[2 * (this->tileLength)], zGm[progress * this->tileLength], this->lasttileLength);
-                for (int32_t index = remain_start; index < this->lasttileLength; index++) {
+            if (progress == this->tileNum - 1 && this->lastTileLength != 0) {
+                AscendC::DataCopy(inLocal[0], xGm[progress * this->tileLength], this->lastTileLength);
+                AscendC::DataCopy(inLocal[this->tileLength], yGm[progress * this->tileLength], this->lastTileLength);
+                AscendC::DataCopy(inLocal[2 * (this->tileLength)], zGm[progress * this->tileLength], this->lastTileLength);
+                for (int32_t index = remain_start; index < this->lastTileLength; index++) {
                     inLocal.SetValue(index, xGm.GetValue(index + progress * this->tileLength));
                     inLocal.SetValue(index + this->tileLength, yGm.GetValue(index + progress * this->tileLength));
                     inLocal.SetValue(index + this->tileLength + this->tileLength, zGm.GetValue(index + progress * this->tileLength));
@@ -119,15 +119,15 @@ private:
         AscendC::LocalTensor<DTYPE_Y> outLocal = outQueueOUT.DeQue<DTYPE_Y>();
 
         if (this->tiling_mode == 1) {
-            AscendC::DataCopy(outGm[0], outLocal, this->lasttileLength);
-            for (int32_t index = remain_start; index < this->lasttileLength; index++) {
+            AscendC::DataCopy(outGm[0], outLocal, this->lastTileLength);
+            for (int32_t index = remain_start; index < this->lastTileLength; index++) {
                 outGm.SetValue(index, outLocal.GetValue(index));
             }
         } 
         else if (this->tiling_mode == 2) {
-            if (progress == this->tileNum - 1 && this->lasttileLength != 0) {
-                AscendC::DataCopy(outGm[progress * this->tileLength], outLocal, this->lasttileLength);
-                for (int32_t index = remain_start; index < this->lasttileLength; index++) {
+            if (progress == this->tileNum - 1 && this->lastTileLength != 0) {
+                AscendC::DataCopy(outGm[progress * this->tileLength], outLocal, this->lastTileLength);
+                for (int32_t index = remain_start; index < this->lastTileLength; index++) {
                     outGm.SetValue(index + progress * this->tileLength, outLocal.GetValue(index));
                 }
             } else {
@@ -153,7 +153,7 @@ private:
     uint32_t blockLength;
     uint32_t tileNum;
     uint32_t tileLength;
-    uint32_t lasttileLength;
+    uint32_t lastTileLength;
 };
 
 
@@ -170,6 +170,6 @@ extern "C" __global__ __aicore__ void mse_loss_grad(GM_ADDR predict, GM_ADDR lab
     op.Init(predict, label, dout, y, tiling_data.remain_start, tiling_data.mode, 
             tiling_data.totalLength, tiling_data.blockLength,
             tiling_data.tileNum, tiling_data.tileLength,
-            tiling_data.lasttileLength, tilingKey);
+            tiling_data.lastTileLength, tilingKey);
     op.Process();
 }

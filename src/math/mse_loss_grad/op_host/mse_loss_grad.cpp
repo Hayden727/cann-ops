@@ -80,7 +80,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto block_dim = context->GetBlockDim();
     uint32_t blockLength = 0;
     uint32_t tileLength = 0;
-    uint32_t lasttileLength = 0;
+    uint32_t lastTileLength = 0;
 
     // once_size为一次能搬入ub的数据的最大值（取决于ub_block_num的设置）
     uint32_t once_size = ALIGN_NUM * ub_block_num;
@@ -90,27 +90,27 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     // 数据总量小于once_size时采用切分策略1
     if (tile_num == 0) {
         tileLength = blockLength;
-        lasttileLength = totalLength;
+        lastTileLength = totalLength;
         tile_num += 1;
         context->SetTilingKey(1);
     } 
     // 数据总量大于once_size时采用切分策略2
     else {
         tileLength = once_size;
-        lasttileLength = totalLength - tile_num * once_size;
-        if (lasttileLength != 0) {
+        lastTileLength = totalLength - tile_num * once_size;
+        if (lastTileLength != 0) {
             tile_num += 1;
         }
         context->SetTilingKey(2);
     }
 
     // remain_start为lasttileLength向下32对齐的长度
-    uint32_t remain_start = lasttileLength / 32 * 32;
+    uint32_t remain_start = lastTileLength / 32 * 32;
     tiling.set_remain_start(remain_start);
     tiling.set_blockLength(blockLength);
     tiling.set_tileNum(tile_num);
     tiling.set_tileLength(tileLength);
-    tiling.set_lasttileLength(lasttileLength);
+    tiling.set_lastTileLength(lastTileLength);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
                         context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
