@@ -129,9 +129,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
   LessEqualTilingParam param;
   param.pad32 = BLOCK_SIZE;
   
-  if (dataSize == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
-  param.padMax = static_cast<uint32_t>(ubSize) / bufferNum;
   if (bufferNum == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
+  param.padMax = static_cast<uint32_t>(ubSize) / bufferNum;
+  if (dataSize == static_cast<uint32_t>(0)) return ge::GRAPH_FAILED;// non zero check
   param.padMax = param.padMax / dataSize;
   constexpr uint32_t TWO_BLOCKSIZE = TWO * BLOCK_SIZE;
   if (TWO_BLOCKSIZE == static_cast<uint32_t>(0) ) return ge::GRAPH_FAILED;// non zero check
