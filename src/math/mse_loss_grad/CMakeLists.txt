@@ -21,5 +21,11 @@ target_sources(opsproto PRIVATE
          op_host/mse_loss_grad.cpp
 )
 
-install(FILES op_kernel/mse_loss_grad.cpp
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
+# install kernel侧源码和aclnn头文件
+install(DIRECTORY op_kernel/
+        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic
+        FILES_MATCHING PATTERN "*.cpp")
+
+install(DIRECTORY op_kernel/
+        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic
+        FILES_MATCHING PATTERN "*.h")
