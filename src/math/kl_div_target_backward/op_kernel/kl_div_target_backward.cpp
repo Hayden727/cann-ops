@@ -23,17 +23,7 @@ __aicore__ inline T RoundUp(T a, T b) {
     return (a + b - 1) / b * b;
 }
 
-class TileVar {
-public:    
-    int64_t gradOutputLen;
-    int64_t selfLen;
-    int64_t targetLen; 
-    int64_t maxShapeDim; 
-    int64_t ss[INPUT_VAR_NUM][MAX_DIM_NUM];
-    int64_t sf[MAX_DIM_NUM];
-};
-
-template <typename T, bool IS_BROADCAST>
+template <typename T>
 class KernelKlDivTargetBackward {
 public:
     __aicore__ inline KernelKlDivTargetBackward() {}
@@ -43,7 +33,7 @@ public:
                                 int64_t finalSmallTileNum, int64_t tileDataNum, 
                                 int64_t smallTailDataNum, int64_t bigTailDataNum, 
                                 int64_t tailBlockNum, uint32_t reduction, uint32_t logTarget,
-                                int64_t inputNum, TileVar* tilevar) 
+                                int64_t inputNum) 
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
@@ -66,15 +56,6 @@ public:
             // 每个小核最后一次搬运数据量 smallTailDataNum
             this->tailDataNum = smallTailDataNum;
             globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (GetBlockIdx() - tailBlockNum);
-        }
-        this->maxShapeDim = tilevar->maxShapeDim;
-        for(int32_t i = 0; i < INPUT_VAR_NUM; i++) {
-            for(int32_t j = 0; j < this->maxShapeDim; j++) {
-                this->shape[i][j] =  tilevar->ss[i][j];
-            }
-        }
-        for(int32_t j = 0; j < this->maxShapeDim; j++) {
-            this->shapefull[j] = tilevar->sf[j];
         }
         this->globalBufferIndex = globalBufferIndex;
         this->reduction = reduction;
@@ -119,16 +100,10 @@ private:
         LocalTensor<T> selfLocal = inQueueSelf.AllocTensor<T>();
         LocalTensor<T> targetLocal = inQueueTarget.AllocTensor<T>();
         
-        if constexpr (IS_BROADCAST) {
-            BroadCINPUTX0(gradOutputLocal, globalBufferIndex + progress * this->tileDataNum, this->processDataNum);
-            BroadCINPUTX1(selfLocal, globalBufferIndex + progress * this->tileDataNum, this->processDataNum);
-            BroadCINPUTX2(targetLocal, globalBufferIndex + progress * this->tileDataNum, this->processDataNum);
-        } else {
-            int64_t offset = globalBufferIndex + progress * this->tileDataNum;
-            DataCopy(gradOutputLocal, gradOutputGm[offset], this->processDataNum);
-            DataCopy(selfLocal, selfGm[offset], this->processDataNum);
-            DataCopy(targetLocal, targetGm[offset], this->processDataNum);
-        }
+        int64_t offset = globalBufferIndex + progress * this->tileDataNum;
+        DataCopy(gradOutputLocal, gradOutputGm[offset], this->processDataNum);
+        DataCopy(selfLocal, selfGm[offset], this->processDataNum);
+        DataCopy(targetLocal, targetGm[offset], this->processDataNum);
         
         inQueueGradOuput.EnQue(gradOutputLocal);
         inQueueSelf.EnQue(selfLocal);
@@ -213,63 +188,6 @@ private:
       DataCopy(gradTargetGm[globalBufferIndex + progress * this->tileDataNum], gradTargetLocal, this->processDataNum);
       outQueueGradTarget.FreeTensor(gradTargetLocal);
     }
-    
-    __aicore__ inline int GetPos(int target_index, int inputNo) {
-        int source_index = 0;  // 源Tensor的索引
-        int stride = 1;        // 当前维度的步长
-        // 从最低维度向最高维度遍历
-        for (int dim = this->maxShapeDim - 1; dim >= 0; --dim) {
-            int full_dim_size = shapefull[dim];  // 广播后当前维度的大小
-            int src_dim_size = shape[inputNo][dim];  // 源Tensor当前维度的大小
-
-            // 计算当前维度的坐标
-            int coord = target_index % full_dim_size;
-            target_index = target_index / full_dim_size;
-            
-            // 如果源Tensor的当前维度不是1，则累加索引
-            if (src_dim_size > 1) {
-                source_index += coord * stride;
-                stride *= src_dim_size;
-            }
-            // 如果源Tensor的当前维度是1，则跳过（广播维度）
-        }
-
-        return source_index;
-    }
-    // 从offset索引开始到offset+length索引的全部数据，映射回原始输入x0
-    __aicore__ inline void BroadCINPUTX0(LocalTensor<T> &dst, uint32_t offset, uint32_t length) {
-        // 对每一个数
-        for(uint32_t i = 0; i < length; i++) {
-            // 在dst中的索引位置 istart
-            int istart = i + offset;
-            // 在原src中的索引位置 idxtmp
-            int idxtmp = GetPos(istart, 0);
-            T tmp = gradOutputGm.GetValue(idxtmp);
-            dst.SetValue(i, tmp);
-        }
-    }
-    __aicore__ inline void BroadCINPUTX1(LocalTensor<T> &dst, uint32_t offset, uint32_t length) {
-        // 对每一个数
-        for(uint32_t i = 0; i < length; i++) {
-            // 在dst中的索引位置 istart
-            int istart = i + offset;
-            // 在原src中的索引位置 idxtmp
-            int idxtmp = GetPos(istart, 1);
-            T tmp = selfGm.GetValue(idxtmp);
-            dst.SetValue(i, tmp);
-        }
-    }
-    __aicore__ inline void BroadCINPUTX2(LocalTensor<T> &dst, uint32_t offset, uint32_t length) {
-        // 对每一个数
-        for(uint32_t i = 0; i < length; i++) {
-            // 在dst中的索引位置 istart
-            int istart = i + offset;
-            // 在原src中的索引位置 idxtmp
-            int idxtmp = GetPos(istart, 2);
-            T tmp = targetGm.GetValue(idxtmp);
-            dst.SetValue(i, tmp);
-        }
-    }
 
 private:
     TPipe pipe;
@@ -282,10 +200,7 @@ private:
     int64_t tileDataNum;
     int64_t tailDataNum;
     int64_t processDataNum;
-    int64_t maxShapeDim;
     int64_t inputNum;
-    int64_t shape[INPUT_VAR_NUM][MAX_DIM_NUM];
-    int64_t shapefull[MAX_DIM_NUM];
     int64_t globalBufferIndex;
     uint32_t reduction;
     uint32_t logTarget;
@@ -295,38 +210,14 @@ extern "C" __global__ __aicore__ void kl_div_target_backward(GM_ADDR grad_output
     GM_ADDR grad_target, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
     
-    TileVar tilevar; 
-    tilevar.gradOutputLen = tiling_data.gradOutputLen;
-    tilevar.selfLen = tiling_data.selfLen;
-    tilevar.targetLen =  tiling_data.targetLen;  
-    tilevar.maxShapeDim =  tiling_data.maxShapeDim;
-    for(int32_t i = 0; i < INPUT_VAR_NUM; i++) {
-        for(int32_t j = 0; j < tilevar.maxShapeDim; j++) {
-            tilevar.ss[i][j] = tiling_data.shape[i * MAX_DIM_NUM + j];
-        }
-    }
-    for(int32_t j = 0; j < tilevar.maxShapeDim; j++) {
-        tilevar.sf[j] = tiling_data.shapefull[j];  
-    }
-    if (TILING_KEY_IS(0)) {
-        KernelKlDivTargetBackward<DTYPE_TARGET, false> op;
-        op.Init(grad_output, self, target, grad_target, tiling_data.smallCoreDataNum,
-                tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-                tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-                tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-                tiling_data.tailBlockNum, tiling_data.reduction, tiling_data.logTarget,
-                tiling_data.inputNum, &tilevar);
-        op.Process();
-    } else if (TILING_KEY_IS(1)) {
-        KernelKlDivTargetBackward<DTYPE_TARGET, true> op;
-        op.Init(grad_output, self, target, grad_target, tiling_data.smallCoreDataNum,
-                tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-                tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-                tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-                tiling_data.tailBlockNum, tiling_data.reduction, tiling_data.logTarget,
-                tiling_data.inputNum, &tilevar);
-        op.Process();
-    }
+    KernelKlDivTargetBackward<DTYPE_TARGET> op;
+    op.Init(grad_output, self, target, grad_target, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
+            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
+            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
+            tiling_data.tailBlockNum, tiling_data.reduction, tiling_data.logTarget,
+            tiling_data.inputNum);
+    op.Process();
     return;
 }
 

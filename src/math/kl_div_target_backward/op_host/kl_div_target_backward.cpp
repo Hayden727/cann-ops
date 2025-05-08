@@ -30,59 +30,6 @@ namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
     KlDivTargetBackwardTilingData tiling;
-    // 广播相关参数计算
-    int64_t gradOutputLen = context->GetInputShape(GRAD_OUTPUT_IDX)->GetStorageShape().GetShapeSize();
-    int64_t selfLen = context->GetInputShape(SELF_IDX)->GetStorageShape().GetShapeSize();
-    int64_t targetLen = context->GetInputShape(TARGET_IDX)->GetStorageShape().GetShapeSize();
-    int64_t numshapes0 = context->GetInputShape(GRAD_OUTPUT_IDX)->GetStorageShape().GetDimNum();
-    int64_t numshapes1 = context->GetInputShape(SELF_IDX)->GetStorageShape().GetDimNum();
-    int64_t numshapes2 = context->GetInputShape(TARGET_IDX)->GetStorageShape().GetDimNum();
-    // 广播后维度数
-    int64_t maxShapeDim = std::max(numshapes0, std::max(numshapes1, numshapes2));
-    // 记录每个输入原始shape
-    int64_t shape[INPUT_VAR_NUM * MAX_SHAPE_DIM];
-    // 记录广播后shape
-    int64_t shapefull[maxShapeDim];
-    for (int64_t i = 0; i < INPUT_VAR_NUM; i++) {
-        int64_t *ss = &shape[i * MAX_SHAPE_DIM];
-        const gert::StorageShape* inputshape = context->GetInputShape(i);
-        int64_t dim_num =  inputshape->GetStorageShape().GetDimNum();
-        for (int64_t j = 0; j < maxShapeDim; j++) {
-            if(j < maxShapeDim - dim_num){
-                ss[j] = 1;
-            } else {
-                ss[j] = inputshape->GetStorageShape().GetDim(j - (maxShapeDim - dim_num));
-            }
-        }
-    }
-    int64_t inputNum = 1;
-    for (int64_t j = 0; j < maxShapeDim; j++) {
-        int64_t maxDim = 1;
-        int64_t *sf = &shapefull[0];
-        for (int64_t i = 0; i < INPUT_VAR_NUM; i++) {
-            int64_t *ss = &shape[i * MAX_SHAPE_DIM];
-            if (ss[j] > maxDim) {
-                maxDim = ss[j];
-            }
-        }
-        sf[j] = maxDim;  // 广播后的形状
-        inputNum *= maxDim;
-    }
-    tiling.set_maxShapeDim(maxShapeDim);
-    tiling.set_inputNum(inputNum);
-    tiling.set_shape(shape);
-    tiling.set_shapefull(shapefull);
-    tiling.set_gradOutputLen(gradOutputLen);
-    tiling.set_selfLen(selfLen);
-    tiling.set_targetLen(targetLen);
-
-    // 设置tilingkey
-    uint32_t key = 1;
-    if (gradOutputLen == selfLen && selfLen == targetLen) {
-        key = 0;
-    }
-    context->SetTilingKey(key);
-    ///////////////////
     uint64_t ubSize;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
@@ -90,6 +37,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
     uint32_t typeLength = 0;
+    int64_t inputNum = context->GetInputShape(TARGET_IDX)->GetStorageShape().GetShapeSize();
     auto dtype = context->GetInputDesc(0)->GetDataType();
     ge::TypeUtils::GetDataTypeLength(dtype, typeLength);
     int64_t inputLength = inputNum * typeLength;
@@ -142,6 +90,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_finalSmallTileNum(finalSmallTileNum);
     tiling.set_finalBigTileNum(finalBigTileNum);
     tiling.set_tailBlockNum(tailBlockNum);
+    tiling.set_inputNum(inputNum);
     tiling.set_reduction(reduction);
     tiling.set_logTarget(logTarget);
 
@@ -153,7 +102,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     size_t *currentWorkspace = context->GetWorkspaceSizes(1); // 通过框架获取workspace的指针，GetWorkspaceSizes入参为所需workspace的块数。当前限制使用一块。
     currentWorkspace[0] = sysWorkspaceSize;
 
-    OP_LOGD(context->GetNodeName(), "key = %u.", key);
     OP_LOGD(context->GetNodeName(), "smallCoreDataNum = %lu.", smallCoreDataNum);
     OP_LOGD(context->GetNodeName(), "bigCoreDataNum = %lu.", bigCoreDataNum);
     OP_LOGD(context->GetNodeName(), "finalBigTileNum = %lu.", finalBigTileNum);
@@ -162,9 +110,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     OP_LOGD(context->GetNodeName(), "smallTailDataNum = %lu.", smallTailDataNum);
     OP_LOGD(context->GetNodeName(), "bigTailDataNum = %lu.", bigTailDataNum);
     OP_LOGD(context->GetNodeName(), "tailBlockNum = %lu.", tailBlockNum);
-    OP_LOGD(context->GetNodeName(), "gradOutputLen = %lu.", gradOutputLen);
-    OP_LOGD(context->GetNodeName(), "selfLen = %lu.", selfLen);
-    OP_LOGD(context->GetNodeName(), "targetLen = %lu.", targetLen);
+    OP_LOGD(context->GetNodeName(), "inputNum = %lu.", inputNum);
     OP_LOGD(context->GetNodeName(), "reduction = %u.", reduction);
     OP_LOGD(context->GetNodeName(), "logTarget = %u.", logTarget);
 
