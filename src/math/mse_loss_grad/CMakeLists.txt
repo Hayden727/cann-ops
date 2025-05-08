@@ -6,11 +6,11 @@ add_ops_compile_options(
 )
 
 target_sources(op_host_aclnn PRIVATE
-        op_host/mse_loss_grad.cpp
+        op_host/mse_loss_grad_v1.cpp
 )
 
 target_sources(optiling PRIVATE
-        op_host/mse_loss_grad.cpp
+        op_host/mse_loss_grad_v1.cpp
 )
 
 target_include_directories(optiling PRIVATE
@@ -18,7 +18,7 @@ target_include_directories(optiling PRIVATE
 )
 
 target_sources(opsproto PRIVATE
-         op_host/mse_loss_grad.cpp
+         op_host/mse_loss_grad_v1.cpp
 )
 
 # install kernel侧源码和aclnn头文件

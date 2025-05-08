@@ -9,7 +9,7 @@
  */
 
 /**
- * @file mse_loss_grad.cpp
+ * @file mse_loss_grad_v1.cpp
  */
 
 #include <cstdint>
