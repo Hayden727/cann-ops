@@ -113,7 +113,6 @@ atb::Status AddCdivOperation::Setup(const atb::VariantPack &variantPack, uint64_
             return atb::ERROR_INTERNAL_ERROR;
         }
         aclInTensors_[i] = aclnnTensor;
-        
     }
 
     aclOutTensors_.resize(GetOutputNum());
