@@ -9,14 +9,14 @@
  */
 
 /**
- * @file mse_loss_grad_v1.cpp
+ * @file mse_loss_grad.cpp
  */
 
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "tiling/tiling_api.h"
-#include "mse_loss_grad_v1_tiling.h"
+#include "mse_loss_grad_tiling.h"
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 32;

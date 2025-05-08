@@ -46,7 +46,7 @@
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_mse_loss_grad_v1_op
+    ./execute_mse_loss_grad_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。
