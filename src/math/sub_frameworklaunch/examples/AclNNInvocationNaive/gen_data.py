@@ -13,6 +13,7 @@ import os
 import torch
 import numpy as np
 
+
 def gen_golden_data_simple():
     dtype = np.float16
     input_shape = [8, 2048]
@@ -22,10 +23,6 @@ def gen_golden_data_simple():
     y = np.random.uniform(-1, 1, input_shape).astype(dtype)
 
     golden = (x - y).astype(dtype)
-    
-    print(x)
-    print(y)
-    
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

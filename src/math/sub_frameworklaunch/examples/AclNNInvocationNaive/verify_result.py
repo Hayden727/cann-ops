@@ -12,6 +12,7 @@ import os
 import sys
 import numpy as np
 
+
 LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
 MINIMUM = 10e-10
 
@@ -27,8 +28,6 @@ def verify_result(real_result, golden):
         if np.sum(result_rtol == False) > real_result.size * LOSS and \
            np.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
-            print(real_result)
-            print(golden)
             return False
     print("test pass")
     return True
