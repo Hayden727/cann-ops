@@ -149,6 +149,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
 
+    uint32_t sysWorkspaceSize = ascendcPlatform.GetLibApiWorkSpaceSize();
+    size_t *currentWorkspace = context->GetWorkspaceSizes(1); // 通过框架获取workspace的指针，GetWorkspaceSizes入参为所需workspace的块数。当前限制使用一块。
+    currentWorkspace[0] = sysWorkspaceSize;
+
     OP_LOGD(context->GetNodeName(), "key = %u.", key);
     OP_LOGD(context->GetNodeName(), "smallCoreDataNum = %lu.", smallCoreDataNum);
     OP_LOGD(context->GetNodeName(), "bigCoreDataNum = %lu.", bigCoreDataNum);
@@ -260,17 +264,11 @@ public:
             .DataType({ge::DT_FLOAT16, ge::DT_FLOAT, ge::DT_BF16})
             .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Attr("reduction")
-            .AttrType(OPTIONAL)
-            .Int(0);
-        this->Attr("log_target")
-            .AttrType(OPTIONAL)
-            .Bool(false);
+        this->Attr("reduction").Int(0);
+        this->Attr("log_target").Bool(false);
 
         this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
-
-        this->AICore()
-            .SetTiling(optiling::TilingFunc);
+        this->AICore().SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
     }
 };

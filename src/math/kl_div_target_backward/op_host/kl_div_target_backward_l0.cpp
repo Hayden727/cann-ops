@@ -44,7 +44,6 @@ static const aclTensor* KlDivTargetBackwardAiCore(const aclTensor* gradOutput, c
                                            OP_ATTR(reduction, logTarget));
     OP_CHECK(ret == ACLNN_SUCCESS, OP_LOGE(ACLNN_ERR_INNER_NULLPTR,
         "KlDivTargetBackwardAiCore ADD_TO_LAUNCHER_LIST_AICORE failed."), return nullptr);
-    OP_LOGD("4.1*******************.");
     return out;
 }
 

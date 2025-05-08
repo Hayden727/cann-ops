@@ -61,7 +61,7 @@ static const std::initializer_list<op::DataType> TARGET_DTYPE_SUPPORT_LIST_SUPPO
     op::DataType::DT_FLOAT, op::DataType::DT_FLOAT16, op::DataType::DT_BF16};
 
 inline static bool CheckNotNull(const aclTensor* gradOutput, const aclTensor* self, const aclTensor* target,
-                                aclTensor* gradTarget) {
+                                const aclTensor* gradTarget) {
     OP_CHECK_NULL(gradOutput, return false);
     OP_CHECK_NULL(self, return false);
     OP_CHECK_NULL(target, return false);
@@ -79,7 +79,7 @@ static const std::initializer_list<op::DataType> CheckSocVersionIsSupportBf16(vo
 }
 
 static bool CheckDtypeValid(const aclTensor* gradOutput, const aclTensor* self, const aclTensor* target,
-                            aclTensor* gradTarget) {
+                            const aclTensor* gradTarget) {
     auto DTYPE_SUPPORT_LIST = CheckSocVersionIsSupportBf16();
     OP_CHECK_DTYPE_NOT_SUPPORT(gradOutput, DTYPE_SUPPORT_LIST, return false);
     OP_CHECK_DTYPE_NOT_SUPPORT(self, DTYPE_SUPPORT_LIST, return false);
@@ -98,25 +98,15 @@ inline static bool isOutSizeSameWithBroadcastShapeSize(const aclTensor* y, op::S
 }
 
 static bool CheckShape(const aclTensor* gradOutput, const aclTensor* self, const aclTensor* target,
-                       aclTensor* gradTarget) {
+                       const aclTensor* gradTarget) {
     OP_CHECK_MAX_DIM(gradOutput, MAX_DIM_LEN, return false);
     OP_CHECK_MAX_DIM(self, MAX_DIM_LEN, return false);
     OP_CHECK_MAX_DIM(target, MAX_DIM_LEN, return false);
-
-    // Shape broadcastShape;
-    // OP_CHECK_BROADCAST_AND_INFER_SHAPE(gradOutput, self, broadcastShape, return false);
-    // OP_CHECK_BROADCAST_AND_INFER_SHAPE(gradOutput, target, broadcastShape, return false);
-    // OP_CHECK_WRONG_DIMENSION(y, 1, return false);
-
-    // if (!isOutSizeSameWithBroadcastShapeSize(gradTarget, broadcastShape)) {
-    //     OP_LOGE(ACLNN_ERR_PARAM_INVALID, "The gradTarget shape size  is not same with broadcastShapeSize.");
-    //     return false;
-    // }
     return true;
 }
 
 inline static aclnnStatus CheckParams(const aclTensor* gradOutput, const aclTensor* self, const aclTensor* target,
-    aclTensor* gradTarget) {
+    const aclTensor* gradTarget) {
   // 错误码等DFX方案细化后刷新，错误日志在check接口内打印
     // 1. 检查参数是否为空指针
     CHECK_RET(CheckNotNull(gradOutput, self, target, gradTarget), ACLNN_ERR_PARAM_NULLPTR);
@@ -144,7 +134,7 @@ aclnnStatus aclnnKlDivTargetBackwardGetWorkspaceSize(const aclTensor *gradOutput
     const aclTensor *target,
     int64_t reduction,
     bool logTarget,
-    aclTensor *gradTarget,
+    const aclTensor *gradTarget,
     uint64_t *workspaceSize,
     aclOpExecutor **executor) {
     OP_CHECK_COMM_INPUT(workspaceSize, executor);
@@ -185,14 +175,11 @@ aclnnStatus aclnnKlDivTargetBackwardGetWorkspaceSize(const aclTensor *gradOutput
     selfBroadcast = selfContiguous;
     targetBroadcast = targetContiguous;
 
-    OP_LOGD("1*******************.");
     if(IsAiCoreSupport(target)){
-        OP_LOGD("2*******************.");
         // 判断输入shape不相等需要调用BroadcastTo
         if (gradOutput->GetViewShape() != self->GetViewShape() ||
             gradOutput->GetViewShape() != target->GetViewShape() ||
             self->GetViewShape() != target->GetViewShape()) {
-            OP_LOGD("3*******************.");
             op::Shape broadcastShape;
             if (BroadcastInferShape(gradOutput->GetViewShape(), self->GetViewShape(), broadcastShape) &&
                 BroadcastInferShape(broadcastShape, target->GetViewShape(), broadcastShape)) {
@@ -209,7 +196,6 @@ aclnnStatus aclnnKlDivTargetBackwardGetWorkspaceSize(const aclTensor *gradOutput
                 CHECK_RET(targetBroadcast != nullptr, ACLNN_ERR_INNER_NULLPTR);
             }
         }
-        OP_LOGD("4*******************.");
         // 调用MaskedSelect算子
         auto out = l0op::KlDivTargetBackward(gradOutputBroadcast, selfBroadcast, targetBroadcast,
             reduction, logTarget, uniqueExecutor.get());
@@ -218,7 +204,6 @@ aclnnStatus aclnnKlDivTargetBackwardGetWorkspaceSize(const aclTensor *gradOutput
         // 固定写法，将计算结果拷贝到输出out上，out可能是非连续的tensor
         auto viewCopyResult = l0op::ViewCopy(out, gradTarget, uniqueExecutor.get());
         CHECK_RET(viewCopyResult != nullptr, ACLNN_ERR_INNER_NULLPTR);
-        OP_LOGD("5*******************.");
     }
     
     // 固定写法，获取计算过程中需要使用的workspace大小
