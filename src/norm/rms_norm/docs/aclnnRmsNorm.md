@@ -11,7 +11,7 @@
 每个算子分为两段式接口，必须先调用`aclnnRmsNormGetWorkspaceSize`接口获取入参并根据计算流程所需workspace大小，再调用`aclnnRmsNorm`接口执行计算。
 
 - `aclnnStatus aclnnRmsNormGetWorkspaceSize(const aclTensor *x, const aclTensor *gamma, double epsilon, const aclTensor *yOut, const aclTensor *rstdOut, uint64_t *workspaceSize, aclOpExecutor **executor)`
-- `aclnnStatus aclnnRmsNorm( void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
+- `aclnnStatus aclnnRmsNorm(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 ## 功能描述
 
