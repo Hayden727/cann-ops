@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_mse_loss_grad.h"
+#include "aclnn_mse_loss_grad_v1.h"
 
 #define SUCCESS 0
 #define FAILED 1

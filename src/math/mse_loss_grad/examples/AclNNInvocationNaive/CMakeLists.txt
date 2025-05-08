@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_mse_loss_grad)
+project(acl_execute_add)
 
 # Compile options
 add_compile_options(-std=c++11)
@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_mse_loss_grad_op
+add_executable(execute_mse_loss_grad_v1_op
     main.cpp
 )
 
-target_link_libraries(execute_mse_loss_grad_op
+target_link_libraries(execute_mse_loss_grad_v1_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,4 +57,4 @@ target_link_libraries(execute_mse_loss_grad_op
     stdc++
 )
 
-install(TARGETS execute_mse_loss_grad_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_mse_loss_grad_v1_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
