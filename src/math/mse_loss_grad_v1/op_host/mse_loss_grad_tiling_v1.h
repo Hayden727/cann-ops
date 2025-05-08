@@ -9,11 +9,11 @@
  */
 
 /**
- * @file mse_loss_grad_tiling.h
+ * @file mse_loss_grad_tiling_v1.h
  */
 
-#ifndef MSE_LOSS_GRAD_TILING_H
-#define MSE_LOSS_GRAD_TILING_H
+#ifndef MSE_LOSS_GRAD_V1_TILING_H
+#define MSE_LOSS_GRAD_V1_TILING_H
 
 #include "register/tilingdata_base.h"
 
@@ -29,7 +29,7 @@ BEGIN_TILING_DATA_DEF(MseLossGradTilingDataV1)
   TILING_DATA_FIELD_DEF(uint32_t, lastTileLength);
 END_TILING_DATA_DEF;
 
-REGISTER_TILING_DATA_CLASS(MseLossGrad, MseLossGradTilingDataV1)
+REGISTER_TILING_DATA_CLASS(MseLossGradV1, MseLossGradTilingDataV1)
 }
 
-#endif // MSE_LOSS_GRAD_TILING_H
+#endif // MSE_LOSS_GRAD_V1_TILING_H

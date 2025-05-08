@@ -27,7 +27,7 @@
   - 进入样例代码所在路径
   
     ```bash
-    cd ${git_clone_path}/cann-ops/src/math/mse_loss_grad/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/cann-ops/src/math/mse_loss_grad_v1/examples/AclNNInvocationNaive
     ```
   
   - 环境变量配置
@@ -46,7 +46,7 @@
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_mse_loss_grad_op
+    ./execute_mse_loss_grad_v1_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。

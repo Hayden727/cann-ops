@@ -9,7 +9,7 @@
  */
 
 /**
- * @file mse_loss_grad.cpp
+ * @file mse_loss_grad_v1.cpp
  */
 
 #include <cstdint>
@@ -157,7 +157,7 @@ private:
 };
 
 
-extern "C" __global__ __aicore__ void mse_loss_grad(GM_ADDR predict, GM_ADDR label, GM_ADDR dout, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
+extern "C" __global__ __aicore__ void mse_loss_grad_v1(GM_ADDR predict, GM_ADDR label, GM_ADDR dout, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
     KernelMseLossGrad op;
     uint32_t tilingKey = 1;

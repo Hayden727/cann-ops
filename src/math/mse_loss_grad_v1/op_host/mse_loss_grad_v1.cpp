@@ -9,26 +9,26 @@
  */
 
 /**
- * @file mse_loss_grad.cpp
+ * @file mse_loss_grad_v1.cpp
  */
 
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "tiling/tiling_api.h"
-#include "mse_loss_grad_tiling.h"
+#include "mse_loss_grad_tiling_v1.h"
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 32;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
     MseLossGradTilingDataV1 tiling;
-    uint32_t sizeofdatatype;
+    uint32_t sizeOfDataType;
     uint32_t totalLengthAligned;
     uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     auto dt = context->GetInputDesc(0)->GetDataType();
     if (dt == 1) {
-        sizeofdatatype = 2;
+        sizeOfDataType = 2;
     }
 
     uint32_t ALIGN_NUM = BLOCK_SIZE;
@@ -133,9 +133,9 @@ static ge::graphStatus InferShape(gert::InferShapeContext* context)
 
 
 namespace ops {
-class MseLossGrad : public OpDef {
+class MseLossGradV1 : public OpDef {
 public:
-    explicit MseLossGrad(const char* name) : OpDef(name)
+    explicit MseLossGradV1(const char* name) : OpDef(name)
     {
         this->Input("predict")
             .ParamType(REQUIRED)
@@ -165,5 +165,5 @@ public:
                         .AddConfig("ascend910b");
     }
 };
-OP_ADD(MseLossGrad);
+OP_ADD(MseLossGradV1);
 }

@@ -12,8 +12,8 @@
 
 namespace domi {
 // register op info to GE
-REGISTER_CUSTOM_OP("MseLossGrad")
+REGISTER_CUSTOM_OP("MseLossGradV1")
     .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
-    .OriginOpType("MseLossGrad")      // name in tf module
+    .OriginOpType("MseLossGradV1")      // name in tf module
     .ParseParamsByOperatorFn(AutoMappingByOpFn);
 }  // namespace domi

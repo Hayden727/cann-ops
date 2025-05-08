@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_mse_loss_grad.h"
+#include "aclnn_mse_loss_grad_v1.h"
 
 #define SUCCESS 0
 #define FAILED 1
@@ -206,16 +206,16 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnMseLossGradGetWorkspaceSize(inputPredict, inputLabel, inputDout, reductionOptional, outputY, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGradGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnMseLossGradV1GetWorkspaceSize(inputPredict, inputLabel, inputDout, reductionOptional, outputY, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGradV1GetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return FAILED;);
     }
     // 执行算子
-    ret = aclnnMseLossGrad(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGrad failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnMseLossGradV1(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMseLossGradV1 failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
