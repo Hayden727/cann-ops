@@ -8,22 +8,23 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
+import os
+import sys
 import numpy as np
 import torch
-import sys
-import os
+
 
 def gen_golden_data(case_id):
     if case_id == "case1":
-        x_shape = (1024,16)
+        x_shape = (1024, 16)
         k = 4
     elif case_id == "case2":
-        x_shape = (2048,32)
+        x_shape = (2048, 32)
         k = 6
     dtype = torch.float32
     device = "cpu"
     x = torch.randn(*x_shape, dtype=dtype, device=device)
-    y, indices = torch.topk(torch.softmax(x,dim=1), k)
+    y, indices = torch.topk(torch.softmax(x, dim=1), k)
 
     input_x = x.detach().numpy().astype(np.float32)
     output_y = y.detach().numpy().astype(np.float32)

@@ -31,7 +31,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     n--;
   }
   
-
   tiling.set_k(*k);
   tiling.set_totalLength(totalLength);
   tiling.set_lastDim(lastDim);

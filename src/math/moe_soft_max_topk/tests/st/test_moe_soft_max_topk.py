@@ -22,9 +22,10 @@ def moe_soft_max_topk_test(x, k):
     output_indices = indices.detach().numpy().astype(np.int32)
     return output_y, output_indices
 
+
 def calc_expect_func(x, k, y, indices):
     """
     calc_expect_func
     """
     res1, res2 = moe_soft_max_topk_test(x['value'], k)
-    return [res1,res2]
+    return [res1, res2]
