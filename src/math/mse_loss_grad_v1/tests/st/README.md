@@ -2,7 +2,7 @@
 ```
 ├── msopst.ini                  // st测试配置文件 
 ├── MseLossGrad_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
-└── test_mse_loss_grad.py               // 算子期望数据生成脚本
+└── test_mse_loss_grad_v1.py               // 算子期望数据生成脚本
 ```
 
 ## ST测试介绍
@@ -26,7 +26,7 @@
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/cann-ops/src/math/mse_loss_grad/tests/st
+    cd ${git_clone_path}/cann-ops/src/math/mse_loss_grad_v1/tests/st
     ```
 
   - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH
@@ -41,7 +41,7 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./MseLossGrad_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./MseLossGradV1_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明

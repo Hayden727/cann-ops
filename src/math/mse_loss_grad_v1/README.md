@@ -1,8 +1,8 @@
-## `MseLossGrad`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`MseLossGrad`算子。
+## `MseLossGradV1`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`MseLossGradV1`算子。
 
 ### 算子描述
-`MseLossGrad`是计算均方误差损失（`MseLoss`）相对于输入的梯度的算子。在神经网络的反向传播过程中，梯度是用来更新模型参数的重要部分。通过计算`MSELoss`的梯度，优化器可以调整模型的权重，以最小化损失。其中传入的reduction参数有两个取值：
+`MseLossGradV1`是计算均方误差损失（`MseLoss`）相对于输入的梯度的算子。在神经网络的反向传播过程中，梯度是用来更新模型参数的重要部分。通过计算`MSELoss`的梯度，优化器可以调整模型的权重，以最小化损失。其中传入的reduction参数有两个取值：
 
 - `mean`: 计算出的梯度会是均方误差平均值的梯度；
 
@@ -12,7 +12,7 @@
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLossGrad</th></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLossGradV1</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>
@@ -33,7 +33,7 @@
 <tr><td rowspan="1" align="center">attr属性</td>
 <td align="center">reduction</td><td align="center">scalar</td><td align="center">string</td><td align="center">\</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss_grad</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss_grad_v1</td></tr>  
 </table>
 
 
@@ -82,7 +82,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用MseLossGrad算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用MseLossGradV1算子。</td>
     </tr>
 </table>
 
