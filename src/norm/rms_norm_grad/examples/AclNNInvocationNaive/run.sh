@@ -18,25 +18,21 @@ else
         _ASCEND_INSTALL_PATH=/usr/local/Ascend/ascend-toolkit/latest
     fi
 fi
-# source $_ASCEND_INSTALL_PATH/bin/setenv.bash
+source $_ASCEND_INSTALL_PATH/bin/setenv.bash
 export DDK_PATH=$_ASCEND_INSTALL_PATH
-echo $NPU_HOST_LIB
 export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
 
-echo $LD_LIBRARY_PATH
-echo $NPU_HOST_LIB
-
 rm -rf $HOME/ascend/log/*
-rm -rf ./input/*.bin
-rm -rf ./output/*.bin
-
-# python3 gen_data.py
-
-# if [ $? -ne 0 ]; then
-#     echo "ERROR: generate input data failed!"
-#     return 1
-# fi
-# echo "INFO: generate input data success!"
+rm -rf input
+rm -rf output
+mkdir output
+set -e
+python3 gen_data.py
+if [ $? -ne 0 ]; then
+    echo "ERROR: generate input data failed!"
+    return 1
+fi
+echo "INFO: generate input data success!"
 
 rm -rf build
 mkdir -p build
@@ -48,6 +44,16 @@ cmake --build build -j
     ./execute_test_op
 )
 
-echo "#####################################"
-echo "INFO: you have passed the Precision!"
-echo "#####################################"
+ret=`python3 verify_result.py output/output_out1.bin output/golden1.bin`
+ret2=`python3 verify_result.py output/output_out2.bin output/golden2.bin`
+echo $ret
+echo $ret2
+if [[ "x$ret" == "xtest pass" && "x$ret2" == "xtest pass" ]]; then
+    echo ""
+    echo "#####################################"
+    echo "INFO: you have passed the Precision!"
+    echo "#####################################"
+    echo ""
+fi
+rm -rf build
+rm -rf output

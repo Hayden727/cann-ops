@@ -10,7 +10,7 @@
 每个算子分为两段式接口，必须先调用`aclnnRmsNormGradGetWorkspaceSize`接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用`aclnnRmsNormGrad`接口执行计算。
 
 - `aclnnStatus aclnnRmsNormGradGetWorkspaceSize( const aclTensor *dy, const aclTensor *x, const aclTensor *rstd, const aclTensor *gamma, const aclTensor *dxOut, const aclTensor *dgammaOut, uint64_t *workspaceSize, aclOpExecutor **executor)`
-- `aclnnStatus aclnnRmsNormGrad( void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
+- `aclnnStatus aclnnRmsNormGrad(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 ## 功能描述
 
@@ -56,12 +56,11 @@
 
   aclnnStatus：返回状态码，具体参见aclnn返回码。
 
-
   ```
-第一段接口完成入参校验，出现以下场景时报错：
-返回161001（ACLNN_ERR_PARAM_NULLPTR）: 1. 如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-返回161002（ACLNN_ERR_PARAM_INVALID）: 1. 输入或输出的数据类型不在支持范围之内。
-返回561002（ACLNN_ERR_INNER_TILING_ERROR）: 1. 参数不满足参数说明中的要求。
+  第一段接口完成入参校验，出现以下场景时报错：
+  返回161001（ACLNN_ERR_PARAM_NULLPTR）: 1. 如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
+  返回161002（ACLNN_ERR_PARAM_INVALID）: 1. 输入或输出的数据类型不在支持范围之内。
+  返回561002（ACLNN_ERR_INNER_TILING_ERROR）: 1. 参数不满足参数说明中的要求。
   ```
 
 ## aclnnRmsNormGrad

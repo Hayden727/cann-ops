@@ -347,6 +347,11 @@ int main()
     for (int64_t i = 0; i < size_dx; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultData1[i]);
     }
+    // 写出数据
+    void **output_out2=(void **)(&resultData1);
+    WriteFile("../output/output_out2.bin", *output_out2, size_dx * sizeof(resultData1[0]));
+    INFO_LOG("Write dx output success");
+    
     auto size_dgamma = GetShapeSize(gammaInputShape);
     std::vector<float> resultData2(size_dgamma, 1);
     ret = aclrtMemcpy(resultData2.data(),
@@ -358,6 +363,10 @@ int main()
     for (int64_t i = 0; i < size_dgamma; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultData2[i]);
     }
+    // 写出数据
+    void **output_out=(void **)(&resultData2);
+    WriteFile("../output/output_out1.bin", *output_out, size_dgamma * sizeof(resultData2[0]));
+    INFO_LOG("Write dgamma output success");
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(gradInput);
