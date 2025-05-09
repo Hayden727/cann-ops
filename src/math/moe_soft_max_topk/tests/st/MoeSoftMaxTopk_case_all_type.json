@@ -11,7 +11,7 @@
                 "type": [
                     "float"
                 ],
-                "shape": [1024,16],
+                "shape": [1024, 16],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -32,7 +32,7 @@
                 "type": [
                     "float"
                 ],
-                "shape": [],
+                "shape": [1024, 4],
                 "name": "y"
             },
             {
@@ -42,7 +42,7 @@
                 "type": [
                     "int32"
                 ],
-                "shape": [],
+                "shape": [1024, 4],
                 "name": "indices"
             }
         ],
