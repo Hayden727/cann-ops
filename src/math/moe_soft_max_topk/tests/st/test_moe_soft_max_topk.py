@@ -23,7 +23,7 @@ def moe_soft_max_topk_test(x, k):
     return output_y, output_indices
 
 
-def calc_expect_func(x, k, y, indices):
+def calc_expect_func(x, y, indices, k):
     """
     calc_expect_func
     """
