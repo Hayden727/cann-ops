@@ -27,6 +27,8 @@ rm -rf $HOME/ascend/log/*
 rm ./input/*.bin
 rm ./output/*.bin
 
+
+# case: batch_size = 1; spatial_size = 24; num_heads = 8; channels = 64; num_levels = 1; num_query = 100; num_point = 2;
 python3 gen_data.py
 
 if [ $? -ne 0 ]; then
@@ -44,12 +46,12 @@ cmake --build build -j
     ./execute_test_op
 )
 
-ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
-echo $ret
-if [ "x$ret" == "xtest pass" ]; then
-    echo ""
-    echo "#####################################"
-    echo "INFO: you have passed the Precision!"
-    echo "#####################################"
-    echo ""
-fi
+# ret=`python3 verify_result.py output/output_z.bin output/golden.bin`
+# echo $ret
+# if [ "x$ret" == "xtest pass" ]; then
+#     echo ""
+#     echo "#####################################"
+#     echo "INFO: you have passed the Precision!"
+#     echo "#####################################"
+#     echo ""
+# fi

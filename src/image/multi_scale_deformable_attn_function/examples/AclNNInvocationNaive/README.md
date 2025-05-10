@@ -66,4 +66,4 @@ aclnnStatus aclnnMultiScaleDeformableAttnFunction(void *workspace, int64_t works
 
 | 时间       | 更新事项     |
 | ---------- | ------------ |
-| 2025/01/06 | 新增本readme |
+| 2025/05/10 | 新增本readme |
