@@ -18,8 +18,30 @@
  * \file multi_scale_deformable_attn_function.cpp
  * \brief
  */
-#include "runtime_util.h"
-#include "op_log.h"
+// #include "runtime_util.h"
+// #include "op_log.h"
+
+#include "register/op_def_registry.h"
+#include "experiment/metadef/common/util/error_manager/error_manager.h"
+#include "aclnn/opdev/op_log.h"
+
+// tools api
+#define OPS_CHECK_NULL_WITH_CONTEXT(context, ptr)                                                \
+  if ((ptr) == nullptr) {                                                                        \
+    std::printf("nullptr error!");                                                               \
+    return ge::GRAPH_FAILED;                                                                     \
+  }
+#define OP_CHECK(cond, log_func, return_expr) \
+  if (cond) {                                 \
+    log_func;                                 \
+    return_expr;                              \
+  }
+#define VECTOR_INFER_SHAPE_INNER_ERR_REPORT(op_name, err_msg)                                \
+  do {                                                                                       \
+    OP_LOGE_WITHOUT_REPORT(op_name, "%s", err_msg);                                          \
+    REPORT_INNER_ERROR("89999", "%s",                                                        \
+                       err_msg);                                                             \
+  } while (0)
 
 using namespace ge;
 namespace {
@@ -34,6 +56,7 @@ constexpr size_t INPUT_LOCAT_DIM_1 = 1;
 constexpr size_t OUTPUT_DIM_0 = 0;
 constexpr size_t OUTPUT_DIM_1 = 1;
 constexpr size_t OUTPUT_DIM_2 = 2;
+
 }  // namespace
 
 namespace ops {
@@ -50,9 +73,6 @@ static ge::graphStatus InferShapeForMultiScaleDeformableAttnFunction(gert::Infer
     gert::Shape *yShape = context->GetOutputShape(OUTPUT_Y_INDEX);
     if (yShape == nullptr) {
         return ge::GRAPH_FAILED;
-    }
-    if (IsUnknownRank(valueShape)) {
-        return SetUnknownRank(yShape);
     }
     bool isTranspose = samplingLocationsShape->GetDim(INPUT_LOCAT_DIM_1) < 32;
     uint64_t numHeads = INPUT_LOCAT_DIM_2;
