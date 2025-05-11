@@ -17,7 +17,7 @@ import numpy as np
 def gen_golden_data_simple():
     dtype = np.float16
     input_shape = [4, 400]
-    input1_shape = [4, 400]
+    input1_shape = [1, 400]
     output_shape = [4, 400]
     reduction = 0
     log_target = True
@@ -27,8 +27,8 @@ def gen_golden_data_simple():
     target = torch.from_numpy(np.random.uniform(-1, 1, input_shape).astype(dtype))
     if log_target:
         grad_target = target + 1
-        grad_target = grad_target - self_x
         tmp = torch.exp(target)
+        grad_target = grad_target - self_x
         grad_target = grad_target * tmp
         grad_target = grad_output * grad_target
     else:

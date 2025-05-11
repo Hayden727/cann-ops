@@ -27,11 +27,9 @@ def verify_result(real_result, golden):
     if not result_rtol.all() and not result_atol.all():
         if np.sum(result_rtol == False) > real_result.size * LOSS and \
            np.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
-            print("[ERROR] result error")
             return False
-    print("test pass")
     return True
 
 
 if __name__ == '__main__':
-    verify_result(sys.argv[1],sys.argv[2])
+    verify_result(sys.argv[1], sys.argv[2])

@@ -51,15 +51,12 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
         from torchair.configs.compiler_config import CompilerConfig
         config = CompilerConfig()
         npu_backend = torchair.get_npu_backend(compiler_config=config)
-        length = [1]
-        length1 = [1, 7, 16, 1]
-        length2 = [16, 1]
+        length = [8, 2048]
         grad_output = torch.rand(length, device='cpu', dtype=torch.float16)
-        self_x = torch.rand(length1, device='cpu', dtype=torch.float16)
-        target = torch.rand(length2, device='cpu', dtype=torch.float16)
+        self_x = torch.rand(length, device='cpu', dtype=torch.float16)
+        target = torch.rand(length, device='cpu', dtype=torch.float16)
         reduction = 1
         log_target = True
-        print(grad_output, '\n', self_x, '\n', target)
         if log_target:
             grad_target = target + 1
             grad_target = grad_target - self_x
@@ -85,7 +82,6 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
                 return torch_npu.npu_kl_div_target_backward(grad_output, self_x, target, reduction, log_target)
         mod = torch.compile(Module().npu(), backend=npu_backend)
         output = mod(grad_output.npu(), self_x.npu(), target.npu(), reduction, log_target).cpu()
-        print(output)
         self.assertRtolEqual(output, grad_target)
 
 

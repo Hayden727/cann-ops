@@ -24,8 +24,8 @@
 #include "acl/acl.h"
 #include "aclnn_kl_div_target_backward.h"
 
-#define SUCCESS 0
-#define FAILED 1
+const int SUCCESS = 0;
+const int FAILED = 1;
 
 #define INFO_LOG(fmt, args...) fprintf(stdout, "[INFO]  " fmt "\n", ##args)
 #define WARN_LOG(fmt, args...) fprintf(stdout, "[WARN]  " fmt "\n", ##args)
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputXShape = {4, 400};
-    std::vector<int64_t> inputX1Shape = {4, 400};
+    std::vector<int64_t> inputX1Shape = {1, 400};
     std::vector<int64_t> outputZShape = {4, 400};
     void *inputX0DeviceAddr = nullptr;
     void *inputX1DeviceAddr = nullptr;
@@ -175,9 +175,9 @@ int main(int argc, char **argv)
     std::vector<aclFloat16> outputZHostData(outputZShapeSize);
     size_t dataType = sizeof(uint16_t);
     size_t fileSize = 0;
-    void ** input0=(void **)(&inputX0HostData);
-    void ** input1=(void **)(&inputX1HostData);
-    void ** input2=(void **)(&inputX2HostData);
+    void** input0=(void **)(&inputX0HostData);
+    void** input1=(void **)(&inputX1HostData);
+    void** input2=(void **)(&inputX2HostData);
     //读取数据
     ReadFile("../input/input_x0.bin", fileSize, *input0, inputXShapeSize * dataType);
     ReadFile("../input/input_x1.bin", fileSize, *input1, inputX1ShapeSize * dataType);
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputZDeviceAddr,
                       size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void ** output1=(void **)(&resultData);
+    void** output1=(void **)(&resultData);
     //写出数据
     WriteFile("../output/output_z.bin", *output1, outputZShapeSize * dataType);
     INFO_LOG("Write output success");
