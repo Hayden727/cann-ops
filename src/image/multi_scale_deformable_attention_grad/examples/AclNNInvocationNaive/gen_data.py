@@ -15,9 +15,9 @@ import numpy as np
 
 def write_file(inputs, outputs):
     for input_name in inputs:
-        inputs[input_name].tofile(os.path.join("input" + input_name + ".bin"))
+        inputs[input_name].tofile(os.path.join(input_name + ".bin"))
     for output_name in outputs:
-        outputs[output_name].tofile(os.path.join("output" + output_name + ".bin")) 
+        outputs[output_name].tofile(os.path.join(output_name + ".bin")) 
 
 
 def cal_grad_value(num_point, channels, v1_ub, offset1, offset2, base_ptr, value, value_ptr_offset, grad_h_weight_ub,

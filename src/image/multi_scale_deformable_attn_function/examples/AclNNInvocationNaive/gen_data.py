@@ -17,9 +17,9 @@ import torch.nn.functional as F
 
 def write_file(inputs, outputs):
     for input_name in inputs:
-        inputs[input_name].tofile(os.path.join("input" + input_name + ".bin"))
+        inputs[input_name].tofile(os.path.join(input_name + ".bin"))
     for output_name in outputs:
-        outputs[output_name].tofile(os.path.join("output" + output_name + ".bin")) 
+        outputs[output_name].tofile(os.path.join(output_name + ".bin")) 
 
 def multi_scale_deformable_attn_pytorch(
         value: torch.Tensor, value_spatial_shapes: torch.Tensor,
