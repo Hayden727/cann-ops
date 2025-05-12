@@ -83,8 +83,8 @@ Atlas 训练系列产品/Atlas A2训练系列产品
 </tr>
 <tr><td rowspan="4" align="center">算子输出</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">gradValue</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">gradLocation</td><td align="center">tensor</td><td align="center">int32、int64</td><td align="center">ND</td></tr>
-<tr><td align="center">gradAttnWeight</td><td align="center">tensor</td><td align="center">int32、int64</td><td align="center">ND</td></tr>
+<tr><td align="center">gradLocation</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">gradAttnWeight</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">MultiScaleDeformableAttentionGrad</td></tr>
 </table>

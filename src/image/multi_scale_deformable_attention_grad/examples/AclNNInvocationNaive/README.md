@@ -21,9 +21,9 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnMultiScaleDeformableAttentionGradGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnMultiScaleDeformableAttentionGradGetWorkspaceSize(const aclTensor* value, const aclTensor* spatialShape, const aclTensor* levelStartIndex, const aclTensor* location, const aclTensor* attnWeight, const aclTensor* gradOutput, aclTensor* gradValue, aclTensor* gradLocation, aclTensor* gradAttnWeight, uint64_t* workspaceSize, aclOpExecutor** executor)
 // 执行算子
-aclnnStatus aclnnMultiScaleDeformableAttentionGrad(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
+aclnnStatus aclnnMultiScaleDeformableAttentionGrad(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)
 ```
 
 其中aclnnMultiScaleDeformableAttentionGradGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnMultiScaleDeformableAttentionGrad执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
@@ -34,7 +34,7 @@ aclnnStatus aclnnMultiScaleDeformableAttentionGrad(void *workspace, int64_t work
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/multi_scale_deformable_attention_grad/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/image/multi_scale_deformable_attention_grad/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
