@@ -45,9 +45,9 @@ aclnnStatus aclnnKlDivTargetBackward(
   
   - 进入样例代码所在路径
   
-  ```bash
-  cd ${git_clone_path}/cann-ops/src/math/kl_div_target_backward/examples/AclNNInvocationNaive
-  ```
+    ```bash
+    cd ${git_clone_path}/cann-ops/src/math/kl_div_target_backward/examples/AclNNInvocationNaive
+    ```
   
   - 环境变量配置
     

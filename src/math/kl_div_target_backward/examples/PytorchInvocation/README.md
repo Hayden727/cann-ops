@@ -42,7 +42,7 @@
     ```
 
 ## 自定义算子入图关键步骤解析
-  可以在test_ops_custom_register_in_graph.py文件查看相关注册实现。
+可以在test_ops_custom_register_in_graph.py文件查看相关注册实现。
   - 注册自定义算子的meta实现
     ```python
     from torch_npu.meta._meta_registrations import m
@@ -97,7 +97,7 @@
   - 进入到样例目录   
     以命令行方式下载样例代码，master分支为例。
     ```bash
-    cd ${git_clone_path}/samples/operator/KlDivTargetBackwardSample/FrameworkLaunch/PytorchInvocation
+    cd ${git_clone_path}/src/math/kl_div_target_backward/examples/PytorchInvocation
     ```
 
   - 样例执行
@@ -118,8 +118,8 @@
       python3 test_ops_custom_register_in_graph.py
       ```
 
-### 其他说明
-    更加详细的Pytorch适配算子开发指导可以参考[LINK](https://gitee.com/ascend/op-plugin/wikis)中的“算子适配开发指南”。
+## 其他说明
+更加详细的Pytorch适配算子开发指导可以参考[Link](https://gitee.com/ascend/op-plugin/wikis)中的“算子适配开发指南”。
 
 ## 更新说明
 | 时间       | 更新事项     |

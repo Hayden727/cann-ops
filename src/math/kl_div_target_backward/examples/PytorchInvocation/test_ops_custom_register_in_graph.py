@@ -30,7 +30,7 @@ def npu_kl_div_target_backward_meta(grad_output, self_x, target, reduction, log_
 # 注意： meta_outputs形参名为固定写法，若写错会影响ge节点的输出dtype与shape推导
 @register_fx_node_ge_converter(torch.ops.npu.npu_kl_div_target_backward.default)
 def convert_npu_kl_div_target_backward(grad_output: Tensor, self_x: Tensor, target: Tensor,
-    reduction: int, log_target: bool, grad_target: Tensor = None, meta_outputs: Any = None):
+    reduction: int, log_target: bool, target_grad: Tensor = None, meta_outputs: Any = None):
     return torchair.ge.custom_op(
         "KlDivTargetBackward",
         inputs={
@@ -42,7 +42,7 @@ def convert_npu_kl_div_target_backward(grad_output: Tensor, self_x: Tensor, targ
             "reduction": torchair.ge.attr.Int(reduction),
             "log_target": torchair.ge.attr.Bool(log_target),
         },
-        outputs=['grad_target']
+        outputs=['target_grad']
     )
 
 
@@ -58,21 +58,21 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
         reduction = 1
         log_target = True
         if log_target:
-            grad_target = target + 1
-            grad_target = grad_target - self_x
+            target_grad = target + 1
+            target_grad = target_grad - self_x
             tmp = torch.exp(target)
-            grad_target = grad_target * tmp
-            grad_target = grad_output * grad_target
+            target_grad = target_grad * tmp
+            target_grad = grad_output * target_grad
         else:
             tmp = torch.log(target)
-            grad_target = tmp + 1
-            grad_target = grad_target - self_x
-            grad_target = grad_output * grad_target
-            grad_target = grad_target.masked_fill(target == 0, 0)
+            target_grad = tmp + 1
+            target_grad = target_grad - self_x
+            target_grad = grad_output * target_grad
+            target_grad = target_grad.masked_fill(target == 0, 0)
 
         if reduction == 1:
             max_len = max(max(grad_output.numel(), self_x.numel()), target.numel())
-            grad_target = grad_target / max_len
+            target_grad = target_grad / max_len
         
         class Module(torch.nn.Module):
             def __init__(self):
@@ -82,7 +82,7 @@ class TestTorchCompileCustomKlDivTargetBackward(TestCase):
                 return torch_npu.npu_kl_div_target_backward(grad_output, self_x, target, reduction, log_target)
         mod = torch.compile(Module().npu(), backend=npu_backend)
         output = mod(grad_output.npu(), self_x.npu(), target.npu(), reduction, log_target).cpu()
-        self.assertRtolEqual(output, grad_target)
+        self.assertRtolEqual(output, target_grad)
 
 
 if __name__ == "__main__":
