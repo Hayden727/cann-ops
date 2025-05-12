@@ -11,7 +11,7 @@
 #define OP_API_INC_MULTI_SCALE_DEFORMABLE_ATTENTION_GRAD_H_
 
 #include "aclnn/aclnn_base.h"
-#include "aclnn_util.h"
+#include "aclnnop/aclnn_util.h"
 
 #ifdef __cplusplus
 extern "C" {
