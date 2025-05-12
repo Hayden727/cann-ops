@@ -18,8 +18,6 @@
  * \file multi_scale_deformable_attn_function.cpp
  * \brief
  */
-// #include "runtime_util.h"
-// #include "op_log.h"
 
 #include "register/op_def_registry.h"
 #include "experiment/metadef/common/util/error_manager/error_manager.h"

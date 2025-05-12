@@ -22,7 +22,7 @@
 #include <fcntl.h>
 
 #include "acl/acl.h"
-#include "aclnn_multi_scale_deformable_attn_function.h"
+#include "aclnn_multi_scale_deformable_attention_grad.h"
 
 #define SUCCESS 0
 #define FAILED 1
@@ -155,37 +155,44 @@ int main() {
     // check根据自己的需要处理
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
     // 2.构造输入与输出，需要根据API的接口自定义构造
-    // bs = 1
-    // num_heads = 8
-    // channels = 64
-    // num_levels = 1
-    // num_points = 2
-    // num_queries = 100
 
     std::vector<int64_t> valueShape = {1, 1, 1, 8};
     std::vector<int64_t> spatialShapeShape = {1, 2};
     std::vector<int64_t> levelStartIndexShape = {1};
     std::vector<int64_t> locationShape = {1, 32, 1, 1, 1, 2};
     std::vector<int64_t> attnWeightShape = {1, 32, 1, 1, 1};
-    std::vector<int64_t> outputShape = {1, 32, 8};
+    std::vector<int64_t> gradOutputShape = {1, 32, 8};
+    std::vector<int64_t> gradValueShape = {1, 1, 1, 8};
+    std::vector<int64_t> gradLocationShape = {1, 32, 1, 1, 1, 2};
+    std::vector<int64_t> gradAttnWeightShape = {1, 32, 1, 1, 1};
     void* valueDeviceAddr = nullptr;
     void* spatialShapeDeviceAddr = nullptr;
     void* levelStartIndexDeviceAddr = nullptr;
     void* locationDeviceAddr = nullptr;
     void* attnWeightDeviceAddr = nullptr;
-    void* outputDeviceAddr = nullptr;
+    void* gradOutputDeviceAddr = nullptr;
+    void* gradValueDeviceAddr = nullptr;
+    void* gradLocationDeviceAddr = nullptr;
+    void* gradAttnWeightDeviceAddr = nullptr;
     aclTensor* value = nullptr;
     aclTensor* spatialShape = nullptr;
     aclTensor* levelStartIndex = nullptr;
     aclTensor* location = nullptr;
     aclTensor* attnWeight = nullptr;
-    aclTensor* output = nullptr;
+    aclTensor* gradOutput = nullptr;
+    aclTensor* gradValue = nullptr;
+    aclTensor* gradLocation = nullptr;
+    aclTensor* gradAttnWeight = nullptr;
     std::vector<float> valueHostData = {1, 1, 1, 1, 1, 1, 1, 1};
     std::vector<float> spatialShapeHostData = {1, 1};
     std::vector<float> levelStartIndexHostData = {0};
+    std::vector<float> gradValueHostData = {0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<float> gradLocationHostData(GetShapeSize(gradLocationShape), 0);
+    std::vector<float> gradAttnWeightHostData(GetShapeSize(gradAttnWeightShape), 0);
     std::vector<float> locationHostData(GetShapeSize(locationShape), 0);
-    std::vector<float> attnWeightHostData = {GetShapeSize(attnWeightShape), 1};
-    std::vector<float> outputHostData = {GetShapeSize(outputShape), 1};
+    std::vector<float> attnWeightHostData(GetShapeSize(attnWeightShape), 1);
+    std::vector<float> gradOutputHostData(GetShapeSize(gradOutputShape), 1);
+
     // value aclTensor
     ret = CreateAclTensor(valueHostData, valueShape, &valueDeviceAddr, aclDataType::ACL_FLOAT, &value);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -201,39 +208,46 @@ int main() {
     // 创建attnWeight aclTensor
     ret = CreateAclTensor(attnWeightHostData, attnWeightShape, &attnWeightDeviceAddr, aclDataType::ACL_FLOAT, &attnWeight);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
-    // 创建output aclTensor
-    ret = CreateAclTensor(outputHostData, outputShape, &outputDeviceAddr, aclDataType::ACL_FLOAT, &output);
+    // gradOutput aclTensor
+    ret = CreateAclTensor(gradOutputHostData, gradOutputShape, &gradOutputDeviceAddr, aclDataType::ACL_FLOAT, &gradOutput);
+    CHECK_RET(ret == ACL_SUCCESS, return ret);
+    // 创建gradValue aclTensor
+    ret = CreateAclTensor(gradValueHostData, gradValueShape, &gradValueDeviceAddr, aclDataType::ACL_FLOAT, &gradValue);
+    CHECK_RET(ret == ACL_SUCCESS, return ret);
+    // 创建gradLocation aclTensor
+    ret = CreateAclTensor(gradLocationHostData, gradLocationShape, &gradLocationDeviceAddr, aclDataType::ACL_FLOAT, &gradLocation);
+    CHECK_RET(ret == ACL_SUCCESS, return ret);
+    // 创建gradAttnWeight aclTensor
+    ret = CreateAclTensor(gradAttnWeightHostData, gradAttnWeightShape, &gradAttnWeightDeviceAddr, aclDataType::ACL_FLOAT, &gradAttnWeight);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
 
     // 3.调用CANN算子库API，需要修改为具体的API
     uint64_t workspaceSize = 0;
     aclOpExecutor* executor;
-    // 调用aclnnMultiScaleDeformableAttnFunction第一段接口
-    ret = aclnnMultiScaleDeformableAttnFunctionGetWorkspaceSize(value, spatialShape, levelStartIndex, location, attnWeight, output, 
-                                                                &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMultiScaleDeformableAttnFunctionGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
+    // 调用aclnnMultiScaleDeformableAttentionGrad第一段接口
+    ret = aclnnMultiScaleDeformableAttentionGradGetWorkspaceSize(value, spatialShape, levelStartIndex, location, attnWeight, gradOutput, gradValue, gradLocation, gradAttnWeight, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMultiScaleDeformableAttentionGradGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
     // 根据第一段接口计算出的workspaceSize申请device内存
     void* workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret;);
     }
-    // 调用aclnnMultiScaleDeformableAttnFunction第二段接口
-    ret = aclnnMultiScaleDeformableAttnFunction(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMultiScaleDeformableAttnFunction failed. ERROR: %d\n", ret); return ret);
+    // 调用aclnnMultiScaleDeformableAttentionGrad第二段接口
+    ret = aclnnMultiScaleDeformableAttentionGrad(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMultiScaleDeformableAttentionGrad failed. ERROR: %d\n", ret); return ret);
     // 4.(固定写法)同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     // 5.获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
-    auto size = GetShapeSize(outputShape);
+    auto size = GetShapeSize(gradValueShape);
     std::vector<float> resultData(size, 0);
-    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputDeviceAddr, size * sizeof(float),
+    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), gradValueDeviceAddr, size * sizeof(float),
                       ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return ret);
     for (int64_t i = 0; i < size; i++) {
-        LOG_PRINT("result[%ld] is: %f\n", i, resultData[i]);+
+        LOG_PRINT("result[%ld] is: %f\n", i, resultData[i]);
     }
-
 
     // 6.释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(value);
@@ -241,7 +255,10 @@ int main() {
     aclDestroyTensor(levelStartIndex);
     aclDestroyTensor(location);
     aclDestroyTensor(attnWeight);
-    aclDestroyTensor(output);
+    aclDestroyTensor(gradOutput);
+    aclDestroyTensor(gradValue);
+    aclDestroyTensor(gradLocation);
+    aclDestroyTensor(gradAttnWeight);
 
     // 7.释放device资源，需要根据具体API的接口定义修改
     aclrtFree(valueDeviceAddr);
@@ -249,7 +266,10 @@ int main() {
     aclrtFree(levelStartIndexDeviceAddr);
     aclrtFree(locationDeviceAddr);
     aclrtFree(attnWeightDeviceAddr);
-    aclrtFree(outputDeviceAddr);
+    aclrtFree(gradOutputDeviceAddr);
+    aclrtFree(gradValueDeviceAddr);
+    aclrtFree(gradLocationDeviceAddr);
+    aclrtFree(gradAttnWeightDeviceAddr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }
