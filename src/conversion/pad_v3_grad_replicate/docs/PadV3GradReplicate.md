@@ -27,7 +27,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnReflectionPad2dGradGetWorkspaceSize
+### aclnnReplicationPad2dBackwardGetWorkspaceSize
 
 - **参数说明：**
   
@@ -48,7 +48,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
   				     4. padding内的数值大于等于self的维度。
   				     5. gradOutput shape需要与replication_pad2d正向传播的output一致。
   ```
-### aaclnnReplicationPad2dBackward
+### aclnnReplicationPad2dBackward
 - **参数说明：**
   
   - workspace(void*，入参)：在Device侧申请的workspace内存地址。

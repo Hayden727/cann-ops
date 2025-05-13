@@ -1055,7 +1055,6 @@ uint32_t dtypeByteSize;
 uint32_t eleNumPer32Block;
 uint32_t cubeNumCurrentCore;
 bool isLastCore;
-uint32_t coreId;
 PadV3GradReplicationTilingData &tilingData;
 private:
 static constexpr uint32_t PAIR = 2;

@@ -22,7 +22,7 @@ def gen_golden_data_simple():
     grad_output = torch.from_numpy(grad_output_np.astype(np.float32))
     input_tensor = torch.from_numpy(input_tensor_np.astype(np.float32))
 
-    grad_input = torch.ops.aten.reflection_pad2d_backward(grad_output, input_tensor, padding)
+    grad_input = torch.ops.aten.replication_pad2d_backward(grad_output, input_tensor, padding)
     golden = grad_input.numpy()
     os.system("mkdir -p input")
     os.system("mkdir -p output")

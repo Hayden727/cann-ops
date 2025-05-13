@@ -1,6 +1,6 @@
 add_ops_compile_options(
         OP_NAME PadV3GradReplicate
-        OPTIONS --cce-auto-sync=off
+        OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
 )
@@ -22,7 +22,7 @@ target_include_directories(optiling PRIVATE
 )
 
 target_sources(opsproto PRIVATE
-        op_host/pad_v3_grad_replicate.cpp
+        op_host/pad_v3_grad_replicate_proto.cpp
 )
 
 target_include_directories(opsproto PRIVATE
@@ -39,7 +39,7 @@ target_include_directories(opsproto PRIVATE
 
 # 手动生成的aclnn
 target_sources(op_host_aclnnInner PRIVATE
-        op_host/pad_v3_grad_replicate.cpp
+        op_host/pad_v3_grad_replicate_def.cpp
 )
 
 target_include_directories(op_host_aclnnInner PRIVATE

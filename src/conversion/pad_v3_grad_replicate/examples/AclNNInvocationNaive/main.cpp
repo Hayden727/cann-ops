@@ -143,7 +143,7 @@ int CreateAclTensor(const std::vector<T>& hostData, const std::vector<int64_t>& 
     }
 
     // 调用aclCreateTensor接口创建aclTensor
-    *tensor = aclCreateTensor(shape.data(), shape.size(), dataType, strides.data(), 0, aclFormat::ACL_FORMAT_ND,
+    *tensor = aclCreateTensor(shape.data(), shape.size(), dataType, strides.data(), 0, aclFormat::ACL_FORMAT_NCHW,
                               shape.data(), shape.size(), *deviceAddr);
     return 0;
 }
@@ -200,18 +200,18 @@ int main() {
     // 3. 调用CANN算子库API，需要修改为具体的API
     uint64_t workspaceSize = 0;
     aclOpExecutor* executor;
-    // 调用aclnnReflectionPad2dBackward第一段接口
-    ret = aclnnReflectionPad2dBackwardGetWorkspaceSize(gradOutput, self, padding, gradInput, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnReflectionPad2dBackwardGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
+    // 调用aclnnReplicationPad2dBackwardGetWorkspaceSize第一段接口
+    ret = aclnnReplicationPad2dBackwardGetWorkspaceSize(gradOutput, self, padding, gradInput, &workspaceSize, &executor);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnReplicationPad2dBackwardGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
     // 根据第一段接口计算出的workspaceSize申请device内存
     void* workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret;);
     }
-    // 调用aclnnReflectionPad2dBackward第二段接口
-    ret = aclnnReflectionPad2dBackward(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnReflectionPad2dBackward failed. ERROR: %d\n", ret); return ret);
+    // 调用aclnnReplicationPad2dBackward第二段接口
+    ret = aclnnReplicationPad2dBackward(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnReplicationPad2dBackward failed. ERROR: %d\n", ret); return ret);
     // 4. 固定写法，同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
