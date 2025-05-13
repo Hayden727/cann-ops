@@ -1,27 +1,33 @@
-## `MatMulV3`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`MatMulV3`算子。
+## `BatchMatMulV3`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`BatchMatMulV3`算子。
 
 ### 算子描述
-完成张量self与张量mat2的矩阵乘计算（支持1维到6维作为输入的矩阵乘）。
+完成张量x1与张量x2的矩阵乘计算（支持1维到6维作为输入的矩阵乘）。
  计算公式：
 
   $$
-  result=self @ mat2
+  y=x1 @ x2
   $$
 
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatMulV3</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="5" align="center">BatchMatMulV3</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">self</td><td align="center">16 * 32</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">mat2</td><td align="center">32 * 16</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">type</td></tr>
+<tr><td align="center">x1</td><td align="center">2 * 16 * 32</td><td align="center">float16、bfloat16、float32</td><td align="center">ND</td><td align="center">tensor</td></tr>
+<tr><td align="center">x2</td><td align="center">2 * 32 * 16</td><td align="center">float16、bfloat16、float32</td><td align="center">ND</td><td align="center">tensor</td></tr>
+<tr><td align="center">bias(optional)</td><td align="center">2 * 1 * 16</td><td align="center">float16、float32</td><td align="center">ND</td><td align="center">tensor</td></tr>
+<tr><td align="center">offset_w(optional)</td><td align="center">-</td><td align="center">int4、int8</td><td align="center">ND</td><td align="center">tensor</td></tr>
+<tr><td align="center">adj_x1(optional)</td><td align="center">-</td><td align="center">bool</td><td align="center">-</td><td align="center">attr</td></tr>
+<tr><td align="center">adj_x2(optional)</td><td align="center">-</td><td align="center">bool</td><td align="center">-</td><td align="center">attr</td></tr>
+<tr><td align="center">offset_x(optional)</td><td align="center">-</td><td align="center">int</td><td align="center">-</td><td align="center">attr</td></tr>
+<tr><td align="center">enable_hf32(optional)</td><td align="center">-</td><td align="center">bool</td><td align="center">-</td><td align="center">attr</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">result</td><td align="center">16 * 16</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">2 * 16 * 16</td><td align="center">float16、bfloat16、float32</td><td align="center">ND</td><td align="center">tensor</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mat_mul_v3</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">batch_mat_mul_v3</td><td align="center"></td></tr>
 </table>
 
 ### 支持的产品型号
@@ -67,7 +73,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用MatMulV3算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用BatchMatMulV3算子。</td>
     </tr>
 </table>
 
