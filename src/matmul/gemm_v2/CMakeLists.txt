@@ -64,16 +64,6 @@ target_include_directories(op_host_aclnn PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
 )
 
-# 安装nlohmann/json.hpp三方库
-include(FetchContent)
-FetchContent_Declare(
-  json
-  GIT_REPOSITORY https://gitee.com/rueenov/nlohmann_json.git
-  GIT_TAG develop  # 可选，固定版本
-)
-FetchContent_MakeAvailable(json)
-target_link_libraries(optiling PRIVATE nlohmann_json::nlohmann_json)
-
 install(FILES op_kernel/gemm_v2.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 

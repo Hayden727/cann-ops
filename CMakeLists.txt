@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Huawei Technologies Co., Ltd.
+# Copyright (c) 2024-2025 Huawei Technologies Co., Ltd.
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
@@ -21,6 +21,14 @@ include(cmake/config.cmake)
 include(cmake/func.cmake)
 include(cmake/intf.cmake)
 
+# 添加json第三方库
+list(APPEND CMAKE_MODULE_PATH ${ASCEND_THIRD_LIB_PATH}/cmake/modules)
+list(APPEND CMAKE_PREFIX_PATH ${ASCEND_THIRD_LIB_PATH}/json)
+message(STATUS "Third party lib module search path: ${CMAKE_MODULE_PATH}")
+message(STATUS "Third party lib packages search path: ${CMAKE_PREFIX_PATH}")
+
+find_package(json MODULE REQUIRED)
+include_directories(${JSON_INCLUDE_DIR})
 
 set(_op_host_aclnn_link
         $<BUILD_INTERFACE:intf_pub>
