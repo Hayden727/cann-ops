@@ -33,9 +33,9 @@ aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor
   
   - 进入样例代码所在路径
   
-  ```bash
-  cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/AclNNInvocationNaive
-  ```
+    ```bash
+    cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/AclNNInvocationNaive
+    ```
   
   - 环境变量配置
     
@@ -43,7 +43,7 @@ aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor
     
     ```bash
     export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
-    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/aarch64-linux/devlib
+    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/lib64
     ```
   - 样例执行
     

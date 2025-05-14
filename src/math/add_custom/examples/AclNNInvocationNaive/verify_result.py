@@ -10,10 +10,17 @@
 # ======================================================================================================================
 import os
 import sys
+import logging
 import numpy as np
 
 LOSS = 1e-3 # 容忍偏差，一般fp16要求绝对误差和相对误差均不超过千分之一
 MINIMUM = 10e-10
+# 配置logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 
 def verify_result(real_result, golden):
     dtype = np.float16
@@ -26,10 +33,10 @@ def verify_result(real_result, golden):
     if not result_rtol.all() and not result_atol.all():
         if np.sum(result_rtol == False) > real_result.size * LOSS and \
            np.sum(result_atol == False) > real_result.size * LOSS: # 误差超出预期时返回打印错误，返回对比失败
-            print("[ERROR] result error")
-            return False
-    print("test pass")
-    return True
+            logging.error(f"Compare failed!\n golden: {golden}\n real_result: {real_result}\n")
+            sys.exit(1)
+    logging.info(f"test pass")
+    sys.exit(0)
 
 if __name__ == '__main__':
     verify_result(sys.argv[1],sys.argv[2])
