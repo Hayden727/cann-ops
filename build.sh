@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2024 Huawei Technologies Co., Ltd.
+# Copyright (c) 2024-2025 Huawei Technologies Co., Ltd.
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ set -e
 CURRENT_DIR=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
 BUILD_DIR=${CURRENT_DIR}/build
 OUTPUT_DIR=${CURRENT_DIR}/output
+THIRD_LIB_PATH=${CURRENT_DIR}/third_party
 USER_ID=$(id -u)
 PARENT_JOB="false"
 CHECK_COMPATIBLE="false"
@@ -61,6 +62,8 @@ function help_info() {
     echo
     echo "--tiling_key         Sets the tiling key list for operators. If there are multiple values, separate them with semicolons and use quotation marks. The default is all."
     echo "                     For example: --tiling_key \"1\" or --tiling_key \"1;2;3;4\""
+    echo
+    echo "--third_lib_path     Set third_party package install path, default ./third_party."
     echo
     echo "--asan               Compiles with AddressSanitizer, only supported in UTest."
     echo
@@ -159,6 +162,24 @@ function build_kernel(){
     build ops_kernel
 }
 
+function install_json_pkg(){
+    if [ -d "${THIRD_LIB_PATH}/json" ]; then
+        log "Json directory exists: ${THIRD_LIB_PATH}/json"
+        return 0
+    fi
+
+    log "=========================== Start to install third party packages ==========================="
+    (
+        source ${CURRENT_DIR}/build_third_party.sh
+    )
+    if [ 0 -ne $? ]; then
+        log "=========================== Install third party packages failed! ==========================="
+        exit 1
+    else
+        log "=========================== Install third party packages success. ==========================="
+    fi
+}
+
 ########################################################################################################################
 # 参数解析处理
 ########################################################################################################################
@@ -239,6 +260,10 @@ while [[ $# -gt 0 ]]; do
         ascend_cmake_dir="$2"
         shift 2
         ;;
+    --third_lib_path)
+        THIRD_LIB_PATH="$2"
+        shift 2
+        ;;
     --verbose)
         VERBOSE="true"
         shift
@@ -292,6 +317,10 @@ fi
 
 if [ -n "${ascend_cmake_dir}" ];then
     CUSTOM_OPTION="${CUSTOM_OPTION} -DASCEND_CMAKE_DIR=${ascend_cmake_dir}"
+fi
+
+if [ -n "${THIRD_LIB_PATH}" ];then
+    CUSTOM_OPTION="${CUSTOM_OPTION} -DASCEND_THIRD_LIB_PATH=${THIRD_LIB_PATH}"
 fi
 
 if [ -n "${TEST}" ];then
@@ -390,6 +419,9 @@ CUSTOM_OPTION="${CUSTOM_OPTION} -DCUSTOM_ASCEND_CANN_PACKAGE_PATH=${ASCEND_CANN_
 set_env
 
 clean
+
+# 安装nlohmann_json第三方库
+install_json_pkg
 
 if [ -n "${CCACHE_PROGRAM}" ]; then
     if [ "${CCACHE_PROGRAM}" == "false" ] || [ "${CCACHE_PROGRAM}" == "off" ]; then

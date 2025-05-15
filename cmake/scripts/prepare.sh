@@ -69,6 +69,10 @@ while [[ $# -gt 0 ]]; do
         OP_DEBUG_CONFIG="$2"
         shift 2
         ;;
+    --third_lib_path)
+        THIRD_LIB_PATH="$2"
+        shift 2
+        ;;
     *)
         break
         ;;
@@ -111,7 +115,8 @@ function build() {
         -DTILING_KEY="${CONVERT_TILING_KEY}" \
         -DOPS_COMPILE_OPTIONS="${CONVERT_OPS_COMPILE_OPTIONS}" \
         -DASCEND_COMPUTE_UNIT=${CONVERT_ASCEND_COMPUTE_UNIT} \
-        -DOP_DEBUG_CONFIG=${OP_DEBUG_CONFIG}
+        -DOP_DEBUG_CONFIG=${OP_DEBUG_CONFIG} \
+        -DASCEND_THIRD_LIB_PATH=${THIRD_LIB_PATH}
 
     make ${JOB_NUM} prepare_build
 }

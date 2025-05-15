@@ -88,6 +88,13 @@ else()
     set(ADD_OPS_COMPILE_OPTION_V2 OFF)
 endif()
 
+# 第三方库路径
+set(THIRD_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/thirt_party")
+if(ASCEND_THIRD_LIB_PATH)
+    set(THIRD_LIB_PATH "${ASCEND_THIRD_LIB_PATH}")
+endif()
+message(STATUS "THIRD_PARTY_LIB_PATH=${THIRD_LIB_PATH}")
+
 ########################################################################################################################
 # CMake 选项, 缺省参数设置
 #   按 CMake 构建过程对 CMake 选项, CMake 缺省参数进行配置
@@ -223,6 +230,7 @@ if (BUILD_OPEN_PROJECT)
                 --check-compatible ${CHECK_COMPATIBLE}
                 --ascend-compute_unit ${EP_ASCEND_COMPUTE_UNIT}
                 --op_debug_config ${OP_DEBUG_CONFIG}
+                --third_lib_path ${THIRD_LIB_PATH}
                 RESULT_VARIABLE result
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 OUTPUT_VARIABLE PREPARE_BUILD_OUTPUT_VARIABLE)

@@ -1,7 +1,8 @@
 # Samples
-build
+/build/
 build_out
 output
+/third_party/
 src/math/*/tests/st/[0-9]*/
 src/math/*/examples/CppExtensions/*/test/*.json
 src/math/*/examples/PytorchInvocation/pytorch
