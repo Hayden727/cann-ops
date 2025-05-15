@@ -37,30 +37,13 @@ aclnnStatus aclnnUpsampleBilinear2d(void *workspace, uint64_t workspaceSize, acl
   cd ${git_clone_path}/cann-ops/src/image/upsample_bilinear2d/examples/AclNNInvocationNaive
   ```
   
-  - 环境变量配置
-    
-    需要设置环境变量，以arm为例
-    
-    ```bash
-    export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
-    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/aarch64-linux/devlib
-    ```
   - 样例执行
     
-    样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
+  样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     
-    ```bash
-    mkdir -p build
-    cd build
-    cmake .. && make
-    ./execute_test_op
-    ```
-    
-    用户亦可参考run.sh脚本进行编译与运行。
-    
-    ```bash
-    bash run.sh
-    ```
+  ```bash
+  bash run.sh
+  ```
 
 ## 更新说明
 
