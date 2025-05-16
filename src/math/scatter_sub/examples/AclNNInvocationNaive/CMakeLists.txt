@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_add_op
+add_executable(execute_scatter_sub_op
     main.cpp
 )
 
-target_link_libraries(execute_add_op
+target_link_libraries(execute_scatter_sub_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,5 +57,5 @@ target_link_libraries(execute_add_op
     stdc++
 )
 
-install(TARGETS execute_add_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_scatter_sub_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
