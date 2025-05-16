@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_add_op
+    ./execute_scatter_sub_op
 )
 
 python3 verify_result.py output/output_var.bin output/golden.bin
