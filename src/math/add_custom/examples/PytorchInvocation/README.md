@@ -89,7 +89,7 @@
   - 进入到样例目录   
     以命令行方式下载样例代码，master分支为例。
     ```bash
-    cd ${git_clone_path}/cann-ops/math/add_custom/examples/PytorchInvocation
+    cd ${git_clone_path}/cann-ops/src/math/add_custom/examples/PytorchInvocation
     ```
 
   - 样例执行
@@ -111,7 +111,7 @@
       ```
 
 ### 其他说明
-更加详细的Pytorch适配算子开发指导可以参考[LINK](https://gitee.com/ascend/op-plugin/wikis)中的“算子适配开发指南”。
+更加详细的Pytorch适配算子开发指导可以参考[LINK](https://gitee.com/ascend/op-plugin/wikis/%E7%AE%97%E5%AD%90%E9%80%82%E9%85%8D%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)中的“算子适配开发指南”。
 
 ## 更新说明
 | 时间       | 更新事项     |
