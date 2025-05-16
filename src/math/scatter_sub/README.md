@@ -1,29 +1,36 @@
-## `AddCustom`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`AddCustom`算子。
+## `ScatterSub`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`SatterSub`算子。
 
 ### 算子描述
-`AddCustom`算子返回两个数据相加的结果。
+`ScatterSub`算子将`var`中的数据用`indices`进行索引，索引结果与`updates`进行减法操作。具体计算方式如下：
+
+```
+# Scalar indices
+var[indices, ...] -= updates[...]
+
+# Vector indices (for each i)
+var[indices[i], ...] -= updates[i, ...]
+
+# High rank indices (for each i, ..., j)
+var[indices[i, ..., j], ...] -= updates[i, ..., j, ...]
+```
 
 ### 算子规格描述
 
-<table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddCustom</td></tr>
-</tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-</tr>
-</tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-</tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<table>  
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">ScatterSub</th></tr>  
+<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr>  
+<tr><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td align="center">indices</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td align="center">updates</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">attr属性</td><td align="center">use_locking</td><td align="center">\</td><td align="center">bool</td><td align="center">\</td><td align="center">false</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="8" align="center">scattersub</td></tr>  
 </table>
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas 训练系列产品
-- Atlas 推理系列产品
-- Atlas A2训练系列产品
+- Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
 
@@ -63,30 +70,11 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AddCustom算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用ScatterSub算子。</td>
     </tr>
-    <tr>
-        <td><a href="./examples/AclOfflineModel"> AclOfflineModel</td><td>通过aclopExecuteV2调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/ATBInvocation">ATBInvocation</td><td>通过ATB调用的方式调用AddCustom算子。</td>
-    </tr>
-
 </table>
 
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/06 | 新增本readme |
+| 2025/05/16 | 新增本readme |
