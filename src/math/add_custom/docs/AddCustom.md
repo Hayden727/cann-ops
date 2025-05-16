@@ -28,7 +28,7 @@ Atlas 训练系列产品/Atlas 推理系列产品/Atlas A2训练系列产品/Atl
 
 AddCustom由Add操作组成，计算过程只有1步：
 
-1. out = Add(x[offset], y[offset])
+1. out = Add(x, y)
 
 ## 算子执行接口
 
