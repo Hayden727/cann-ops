@@ -11,6 +11,14 @@
 import os
 import tensorflow._api.v2.compat.v1 as tf
 import numpy as np
+import logging
+
+# 配置logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 tf.disable_v2_behavior()
 
 
@@ -19,6 +27,14 @@ def gen_golden_data_simple():
     input_indices = np.random.uniform(0, 3, [3]).astype(np.int32)
     input_updates = np.random.uniform(-10, 10, [3, 4, 24, 24]).astype(np.int8)
     use_locking = False
+
+        # 打印输入值
+    logging.info("Input var:")
+    logging.info(input_var[:10])
+    logging.info("Input indices:")
+    logging.info(input_indices)
+    logging.info("Input updates:")
+    logging.info(input_updates[:10])
 
     ref = tf.Variable(input_var)
     indices = tf.constant(input_indices)
