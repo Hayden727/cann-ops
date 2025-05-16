@@ -170,8 +170,7 @@ public:
                     varGm.SetValue(indice * lastDim + ii, resHalf);
                 }else {
                     varGm.SetValue(indice * lastDim + ii, var - update);
-                }
-                
+                }  
             }
         }
     }

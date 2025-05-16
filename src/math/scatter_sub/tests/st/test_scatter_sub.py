@@ -13,12 +13,18 @@
 import tensorflow as tf
 import numpy as np
 
+
 def scatter_sub_test(var, indices, updates, use_locking=False):
     ref = tf.Variable(var)
     indices_tensor = tf.constant(indices)
     updates_tensor = tf.constant(updates)
-    scatter_sub_result = tf.raw_ops.ScatterSub(ref=ref, indices=indices_tensor, updates=updates_tensor, use_locking=use_locking)
+    scatter_sub_result = tf.raw_ops.ScatterSub(
+        ref=ref, 
+        indices=indices_tensor, 
+        updates=updates_tensor, 
+        use_locking=use_locking)
     return scatter_sub_result.numpy()
+
 
 def calc_expect_func(var, indices, updates, use_locking=False):
     res = scatter_sub_test(var["value"], indices["value"], updates["value"], use_locking)

@@ -155,7 +155,6 @@ public:
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b")
                       .AddConfig("ascend910b");
-
     }
 };
 
