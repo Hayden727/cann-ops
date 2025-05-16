@@ -159,24 +159,18 @@ int main(int argc, char **argv)
     std::vector<int64_t> inputVarShape = { 3, 4, 24, 24 };
     std::vector<int64_t> inputIndicesShape = { 3 };
     std::vector<int64_t> inputUpdatesShape = { 3, 4, 24, 24 };
-    std::vector<int64_t> outputVarShape = { 3, 4, 24, 24 };
     void *inputVarDeviceAddr = nullptr;
     void *inputIndicesDeviceAddr = nullptr;
     void *inputUpdatesDeviceAddr = nullptr;
-    void *outputVarDeviceAddr = nullptr;
     aclTensor *inputVar = nullptr;
     aclTensor *inputIndices = nullptr;
     aclTensor *inputUpdates = nullptr;
-    aclTensor *outputVar = nullptr;
     size_t inputVarShapeSize = inputVarShape[0] * inputVarShape[1] * inputVarShape[2] * inputVarShape[3];
     size_t inputIndicesShapeSize = inputIndicesShape[0];
     size_t inputUpdatesShapeSize = inputUpdatesShape[0] * inputUpdatesShape[1] * inputUpdatesShape[2] * inputUpdatesShape[3];
-    size_t outputVarShapeSize = outputVarShape[0] * outputVarShape[1] * outputVarShape[2] * outputVarShape[3];
     std::vector<int8_t> inputVarHostData(inputVarShape[0] * inputVarShape[1] * inputVarShape[2] * inputVarShape[3]);
     std::vector<int32_t> inputIndicesHostData(inputIndicesShape[0]);
     std::vector<int8_t> inputUpdatesHostData(inputUpdatesShape[0] * inputUpdatesShape[1] * inputUpdatesShape[2] * inputUpdatesShape[3]);
-    std::vector<aclFloat16> outputVarHostData(outputVarShape[0] * outputVarShape[1] * outputVarShape[2] * outputVarShape[3]);
-    size_t dataType = sizeof(uint16_t);
     size_t fileSize = 0;
     void** input1 = (void **)(&inputVarHostData);
     void** input2 = (void **)(&inputIndicesHostData);
@@ -187,15 +181,12 @@ int main(int argc, char **argv)
     ReadFile("../input/input_updates.bin", fileSize, *input3, inputUpdatesShapeSize);
 
     INFO_LOG("Set input success");
-    // 创建inputX aclTensor
+    // 创建input aclTensor
     ret = CreateAclTensor(inputVarHostData, inputVarShape, &inputVarDeviceAddr, aclDataType::ACL_INT8, &inputVar);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     ret = CreateAclTensor(inputIndicesHostData, inputIndicesShape, &inputIndicesDeviceAddr, aclDataType::ACL_INT32, &inputIndices);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     ret = CreateAclTensor(inputUpdatesHostData, inputUpdatesShape, &inputUpdatesDeviceAddr, aclDataType::ACL_INT8, &inputUpdates);
-    CHECK_RET(ret == ACL_SUCCESS, return FAILED);
-    // 创建outputZ aclTensor
-    ret = CreateAclTensor(outputVarHostData, outputVarShape, &outputVarDeviceAddr, aclDataType::ACL_FLOAT16, &outputVar);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
     // 3. 调用CANN自定义算子库API
@@ -218,27 +209,26 @@ int main(int argc, char **argv)
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return FAILED);
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
-    auto size = GetShapeSize(outputVarShape);
-    std::vector<aclFloat16> resultData(size, 0);
-    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputVarDeviceAddr,
-                      size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
+    auto size = GetShapeSize(inputVarShape);
+    std::vector<int8_t> resultData(size, 0);
+    ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), inputVarDeviceAddr,
+                      size * sizeof(int8_t), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void** output1=(void **)(&resultData);
     //写出数据
-    WriteFile("../output/output_var.bin", *output1, outputVarShapeSize);
+    WriteFile("../output/output_var.bin", *output1, inputVarShapeSize);
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
     aclDestroyTensor(inputVar);
     aclDestroyTensor(inputIndices);
     aclDestroyTensor(inputUpdates);
-    aclDestroyTensor(outputVar);
+
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(inputVarDeviceAddr);
     aclrtFree(inputIndicesDeviceAddr);
     aclrtFree(inputUpdatesDeviceAddr);
-    aclrtFree(outputVarDeviceAddr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }

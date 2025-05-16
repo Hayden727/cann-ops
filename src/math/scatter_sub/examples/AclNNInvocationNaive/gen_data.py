@@ -30,11 +30,11 @@ def gen_golden_data_simple():
 
         # 打印输入值
     logging.info("Input var:")
-    logging.info(input_var[:10])
+    logging.info(input_var[:5])
     logging.info("Input indices:")
     logging.info(input_indices)
     logging.info("Input updates:")
-    logging.info(input_updates[:10])
+    logging.info(input_updates[:5])
 
     ref = tf.Variable(input_var)
     indices = tf.constant(input_indices)
@@ -43,7 +43,6 @@ def gen_golden_data_simple():
     with tf.Session() as sess:
         sess.run(tf.compat.v1.global_variables_initializer())
         golden = sess.run(scatter_sub_op)
-
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
