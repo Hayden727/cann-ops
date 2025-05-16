@@ -8,16 +8,15 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-
+import os
 import tensorflow._api.v2.compat.v1 as tf
 import numpy as np
 tf.disable_v2_behavior()
-import os
 
 
 def gen_golden_data_simple():
     input_var = np.random.uniform(-10, 10, [3, 4, 24, 24]).astype(np.int8)
-    input_indices  = np.random.uniform(0, 3, [3]).astype(np.int32)
+    input_indices = np.random.uniform(0, 3, [3]).astype(np.int32)
     input_updates = np.random.uniform(-10, 10, [3, 4, 24, 24]).astype(np.int8)
     use_locking = False
 

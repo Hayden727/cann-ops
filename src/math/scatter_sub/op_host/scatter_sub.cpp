@@ -9,12 +9,12 @@
  */
 
 /**
- * @file add_custom.cpp
+ * @file scatter_sub.cpp
  */
+#include <cassert>
 #include "scatter_sub_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <assert.h>
 
 constexpr uint32_t BLOCK_SIZE = 32;
 
@@ -25,12 +25,20 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     auto shape = context->GetInputShape(0)->GetOriginShape();
     uint32_t var1stDim = shape.GetDim(0);
+    // 检查 var1stDim 是否为零
+    if (var1stDim == 0) {
+        std::cerr << "Error: var1stDim is zero, division by zero is not allowed." << std::endl;
+        return ge::GRAPH_FAILED; 
+    }
     uint32_t lastDim = totalLength / var1stDim;
 
     // 根据CoerNum设置BlockDim
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto coreNum = ascendcPlatform.GetCoreNum();
-    assert(coreNum != 0);
+    if (coreNum == 0) {
+        std::cerr << "Error: coreNum is zero, which is not allowed." << std::endl;
+        return ge::GRAPH_FAILED; 
+    }
     // 当前代码仅能运行在单核环境
     coreNum = 1;    
     context->SetBlockDim(coreNum);
@@ -60,8 +68,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     default:
         break;
     }
-
-    assert(sizeOfDataType != 0);
+    if (sizeOfDataType == 0) {
+        std::cerr << "Error: sizeOfDataType is zero, which is not allowed." << std::endl;
+        return ge::GRAPH_FAILED; 
+    }
    
     // shape对齐的最小段位
     auto alignNum = BLOCK_SIZE / sizeOfDataType;
@@ -90,11 +100,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
 
     // 设置tiling
-    // printf("alignNum is %d\n", alignNum);
-    // printf("lastDim is %d\n", lastDim);
-    // printf("indicesLength is %d\n", indicesLength);
-    // printf("var1stDim is %d\n", var1stDim);
-    // printf("firstTiling is %d\n", firstTiling);
     tiling.set_alignNum(alignNum);
     tiling.set_lastDim(lastDim);
     tiling.set_indicesLength(indicesLength);

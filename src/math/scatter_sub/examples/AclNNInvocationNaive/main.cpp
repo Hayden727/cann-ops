@@ -172,15 +172,15 @@ int main(int argc, char **argv)
     size_t inputIndicesShapeSize = inputIndicesShape[0];
     size_t inputUpdatesShapeSize = inputUpdatesShape[0] * inputUpdatesShape[1] * inputUpdatesShape[2] * inputUpdatesShape[3];
     size_t outputVarShapeSize = outputVarShape[0] * outputVarShape[1] * outputVarShape[2] * outputVarShape[3];
-    std::vector<aclInt8> inputVarHostData(inputVarShape[0] * inputVarShape[1] * inputVarShape[2] * inputVarShape[3]);
-    std::vector<aclInt32> inputIndicesHostData(inputIndicesShape[0]);
-    std::vector<aclInt8> inputUpdatesHostData(inputUpdatesShape[0] * inputUpdatesShape[1] * inputUpdatesShape[2] * inputUpdatesShape[3]);
-    std::vector<aclInt8> outputVarHostData(outputVarShape[0] * outputVarShape[1] * outputVarShape[2] * outputVarShape[3]);
+    std::vector<int8_t> inputVarHostData(inputVarShape[0] * inputVarShape[1] * inputVarShape[2] * inputVarShape[3]);
+    std::vector<int32_t> inputIndicesHostData(inputIndicesShape[0]);
+    std::vector<int8_t> inputUpdatesHostData(inputUpdatesShape[0] * inputUpdatesShape[1] * inputUpdatesShape[2] * inputUpdatesShape[3]);
+    std::vector<int8_t> outputVarHostData(outputVarShape[0] * outputVarShape[1] * outputVarShape[2] * outputVarShape[3]);
     size_t dataType = sizeof(uint16_t);
     size_t fileSize = 0;
-    void ** input1=(void **)(&inputVarHostData);
-    void ** input2=(void **)(&inputIndicesHostData);
-    void ** input3=(void **)(&inputUpdatesHostData);
+    void** input1 = (void **)(&inputVarHostData);
+    void** input2 = (void **)(&inputIndicesHostData);
+    void** input3 = (void **)(&inputUpdatesHostData);
     //读取数据
     ReadFile("../input/input_var.bin", fileSize, *input1, inputVarShapeSize);
     ReadFile("../input/input_indices.bin", fileSize, *input2, inputIndicesShapeSize * 4);
@@ -219,9 +219,9 @@ int main(int argc, char **argv)
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
     auto size = GetShapeSize(outputVarShape);
-    std::vector<aclInt8> resultData(size, 0);
+    std::vector<int8_t> resultData(size, 0);
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), outputVarDeviceAddr,
-                      size * sizeof(aclInt8), ACL_MEMCPY_DEVICE_TO_HOST);
+                      size * sizeof(int8_t), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
     void ** output1=(void **)(&resultData);
     //写出数据
