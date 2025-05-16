@@ -202,7 +202,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnScatterSubGetWorkspaceSize(inputVar, inputIndices, inputUpdates, false, outputVar, &workspaceSize, &executor);
+    ret = aclnnScatterSubGetWorkspaceSize(inputVar, inputIndices, inputUpdates, false, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnScatterSubGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
