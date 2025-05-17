@@ -10,7 +10,7 @@
                 ],
                 "type": [
                     "float",
-                    "fp16",
+                    "float16",
                     "int32",
                     "int8"
                 ],
@@ -20,8 +20,8 @@
                 ],
                 "value_range": [
                     [
-                        0.1,
-                        1.0
+                        -5,
+                        5
                     ]
                 ],
                 "name": "var"
@@ -31,6 +31,9 @@
                     "ND"
                 ],
                 "type": [
+                    "int32",
+                    "int32",
+                    "int32",
                     "int32"
                 ],
                 "shape": [3],
@@ -51,7 +54,7 @@
                 ],
                 "type": [
                     "float",
-                    "fp16",
+                    "float16",
                     "int32",
                     "int8"
                 ],
@@ -61,8 +64,8 @@
                 ],
                 "value_range": [
                     [
-                        0.1,
-                        1.0
+                        -5,
+                        5
                     ]
                 ],
                 "name": "updates"
@@ -75,7 +78,7 @@
                 ],
                 "type": [
                     "float",
-                    "fp16",
+                    "float16",
                     "int32",
                     "int8"
                 ],
