@@ -9,9 +9,9 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 import os
+import logging
 import tensorflow._api.v2.compat.v1 as tf
 import numpy as np
-import logging
 
 # 配置logging
 logging.basicConfig(
