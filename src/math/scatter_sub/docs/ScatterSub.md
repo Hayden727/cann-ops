@@ -79,7 +79,7 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 
 ## 约束与限制
 
-- `var`、`indices`、`updates`、`out`的数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式只支持 ND。
+- `var`、`indices`、`updates`的数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式只支持 ND。
 - `use_locking`的数据类型只支持 BOOL，数据格式只支持 SCALE。
 
 ## 算子原型
@@ -87,10 +87,10 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 <table>  
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">ScatterSub</th></tr>  
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr>  
-<tr><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td align="center">var</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td align="center">indices</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td><td align="center">\</td></tr>  
-<tr><td align="center">updates</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">updates</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
 <tr><td align="center">attr属性</td><td align="center">use_locking</td><td align="center">\</td><td align="center">bool</td><td align="center">\</td><td align="center">false</td></tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="8" align="center">scattersub</td></tr>  
 </table>
