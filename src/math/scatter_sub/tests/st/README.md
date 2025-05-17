@@ -2,7 +2,7 @@
 ```
 ├── msopst.ini                      // st测试配置文件 
 ├── ScatterSub_case_all_type.json    // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
-└── test_add_custom.py              // 算子期望数据生成脚本
+└── test_scatter_sub.py              // 算子期望数据生成脚本
 ```
 
 ## ST测试介绍

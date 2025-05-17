@@ -21,7 +21,7 @@ var[indices[i, ..., j], ...] -= updates[i, ..., j, ...]
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">ScatterSub</th></tr>  
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr>  
 <tr><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
-<tr><td align="center">indices</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td align="center">indices</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td align="center">updates</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
 <tr><td align="center">attr属性</td><td align="center">use_locking</td><td align="center">\</td><td align="center">bool</td><td align="center">\</td><td align="center">false</td></tr>

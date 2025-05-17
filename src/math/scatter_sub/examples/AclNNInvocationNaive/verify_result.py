@@ -30,8 +30,8 @@ def verify_result(real_result, golden):
     logging.info(f"Golden result sample: {golden[:10]}")
     result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
     deno = np.maximum(np.abs(real_result), np.abs(golden))  # 获取最大值并组成新数组
-    result_atol = np.less_equal(result, loss) # 计算绝对误差
-    result_rtol = np.less_equal(result / np.add(deno, minimum), loss) # 计算相对误差
+    result_atol = np.less_equal(result, LOSS) # 计算绝对误差
+    result_rtol = np.less_equal(result / np.add(deno, MINIMUM), LOSS) # 计算相对误差
     # 打印绝对误差和相对误差的部分值
     logging.info(f"Absolute error sample: {result[:10]}")
     logging.info(f"Relative error sample: {(result / np.add(deno, MINIMUM))[:10]}")

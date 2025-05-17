@@ -37,7 +37,7 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 
 每个算子分为[两段式接口](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E4%B8%A4%E6%AE%B5%E5%BC%8F%E6%8E%A5%E5%8F%A3.md)，必须先调用“aclnnScatterSubGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnScatterSub”接口执行计算。
 
-* `aclnnStatus aclnnScatterSubGetWorkspaceSize(const aclTensor* var, const aclTensor* indices, const aclTensor* updates, bool use_locking, const aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnScatterSubGetWorkspaceSize(const aclTensor* var, const aclTensor* indices, const aclTensor* updates, bool use_locking, uint64_t* workspaceSize, aclOpExecutor** executor)`
 * `aclnnStatus aclnnScatterSub(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
 
 **说明**：
@@ -50,10 +50,9 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 - **参数说明：**
   
   - var（aclTensor*，计算输入）：必选参数，Device 侧的 aclTensor，公式中的输入`var`，数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式支持 ND。
-  - indices（aclTensor*，计算输入）：必选参数，Device 侧的 aclTensor，用于索引`var`的张量，数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式支持 ND。
+  - indices（aclTensor*，计算输入）：必选参数，Device 侧的 aclTensor，用于索引`var`的张量，数据类型支持INT32，数据格式支持 ND。
   - updates（aclTensor*，计算输入）：必选参数，Device 侧的 aclTensor，用于与索引后的`var`做减法的张量，数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式支持 ND。
   - use_locking（bool*，算子属性）：可选参数，Host 侧的 bool，是否使用锁，默认值为 false。
-  - out（aclTensor*，计算输出）：Device 侧的 aclTensor，公式中的输出`var`，数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式支持 ND，输出维度与`var`一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -89,7 +88,7 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">ScatterSub</th></tr>  
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr>  
 <tr><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
-<tr><td align="center">indices</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
+<tr><td align="center">indices</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td align="center">updates</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float3,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
 <tr><td align="center">attr属性</td><td align="center">use_locking</td><td align="center">\</td><td align="center">bool</td><td align="center">\</td><td align="center">false</td></tr>

@@ -21,7 +21,7 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnScatterSubGetWorkspaceSize(const aclTensor *var, const aclTensor *indices, const aclTensor *updates, bool use_locking, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnScatterSubGetWorkspaceSize(const aclTensor *var, const aclTensor *indices, const aclTensor *updates, bool use_locking, uint64_t workspaceSize, aclOpExecutor **executor);
 // 执行算子
 aclnnStatus aclnnScatterSub(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
 ```
