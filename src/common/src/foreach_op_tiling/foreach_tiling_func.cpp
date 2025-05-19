@@ -18,8 +18,8 @@
 
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include "foreach_tiling_def.h"
-#include "common_dtype.h"
+#include "tiling/foreach_op_tiling/foreach_tiling_def.h"
+#include "tiling/foreach_op_tiling/common_dtype.h"
 #include "runtime2_util.h"
 
 namespace optiling {
