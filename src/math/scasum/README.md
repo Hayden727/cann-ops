@@ -9,8 +9,11 @@
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Scasum</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">2043</td><td align="center">complex64</td><td align="center">ND</td></tr><tr></tr>
+<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x</td><td align="center">2043</td><td align="center">complex64</td><td align="center">ND</td></tr>
+<tr><td align="center">n</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">incx</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr></tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">1</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
