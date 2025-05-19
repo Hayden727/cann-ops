@@ -32,17 +32,18 @@
   
   - 环境变量配置
     
-    需要设置环境变量，以arm为例
+    需要设置环境变量，以arm为例，用户请根据实际情况修改ascend-toolkit路径。
     
     ```bash
     export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
-    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/aarch64-linux/devlib
+    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/lib64
     ```
   - 样例执行
     
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     
     ```bash
+    python3 gen_data.py
     mkdir -p build
     cd build
     cmake .. && make
