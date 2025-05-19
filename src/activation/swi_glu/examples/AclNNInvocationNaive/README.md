@@ -34,7 +34,7 @@ aclnnStatus aclnnSwiGlu(void *workspace, uint64_t workspaceSize, aclOpExecutor *
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/swi_glu/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/activation/swi_glu/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
@@ -43,17 +43,19 @@ aclnnStatus aclnnSwiGlu(void *workspace, uint64_t workspaceSize, aclOpExecutor *
     
     ```bash
     export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
-    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/aarch64-linux/devlib
+    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/lib64
     ```
   - 样例执行
     
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     
     ```bash
+    python3 gen_data.py
     mkdir -p build
     cd build
     cmake .. && make
     ./execute_test_op
+    python3 verify_result.py output/output.bin output/golden.bin
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。

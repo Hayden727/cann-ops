@@ -4,6 +4,11 @@
 ### 算子描述
 Swish门控线性单元激活函数，实现x的SwiGlu计算。 
 
+计算公式：  
+<p style="text-align: center">
+out<sub>i</sub> = SwiGlu(x<sub>i</sub>)=Swish(A<sub>i</sub>)*B<sub>i</sub>
+</p>
+其中，A<sub>i</sub>表示x<sub>i</sub>按指定dim维度一分为二的前半部分张量，B<sub>i</sub>表示x<sub>i</sub>按指定dim维度一分为二的后半部分张量。
 ### 算子规格描述
 
 <table>
