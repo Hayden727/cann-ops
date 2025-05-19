@@ -25,7 +25,7 @@ var[indices[i, ..., j], ...] -= updates[i, ..., j, ...]
 <tr><td align="center">updates</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
 <tr><td align="center">attr属性</td><td align="center">use_locking</td><td align="center">\</td><td align="center">bool</td><td align="center">\</td><td align="center">false</td></tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="8" align="center">scattersub</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="8" align="center">scatter_sub</td></tr>  
 </table>
 
 ### 支持的产品型号

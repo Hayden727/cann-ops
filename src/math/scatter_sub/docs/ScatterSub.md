@@ -1,6 +1,6 @@
 声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 
-# AddCustom
+# ScatterSub
 
 ## 支持的产品型号
 
@@ -45,7 +45,7 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnAddCustomGetWorkspaceSize
+### aclnnScatterSubGetWorkspaceSize
 
 - **参数说明：**
   
@@ -65,7 +65,7 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
   - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、y、out的数据类型和数据格式不在支持的范围内。
   ```
 
-### aclnnAddCustom
+### aclnnScatterSub
 
 - **参数说明：**
   
@@ -79,7 +79,8 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 
 ## 约束与限制
 
-- `var`、`indices`、`updates`的数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式只支持 ND。
+- `var`、`updates`的数据类型支持 FLOAT16、FLOAT32、INT32、INT8，数据格式只支持 ND。
+- `indices`的数据类型只支持 INT32，数据格式只支持 ND。
 - `use_locking`的数据类型只支持 BOOL，数据格式只支持 SCALE。
 
 ## 算子原型
@@ -92,7 +93,7 @@ ScatterSub 算子通过依次调用`Ascend C`的`API`接口，如数据拷贝`Da
 <tr><td align="center">updates</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">var</td><td align="center">-</td><td align="center">float32,float16,int32,int8</td><td align="center">ND</td><td align="center">\</td></tr>
 <tr><td align="center">attr属性</td><td align="center">use_locking</td><td align="center">\</td><td align="center">bool</td><td align="center">\</td><td align="center">false</td></tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="8" align="center">scattersub</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="8" align="center">scatter_sub</td></tr>  
 </table>
 
 ## 调用示例
