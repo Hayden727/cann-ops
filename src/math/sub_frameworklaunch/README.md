@@ -16,7 +16,7 @@
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">sub_frameworklaunch</td></tr>
 </table>
 
 ### 支持的产品型号
