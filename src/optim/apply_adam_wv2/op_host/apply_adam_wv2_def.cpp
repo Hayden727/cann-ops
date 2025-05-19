@@ -50,19 +50,19 @@ namespace ops {
                     .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
             this->Attr("lr")
                     .AttrType(OPTIONAL)
-                    .Float(0.1);
+                    .Float(0.1f);
             this->Attr("beta1")
                     .AttrType(OPTIONAL)
-                    .Float(0.1);
+                    .Float(0.1f);
             this->Attr("beta2")
                     .AttrType(OPTIONAL)
-                    .Float(0.1);
+                    .Float(0.1f);
             this->Attr("weight_decay")
                     .AttrType(OPTIONAL)
-                    .Float(0.1);
+                    .Float(0.1f);
             this->Attr("eps")
                     .AttrType(OPTIONAL)
-                    .Float(0.1);
+                    .Float(0.1f);
             this->Attr("amsgrad")
                     .AttrType(OPTIONAL)
                     .Bool(false);
