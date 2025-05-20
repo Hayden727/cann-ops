@@ -55,6 +55,7 @@ aclnnStatus aclnnSwiGlu(void *workspace, uint64_t workspaceSize, aclOpExecutor *
     cd build
     cmake .. && make
     ./execute_test_op
+    cd ..
     python3 verify_result.py output/output.bin output/golden.bin
     ```
     

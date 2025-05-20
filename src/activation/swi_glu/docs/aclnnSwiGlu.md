@@ -21,7 +21,7 @@
 ## aclnnSwiGluGetWorkspaceSize
 - **参数说明**：
   
-  - x（aclTensor*，计算输入）：表示待计算的数据，公式中的x<sub>i</sub>，Device侧的aclTensor，维度必须大于0维，小于八维，且shape必须在入参dimOptional对应维度上可以整除2.不支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
+  - x（aclTensor*，计算输入）：表示待计算的数据，公式中的x<sub>i</sub>，Device侧的aclTensor，维度必须大于0维，小于8维，且shape必须在入参dimOptional对应维度上可以整除2.不支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
     - 昇腾310P AI处理器：数据类型支持FLOAT16、FLOAT32。shape不支持非64字节对齐。
     - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32。
   - dimOptional（int64_t，入参）：需要进行切分的维度序号，对x相应轴进行对半切，Host侧的整型，数据类型支持INT64。取值范围为[-x.dim(), x.dim()-1]。
