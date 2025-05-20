@@ -227,7 +227,7 @@ add_ops_compile_options(
 )
 endif()
 
-
+set(OP_COMMON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/common)
 add_subdirectory(src/common)
 # add_subdirectory(src/math)
 # add_subdirectory(tests)

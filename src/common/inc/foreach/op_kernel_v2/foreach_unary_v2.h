@@ -13,8 +13,8 @@
  * \brief
  */
 
-#ifndef FOREACH_UNARY_H
-#define FOREACH_UNARY_H
+#ifndef FOREACH_UNARY_V2_H
+#define FOREACH_UNARY_V2_H
 
 #include "kernel_foreach_elewise.h"
 
@@ -153,4 +153,4 @@ __aicore__ inline void ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopy
 }  // namespace OpKernel
 }  // namespace Common
 
-#endif  // KERNEL_FOREACH_UNARY_H
+#endif  // KERNEL_FOREACH_UNARY_V2_H

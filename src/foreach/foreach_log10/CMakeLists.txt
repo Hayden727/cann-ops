@@ -1,6 +1,7 @@
 add_ops_compile_options(
         OP_NAME ForeachLog10
-        OPTIONS --cce-auto-sync=on
+        OPTIONS -I${OP_COMMON_DIR}/inc/foreach/op_kernel
+                --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
 )
@@ -9,12 +10,16 @@ target_sources(op_host_aclnn PRIVATE
 op_host/foreach_log10.cpp
 )
 
+target_include_directories(op_host_aclnn PRIVATE
+        ${OP_COMMON_DIR}/inc
+)
+
 target_sources(optiling PRIVATE
-        op_host/foreach_log10.cpp
+        ${OP_COMMON_DIR}/src/foreach/op_tiling/foreach_tiling_func.cpp
 )
 
 target_include_directories(optiling PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${OP_COMMON_DIR}/inc
 )
 
 target_sources(opsproto PRIVATE
