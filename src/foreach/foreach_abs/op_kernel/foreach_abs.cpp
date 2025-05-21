@@ -14,7 +14,7 @@
  */
 
 #include "kernel_operator.h"
-#include "./foreach_utils/foreach_triangle.h"
+#include "foreach_triangle.h"
  
 using namespace AscendC;
 using namespace Common::OpKernel;

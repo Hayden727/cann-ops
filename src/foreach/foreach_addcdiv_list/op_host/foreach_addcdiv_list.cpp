@@ -13,7 +13,7 @@
  * \brief
  */
 
- #include "../../foreach_op_host/foreach/foreach_proto_utils.h"
+ #include "foreach/foreach_proto_utils.h"
  #include "register/op_def_registry.h"
  
  namespace ops {

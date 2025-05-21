@@ -9,12 +9,16 @@ target_sources(op_host_aclnn PRIVATE
 op_host/foreach_lerp_scalar.cpp
 )
 
+target_include_directories(op_host_aclnn PRIVATE
+        ${OP_COMMON_DIR}/inc
+)
+
 target_sources(optiling PRIVATE
-        op_host/foreach_lerp_scalar.cpp
+        ${OP_COMMON_DIR}/src/foreach/op_tiling/foreach_tiling_func.cpp
 )
 
 target_include_directories(optiling PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${OP_COMMON_DIR}/inc
 )
 
 target_sources(opsproto PRIVATE

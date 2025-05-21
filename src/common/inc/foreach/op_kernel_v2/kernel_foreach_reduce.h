@@ -14,8 +14,8 @@
  */
 
  
-#ifndef FOREACH_REDUCE_N_D_H
-#define FOREACH_REDUCE_N_D_H
+#ifndef KERNEL_FOREACH_REDUCE_N_D_H
+#define KERNEL_FOREACH_REDUCE_N_D_H
 
 #include "kernel_foreach_base_v2.h"
 
@@ -416,4 +416,4 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
 }  // namespace OpKernel
 }  // namespace Common
 
-#endif // FOREACH_REDUCE_N_D_H
+#endif // KERNEL_FOREACH_REDUCE_N_D_H

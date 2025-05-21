@@ -17,10 +17,10 @@
 #define AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_COMMON_REDUCE_V2_FUNC_H_
 
 #include <cmath>
-#include "tiling/foreach_op_tiling/foreach_tiling_def.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include "tiling/foreach_op_tiling/common_dtype.h"
+#include "foreach/op_tiling/foreach_reduce_tiling_def.h"
+#include "foreach/op_tiling/common_dtype.h"
 
 namespace optiling {
 constexpr uint32_t DEFAULT_SYNCALL_NEED_SIZE = 8;
