@@ -37,6 +37,10 @@ constexpr uint32_t ROW_FACTOR_SPLIT_D = 32;
 constexpr int32_t DIM_NUM = 2;
 constexpr int32_t DIM_N = 0;
 constexpr int32_t DIM_D = 1;
+constexpr uint32_t TWO_POWER_ONE = 2;
+constexpr uint32_t TWO_POWER_TWO = 4;
+constexpr uint32_t TWO_POWER_THREE = 8;
+constexpr uint32_t TWO_POWER_FOUR = 16;
 
 template <typename Tp, Tp v>
 struct IntegralConstant {
@@ -195,4 +199,21 @@ __aicore__ inline void InitGmZero(
 
     pipe_barrier(PIPE_ALL);
 }
+
+__aicore__ inline uint32_t FindDichotomizeAddDiffSize(uint32_t parallelN)
+{
+    // 找到parallelN与小于parallelN的最近二次幂的差值 例如：parallelN = 15，结果为15 - 8 = 7
+    if ((parallelN & (parallelN - 1)) != 0) {
+        uint32_t temp = parallelN - 1;
+        temp |= temp >> 1;
+        temp |= temp >> TWO_POWER_ONE;
+        temp |= temp >> TWO_POWER_TWO;
+        temp |= temp >> TWO_POWER_THREE;
+        temp |= temp >> TWO_POWER_FOUR;
+        return (parallelN - ((temp + 1) / TWO_POWER_ONE));
+    } else {
+        return 0;
+    }
+}
+
 #endif  // RMS_NORM_GRAD_BASE_H
