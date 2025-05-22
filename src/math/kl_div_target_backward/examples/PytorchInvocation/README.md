@@ -41,52 +41,6 @@
     (bash ci/build.sh --python=${PYTHON_VERSION} --disable_rpc ; pip uninstall torch-npu -y ; pip3 install dist/*.whl)
     ```
 
-## 自定义算子入图关键步骤解析
-可以在test_ops_custom_register_in_graph.py文件查看相关注册实现。
-  - 注册自定义算子的meta实现
-    ```python
-    from torch_npu.meta._meta_registrations import m
-    from torch.library import impl
-    @impl(m, "npu_kl_div_target_backward")
-    def npu_kl_div_target_backward_meta(grad_output, self_x, target, reduction, log_target):
-        return torch.empty_like(target)
-    ```
-
-  - 根据Ascend C工程产生的REG_OP算子原型填充torchair.ge.custom_op的参数。
-
-    KlDivTargetBackward的REG_OP原型为：
-    ```cpp
-    REG_OP(KlDivTargetBackward)
-        .INPUT(grad_output, ge::TensorType::ALL())
-        .INPUT(self, ge::TensorType::ALL())
-        .INPUT(target, ge::TensorType::ALL())
-        .OUTPUT(z, ge::TensorType::ALL())
-        .REQUIRED_ATTR(reduction, Int)
-        .REQUIRED_ATTR(log_target, Bool)
-        .OP_END_FACTORY_REG(KlDivTargetBackward);
-    ```
-
-  - 注册自定义算子converter
-    ```python
-    from torchair import register_fx_node_ge_converter
-    from torchair.ge import Tensor
-    @register_fx_node_ge_converter(torch.ops.npu.npu_kl_div_target_backward.default)
-    def convert_npu_kl_div_target_backward(grad_output: Tensor, self_x: Tensor, target: Tensor, reduction: int, log_target: bool, grad_target: Tensor = None, meta_outputs: Any = None):
-        return torchair.ge.custom_op(
-            "KlDivTargetBackward",
-            inputs={
-                "grad_output": grad_output,
-                "self": self_x,
-                "target": target,
-            },
-            attrs={
-                "reduction": torchair.ge.attr.Int(reduction),
-                "log_target": torchair.ge.attr.Bool(log_target),
-            },
-            outputs=['grad_target']
-        )
-    ```
-
 ## 运行样例算子
 该样例脚本基于Pytorch2.1、python3.9 运行
 ### 1.编译部署自定义算子
@@ -112,10 +66,6 @@
     - 执行pytorch eager模式的自定义算子测试文件
       ```bash
       python3 test_ops_custom.py
-      ```
-    - 执行pytorch torch.compile模式的自定义算子测试文件
-      ```bash
-      python3 test_ops_custom_register_in_graph.py
       ```
 
 ## 其他说明

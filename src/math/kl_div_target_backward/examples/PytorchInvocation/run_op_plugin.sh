@@ -81,13 +81,5 @@ function main() {
         return 1
     fi
     echo "INFO: Ascend C KlDivTargetBackward SUCCESS"
-    # 6. 执行测试文件
-    python3 test_ops_custom_register_in_graph.py
-    if [ $? -ne 0 ]; then
-        echo "ERROR: run KlDivTargetBackward op in graph failed!"
-        return 1
-    fi
-    echo "INFO: Ascend C KlDivTargetBackward  in torch.compile graph SUCCESS"
-
 }
 main
