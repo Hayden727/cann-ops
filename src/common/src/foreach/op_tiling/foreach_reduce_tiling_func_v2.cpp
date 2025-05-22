@@ -19,7 +19,7 @@
 #include <cmath>
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include "foreach/op_tiling/foreach_reduce_tiling_def.h"
+#include "foreach/op_tiling/foreach_tiling_def.h"
 #include "foreach/op_tiling/common_dtype.h"
 
 namespace optiling {
