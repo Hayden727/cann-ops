@@ -4,6 +4,26 @@
 ### 算子描述
 `AdaptiveMaxPool3DGrad`算子返回两个数据相加的结果。
 
+### 算子规格描述
+<table>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AdaptiveMaxPool3DGrad</td></tr>
+</tr>
+<tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">gradOutput</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">self</td><td align="center">1 * 1 * 2 * 2 * 2</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">indices</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+</tr>
+</tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">gradInput</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
+</tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">adaptive_max_pool3d_grad</td></tr>
+</table>
+
 ### 支持的产品型号
 本样例支持如下产品型号：
 - Atlas A2训练系列产品
@@ -45,21 +65,6 @@
     <th>目录</th><th>描述</th>
     <tr>
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AdaptiveMaxPool3DGrad算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOfflineModel"> AclOfflineModel</td><td>通过aclopExecuteV2调用的方式调用AdaptiveMaxPool3DGrad算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用AdaptiveMaxPool3DGrad算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用AdaptiveMaxPool3DGrad算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用AdaptiveMaxPool3DGrad算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用AdaptiveMaxPool3DGrad算子。</td>
     </tr>
 </table>
 
