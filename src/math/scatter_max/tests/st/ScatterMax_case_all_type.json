@@ -2,7 +2,7 @@
     {
         "case_name": "Test_ScatterMax_001",
         "op": "ScatterMax",
-        "calc_expect_func_file": "test_scatter_max.py:calc_expect_func",
+        "calc_expect_func_file": "./test_scatter_max.py:calc_expect_func",
         "input_desc": [
             {
                 "format": [
