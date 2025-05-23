@@ -19,6 +19,9 @@ cann-ops仓关键目录如下所示：
 └── build.sh // 算子编译脚本
 ```
 ## ⚡️ 快速上手
+
+快速上手指南请见：[QuickStart](./QuickStart.md)
+
 | 样例名称  | 样例介绍  | 开发语言  |
 |---|---|---|
 | [add_custom](./src/math/add_custom)  | 参考算子，基于Ascend C的vector加法算子  |  Ascend C |
