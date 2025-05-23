@@ -2,7 +2,7 @@
 
 ## 支持的产品型号
 
-- Atlas 训练系列产品/Atlas A2 训练系列产品/Atlas 800I A2 推理产品
+- Atlas 训练系列产品/Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品
 
 ## 接口原型
 
@@ -43,7 +43,7 @@
 
   - self(aclTensor*, 计算输入)：公式中的`self`，Device侧的aclTensor。scatter的目标张量。self的维度数量需要与index相同,shape支持0-8维。支持非连续的Tensor支持ND。
     - Atlas 训练系列产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT32、DOUBLE、COMPLEX64、COMPLEX128。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT32、DOUBLE、COMPLEX64、COMPLEX128、BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT32、DOUBLE、COMPLEX64、COMPLEX128、BFLOAT16。
 
   - dim(int64_t, 计算输入)：用来scatter的维度，数据类型为INT64。范围为[-self的维度数量, self的维度数量-1]。
 
@@ -58,7 +58,7 @@
 
   - out(aclTensor*, 计算输出)： scatter的输出结果将存储在此张量中。数据格式、数据类型、shape需要与self一致。
     - Atlas 训练系列产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT32、DOUBLE、COMPLEX64、COMPLEX128。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT32、DOUBLE、COMPLEX64、COMPLEX128、BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT32、DOUBLE、COMPLEX64、COMPLEX128、BFLOAT16。
 
   - workspaceSize(uint64_t *，出参)：返回需要在Device侧申请的workspace大小。
 
@@ -106,7 +106,7 @@
 
   - selfRef(aclTensor*, 计算输入|计算输出)：公式中的`self`，Device侧的aclTensor。scatter的目标张量。selfRef的维度数量需要与index相同，shape支持0-8维。支持空tensor， 支持非连续的Tensor支持ND。
     - Atlas 训练系列产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT、DOUBLE、COMPLEX64、COMPLEX128。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT、DOUBLE、COMPLEX64、COMPLEX128、BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持UINT8、INT8、INT16、INT32、INT64、BOOL、FLOAT16、FLOAT、DOUBLE、COMPLEX64、COMPLEX128、BFLOAT16。
   - dim(int64_t, 计算输入)：用来scatter的维度，数据类型为INT64。范围为[-selfRef的维度数量, selfRef的维度数量-1]。
   - index(aclTensor*, 计算输入)：公式中的`index`，Device侧的aclTensor。索引张量，数据类型支持INT32、INT64。index的维度数量需要与selfRef相同,shape支持0-8维。对于每一个维度d，如果d != dim, 需保证index.size(d) <= selfRef.size(d)。支持空tensor，支持非连续的Tensor支持ND。
   - value(aclScalar*, 计算输入)：当value为COMPLEX时，selfRef也必须为COMPLEX tensor，无其他数据类型限制。

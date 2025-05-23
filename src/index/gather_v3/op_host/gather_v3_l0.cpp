@@ -34,7 +34,8 @@ static const std::initializer_list<op::DataType> AICORE_DTYPE_SUPPORT_LIST_INDIC
 
 static bool IsAiCoreSupport(const aclTensor *self,
                             const aclTensor *indices) {
-  auto checkSoc = (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B);
+  auto checkSoc = (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B ||
+                   GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93);
 
   auto checkSelfType = CheckType(self->GetDataType(), AICORE_DTYPE_SUPPORT_LIST_SELF);
   auto checkIndicesType = CheckType(indices->GetDataType(), AICORE_DTYPE_SUPPORT_LIST_INDICES);

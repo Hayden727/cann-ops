@@ -1,7 +1,9 @@
 # aclnnMaskedSelect
 
 ## 支持的产品型号
-- 昇腾910B AI处理器。
+- Atlas 推理系列产品
+- Atlas 训练系列产品
+- Atlas A2 训练系列产品/Atlas A3 训练系列产品
 
 ## 接口原型
 
@@ -19,12 +21,12 @@
 - **参数说明：**
 
   - self (aclTensor*, 计算输入)：功能描述中的输入张量`self`，Device侧的aclTensor。shape需要与mask满足[broadcast关系](common/broadcast关系.md)。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
-    - 昇腾910 AI处理器、昇腾310P AI处理器：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
+    - Atlas 推理系列产品/Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
   - mask (aclTensor*, 计算输入)：功能描述中的布尔掩码张量`mask`，Device侧的aclTensor。shape要和self满足[broadcast关系](common/broadcast关系.md)。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。数据类型支持UINT8、BOOL。
   - out (aclTensor*, 计算输出)：功能描述中的输出一维张量，Device侧的aclTensor。shape为一维，且元素个数为mask和self广播后的shapesize。不支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
-    - 昇腾910 AI处理器、昇腾310P AI处理器：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
+    - Atlas 推理系列产品/Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT8、INT16、INT32、INT64、UINT8、BOOL。
   - workspaceSize (uint64_t*, 出参)：返回需要在Device侧申请的workspace大小。
   - executor (aclOpExecutor**, 出参)：返回op执行器，包含了算子计算流程。
 

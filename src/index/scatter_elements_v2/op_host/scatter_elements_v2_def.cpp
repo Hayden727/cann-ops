@@ -54,6 +54,7 @@ public:
             .String("none");
 
         this->AICore().AddConfig("ascend910b");
+        this->AICore().AddConfig("ascend910_93");
     }
 };
 
