@@ -2,7 +2,7 @@
 本样例通过`Ascend C`编程语言实现了`GreaterEqual`算子。
 
 ### 算子描述
-`GreaterEqual`算子返回两个数据相加的结果。
+`GreaterEqual`算子返回输入数据1是否大于大于输入数据2。
 
 ### 算子规格描述
 
@@ -10,8 +10,8 @@
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">GreaterEqual</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x1</td><td align="center">-</td><td align="center">float16, float32, int8, int32</td><td align="center">ND</td></tr>
-<tr><td align="center">x2</td><td align="center">-</td><td align="center">float16, float32, int8, int32</td><td align="center">ND</td></tr>
+<tr><td align="center">x1</td><td align="center">-</td><td align="center">float16, float32, int32</td><td align="center">ND</td></tr>
+<tr><td align="center">x2</td><td align="center">-</td><td align="center">float16, float32, int32</td><td align="center">ND</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">bool</td><td align="center">ND</td></tr>
