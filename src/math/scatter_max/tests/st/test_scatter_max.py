@@ -10,31 +10,30 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-#import numpy as np
+import numpy as np
 import tensorflow as tf
 
 
-def scatter_max_test(x_np, indices_np, updates_np, use_locking):
+def scatter_max_test(x_np, indices_np, updates_np, use_locking=False):
     # 转换为TensorFlow张量（保持原始数据类型）
     x_tensor = tf.convert_to_tensor(x_np)
     indices_tensor = tf.convert_to_tensor(indices_np, dtype=tf.int32)
     updates_tensor = tf.convert_to_tensor(updates_np)
     
-    # 调整indices维度格式
-    indices_nd = tf.expand_dims(indices_tensor, axis=-1)
+    x_var = tf.Variable(x_tensor)
     
-    # 计算最大值并更新张量
-    current_values = tf.gather_nd(x_tensor, indices_nd)
-    max_values = tf.maximum(current_values, updates_tensor)
-    result_tensor = tf.tensor_scatter_nd_update(
-        x_tensor,
-        indices_nd,
-        max_values
+    # 调用ScatterMax操作
+    result = tf.raw_ops.ScatterMax(
+        ref=x_var,
+        indices=indices_tensor,
+        updates=updates_tensor,
+        use_locking=use_locking
     )
     
-    return result_tensor.numpy()
+    # 返回结果的NumPy数组
+    return result.numpy()
 
-def calc_expect_func(x, indices, updates, out, use_locking=False):
+def calc_expect_func(x, indices, updates, use_locking):
     """calc_expect_func"""
     res = scatter_max_test(
         x["value"],
@@ -42,4 +41,4 @@ def calc_expect_func(x, indices, updates, out, use_locking=False):
         updates["value"],
         use_locking
     )
-    return [res, ]
+    return [res]
