@@ -35,7 +35,9 @@ static const int UPPER_BORDER = 262144;
 bool IsRfft1DAiCoreSupported(const aclTensor* self, int64_t n, int64_t norm) {
     bool res = false;
   
-    if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B && (n <= UPPER_BORDER) && self->GetDataType() == op::DataType::DT_FLOAT) {
+    if ((GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B ||
+        GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93) &&
+        (n <= UPPER_BORDER) && self->GetDataType() == op::DataType::DT_FLOAT) {
         res = true;
     }
     return res;

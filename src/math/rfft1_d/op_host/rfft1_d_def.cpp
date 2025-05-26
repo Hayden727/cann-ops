@@ -48,6 +48,7 @@ class Rfft1D : public OpDef {
         .UnknownShapeFormat({ge::FORMAT_ND});
 
     this->AICore().AddConfig("ascend910b");
+    this->AICore().AddConfig("ascend910_93");
   }
 };
  

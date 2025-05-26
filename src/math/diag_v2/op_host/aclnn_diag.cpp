@@ -60,7 +60,7 @@ static constexpr size_t DIM_TWO = 2;
 
 static const std::initializer_list<DataType>& GetDtypeSupportList() {
   auto socVersion = GetCurrentPlatformInfo().GetSocVersion();
-  if (socVersion == SocVersion::ASCEND910B) {
+  if (socVersion == SocVersion::ASCEND910B || socVersion == SocVersion::ASCEND910_93) {
     return ASCEND910B_DTYPE_SUPPORT_LIST;
   } else {
     return ASCEND910_DTYPE_SUPPORT_LIST;

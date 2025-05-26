@@ -90,6 +90,12 @@ static const inline std::initializer_list<DataType>& GetSupportDtypeList(SocVers
       op::DataType::DT_UINT8, op::DataType::DT_COMPLEX128, op::DataType::DT_COMPLEX64,
       // AiCpu支持数据类型
       op::DataType::DT_DOUBLE}},
+    {SocVersion::ASCEND910_93, {
+      op::DataType::DT_FLOAT, op::DataType::DT_FLOAT16, op::DataType::DT_BF16,
+      op::DataType::DT_INT32, op::DataType::DT_INT16, op::DataType::DT_INT8,
+      op::DataType::DT_UINT8,
+      // AiCpu支持数据类型
+      op::DataType::DT_DOUBLE}},
     {SocVersion::ASCEND910_95, {
       op::DataType::DT_FLOAT, op::DataType::DT_FLOAT16, op::DataType::DT_BF16,
       op::DataType::DT_INT32, op::DataType::DT_INT16, op::DataType::DT_INT8,

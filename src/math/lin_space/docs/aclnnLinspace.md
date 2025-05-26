@@ -2,7 +2,7 @@
 
 ## 支持的产品型号
 
-- Atlas 推理系列产品/Atlas 训练系列产品/Atlas A2 训练系列产品/Atlas 800I A2 推理产品。
+- Atlas 推理系列产品/Atlas 训练系列产品/Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品。
 
 ## 接口原型
 

@@ -114,7 +114,8 @@ class Rfft1DSingleton {
 };
 
 static const std::initializer_list<DataType>& GetDtypeSupportList() {
-    if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B) {
+    if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93 ||
+        GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B) {
         return ASCEND910B_DTYPE_DTYPE_SUPPORT_LIST;
     } else {
         return NULL_SUPPORT_LIST;

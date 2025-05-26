@@ -38,6 +38,7 @@ class Pows : public OpDef {
         .ParamType(REQUIRED)
         .DataType({ge::DT_FLOAT16, ge::DT_BF16, ge::DT_FLOAT})
         .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
+    this->AICore().AddConfig("ascend910_93");
     this->AICore().AddConfig("ascend910b");
 
     OpAICoreConfig config_without_bf16;

@@ -4,8 +4,8 @@
 
 ## 支持的产品型号
 
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
+- Atlas 训练系列产品
+- Atlas A2 训练系列产品/Atlas A3 训练系列产品
 
 ## 接口原型
 每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnDiagGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnDiag”接口执行计算。
@@ -26,14 +26,14 @@
 - **参数说明：**
 
   - self(aclTensor*, 计算输入)：self最大维度不能超过2。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。输入为空tensor时，输出类型不能是复数类型COMPLEX64。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64、BFLOAT16。
+    - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64、BFLOAT16。
 
   - diagonal(int64_t, 计算输入)：对应逻辑表达中的对角线输入，数据类型支持INT64。
 
   - out(aclTensor*, 计算输出)：输出张量，支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64、BFLOAT16。
+    - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64、BFLOAT16。
 
   - workspaceSize(uint64_t*, 出参)：返回需要在Device侧申请的workspace大小。
   
