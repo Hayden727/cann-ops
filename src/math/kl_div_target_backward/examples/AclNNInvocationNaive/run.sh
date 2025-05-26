@@ -43,8 +43,8 @@ cmake --build build -j
     cd build
     ./execute_add_op
 )
-python verify_result.py output/output_z.bin output/golden.bin
-if [ $? -ne 0 ]; then
+python3 verify_result.py output/output_z.bin output/golden.bin
+if [ $? -eq 0 ]; then
     echo ""
     echo "#####################################"
     echo "INFO: you have passed the Precision!"
