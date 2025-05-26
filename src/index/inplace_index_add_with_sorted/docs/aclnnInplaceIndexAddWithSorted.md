@@ -3,7 +3,7 @@
 ## 支持的产品型号
 - Atlas 推理系列产品
 - Atlas 训练系列产品
-- Atlas A2 训练系列产品/Atlas 800I A2 推理产品
+- Atlas A2 训练系列产品/Atlas 800I A2 推理产品/Atlas A3 训练系列产品
 
 ## 接口原型
 
@@ -23,7 +23,7 @@
 
   - self（aclTensor\*，计算输入）：输入张量，Device侧的aclTensor，数据类型需要和source一致。支持非连续的Tensor，数据格式支持ND，数据维度支持0-8维。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
 
   - dim（int64_t，计算输入）: 指定的维度。数据类型支持INT64，取值范围为[-self.dim(), self.dim()-1]。
 
@@ -31,15 +31,15 @@
 
   - source（aclTensor\*，计算输入）：源张量，Device侧的aclTensor，数据类型需要和self一致，source的shape除dim维度之外，其他维度的值需要与self的shape相等。支持非连续的Tensor，数据格式支持ND，数据维度支持0-8维。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
 
   - alpha（aclScalar\*，计算输入）：host侧的aclScalar，数据类型可转换成self与source推导后的数据类型。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
 
   - out（aclTensor\*，计算输出）：输出Tensor，Device侧的aclTensor。shape需要与self的shape一致，数据类型需要和self一致，支持非连续的Tensor，数据格式支持ND，数据维度支持0-8维。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、FLOAT16、INT32、INT16、INT8、UINT8、DOUBLE、INT64、BOOL和BFLOAT16。
 
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   

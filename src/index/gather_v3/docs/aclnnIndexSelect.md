@@ -3,7 +3,7 @@
 ## 支持的产品型号
 - Atlas 推理系列产品
 - Atlas 训练系列产品
-- Atlas A2 训练系列产品/Atlas 800I A2 推理产品
+- Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品
 
 ## 接口原型
 
@@ -35,13 +35,13 @@ dim为2, index_select(2, index)：   K=index[k]; &nbsp;  out$[l][m][k]$ = self$[
 - **参数说明：**
 
   - self(aclTensor*, 计算输入)：Device侧的aclTensor，支持非连续的Tensor，数据格式支持ND、NCHW、NHWC、HWCN、NDHWC、NCDHW。维度不大于8。
-     * 昇腾910B AI处理器、昇腾910_93 AI处理器：FLOAT、FLOAT16、BFLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
-     * 昇腾310P AI处理器、昇腾910 AI处理器：FLOAT、FLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
+     * Atlas A2 训练系列产品/Atlas A3 训练系列产品：FLOAT、FLOAT16、BFLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
+     * Atlas 推理系列产品/Atlas 训练系列产品：FLOAT、FLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
   - dim(int64_t, 计算输入)：指定的维度，int64类型，范围[-self.dim(), self.dim() - 1]。
   - index(aclTensor*, 计算输入)：索引，Device侧的aclTensor，数据类型支持INT64、INT32。支持非连续的Tensor，数据格式支持ND、NCHW、NHWC、HWCN、NDHWC、NCDHW，且只能是0D或1D（零维的情况：当成是size为1的一维）。index中的索引数据不支持越界。
   - out(aclTensor*, 计算输出)：输出Tensor，Device侧的aclTensor，数据类型同self。维数与self一致。**除dim维长度等于index长度外，其他维长度与self相应维一致**。数据格式支持ND、NCHW、NHWC、HWCN、NDHWC、NCDHW。
-     * 昇腾910B AI处理器、昇腾910_93 AI处理器：FLOAT、FLOAT16、BFLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
-     * 昇腾310P AI处理器、昇腾910 AI处理器：FLOAT、FLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
+     * Atlas A2 训练系列产品/Atlas A3 训练系列产品：FLOAT、FLOAT16、BFLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
+     * Atlas 推理系列产品/Atlas 训练系列产品：FLOAT、FLOAT16、INT64、INT32、INT16、INT8、UINT8、UINT16、UINT32、UINT64、BOOL、DOUBLE、COMPLEX64、COMPLEX128
   - workspaceSize(uint64_t*, 出参)：返回需要在Device侧申请的workspace大小。
   - executor(aclOpExecutor**, 出参)：返回op执行器，包含了算子计算流程。
 

@@ -64,7 +64,8 @@ static const std::initializer_list<op::DataType> DTYPE_SUPPORT_LIST_INDICES = {o
     op::DataType::DT_INT32};
 
 static const std::initializer_list<DataType>& GetDtypeSupportList() {
-  if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B) {
+  if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B ||
+      GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93) {
     return ASCEND910B_DTYPE_SUPPORT_LIST;
   } else {
     return ASCEND910_DTYPE_SUPPORT_LIST;
@@ -412,7 +413,7 @@ static aclnnStatus ExecScatterBase(const aclTensor *self, int64_t dim, const acl
     bool aicoreSupport = true;
     bool flag910b = false;
     auto selfType = selfContiguous->GetDataType();
-    if (socVersion == SocVersion::ASCEND910B) {
+    if (socVersion == SocVersion::ASCEND910B || socVersion == SocVersion::ASCEND910_93) {
         aicoreSupport = CheckType(selfType, AICORE_910B_DTYPE_SUPPORT_LIST);
         flag910b = true;
     } else {

@@ -249,7 +249,8 @@ aclnnStatus aclnnIndexAddGetWorkspaceSize(const aclTensor *self, const int64_t d
   auto sourceContiguous = l0op::Contiguous(source, uniqueExecutor.get());
   CHECK_RET(sourceContiguous != nullptr, ACLNN_ERR_INNER_NULLPTR);
   const aclTensor* alphaTensor = nullptr;
-  bool useNewOp = (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B) && dim == 0 &&
+  bool useNewOp = (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910B ||
+    GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_93) && dim == 0 &&
     self->GetViewShape().GetDim(0) < MAX_SORT_SHAPE_DIM && self->GetDataType() == op::DataType::DT_BF16;
   if (self->GetDataType() == op::DataType::DT_BF16 && !useNewOp) {
     selfContiguous = l0op::Cast(selfContiguous, op::DataType::DT_FLOAT, uniqueExecutor.get());

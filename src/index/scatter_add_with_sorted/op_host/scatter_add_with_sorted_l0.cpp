@@ -24,8 +24,8 @@ const aclTensor *ScatterAddWithSorted(const aclTensor *self, const aclTensor *va
     L0_DFX(ScatterAddWithSorted, self, value, sorted_index, pos);
 
     auto socVersion = GetCurrentPlatformInfo().GetSocVersion();
-    if(socVersion != SocVersion::ASCEND910B) {
-        OP_LOGE(ACLNN_ERR_PARAM_INVALID, "[ScatterAddWithSorted] only support ASCEND910B");
+    if(socVersion != SocVersion::ASCEND910B && socVersion != SocVersion::ASCEND910_93) {
+        OP_LOGE(ACLNN_ERR_PARAM_INVALID, "[ScatterAddWithSorted] only support ASCEND910B and ASCEND910_93");
     }
 
     auto selfOut = const_cast<aclTensor*>(self);

@@ -1,7 +1,7 @@
 # aclnnEmbeddingDenseBackward
 
 ## 支持的产品型号
-- 昇腾910B AI处理器。
+- Atlas A2 训练系列产品/Atlas A3 训练系列产品
 
 ## 接口原型
 
@@ -20,13 +20,13 @@
 - **参数说明：**
 
   - grad(aclTensor*, 计算输入)：数据的原始梯度，Device侧的aclTensor，支持维度2-8维，除尾轴外合轴后shape与indices合轴后shape相同，支持非连续的Tensor，数据格式支持ND。
-    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT。
   - indices(aclTensor*, 计算输入)：grad输入对应的索引值，Device侧的aclTensor, 取值范围为[0, numWeights)，支持维度1-8维, 支持非连续的Tensor，数据格式支持ND。数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL。
   - numWeights(uint64_t, 计算输入)：输出tensor的首轴大小。
   - paddingIdx(uint64_t, 计算输入)：将输出tensor中第paddingIdx行填充成0，如果paddingIdx为负数则不进行处理。
   - scaleGradByFreq(bool, 计算输入)：根据单词出现的频率，对梯度进行放缩，若为true，则对结果按词频进行缩放，若为false，则不进行处理。
   - out(aclTensor*, 计算输出)：梯度求和的结果输出，Device侧的aclTensor，维度为2维，首轴大小为numWeights，尾轴大小与grad尾轴相同，数据类型与grad类型相同，数据格式仅支持ND。
-    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT。
   - workspaceSize(uint64_t *, 出参): 返回需要在Device侧申请的workspace大小。
   - executor(aclOpExecutor **, 出参): 返回op执行器，包含了算子计算流程。
 
@@ -59,7 +59,7 @@
   aclnnStatus：返回状态码，具体参见aclnn返回码。
 
 ## 约束与限制
-- 昇腾910B AI处理器、昇腾910_93 AI处理器
+- Atlas A2 训练系列产品/Atlas A3 训练系列产品
   - 在参数shape超过以下限制时，输出无法保证高精度，若开启了确定性计算，也无法保证高性能
     - grad合轴成二维shape后，第一个维度超过INT32_MAX(2147483647)
     - numWeights超过INT32_MAX(2147483647)

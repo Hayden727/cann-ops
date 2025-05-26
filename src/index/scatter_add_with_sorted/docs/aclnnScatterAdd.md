@@ -2,7 +2,7 @@
 
 ## 支持的产品型号
 
-- Atlas 训练系列产品/Atlas A2 训练系列产品/Atlas 800I A2 推理产品
+- Atlas 训练系列产品/Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品
 
 ## 接口原型
 
@@ -61,16 +61,16 @@
 
   - self（aclTensor*，计算输入）：公式中的输入`self`，Device侧的aclTensor。scatter的目标张量，shape支持0-8维，且维度数量需要与index和src相同。数据类型与src的数据类型一致。支持非连续的Tensor支持ND。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
   - dim（int64_t, 计算输入）：计算公式中的输入`dim`，数据类型为INT64。
 
   - index（aclTensor*，计算输入）：公式中的输入`index`，Device侧的aclTensor。数据类型支持INT32、INT64。index维度数量需要与src相同。支持非连续的Tensor支持ND。
   - src（aclTensor*，计算输入）：公式中的输入`src`，Device侧的aclTensor。源张量，src维度数量需要与index相同。数据类型与self的数据类型一致。数据格式支持ND。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
   - out（aclTensor*，计算输出）：公式中的`output`，Device侧的aclTensor。shape需要与self一致。数据类型与self的数据类型一致。数据格式支持ND。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
-    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
+    - Atlas A2 训练系列产品/Atlas A3 训练系列产品/Atlas 800I A2 推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE、INT64、INT32、INT16、INT8、UINT8、BOOL、COMPLEX64、COMPLEX128。
   - workspaceSize（uint64_t* 出参）：返回需要在Device侧申请的workspace大小。
 
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。

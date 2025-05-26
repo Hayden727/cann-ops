@@ -47,6 +47,7 @@ class MaskedSelectV3 : public OpDef {
       .DynamicShapeSupportFlag(true);
 
     this->AICore().AddConfig("ascend910b");
+    this->AICore().AddConfig("ascend910_93");
   }
 };
 
