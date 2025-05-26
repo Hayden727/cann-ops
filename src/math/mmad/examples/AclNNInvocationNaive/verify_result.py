@@ -27,8 +27,8 @@ def verify_result(output, golden):
                                            atol=ABSOLUTE_TOL,
                                            equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
-    iter = range(len(different_element_indexes))
-    for index in iter:
+    index_range = range(len(different_element_indexes))
+    for index in index_range:
         real_index = different_element_indexes[index]
         golden_data = golden[real_index]
         output_data = output[real_index]
