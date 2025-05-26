@@ -62,6 +62,7 @@ class LinSpace : public OpDef {
         .DataType({ge::DT_FLOAT})
         .Format({ge::FORMAT_ND});
     this->AICore().AddConfig("ascend910b", config);
+    this->AICore().AddConfig("ascend910_93", config);
   }
 };
 

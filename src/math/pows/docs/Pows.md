@@ -2,10 +2,10 @@
 
 ## 支持的产品型号
 
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
-- 昇腾310B AI处理器。
-- 昇腾310P AI处理器。
+- Atlas 推理系列产品
+- Atlas 200/500 A2推理产品
+- Atlas 训练系列产品
+- Atlas A2 训练系列产品/Atlas A3 训练系列产品
 
 ## 接口原型
 
@@ -43,14 +43,14 @@ $$
 - **参数说明：**
 
   - self（aclTensor\*，计算输入）：公式中的输入`self`，Device侧的aclTensor。数据类型与exponent的数据类型需满足数据类型推导规则（参见[互推导关系](common/互推导关系.md)），支持[非连续的Tensor](./common/非连续的Tensor.md)，且shape需要与out一致，[数据格式](./common/数据格式.md)支持ND。
-    * 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128、BFLOAT16。
-    * 昇腾910 AI处理器、昇腾310B AI处理器、昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128。
+    * Atlas A2 训练系列产品、Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128、BFLOAT16。
+    * Atlas 推理系列产品、Atlas 200/500 A2推理产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128。
   - exponent（aclScalar\*，计算输入）：公式中的输入`exponent`，Device侧的aclScalar。数据类型不能和self的数据类型同时为BOOL，且数据类型与self的数据类型需满足数据类型推导规则（参见[互推导关系](common/互推导关系.md)）。
-    * 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128、BFLOAT16。
-    * 昇腾910 AI处理器、昇腾310B AI处理器、昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128。
+    * Atlas A2 训练系列产品、Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128、BFLOAT16。
+    * Atlas 推理系列产品、Atlas 200/500 A2推理产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128。
   - out（aclTensor\*，计算输出）：公式中的输出`out`，Device侧的aclTensor。支持[非连续的Tensor](./common/非连续的Tensor.md)，且shape需要与self一致, 数据类型需要是self的数据类型与exponent的数据类型推导之后可转换的数据类型（参见[互转换关系](common/互转换关系.md)），[数据格式](./common/数据格式.md)支持ND。
-    * 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128、BFLOAT16。
-    * 昇腾910 AI处理器、昇腾310B AI处理器、昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128。
+    * Atlas A2 训练系列产品、Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128、BFLOAT16。
+    * Atlas 推理系列产品、Atlas 200/500 A2推理产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、BOOL、INT8、UINT8、INT16、COMPLEX64、COMPLEX128。
   - workspaceSize（uint64_t\*, 出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**, 出参）：返回op执行器，包含了算子计算流程。
 
@@ -86,11 +86,11 @@ $$
 - **参数说明：**
 
   - selfRef（aclTensor\*）：公式中的输入`self/out`，Device侧的aclTensor。数据类型与exponent的数据类型需满足数据类型推导规则（参见[互推导关系](common/互推导关系.md)），且数据类型需要是与exponent的数据类型推导之后可转换的数据类型（参见[互转换关系](.md)），支持[非连续的Tensor](./common/非连续的Tensor.md)，[数据格式](./common/数据格式.md)支持ND。
-    * 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16、BFLOAT16。
-    * 昇腾910 AI处理器、昇腾310B AI处理器、昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16。
+    * Atlas A2 训练系列产品、Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16、BFLOAT16。
+    * Atlas 推理系列产品、Atlas 200/500 A2推理产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16。
   - exponent（aclScalar\*, 计算输入）：公式中的输入`exponent`，Device侧的aclScalar。数据类型与selfRef的数据类型需满足数据类型推导规则（参见[互推导关系](common/互推导关系.md)）。
-    * 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16、BFLOAT16。
-    * 昇腾910 AI处理器、昇腾310B AI处理器、昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16。
+    * Atlas A2 训练系列产品、Atlas A3 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16、BFLOAT16。
+    * Atlas 推理系列产品、Atlas 200/500 A2推理产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT8、UINT8、COMPLEX64、COMPLEX128、INT16。
   - workspaceSize（uint64_t\*, 出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**, 出参）：返回op执行器，包含了算子计算流程。
 
@@ -122,7 +122,7 @@ $$
 
 ## 约束与限制
 
-昇腾910 AI处理器、昇腾310P AI处理器：该场景下，如果计算结果取值超过了设定的数据类型取值范围，则会以该数据类型的边界值作为结果返回。
+Atlas 推理系列产品、Atlas 训练系列产品：该场景下，如果计算结果取值超过了设定的数据类型取值范围，则会以该数据类型的边界值作为结果返回。
 
 ## 调用示例
 示例代码如下，仅供参考，具体编译和执行过程请参考[编译与运行样例](common/编译与运行样例.md)。

@@ -277,7 +277,8 @@ public:
                     ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,
                     ge::FORMAT_ND, ge::FORMAT_ND});
     this->AICore().SetTiling(optiling::TilingFunc);
-    this->AICore().AddConfig("ascend910b", config);   
+    this->AICore().AddConfig("ascend910b", config);
+    this->AICore().AddConfig("ascend910_93", config);
     }
 };
 OP_ADD(DiagV2);
