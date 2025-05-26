@@ -58,9 +58,9 @@ echo "$ret"
 
 if [ "x$ret" == "xtest pass" ]; then
     echo ""
-    echo "################################################"
-    echo "INFO: You have passed the Precision!"
-    echo "################################################"
+    echo "####################################"
+    echo "INFO: you have passed the Precision!"
+    echo "####################################"
     echo ""
 else
     echo "ERROR: Precision test failed!"
