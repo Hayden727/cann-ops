@@ -12,6 +12,7 @@
  * @file greater_equal.cpp
  */
 #include <type_traits>
+#include <cfloat>
 #include "kernel_operator.h"
 
 
@@ -22,9 +23,9 @@ constexpr float NEGATIVE_ONE_FP32 = -1.0F;
 constexpr float POSITIVE_ONE_FP32 = 1.0F;
 constexpr int32_t NEGATIVE_ONE_I32 = -1;
 constexpr int32_t POSITIVE_ONE_I32 = 1;
-constexpr float MIN_ACCURACY_FP16 = 0.00000005960464477539063F;
+constexpr float MIN_ACCURACY_FP16 = 5.9604645e-8f;
 constexpr float MAX_MUL_FP16 = 4096;
-constexpr float MIN_ACCURACY_FP32 = 1.1754943508222875e-38;
+constexpr float MIN_ACCURACY_FP32 = FLT_MIN;
 constexpr float MAX_MUL_1_FP32 = 1125899906842624;
 constexpr float MAX_MUL_2_FP32 = 67108864;
 constexpr uint32_t BLOCK_SIZE = 32;
