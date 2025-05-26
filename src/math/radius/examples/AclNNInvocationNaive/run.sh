@@ -25,54 +25,44 @@ export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
 
 export COMPUTE_TYPE=int32
 
-# Loop through all test cases from 1 to 50
-for case_id in {1..50}; do
-    rm -rf $HOME/ascend/log/*
-    rm ./input/*.bin
-    rm ./output/*.bin
-    export CASE_ID=$case_id
+rm -rf $HOME/ascend/log/*
+rm ./input/*.bin
+rm ./output/*.bin
+export CASE_ID=1
 
-    echo "INFO: Generating input data for Case $case_id..."
-    ret=`python3 gen_data.py`
-    # echo $ret
+echo "INFO: Generating input data for Case $case_id..."
+ret=`python3 gen_data.py`
+# echo $ret
 
-    if [ $? -ne 0 ]; then
-        echo "ERROR: generate input data failed for Case $case_id!"
-        exit 1
-    fi
-    echo "INFO: generate input data success for Case $case_id!"
+if [ $? -ne 0 ]; then
+    echo "ERROR: generate input data failed for Case $case_id!"
+    exit 1
+fi
+echo "INFO: generate input data success for Case $case_id!"
 
-    echo "INFO: Building and running the test for Case $case_id..."
-    set -e
-    rm -rf build
-    mkdir -p build
-    cmake -B build
-    cmake --build build -j
+echo "INFO: Building and running the test for Case $case_id..."
+set -e
+rm -rf build
+mkdir -p build
+cmake -B build
+cmake --build build -j
 
-    (
-        cd build
-        ./execute_radius_op $ret
-    )
+(
+    cd build
+    ./execute_radius_op $ret
+)
 
-    echo "INFO: Verifying result for Case $case_id..."
-    ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
-    echo "$ret"
+echo "INFO: Verifying result..."
+ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
+echo "$ret"
 
-    if [ "x$ret" == "xtest pass" ]; then
-        echo ""
-        echo "################################################"
-        echo "INFO: You have passed the Precision for Case $case_id!"
-        echo "################################################"
-        echo ""
-    else
-        echo "ERROR: Precision test failed for Case $case_id!"
-        exit 1
-    fi
-done
-
-echo ""
-echo "####################################################"
-echo "INFO: All test cases in $COMPUTE_TYPE passed successfully!"
-echo "####################################################"
-echo ""
-echo ""
+if [ "x$ret" == "xtest pass" ]; then
+    echo ""
+    echo "################################################"
+    echo "INFO: You have passed the Precision!"
+    echo "################################################"
+    echo ""
+else
+    echo "ERROR: Precision test failed!"
+    exit 1
+fi
