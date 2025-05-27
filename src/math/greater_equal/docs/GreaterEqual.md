@@ -32,7 +32,7 @@ GreaterEqual由GreaterEqual操作组成，计算过程只有1步：
 
 每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnGreaterEqualGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnGreaterEqual”接口执行计算。
 
-* `aclnnStatus aclnnGreaterEqualGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnGreaterEqualGetWorkspaceSize(const aclTensor *x1, const aclTensor *x2, const aclTensor *y, uint64_t workspaceSize, aclOpExecutor **executor)`
 * `aclnnStatus aclnnGreaterEqual(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
