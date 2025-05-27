@@ -48,13 +48,12 @@ public:
             this->lasttileLength = bigLasttileLength;  
         }  
     }
-    __aicore__ inline void Process()
+    __aicore__ inline void Process_float32()
     {
         int32_t loopCount = this->tileNum;
         this->calcLength = this->tileLength;
         for (int32_t i = 0; i < loopCount; i++) {
-            if(i == loopCount -1)
-            {
+            if(i == loopCount -1){
                 this->calcLength = this->lasttileLength;
             }
             CopyIn(i);

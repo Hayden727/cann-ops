@@ -47,7 +47,7 @@ public:
             this->lasttileLength = bigLasttileLength;  
         }  
     }
-    __aicore__ inline void Process()
+    __aicore__ inline void Process_int64()
     {
         int32_t loopCount = this->tileNum;
         this->calcLength = this->tileLength;

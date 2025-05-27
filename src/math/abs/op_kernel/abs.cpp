@@ -142,7 +142,7 @@ extern "C" __global__ __aicore__ void abs(GM_ADDR x, GM_ADDR y, GM_ADDR workspac
                 tiling_data.smallTileNum, tiling_data.smallTileLength, tiling_data.smallLasttileLength, 
                 tiling_data.bigTileNum, tiling_data.bigTileLength, tiling_data.bigLasttileLength,
                 tiling_data.dataWidth);
-        op2.Process();           
+        op2.Process_int64();           
     }    
     
     else if (TILING_KEY_IS(ABS_TILING_3)) 
@@ -163,6 +163,6 @@ extern "C" __global__ __aicore__ void abs(GM_ADDR x, GM_ADDR y, GM_ADDR workspac
                 tiling_data.smallTileNum, tiling_data.smallTileLength, tiling_data.smallLasttileLength, 
                 tiling_data.bigTileNum, tiling_data.bigTileLength, tiling_data.bigLasttileLength,
                 tiling_data.dataWidth);
-        op4.Process();           
+        op4.Process_float32();           
     }     
 }

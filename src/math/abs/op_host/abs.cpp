@@ -50,10 +50,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
 
     const gert::StorageShape* x1_shape = context->GetInputShape(0);
-    int32_t totalLength = 1;
-    for (int i = 0; i < x1_shape->GetStorageShape().GetDimNum(); i++)
-        totalLength *= x1_shape->GetStorageShape().GetDim(i);
-
+    auto totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+    // for (int i = 0; i < x1_shape->GetStorageShape().GetDimNum(); i++)
+    //     totalLength *= x1_shape->GetStorageShape().GetDim(i);
     auto dt = context->GetInputTensor(0)->GetDataType();
     uint32_t dataWidth;
     uint32_t ubfactor;  
@@ -83,10 +82,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         ubfactor = 6; 
         tilingKey = ABS_TILING_3;
     }        
-    else {
-        std::cout << "The input data type is not supported!!!" << std::endl;
-        return ge::GRAPH_FAILED;
-    }
 
     int elementsPerBlock = ALIGN_NUM / dataWidth;       
     int elementsPerRepeat = CALC_ALIGN_NUM / dataWidth;    
@@ -105,10 +100,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
     uint32_t bigDataCoreNum = (totalLengthBlockAlign / elementsPerBlock) % aivNum;
     uint32_t bigBlockLength = 0;
-    if(bigDataCoreNum > 0)
-    {
-        bigBlockLength = smallBlockLength + elementsPerBlock;
-    }
+    bigBlockLength = smallBlockLength + elementsPerBlock;
 
     uint32_t maxTileCalcBlock = ub_size / (CALC_ALIGN_NUM * ubfactor) / BUFFER_NUM;
     uint32_t maxTileLength =  maxTileCalcBlock * (CALC_ALIGN_NUM / dataWidth);
