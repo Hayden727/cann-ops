@@ -132,7 +132,7 @@ extern "C" __global__ __aicore__ void abs(GM_ADDR x, GM_ADDR y, GM_ADDR workspac
                 tiling_data.smallTileNum, tiling_data.smallTileLength, tiling_data.smallLasttileLength, 
                 tiling_data.bigTileNum, tiling_data.bigTileLength, tiling_data.bigLasttileLength,
                 tiling_data.dataWidth);
-        op1.Process();           
+        op1.Process_int32();           
     }
     else if (TILING_KEY_IS(ABS_TILING_2)) 
     {
