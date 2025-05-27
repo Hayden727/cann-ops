@@ -96,8 +96,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     aivNum = (aivNum <  totalLengthBlockAlign / elementsPerBlock) ? aivNum : totalLengthBlockAlign / elementsPerBlock;
     aivNum = (aivNum >= 1) ? aivNum : 1;
 
+    if(aivNum == 0) {
+        return ge::GRAPH_FAILED;
+    }
     uint32_t smallBlockLength = RoundDown(totalLengthBlockAlign / aivNum, elementsPerBlock);
-    
+    if (elementsPerBlock == 0) {
+        return ge::GRAPH_FAILED;
+    }
     uint32_t bigDataCoreNum = (totalLengthBlockAlign / elementsPerBlock) % aivNum;
     uint32_t bigBlockLength = 0;
     if(bigDataCoreNum > 0)

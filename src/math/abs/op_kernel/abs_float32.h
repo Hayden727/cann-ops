@@ -11,6 +11,9 @@
 /**
  * @file abs_float32.h
  */
+#ifndef ABS_FLOAT32_H 
+#define ABS_FLOAT32_H
+
 #include "abs_common.h"
 
 class KernelAbs_float {
@@ -101,3 +104,5 @@ private:
     uint32_t times;
     uint32_t repeat;
 };
+
+#endif  // ABS_FLOAT32_H

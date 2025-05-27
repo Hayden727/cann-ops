@@ -11,6 +11,9 @@
 /**
  * @file abs_complex64.h
  */
+#ifndef ABS_COMPLEX64_H 
+#define ABS_COMPLEX64_H
+
 #include "abs_common.h"
 
 class KernelAbs_complex64 {
@@ -121,3 +124,5 @@ private:
     uint32_t times;
     uint32_t repeat;
 };
+
+#endif  // ABS_COMPLEX64_H

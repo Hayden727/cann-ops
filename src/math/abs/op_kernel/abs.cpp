@@ -23,8 +23,6 @@ constexpr int ABS_TILING_2 = 3; //int64
 constexpr int ABS_TILING_3 = 4; //complex64
 constexpr int ABS_TILING_4 = 5; //float32
 
-
-
 class KernelAbs {
 public:
     __aicore__ inline KernelAbs() {}

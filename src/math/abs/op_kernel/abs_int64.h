@@ -11,10 +11,12 @@
 /**
  * @file abs_int64.h
  */
+#ifndef ABS_INT64_H 
+#define ABS_INT64_H
+
 #include "abs_common.h"
 
 class KernelAbs_int64 {
-
 public:
     __aicore__ inline KernelAbs_int64() {}
     __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, 
@@ -105,3 +107,5 @@ private:
     uint32_t times;
     uint32_t repeat;
 };
+
+#endif  // ABS_INT64_H

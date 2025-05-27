@@ -11,6 +11,9 @@
 /**
  * @file abs_int32.h
  */
+#ifndef ABS_INT32_H 
+#define ABS_INT32_H
+
 #include "abs_common.h"
 
 class KernelAbs_int32 {
@@ -109,3 +112,5 @@ private:
     uint32_t times;
     uint32_t repeat;
 };
+
+#endif  // ABS_INT32_H
