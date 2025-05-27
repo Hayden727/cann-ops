@@ -52,7 +52,7 @@ public:
             SetInitConstValueParams(initConstValueParams, 1, 
                 alignCurrentMAL1 * alignCurrentKAL1 / al1BlockNum);
             InitConstValue<typename Intf::FmapT>(self_->ctx.al1, initConstValueParams);
-            pipe_barrier(PIPE_MTE2);
+            PipeBarrier<PIPE_MTE2>();
         }
          
         if constexpr (AscendC::IsSameType<typename Intf::FmapT, float>::value) {
@@ -227,7 +227,7 @@ public:
             SetInitConstValueParams(initConstValueParams, 1, 
                 alignCurrentNBL1 * alignCurrentKBL1 / bl1BlockNum);
             InitConstValue<typename Intf::WeightT>(self_->ctx.bl1, initConstValueParams);
-            pipe_barrier(PIPE_MTE2);
+            PipeBarrier<PIPE_MTE2>();
         }
     
         uint64_t bL1GmOffset = self_->ctx.nBL1Iter * self_->ctx.conv3dTiling->nBL1 * self_->ctx.orgCi +
