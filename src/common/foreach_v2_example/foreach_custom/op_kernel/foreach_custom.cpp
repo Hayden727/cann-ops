@@ -31,22 +31,24 @@ __aicore__ void CustomAdapter(
     uint32_t oneDataCount =  BYTE_REPEATE / sizeof(T);
     uint32_t castTimes = uValue / oneDataCount;
     uint32_t castTimesRemainder = uValue % oneDataCount;
+    uint32_t offset = 0;
 
     for (int i = 0; i < castTimes; i++) {
-        Mul(tempLocal, srcLocal, srcLocal, static_cast<int32_t>(oneDataCount));
+        Mul(tempLocal, srcLocal[offset], srcLocal[offset], static_cast<int32_t>(oneDataCount));
         pipe_barrier(PIPE_V);
-        Abs(srcLocal, srcLocal, static_cast<int32_t>(oneDataCount));
+        Abs(srcLocal[offset], srcLocal[offset], static_cast<int32_t>(oneDataCount));
         pipe_barrier(PIPE_V);
-        Sub(dstLocal, tempLocal, srcLocal, static_cast<int32_t>(oneDataCount));
+        Sub(dstLocal[offset], tempLocal, srcLocal[offset], static_cast<int32_t>(oneDataCount));
         pipe_barrier(PIPE_V);
+        offset += static_cast<int32_t>(oneDataCount);
     }
 
     if (castTimesRemainder) {
-        Mul(tempLocal, srcLocal, srcLocal, static_cast<int32_t>(castTimesRemainder));
+        Mul(tempLocal, srcLocal[offset], srcLocal[offset], static_cast<int32_t>(castTimesRemainder));
         pipe_barrier(PIPE_V);
-        Abs(srcLocal, srcLocal, static_cast<int32_t>(castTimesRemainder));
+        Abs(srcLocal[offset], srcLocal[offset], static_cast<int32_t>(castTimesRemainder));
         pipe_barrier(PIPE_V);
-        Sub(dstLocal, tempLocal, srcLocal, static_cast<int32_t>(castTimesRemainder));
+        Sub(dstLocal[offset], tempLocal, srcLocal[offset], static_cast<int32_t>(castTimesRemainder));
         pipe_barrier(PIPE_V);
     }
 }

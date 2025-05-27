@@ -36,17 +36,15 @@ __aicore__ inline void SetValueAdapter<bfloat16_t>(LocalTensor<bfloat16_t> & out
     outLocal.SetValue(index, ToBfloat16(value));
 };
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT>
-class KernelForeadhReduce : public KernelForeachBaseV2<T>{
+template <typename T, typename P, typename Predicate, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT, typename Tiling=ForeachReduceTilingData>
+class KernelForeadhReduce : public KernelForeachBaseV2<T, Tiling>{
 protected:
-    using Base = KernelForeachBaseV2<T>;
+    using Base = KernelForeachBaseV2<T, Tiling>;
 
     explicit __aicore__ inline KernelForeadhReduce(Predicate &p): Base(), pred(p) {};
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, const ForeachCommonV2TilingData* tilingData);
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, const Tiling* tilingData);
     __aicore__ inline void Process();
     __aicore__ inline void SingleTensorProcess(int64_t dataCount, uint16_t offset);
-    __aicore__ inline void AssignTensorMiddleCountList();
-    __aicore__ inline void AssignDataToEachCoreReduce();
 private:
     __aicore__ inline void CopyInStage1(uint32_t index, int64_t dataCount);
     __aicore__ inline void CopyInFromWorkspace(uint16_t dataCount, uint16_t offset);
@@ -81,32 +79,16 @@ protected:
 
     uint32_t byteLen = 1024;
 
-    uint16_t coreMiddleOffset = {0};
     uint32_t maxCastDataCount = {0};
-    uint16_t tensorStartList[MAX_CORE_CONT] = {0};
-    uint16_t tensorEndList[MAX_CORE_CONT] = {0};
-    int64_t tensorStartOffsetList[MAX_CORE_CONT] = {0};
-    int64_t tensorEndOffsetList[MAX_CORE_CONT] = {0};
-
-    uint16_t tensorMiddleCountList[MAX_TENSOR_CONT] = {0};
-    uint16_t tensorMiddleStartList[MAX_TENSOR_CONT] = {0};
-    uint16_t coreMiddleOffsetList[MAX_CORE_CONT] = {0};
 private:
     Predicate &pred;
 };
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::InitCoreParams(GM_ADDR x) {
-    Base::parseNumels(x);
-    AssignDataToEachCoreReduce();
-    AssignTensorMiddleCountList();
-}
-
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-    const ForeachCommonV2TilingData* tilingData) {
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
+    const Tiling* tilingData) {
     Base::Init(tilingData);
-    InitCoreParams(x);
+    Base::ParseReduceTilingData(tilingData);
 
     inTensorPtr = x;
     outTensorPtr = y;
@@ -130,92 +112,8 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
     Base::pipe.InitBuffer(calcBuf, byteLen);
 }
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::AssignDataToEachCoreReduce() {
-    // Kernel the input data according to 32 byte alignment.
-    // Divisible, representing the amount of data each core needs to process.
-    uint64_t tempPerCoreCount = Base::totalBlockCount /  Base::needCoreNum *  Base::elementsPerBlock;
-    uint64_t remainderCount =  Base::totalBlockCount %  Base::needCoreNum;  // remainder.
-    uint16_t coreIndex = 0;
-    uint64_t dataCount = 0;
-    uint64_t curCmpCount = 0;
-    uint64_t cursorPos = 0;
-    tensorStartList[coreIndex] = 0;
-    tensorStartOffsetList[coreIndex] = 0;
-    for (uint32_t i = 0; i < Base::totalTensorCount; i++) {
-        // When the remainder is not 0, each kernel index with less than the remainder processes one more block of data.
-        if (remainderCount && coreIndex < remainderCount) {
-            curCmpCount = tempPerCoreCount + Base::elementsPerBlock;
-        } else {
-            curCmpCount = tempPerCoreCount;
-        }
-        uint64_t tempRealCount = Base::tensorDataCountList[i] - cursorPos;
-        uint64_t tempCount = Base::CeilA2B(tempRealCount, Base::elementsPerBlock) * Base::elementsPerBlock;
-        if (dataCount + tempCount < curCmpCount) {
-            dataCount += tempCount;
-            cursorPos = 0;
-            continue;
-        }
-        // dataCount >= curCmpCount, Calculate the offset
-        tensorEndList[coreIndex] = i;
-        cursorPos = cursorPos + curCmpCount - dataCount;
-        // ReduceOp need more currect value
-        tensorEndOffsetList[coreIndex] = dataCount + tempRealCount < curCmpCount ? Base::tensorDataCountList[i] - 1 : cursorPos - 1;
-        dataCount = 0;
-        coreIndex++;
-        if (cursorPos < Base::tensorDataCountList[i]) {
-            tensorStartList[coreIndex] = i;
-            tensorStartOffsetList[coreIndex] = cursorPos;
-            --i;  // The next loop continues to allocate the current tensor
-        } else if (coreIndex != Base::needCoreNum) {
-            tensorStartList[coreIndex] = i + 1;
-            tensorStartOffsetList[coreIndex] = 0;
-            cursorPos = 0;
-        }
-    }
-    /* The temporary count variable is not 0, which means that the last tensor is truncated,
-        and you need to manually set the offset of the last core. */
-    if (dataCount) {
-        tensorEndList[coreIndex] = Base::totalTensorCount - 1;
-        tensorEndOffsetList[coreIndex] = Base::tensorDataCountList[Base::totalTensorCount - 1] - 1;
-    }
-
-    Base::tensorStart = tensorStartList[Base::blockIdx];
-    Base::tensorEnd = tensorEndList[Base::blockIdx];
-    Base::tensorStartOffset = tensorStartOffsetList[Base::blockIdx];
-    Base::tensorEndOffset = tensorEndOffsetList[Base::blockIdx];
-}
-
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::AssignTensorMiddleCountList() {
-    uint16_t preCoreTensorIndex = 0;
-    for (uint32_t i = 1; i < Base::needCoreNum; i++) {
-        if (preCoreTensorIndex == tensorStartList[i]) {
-            tensorMiddleCountList[preCoreTensorIndex] += 1;
-        } else {
-            if (tensorStartOffsetList[i] > 0) {
-                tensorMiddleCountList[tensorStartList[i]] += 1;
-            }
-        }
-        preCoreTensorIndex = tensorStartList[i];
-    }
-    uint16_t tensorMiddleStart = 0;
-    for (uint32_t j = 0; j < Base::totalTensorCount; j++) {
-        tensorMiddleCountList[j]++;
-        tensorMiddleStartList[j] = tensorMiddleStart;
-        tensorMiddleStart += tensorMiddleCountList[j];
-    }
-    uint16_t coreMiddleOffsetReduce = 0;
-    for (uint32_t j = 0; j < Base::needCoreNum; j++) {
-        coreMiddleOffsetList[j] = coreMiddleOffsetReduce;
-        coreMiddleOffsetReduce += tensorEndList[j] - tensorStartList[j] + 1;
-    }
-
-    coreMiddleOffset = coreMiddleOffsetList[Base::blockIdx];
-}
-
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::Process() {
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::Process() {
      /*将中间量预留出来*/
     if (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
         float32Tensor = float32Queue.DeQue<float>(); 
@@ -243,7 +141,7 @@ __aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCo
         inTensorGM.SetGlobalBuffer(Base::GetTensorAddr(i, inTensorPtr) + cursorStart);
         ProcessPlusInLoop(i, cursorStart);
         // coreMiddleOffset : describe this core's offset for middle value of tensor
-        SingleTensorProcess(dataCount, coreMiddleOffset + i - Base::tensorStart);
+        SingleTensorProcess(dataCount, Base::coreMiddleOffset + i - Base::tensorStart);
     }
 
     AfterProcess();
@@ -261,8 +159,8 @@ __aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCo
             OutputZero();
             continue;
         }
-        CopyInFromWorkspace(tensorMiddleCountList[i], tensorMiddleStartList[i]);
-        ComputeRound2(tensorMiddleCountList[i], tensorMiddleStartList[i]);
+        CopyInFromWorkspace(Base::tensorMiddleCountList[i], Base::tensorMiddleStartList[i]);
+        ComputeRound2(Base::tensorMiddleCountList[i], Base::tensorMiddleStartList[i]);
     }
 
     if (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
@@ -270,8 +168,8 @@ __aicore__ inline void  KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCo
     }
 }
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::SingleTensorProcess(int64_t dataCount, uint16_t offset) {
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::SingleTensorProcess(int64_t dataCount, uint16_t offset) {
     // Batch handling and calculation.
     uint32_t copyTimes = dataCount / Base::maxDataCount;
     uint32_t datacountRemainder = dataCount % Base::maxDataCount;
@@ -306,8 +204,8 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
     wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::CopyInStage1(uint32_t index, int64_t dataCount) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::CopyInStage1(uint32_t index, int64_t dataCount) {
     LocalTensor<T> dataLocal = dataQueue.AllocTensor<T>();
 
     DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(T)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位        
@@ -317,8 +215,8 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
     dataQueue.EnQue(dataLocal);
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::CopyInFromWorkspace(uint16_t dataCount, uint16_t offset) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::CopyInFromWorkspace(uint16_t dataCount, uint16_t offset) {
     LocalTensor<P> dataLocal = dataQueue.AllocTensor<P>();
 
     DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(P)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位        
@@ -328,33 +226,33 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
     dataQueue.EnQue(dataLocal);
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::Copy2Workspace(uint32_t index, int64_t dataCount) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::Copy2Workspace(uint32_t index, int64_t dataCount) {
     return;
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::ComputeRound1(uint16_t index, int64_t dataCount, LocalTensor<P>& tempLocal) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::ComputeRound1(uint16_t index, int64_t dataCount, LocalTensor<P>& tempLocal) {
     if (std::is_member_function_pointer_v<decltype(&Predicate::ComputeRound1)>) {
         pred.ComputeRound1(index, dataCount, tempLocal);
     }
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::ComputeRound2(uint16_t dataCount, uint16_t offset) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::ComputeRound2(uint16_t dataCount, uint16_t offset) {
     if (std::is_member_function_pointer_v<decltype(&Predicate::ComputeRound2)>) {
         pred.ComputeRound2(dataCount, offset);
     }
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::ReduceCompute(LocalTensor<P>& dstLocal, LocalTensor<P>& srcLocal, LocalTensor<P>& workLocal, int32_t count) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::ReduceCompute(LocalTensor<P>& dstLocal, LocalTensor<P>& srcLocal, LocalTensor<P>& workLocal, int32_t count) {
     static_assert(std::is_member_function_pointer_v<decltype(&Predicate::ReduceCompute)>);
     pred.ReduceCompute(dstLocal, srcLocal, workLocal, count);
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::OutputZero() {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::OutputZero() {
     LocalTensor<T> outLocal = outQueue.AllocTensor<T>();
 
     set_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -379,36 +277,36 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
     outQueue.FreeTensor(outLocal);
 }
 
-template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline bool KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::CopyOut(uint32_t index, int64_t dataCount) {
+template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline bool KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::CopyOut(uint32_t index, int64_t dataCount) {
     if (std::is_member_function_pointer_v<decltype(&Predicate::CopyOut)>) {
         pred.CopyOut(index, dataCount);
     }
 }
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::CopyInPlusStage1(uint32_t index, int64_t dataCount) {
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::CopyInPlusStage1(uint32_t index, int64_t dataCount) {
     if (std::is_member_function_pointer_v<decltype(&Predicate::CopyInPlusStage1)>) {
         pred.CopyInPlusStage1(index, dataCount);
     }
 }
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::BeforeProcess(){
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::BeforeProcess(){
     if (std::is_member_function_pointer_v<decltype(&Predicate::BeforeProcess)>) {
         pred.BeforeProcess();
     }
 }
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::AfterProcess(){
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::AfterProcess(){
     if (std::is_member_function_pointer_v<decltype(&Predicate::AfterProcess)>) {
         pred.AfterProcess();
     }
 }
 
-template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount>::ProcessPlusInLoop(uint32_t index, uint64_t cursorStart){
+template <typename T, typename P, typename Predicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::ProcessPlusInLoop(uint32_t index, uint64_t cursorStart){
     if (std::is_member_function_pointer_v<decltype(&Predicate::ProcessPlusInLoop)>) {
         pred.ProcessPlusInLoop(index, cursorStart);
     }

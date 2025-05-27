@@ -13,20 +13,20 @@
  * \brief
  */
  
-#ifndef AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_COMMON_REDUCE_FUNC_H_
-#define AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_COMMON_REDUCE_FUNC_H_
+#ifndef AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_NORM_H_
+#define AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_NORM_H_
 
 #include <cmath>
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "common_dtype.h"
-#include "foreach_reduce_tiling_func_v2.cpp"
 #include "foreach_norm_tiling_def.h"
+#include "foreach_reduce_tiling_func.h"
 
 namespace optiling {
 
 static ge::graphStatus Tiling4ForeachNormTiling(gert::TilingContext* context) {
-    ForeachReduceV2Tiling tilingObject(context);
+    ForeachReduceTiling tilingObject(context);
     if (tilingObject.Init() != ge::GRAPH_SUCCESS) {
         return ge::GRAPH_FAILED;
     }
@@ -39,7 +39,7 @@ static ge::graphStatus TilingPrepare4ForeachTiling(gert::TilingParseContext* con
 
 IMPL_OP_OPTILING(ForeachNorm)
 .Tiling(Tiling4ForeachNormTiling)
-.TilingParse<ForeachCompileInfo>(TilingPrepare4ForeachTiling);
+.TilingParse<ForeachNormCompileInfo>(TilingPrepare4ForeachTiling);
 } // namespace optiling
 
-#endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_COMMON_REDUCE_FUNC_H_
+#endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_NORM_H_

@@ -20,7 +20,7 @@
 #include "foreach_tiling_def.h"
 
 namespace optiling {
-REGISTER_TILING_DATA_CLASS(ForeachExp, ForeachCommonV2TilingData)
+REGISTER_TILING_DATA_CLASS(ForeachExp, ForeachCommonTilingData)
 }
 
 #endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_EXP_TILING_DEF_H_

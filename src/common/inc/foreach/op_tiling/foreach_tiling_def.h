@@ -42,11 +42,6 @@ BEGIN_TILING_DATA_DEF(ForeachCommonTilingData)
     TILING_DATA_FIELD_DEF_ARR(int64_t, MAX_CORE_CONT, tensorEndOffsetList);
 END_TILING_DATA_DEF;
 
-BEGIN_TILING_DATA_DEF(ForeachCommonV2TilingData)
-    TILING_DATA_FIELD_DEF(uint64_t, inputsTensorUbSize);
-    TILING_DATA_FIELD_DEF(uint32_t, needCoreNum);
-END_TILING_DATA_DEF;
-
 REGISTER_TILING_DATA_CLASS(ForeachPowScalarAndTensor, ForeachCommonTilingData)
 REGISTER_TILING_DATA_CLASS(ForeachReciprocal, ForeachCommonTilingData)
 REGISTER_TILING_DATA_CLASS(ForeachExpm1, ForeachCommonTilingData)
