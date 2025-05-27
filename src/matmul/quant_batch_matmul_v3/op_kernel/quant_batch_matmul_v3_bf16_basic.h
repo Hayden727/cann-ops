@@ -311,18 +311,18 @@ private:
     {
         uint32_t computedAivN = DequantBmm::Align(curAivN, 8U);  // 8: 32B aligned for int32_t
         uint32_t ubResAlignedN = DequantBmm::Align(curAivN);     // 16: sizeof(yType) is 2, 32B / 2
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         if (biasDtype_ == DT_BF16) {
             Cast(biasFp32, oriBiasBf16, RoundMode::CAST_NONE, ubResAlignedN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasBf16);
         } else if (biasDtype_ == DT_FLOAT16) {
             Cast(biasFp32, oriBiasFp16, RoundMode::CAST_NONE, ubResAlignedN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasFp16);
         } else if (biasDtype_ == DT_FLOAT) {
             biasFp32 = oriBiasFp32;
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasFp32);
         }
         LocalTensor<float> dstLocalFp32Pad;
@@ -336,13 +336,13 @@ private:
                 Add(dstLocalFp32[mIdx * ubResAlignedN], dstLocalFp32[mIdx * ubResAlignedN], biasFp32, ubResAlignedN);
             }
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         if (computedAivN != ubResAlignedN) {
             Cast(dstLocal, dstLocalFp32Pad, RoundMode::CAST_RINT, curAivM * ubResAlignedN);
         } else {
             Cast(dstLocal, dstLocalFp32, RoundMode::CAST_RINT, curAivM * ubResAlignedN);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void End()

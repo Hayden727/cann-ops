@@ -77,7 +77,7 @@ __aicore__ inline void WeightQuantBatchMatmulV2WeightNzPerformanceKernel<xType, 
         }
         this->mmObj_.GetTensorC(resCNz);
 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         this->PostProcess(mL0Len, nL0Len, mAL1Offset, nBL1Offset);
 

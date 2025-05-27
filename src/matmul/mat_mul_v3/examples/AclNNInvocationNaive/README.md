@@ -45,6 +45,7 @@ aclnnStatus aclnnMatmul(void *workspace, uint64_t workspaceSize, aclOpExecutor *
     export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
     export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/lib64
     ```
+    以上需要根据CANN包路径修改。
   - 样例执行
     
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
@@ -55,6 +56,7 @@ aclnnStatus aclnnMatmul(void *workspace, uint64_t workspaceSize, aclOpExecutor *
     cd build
     cmake .. && make
     ./execute_test_op
+    cd ..
     python3 verify_result.py output/output.bin output/golden.bin
     ```
     
