@@ -295,7 +295,7 @@ __aicore__ inline void WeightQuantBatchMatmulV2MixSplitKKernel<xType, wType, bia
     LocalTensor<float> offsetTmp = this->offsetTmpBuf_.template Get<float>();
     Cast(offsetTmp, offsetInput, RoundMode::CAST_NONE, singleCoreRealN);
     this->offsetQueue_.FreeTensor(offsetInput);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Cast(this->offsetComputeTensor_, offsetTmp, RoundMode::CAST_NONE, singleCoreRealN);
 
     LocalTensor<xType> scaleInput = this->scaleQueue_.template DeQue<xType>();
@@ -313,7 +313,7 @@ __aicore__ inline void WeightQuantBatchMatmulV2MixSplitKKernel<xType, wType, bia
     LocalTensor<wType> originWeight = this->originWeightQueue_.template DeQue<wType>();
     Cast(weight16, originWeight, RoundMode::CAST_NONE, singleCoreRealK * singleCoreRealN);
     originWeightQueue_.FreeTensor(originWeight);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     LocalTensor<half> weight16AfterAdd = this->weight16Tbuf_.template Get<half>();
 
     constexpr uint32_t fp16MaskSize = ONE_REPEAT_BYTE_SIZE / sizeof(half);
@@ -330,10 +330,10 @@ __aicore__ inline void WeightQuantBatchMatmulV2MixSplitKKernel<xType, wType, bia
         AscendC::Add<half, false>(weight16AfterAdd[kIdx * singleCoreRealN], weight16[kIdx * singleCoreRealN],
             this->offsetComputeTensor_, fp16MaskSize, singleCoreRealN / fp16MaskSize, repeatParams);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     LocalTensor<float> weight32 = this->weight32Tbuf_.template Get<float>()[64];
     Cast(weight32, weight16AfterAdd, RoundMode::CAST_NONE, singleCoreRealK * singleCoreRealN);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     constexpr uint32_t fp32MaskSize = ONE_REPEAT_BYTE_SIZE / sizeof(float);
     LocalTensor<float> weight32AfterMul = this->weight32Tbuf_.template Get<float>();
@@ -345,7 +345,7 @@ __aicore__ inline void WeightQuantBatchMatmulV2MixSplitKKernel<xType, wType, bia
             this->scaleComputeTensor_, fp32MaskSize, singleCoreRealN / fp32MaskSize, repeatParams);
     }
 
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     LocalTensor<xType> weightOutput = this->weightOutputQueue_.template AllocTensor<xType>();
     Cast(weightOutput, weight32AfterMul, RoundMode::CAST_RINT, singleCoreRealK * singleCoreRealN);

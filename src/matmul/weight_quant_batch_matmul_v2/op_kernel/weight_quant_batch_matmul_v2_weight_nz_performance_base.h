@@ -499,7 +499,7 @@ __aicore__ inline void WeightQuantBatchMatmulV2WeightNzBasePerformanceKernel<
     if constexpr (antiQuantType == QuantType::PER_TENSOR) {
         if constexpr (hasAntiQuantOffset) {
             Adds(weight, weight, offsetValue_, weight.GetSize());
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         }
 
         Muls(weight, weight, scaleValue_, weight.GetSize());
@@ -512,7 +512,7 @@ __aicore__ inline void WeightQuantBatchMatmulV2WeightNzBasePerformanceKernel<
             }
         }
 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         LocalTensor<half> mulComputeTensor = apiTmpBuf_.template GetWithOffset<half>(elemsMulCompute_, offsetMulCompute_);
         for (int i = 0; i < CeilDiv(bubKLen, 16); i++) {

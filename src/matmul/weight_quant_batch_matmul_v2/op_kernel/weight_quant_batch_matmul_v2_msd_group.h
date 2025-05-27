@@ -500,7 +500,7 @@ __aicore__ inline void WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, bias
   SetFlag<HardEvent::MTE2_V>(eventIdVToMte2);
   WaitFlag<HardEvent::MTE2_V>(eventIdVToMte2);
   Cast(aF32Tensor_, aBF16Tensor_, RoundMode::CAST_NONE, m * k);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 }
 
 template <typename xType, typename wType, typename biasType, typename yType,
@@ -533,11 +533,11 @@ __aicore__ inline void WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, bias
 
   if constexpr (hasAntiQuantOffset) {
     ComputeAMatrixSum(m, k, maxAddReatParams, dataCopyParams, brcbRepeatParams);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
 
   ComputeAMatrixMax(m, k, maxAddReatParams, dataCopyParams, brcbRepeatParams);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 
   UnfoldAMatrix(m, k);
   SetFlag<HardEvent::V_MTE3>(vector1EventIdVToMte3);
@@ -555,10 +555,10 @@ __aicore__ inline void WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, bias
     // groupSize为128的场景，先将128 reduce 至64(即FP32_MAX_MASK_SIZE)
     Add(aF32MultiScaleTensor_, aF32Tensor_, aF32Tensor_[FP32_MAX_MASK_SIZE], FP32_MAX_MASK_SIZE, groupNum_,
         maxAddReatParams);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if (groupNum_ > 1) {
       DataCopy(aF32MultiScaleTensor_[FP32_MAX_MASK_SIZE], aF32MultiScaleTensor_[tiling_->groupSize], dataCopyParams);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
     BlockReduceSum(aF32MultiScaleTensor_, aF32MultiScaleTensor_, groupNum_, FP32_MAX_MASK_SIZE, 1, 1,
                    VEC_REPEAT_MAX_STRIDE);
@@ -567,11 +567,11 @@ __aicore__ inline void WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, bias
     BlockReduceSum(aF32MultiScaleTensor_, aF32Tensor_, groupNum_, FP32_MAX_MASK_SIZE, 1, 1, VEC_REPEAT_MAX_STRIDE);
   }
 
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   BlockReduceSum(aF32MultiScaleTensor_, aF32MultiScaleTensor_, CeilDiv(groupNum_, FP32_BLOCK_SIZE), FP32_MAX_MASK_SIZE,
                  1, 1, VEC_REPEAT_MAX_STRIDE);
 
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Brcb(aF32ReduceSumBrcTensor_, aF32MultiScaleTensor_, CeilDiv(groupNum_, FP32_BLOCK_SIZE), brcbRepeatParams);
 
   TEventID eventIdVToMte3V1 = GetTPipePtr()->FetchEventID<HardEvent::V_MTE3>();
@@ -590,25 +590,25 @@ __aicore__ inline void WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, bias
                           DataCopyParams& dataCopyParams, BrcbRepeatParams& brcbRepeatParams)
 {
   Abs(aF32MultiScaleTensor_, aF32Tensor_, m * k);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   if (tiling_->groupSize == 128) {
     // groupSize为128的场景，先将128 reduce 至64(即FP32_MAX_MASK_SIZE)
     Max(aF32MultiScaleTensor_, aF32MultiScaleTensor_, aF32MultiScaleTensor_[FP32_MAX_MASK_SIZE],
          FP32_MAX_MASK_SIZE, groupNum_, maxAddReatParams);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if (groupNum_ > 1) {
       DataCopy(aF32MultiScaleTensor_[FP32_MAX_MASK_SIZE], aF32MultiScaleTensor_[tiling_->groupSize], dataCopyParams);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
   }
   BlockReduceMax(aF32MultiScaleTensor_, aF32MultiScaleTensor_, groupNum_, FP32_MAX_MASK_SIZE, 1, 1,
                  VEC_REPEAT_MAX_STRIDE);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   BlockReduceMax(aF32MultiScaleTensor_, aF32MultiScaleTensor_, CeilDiv(groupNum_, FP32_BLOCK_SIZE), FP32_MAX_MASK_SIZE,
                  1, 1, VEC_REPEAT_MAX_STRIDE);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Brcb(aF32ReduceMaxBrcTensor_, aF32MultiScaleTensor_, CeilDiv(groupNum_, FP32_BLOCK_SIZE), brcbRepeatParams);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 
   TEventID eventIdVToMte3V1 = GetTPipePtr()->FetchEventID<HardEvent::V_MTE3>();
   SetFlag<HardEvent::V_MTE3>(eventIdVToMte3V1);
@@ -641,24 +641,24 @@ __aicore__ inline void WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, bias
 
   uint32_t mK = m * k;
 
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Muls(aF32MultiScaleTensor_, aF32MultiScaleTensor_, multiFactor1_, mK);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Cast(aF32Tensor_, aF32MultiScaleTensor_, RoundMode::CAST_ROUND, mK);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Cast(aF16Tensor_, aF32Tensor_, RoundMode::CAST_NONE, mK);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Cast(aUnfoldLocal_, aF16Tensor_, RoundMode::CAST_NONE, mK);  // A1
 
   for (uint64_t transATimes = 1; transATimes < multiScaleTimes_; transATimes++) {
     Sub(aF32MultiScaleTensor_, aF32MultiScaleTensor_, aF32Tensor_, mK);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Muls(aF32MultiScaleTensor_, aF32MultiScaleTensor_, static_cast<float>(multiFactor2_), mK);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Cast(aF32Tensor_, aF32MultiScaleTensor_, RoundMode::CAST_ROUND, mK);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Cast(aF16Tensor_, aF32Tensor_, RoundMode::CAST_NONE, mK);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Cast(aUnfoldLocal_[transATimes * mK], aF16Tensor_, RoundMode::CAST_NONE, mK);
   }
 }
@@ -776,7 +776,7 @@ __aicore__ inline void
   DataCopyPad2D(aF32ReduceSumTensorV3_, workspaceReduceSumBrc_[groupIdx * 8], tiling_->mSize, 8, groupNum_ * 8);
 
   Cast(offsetF32Tensor_, offsetB16Tensor_, RoundMode::CAST_NONE, vecSingleCoreN);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   Mul(offsetF32Tensor_, scaleF32Tensor_, offsetF32Tensor_, vecSingleCoreN);
 
   TEventID eventIdMte2ToVV3 = GetTPipePtr()->FetchEventID<HardEvent::MTE2_V>();
@@ -784,7 +784,7 @@ __aicore__ inline void
   WaitFlag<HardEvent::MTE2_V>(eventIdMte2ToVV3);
 
   // (m, 8) (1, n) -> (m, n)
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   MulOffsetVector3(vecSingleCoreN, groupIdx, taskId);
 }
 
@@ -822,7 +822,7 @@ WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, biasType, yType, aTrans, bT
   repeatParams.dstRepStride = 8;
   repeatParams.src0RepStride = 8;
   repeatParams.src1RepStride = 0;
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   for (uint32_t idxM = 0; idxM < tiling_->mSize; idxM++) {
     Mul(cF32CastTensor_[idxM * vecSingleCoreN], cF32CastTensor_[idxM * vecSingleCoreN], aF32MaxTensor_[idxM * 8],
         256 / sizeof(float), mainRepeatN, repeatParams);
@@ -878,9 +878,9 @@ __aicore__ inline void
     }
   }
 
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   ProcessVector4MaxScale(vecSingleCoreN, groupIdx);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 
 
   if (!hasAntiQuantOffset && taskId == 0) { //无AntiQuantOffset处理流程
@@ -958,7 +958,7 @@ WeightQuantBatchMatMulV2MsdGroupKernel<xType, wType, biasType, yType, aTrans, bT
     WaitFlag<HardEvent::MTE2_V>(eventIdMte2ToV);
 
     Cast(cF32CastTensor_[mOffset], cTensor_[mOffset], RoundMode::CAST_NONE, v4TailCSize);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if (multiScaleTimeIdx == 0) {
         Muls(cF32CastTensor_[mOffset], cF32CastTensor_[mOffset],
          static_cast<float>(1.0) / multiFactor, v4TailCSize);
@@ -1032,7 +1032,7 @@ __aicore__ inline void
   if(tiling_->hasBias) {
     if constexpr (!IsSameType<biasType, float>::value) {
       Cast(biasFp32Tensor_, biasTensor_, RoundMode::CAST_NONE, singleCoreRealN);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
 
     uint64_t repeatTimes = singleCoreRealN / FP32_MAX_MASK_SIZE;
@@ -1048,14 +1048,14 @@ __aicore__ inline void
       AscendC::Add<float, false>(resF32Tensor_[mIdx * singleCoreRealN], resF32Tensor_[mIdx * singleCoreRealN],
           biasFp32Tensor_, FP32_MAX_MASK_SIZE, repeatTimes, repeatParams);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
 
   if constexpr (IsSameType<yType, int8_t>::value) {
     return;
   } else {
     Cast(resF16Tensor_, resF32Tensor_, RoundMode::CAST_ROUND, tiling_->mSize * singleCoreRealN);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     uint64_t cGlobalOffset =  atomicWorkspaceOffset;
     TEventID eventIdVToMte3V5 = GetTPipePtr()->FetchEventID<HardEvent::V_MTE3>();
     SetFlag<HardEvent::V_MTE3>(eventIdVToMte3V5);

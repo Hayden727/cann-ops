@@ -420,25 +420,25 @@ protected:
     {
         uint32_t computedAivN = DequantBmm::Align(curAivN, 8U);  // 8: 32B aligned for int32_t
         uint32_t ubResAlignedN = DequantBmm::Align(curAivN);     // 16: sizeof(yType) is 2, 32B / 2
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         if (biasDtype_ == DT_BF16) {
             Cast(biasFp32, oriBiasBf16, RoundMode::CAST_NONE, ubResAlignedN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasBf16);
         } else if (biasDtype_ == DT_FLOAT16) {
             Cast(biasFp32, oriBiasFp16, RoundMode::CAST_NONE, ubResAlignedN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasFp16);
         } else if (biasDtype_ == DT_FLOAT) {
             biasFp32 = oriBiasFp32;
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasFp32);
         }
 
         for (uint32_t mIdx = 0; mIdx < curAivM; ++mIdx) {
             Add(dstLocalFp32[mIdx * ubResAlignedN], dstLocalFp32[mIdx * ubResAlignedN], biasFp32, ubResAlignedN);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void DequantCompute(GlobalTensor<int32_t> &curMmOutGm, uint64_t baseMOfffset,
@@ -508,7 +508,7 @@ protected:
 
             BroadCast<float, M_N_TWO_DIMS, 1>(broadcastFp32, pertokenScaleLocal, broadCastDst, broadCastSrc);
 
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             LocalTensor<float> tmpdstLocal = vecQueTmp_.Get<float>();
             if (computedAivN == ubResAlignedN) {
                 Mul(tmpdstLocal, broadcastFp32, dstLocalFp32, computedAivN * curAivM);
@@ -523,7 +523,7 @@ protected:
             if (biasDtype_ != DT_INT32) {
                 CalBiasAdd(tmpdstLocal, biasFp32, oriBiasBf16, oriBiasFp16, oriBiasFp32, curAivN, curAivM);
             }
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Cast(dstLocal, tmpdstLocal, RoundMode::CAST_RINT, curAivM * ubResAlignedN);
             set_flag(PIPE_V, PIPE_MTE3, static_cast<event_t>(2));  // 2: event_id of ub->gm
             vecQueSrc_.FreeTensor(srcLocal);

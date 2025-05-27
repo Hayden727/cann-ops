@@ -377,17 +377,17 @@ protected:
         if (biasDtype_ == DT_BF16) {
             LocalTensor<bfloat16_t> oriBiasBf16 = vecQueBias_.DeQue<bfloat16_t>();
             Cast(biasFp32, oriBiasBf16, RoundMode::CAST_NONE, computedAivN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasBf16);
         } else if (biasDtype_ == DT_FLOAT16) {
             LocalTensor<half> oriBiasFp16 = vecQueBias_.DeQue<half>();
             Cast(biasFp32, oriBiasFp16, RoundMode::CAST_NONE, computedAivN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasFp16);
         } else if (biasDtype_ == DT_FLOAT) {
             LocalTensor<float> oriBiasFp32 = vecQueBias_.DeQue<float>();
             biasFp32 = oriBiasFp32;
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             vecQueBias_.FreeTensor(oriBiasFp32);
         }
     }
@@ -398,7 +398,7 @@ protected:
         for (uint32_t mIdx = 0; mIdx < curAivM; ++mIdx) {
             Add(dstLocalFp32[mIdx * computedAivN], dstLocalFp32[mIdx * computedAivN], biasFp32, computedAivN);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void MulPertokenAndScale(LocalTensor<float> &broadcastFp32, LocalTensor<float> &scaleLocalFp32,
@@ -409,7 +409,7 @@ protected:
         for (uint32_t mIdx = 0; mIdx < singleM; ++mIdx) {
             Mul(broadcastFp32[computedAivN * mIdx], broadcastFp32[computedAivN * mIdx], scaleLocalFp32, calCount);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void BroadCastMN(LocalTensor<float> &broadcastFp32, uint32_t singleM, uint32_t computedAivN)
@@ -417,7 +417,7 @@ protected:
         const uint32_t broadCastDst[M_N_TWO_DIMS] = {singleM, computedAivN};
         const uint32_t broadCastSrc[M_N_TWO_DIMS] = {singleM, 1};
         BroadCast<float, M_N_TWO_DIMS, 1>(broadcastFp32, pertokenScaleLocal_, broadCastDst, broadCastSrc);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void PreUbProcess(LocalTensor<float> &broadcastFp32, uint32_t singleM, uint32_t curAicN)
@@ -431,7 +431,7 @@ protected:
 
         if (isPerTensor_) {
             Muls(broadcastFp32, broadcastFp32, scaleScalar_, singleM * computedAivN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         } else {
             // 搬运该base块所需n scale
             ScaleGm2Ub(curAicN);
@@ -440,7 +440,7 @@ protected:
             if constexpr (IsSameType<scaleType, bfloat16_t>::value) {
                 LocalTensor<float> scaleLocalFp32 = vecFp32Scale_.Get<float>();
                 Cast(scaleLocalFp32, scaleLocal, RoundMode::CAST_NONE, computedAivN);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 MulPertokenAndScale(broadcastFp32, scaleLocalFp32, broadCastDims, DequantBmm::Align(curAicN));
             } else {
                 MulPertokenAndScale(broadcastFp32, scaleLocal, broadCastDims,
@@ -489,12 +489,12 @@ protected:
             wait_flag(PIPE_MTE2, PIPE_V, static_cast<event_t>(0));
             // int32 srcLocal -> fp32 srcFp32
             Cast(srcFp32, srcLocal, RoundMode::CAST_RINT, curAivM * computedAivN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             // 只能取部分相乘好的scale
             uint32_t curScaleOffset = mUbLoopIdx * ubCalcM_ * computedAivN;
             LocalTensor curResFp32 = resFp32[curScaleOffset];
             Mul(curResFp32, curResFp32, srcFp32, curAivM * computedAivN);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             if (biasDtype_ != DT_INT32) {
                 CalBiasAdd(curResFp32, biasFp32, curAivM, computedAivN);
             }
