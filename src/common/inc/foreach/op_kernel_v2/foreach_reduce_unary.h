@@ -154,14 +154,13 @@ public:
     }
 };
 
-template <typename T, typename P, typename OpPredicate, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT>
-class  ForeachReduceUnary: public KernelForeadhReduce<T, P, ForeachReduceUnary<T, P, OpPredicate, bufferNum, paramsCount>, bufferNum, paramsCount> {
+template <typename T, typename P, typename OpPredicate, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT, typename Tiling=ForeachReduceTilingData>
+class  ForeachReduceUnary: public KernelForeadhReduce<T, P, ForeachReduceUnary<T, P, OpPredicate, bufferNum, paramsCount, Tiling>, bufferNum, paramsCount, Tiling> {
 public:
-    using Base = KernelForeadhReduce<T, P, ForeachReduceUnary<T, P, OpPredicate, bufferNum, paramsCount>, bufferNum, paramsCount>;
+    using Base = KernelForeadhReduce<T, P, ForeachReduceUnary<T, P, OpPredicate, bufferNum, paramsCount, Tiling>, bufferNum, paramsCount, Tiling>;
 
     __aicore__ inline ForeachReduceUnary(OpPredicate &op) : Base(*this), reduceAdapter(op){};
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-                                const ForeachCommonV2TilingData* tilingData);
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, const Tiling* tilingData);
     using Base::Process;
 
 private:
@@ -226,9 +225,9 @@ private:
     friend Base;
 };
 
-template <typename T, typename P, typename OpPredicate, int32_t bufferNum, uint8_t paramsCount>
-__aicore__ inline void ForeachReduceUnary<T, P, OpPredicate, bufferNum, paramsCount>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-                                const ForeachCommonV2TilingData* tilingData) {                           
+template <typename T, typename P, typename OpPredicate, int32_t bufferNum, uint8_t paramsCount, typename Tiling>
+__aicore__ inline void ForeachReduceUnary<T, P, OpPredicate, bufferNum, paramsCount, Tiling>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
+                                const Tiling* tilingData) {                           
     Base::Init(x, y, workspace, tilingData);
 }
 

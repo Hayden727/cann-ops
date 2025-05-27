@@ -428,11 +428,11 @@ private:
     uint64_t inputsTensorUbSize = 0;
     uint16_t needCoreNum = 0;
     uint16_t totalTensorCount = 0;
-    const uint64_t* tensorDataCountList = nullptr;
+    const int64_t* tensorDataCountList = nullptr;
     uint16_t tensorStart = {0};
     uint16_t tensorEnd = {0};
-    uint64_t tensorStartOffset = {0};
-    uint64_t tensorEndOffset = {0};
+    int64_t tensorStartOffset = {0};
+    int64_t tensorEndOffset = {0};
     // tiling param for Reduce Op
     const uint16_t* tensorMiddleCountList = nullptr;
     const uint16_t* tensorMiddleStartList = nullptr;

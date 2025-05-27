@@ -12,6 +12,7 @@ target_sources(op_host_aclnn PRIVATE
 
 target_sources(optiling PRIVATE
     op_host/foreach_norm_tiling.cpp
+    ${OP_COMMON_DIR}/src/foreach/op_tiling/foreach_reduce_tiling_func.cpp
 )
 
 target_include_directories(optiling PRIVATE
@@ -28,7 +29,6 @@ target_sources(opsproto PRIVATE
 target_include_directories(opsproto PRIVATE
         ${OP_COMMON_DIR}/inc
 )
-
 
 install(FILES op_kernel/foreach_norm.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)

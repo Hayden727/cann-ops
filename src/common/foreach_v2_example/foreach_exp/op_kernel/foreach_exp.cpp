@@ -17,7 +17,7 @@
  
  // op kernel building at build_out directory, it's not fully aligned with source code structure
  // current op_kernel folder is absent in build_out directory, so the relative path to common has just one layer
-#include "foreach_unary_v2.h"
+#include "foreach_implict_output_v2.h"
 
 using namespace AscendC;
 using namespace Common::OpKernel;
@@ -26,10 +26,11 @@ template <typename T>
 __aicore__ void ExpAdapter(
     const LocalTensor<T>& dstLocal, 
     const LocalTensor<T>& srcLocal, 
-    const uint32_t uValue,
+    const int32_t& uValue,
     const LocalTensor<T>& tempLocal) {
-
+    PipeBarrier<PIPE_V>();
     Exp(dstLocal, srcLocal, static_cast<int32_t>(uValue));
+    PipeBarrier<PIPE_V>();
 }
 
 extern "C" __global__ __aicore__ void foreach_exp(GM_ADDR x,  GM_ADDR y,
@@ -40,15 +41,15 @@ extern "C" __global__ __aicore__ void foreach_exp(GM_ADDR x,  GM_ADDR y,
     GM_ADDR userWS = nullptr;
 
     if (TILING_KEY_IS(1)) {
-        ForeachUnaryV2<half, half, ExpAdapter<half>, 2, 1> op;
+        ForeachImplictOutputV2<half, half, ExpAdapter<half>, 2, 1> op;
         op.Init(x, y, userWS, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(2)) {
-        ForeachUnaryV2<float, float, ExpAdapter<float>, 2, 1> op;
+        ForeachImplictOutputV2<float, float, ExpAdapter<float>, 2, 1> op;
         op.Init(x, y, userWS, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(4)) {
-        ForeachUnaryV2<bfloat16_t, float, ExpAdapter<float>, 2, 1> op;
+        ForeachImplictOutputV2<bfloat16_t, float, ExpAdapter<float>, 2, 1> op;
         op.Init(x, y, userWS, &tilingData);
         op.Process();
     }

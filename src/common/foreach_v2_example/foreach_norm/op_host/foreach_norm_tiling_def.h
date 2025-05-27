@@ -17,10 +17,10 @@
 #define AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_NORM_TILING_DEF_H_
 
 #include "register/tilingdata_base.h"
-#include "foreach_tiling_def.h"
+#include "foreach_reduce_tiling_def.h"
 
 namespace optiling {
-REGISTER_TILING_DATA_CLASS(ForeachNorm, ForeachCommonV2TilingData)
+REGISTER_TILING_DATA_CLASS(ForeachNorm, ForeachReduceTilingData)
 }
 
 #endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_NORM_TILING_DEF_H_

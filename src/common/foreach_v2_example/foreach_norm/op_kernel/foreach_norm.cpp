@@ -15,9 +15,9 @@
 
 #include "foreach_reduce_unary.h"
 
-// using namespace ForeachNorm;
 using namespace Common::OpKernel;
 using namespace AscendC;
+
 /**
  * modelCode:
  * 0 p=else... the default operator(not used now)
@@ -86,7 +86,6 @@ public:
         ReduceSum<P>(dstLocal, srcLocal, workLocal, count);
     }
 };
-
 
 extern "C" __global__ __aicore__ void foreach_norm(GM_ADDR inputs, GM_ADDR scalar, GM_ADDR output, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tilingData, tiling);

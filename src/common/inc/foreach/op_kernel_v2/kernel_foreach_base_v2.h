@@ -28,16 +28,15 @@ constexpr uint16_t MAX_TENSOR_CONT = 50;
 constexpr uint16_t MAX_CORE_CONT = 50;
 constexpr uint32_t BYTE_BLOCK = 32;
 
-template <typename T>
+template <typename T, typename Tiling>
 class KernelForeachBaseV2 {
 protected:
     __aicore__ inline KernelForeachBaseV2() {};
 
-    __aicore__ inline void Init(const ForeachCommonV2TilingData* tilingData);
+    __aicore__ inline void Init(const Tiling* tilingData);
     __aicore__ inline void InitParams();
-    __aicore__ inline void ParseTilingData(const ForeachCommonV2TilingData* tilingData);
-    __aicore__ inline void parseNumels(GM_ADDR x);
-    // __aicore__ inline void AssignDataToEachCore(uint32_t needCoreNum);
+    __aicore__ inline void ParseTilingData(const Tiling* tilingData);
+    __aicore__ inline void ParseReduceTilingData(const Tiling* tilingData);
     __aicore__ inline __gm__ T* GetTensorAddr(uint16_t index, GM_ADDR tensorPtr);
 
     template <typename T1, typename T2>
@@ -55,39 +54,55 @@ protected:
 
     // tiling params
     uint64_t inputsTensorUbSize = 0;
-    int64_t tensorDataCountList[MAX_TENSOR_CONT] = {0};
+    const  int64_t* tensorDataCountList = nullptr;
     uint16_t tensorStart = 0;
     uint16_t tensorEnd = 0;
     int64_t tensorStartOffset = 0;
     int64_t tensorEndOffset = 0;
+
     uint32_t needCoreNum = 0;
     uint64_t totalTensorUbSize = 0;
     uint32_t maxDataCount = 0;
     uint32_t maxCastDataCount = 0;
+
+    // for reduce
     uint16_t totalTensorCount = 0;
-    uint64_t totalBlockCount = 0; // for reduce
-    uint8_t elementsPerBlock = BYTE_BLOCK / sizeof(T);
-    int64_t totalDataCount = 0;
+    uint16_t coreMiddleOffset = {0};
+    const  uint16_t* tensorMiddleCountList = nullptr;
+    const  uint16_t* tensorMiddleStartList = nullptr;
 };
 
-template <typename T>
-__aicore__ inline void KernelForeachBaseV2<T>::Init(
-    const ForeachCommonV2TilingData* tilingData) {
+template <typename T, typename Tiling>
+__aicore__ inline void KernelForeachBaseV2<T, Tiling>::Init(const Tiling* tilingData) {
     blockIdx = GetBlockIdx();
 
     ParseTilingData(tilingData);
     InitParams();
 }
 
-template <typename T>
-__aicore__ inline void KernelForeachBaseV2<T>::ParseTilingData(
-    const ForeachCommonV2TilingData* tilingData) {
+template <typename T, typename Tiling>
+__aicore__ inline void KernelForeachBaseV2<T, Tiling>::ParseTilingData(
+    const Tiling* tilingData) {
     inputsTensorUbSize = tilingData->inputsTensorUbSize;
-    needCoreNum = tilingData->needCoreNum;
+    tensorDataCountList = tilingData->tensorDataCountList;
+    tensorStart = tilingData->tensorStartList[blockIdx];
+    tensorEnd = tilingData->tensorEndList[blockIdx];
+    tensorStartOffset = tilingData->tensorStartOffsetList[blockIdx];
+    tensorEndOffset = tilingData->tensorEndOffsetList[blockIdx];
 }
 
-template <typename T>
-__aicore__ inline __gm__ T* KernelForeachBaseV2<T>::GetTensorAddr(uint16_t index, GM_ADDR tensorPtr) {
+template <typename T, typename Tiling>
+__aicore__ inline void KernelForeachBaseV2<T, Tiling>::ParseReduceTilingData(
+    const Tiling* tilingData) {
+    tensorMiddleStartList = tilingData->tensorMiddleStartList;
+    tensorMiddleCountList = tilingData->tensorMiddleCountList;
+    coreMiddleOffset = tilingData->coreMiddleOffsetList[blockIdx];
+    needCoreNum = tilingData->needCoreNum;
+    totalTensorCount = tilingData->totalTensorCount;
+}
+
+template <typename T, typename Tiling>
+__aicore__ inline __gm__ T* KernelForeachBaseV2<T, Tiling>::GetTensorAddr(uint16_t index, GM_ADDR tensorPtr) {
     __gm__ uint64_t* dataAddr = reinterpret_cast<__gm__ uint64_t*>(tensorPtr);
     uint64_t tensorPtrOffset = *dataAddr;  // The offset of the data address from the first address.
     // Moving 3 bits to the right means dividing by sizeof(uint64 t).
@@ -95,8 +110,8 @@ __aicore__ inline __gm__ T* KernelForeachBaseV2<T>::GetTensorAddr(uint16_t index
     return reinterpret_cast<__gm__ T*>(*(retPtr + index));
 }
 
-template <typename T>
-__aicore__ inline void KernelForeachBaseV2<T>::InitParams() {
+template <typename T, typename Tiling>
+__aicore__ inline void KernelForeachBaseV2<T, Tiling>::InitParams() {
     #if __CCE_AICORE__ == 220
         if (std::is_same_v<T, bfloat16_t>) {
             totalTensorUbSize = inputsTensorUbSize * COPY_SPACE_MULTIPLE;
@@ -109,66 +124,6 @@ __aicore__ inline void KernelForeachBaseV2<T>::InitParams() {
         maxDataCount = inputsTensorUbSize / sizeof(T);
     #endif
 }
-
-template <typename T>
-__aicore__ inline void KernelForeachBaseV2<T>::parseNumels(GM_ADDR x) {
-    /* 
-    数据第一个8字节记录ptr_offset，地址相对于首地址的偏移量指向ptr（8字节）
-    接着是shape信息，可以支持多个相同shape合并
-    dim：记录shape的维度(4字节)
-    cnt：记录连续相同shape的个数（4字节），如果cnt不为1，则代表有cnt个输入的shape是相同且连续，可以支持合并或者不合并，不合并cnt固定为1
-    dim*int64：shape每个维度以8字节记录，有dim个（dim个8字节）
-    最后ptr_offset指向的是连续的输入指针（输入个数个8字节）
-
-        tensorlist 数据结构
-                                    --------------
-        ptr偏移(8字节)              | ptr_offset |
-                                    -------|------
-        第1组shape                  | dim  | cnt |
-                                    -------|------
-                                    | dim * int64|
-                                    --------------
-        第2组shape                  | dim  | cnt |
-                                    -------|------
-                                    | dim * int64|
-                                    --------------
-        ...                         |  ......    |
-                                    --------------
-        第N组shape                  | dim  | cnt |
-                                    --------------
-                                    | dim * int64|
-                                    --------------
-        数据指针                    | ptr1       |
-                                    --------------
-        数据指针                    | ptr2       |
-                                    --------------
-        数据指针                    | ptr...     |
-                                    --------------
-    */
-    int64_t dataAddrOffset = *reinterpret_cast<__gm__ int64_t *>(x); // 数据指针相对于首地址的偏移量(单位字节)
-
-    // sizeof(__gm__ uint8_t *) 8字节
-    __gm__ uint8_t *start_ptr = x + sizeof(__gm__ uint8_t *); // 维度信息开始地址
-    __gm__ uint8_t *end_ptr = x + dataAddrOffset;
-
-    __gm__ uint8_t *ptr = start_ptr;
-    while (ptr < end_ptr) {
-        int32_t dim = *reinterpret_cast<__gm__ int32_t *>(ptr);
-        ptr += (sizeof(int32_t) + sizeof(int32_t));
-
-        int64_t size = 1;
-        for (int64_t i = 0; i < dim; i++) {
-            size *= *reinterpret_cast<__gm__ int64_t *>(ptr);
-            ptr += sizeof(int64_t);
-        }
-
-        tensorDataCountList[totalTensorCount] = size;
-        totalDataCount += size;
-        totalTensorCount++;
-        totalBlockCount += CeilA2B(size, elementsPerBlock);
-    }
-}
-
 }  // namespace OpKernel
 }  // namespace Common
 

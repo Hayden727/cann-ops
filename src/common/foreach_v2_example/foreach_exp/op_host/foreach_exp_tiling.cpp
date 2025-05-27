@@ -20,17 +20,17 @@
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "common_dtype.h"
-#include "foreach_tiling_func_v2.cpp"
+#include "foreach_tiling_func.h"
 #include "foreach_exp_tiling_def.h"
 
 namespace optiling {
 
-static ge::graphStatus TilingPrepare4ForeachTiling(gert::TilingParseContext* context) {
+static ge::graphStatus TilingPrepare4ForeachExpTiling(gert::TilingParseContext* context) {
     return ge::GRAPH_SUCCESS;
 }
 
 static ge::graphStatus Tiling4ForeachExpTiling(gert::TilingContext* context) {
-    ForeachCommonV2Tiling tilingObject(context);
+    ForeachCommonTiling tilingObject(context);
     if (tilingObject.Init(FOREACH_EXP_OP_CODE) != ge::GRAPH_SUCCESS) {
         return ge::GRAPH_FAILED;
     }
@@ -39,7 +39,7 @@ static ge::graphStatus Tiling4ForeachExpTiling(gert::TilingContext* context) {
 
 IMPL_OP_OPTILING(ForeachExp)
 .Tiling(Tiling4ForeachExpTiling)
-.TilingParse<ForeachCompileInfo>(TilingPrepare4ForeachTiling);
+.TilingParse<ForeachCompileInfo>(TilingPrepare4ForeachExpTiling);
 }
 
 #endif  // AIR_CXX_RUNTIME_V2_OP_IMPL_FOREACH_EXP_FUNC_H_

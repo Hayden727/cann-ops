@@ -31,22 +31,20 @@ constexpr int16_t BYTE_REPEATE = 256;
 using namespace Common::OpKernel;
 using namespace AscendC;
 template<typename T, typename P, UnaryOp<P> *op, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT,
-         bool needCopyOut=NEED_COPY_OUT, bool needTempBuf=NEED_TEMP_BUF>
-class ForeachCustomNd : public ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf> {
+         bool needCopyOut=NEED_COPY_OUT, bool needTempBuf=NEED_TEMP_BUF, typename Tiling=ForeachCommonTilingData>
+class ForeachCustomNd : public ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf, Tiling> {
 public:
-    using Unary = ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf>;
+    using Unary = ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf, Tiling>;
     __aicore__ inline ForeachCustomNd(){};
     __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-                                const ForeachCommonV2TilingData* tilingData);
+                                const Tiling* tilingData);
 };
 
-template <typename T, typename P, UnaryOp<P> *op, int32_t bufferNum, uint8_t paramsCount, bool needCopyOut, bool needTempBuf>
-__aicore__ inline void ForeachCustomNd<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-                                const ForeachCommonV2TilingData* tilingData) { 
+template <typename T, typename P, UnaryOp<P> *op, int32_t bufferNum, uint8_t paramsCount, bool needCopyOut, bool needTempBuf, typename Tiling>
+__aicore__ inline void ForeachCustomNd<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf, Tiling>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
+                                const Tiling* tilingData) { 
     // tiling参数初始化         
     Unary::Base::Base::Init(tilingData);
-    Unary::Base::InitCoreParams(x, Unary::Base::needCoreNum);
-
     // 重新划分UB
     Unary::Base::inputsTensorUbSize -= BYTE_REPEATE;
     Unary::Base::inputsTensorUbSize = Unary::Base::inputsTensorUbSize / 32 * 32;    

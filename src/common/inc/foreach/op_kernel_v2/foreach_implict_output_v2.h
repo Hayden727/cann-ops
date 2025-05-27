@@ -9,12 +9,12 @@
  */
 
 /*!
- * \file foreach_unary.h
+ * \file foreach_implict_output.h
  * \brief
  */
 
-#ifndef FOREACH_UNARY_V2_H
-#define FOREACH_UNARY_V2_H
+#ifndef FOREACH_IMPLICT_OUTPUT
+#define FOREACH_IMPLICT_OUTPUT
 
 #include "kernel_foreach_elewise.h"
 
@@ -24,78 +24,68 @@ using namespace AscendC;
 constexpr bool NEED_TEMP_BUF = false;
 
 template <typename T>
-using UnaryOp = void (const LocalTensor<T>&, const LocalTensor<T>&, const uint32_t, const LocalTensor<T>&);
+using ImplictOutputOp = void (const LocalTensor<T>&, const LocalTensor<T>&, const int32_t&, const LocalTensor<T>&);
 
-template <typename T, typename P, UnaryOp<P> *op, uint8_t paramsCount>
+template <typename T, typename P, ImplictOutputOp<P> *op, uint8_t paramsCount>
 class InnerComputer {
 public:
     __aicore__ inline void Compute(
-        const LocalTensor<T> &x1Local,
-        const LocalTensor<T> &yLocal,
+        LocalTensor<T> &dataLocal,
         LocalTensor<float> &float32Tensor,
         uint32_t maxCastDataCount,
         int64_t dataCount,
         const LocalTensor<P> &tempTensor) {
-        PipeBarrier<PIPE_V>();
-        op(yLocal, x1Local, dataCount, tempTensor);
-        PipeBarrier<PIPE_V>();
+        op(dataLocal, dataLocal, dataCount, tempTensor);
     }
 };
 
 #if __CCE_AICORE__ == 220
-    template <UnaryOp<float> *op, uint8_t paramsCount>
+    template <ImplictOutputOp<float> *op, uint8_t paramsCount>
     class InnerComputer<bfloat16_t, float, op, paramsCount> {
     public:
         __aicore__ inline void Compute(
-            const LocalTensor<bfloat16_t> &x1Local,
-            const LocalTensor<bfloat16_t> &yLocal,
+            LocalTensor<bfloat16_t> &dataLocal,
             LocalTensor<float> &float32Tensor,
             uint32_t maxCastDataCount,
             int64_t dataCount,
             const LocalTensor<float> &tempTensor) {
             uint32_t castTimes = dataCount / maxCastDataCount;
             uint32_t castTimesRemainder = dataCount % maxCastDataCount;
-
+            
             for (uint32_t i = 0; i < castTimes; i++) {
-                ComputePerCast(
-                    x1Local, yLocal, float32Tensor,
-                    maxCastDataCount, i, maxCastDataCount, tempTensor);
+                ComputePerCast(dataLocal, float32Tensor, maxCastDataCount, i, maxCastDataCount, tempTensor);
             }
 
             if (castTimesRemainder > 0) {
-                ComputePerCast(x1Local, yLocal, float32Tensor,
-                    maxCastDataCount, castTimes, castTimesRemainder, tempTensor);
+                ComputePerCast(dataLocal, float32Tensor, maxCastDataCount, castTimes, castTimesRemainder, tempTensor);
             }
         }
 
     private:
         __aicore__ inline void ComputePerCast(
-            const LocalTensor<bfloat16_t> &x1Local,
-            const LocalTensor<bfloat16_t> &yLocal,
+            LocalTensor<bfloat16_t> &dataLocal,
             LocalTensor<float> &float32Tensor,
             uint32_t maxCastDataCount, uint32_t index, int64_t dataCount, const LocalTensor<float> &tempTensor) {
             PipeBarrier<PIPE_V>();
-            Cast(float32Tensor, x1Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
+            Cast(float32Tensor, dataLocal[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
             PipeBarrier<PIPE_V>();
             uint32_t offset = (paramsCount == 1) ? 0 : maxCastDataCount;
             op(float32Tensor[offset], float32Tensor, dataCount, tempTensor);
             PipeBarrier<PIPE_V>();
-            Cast(yLocal[index * maxCastDataCount], float32Tensor[offset], RoundMode::CAST_RINT, dataCount);
+            Cast(dataLocal[index * maxCastDataCount], float32Tensor[offset], RoundMode::CAST_RINT, dataCount);
             PipeBarrier<PIPE_V>();
         }
     };
 #endif
 
-template <typename T, typename P, UnaryOp<P> *op, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT,
-          bool needCopyOut=NEED_COPY_OUT, bool needTempBuf=NEED_TEMP_BUF, typename Tiling=ForeachCommonTilingData>
-class ForeachUnaryV2 : public KernelForeachElewise<T, ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf, Tiling>, bufferNum, paramsCount, needCopyOut, Tiling> {
+template <typename T, typename P, ImplictOutputOp<P> *op, int32_t bufferNum=BUFFER_NUM, uint8_t paramsCount=INPUT_PARAMETER_COUNT, bool needTempBuf=NEED_TEMP_BUF, typename Tiling=ForeachCommonTilingData>
+class ForeachImplictOutputV2 : public KernelForeachElewise<T, ForeachImplictOutputV2<T, P, op, bufferNum, paramsCount, needTempBuf, Tiling>, bufferNum, paramsCount, false, Tiling> {
 public:
-    using Base = KernelForeachElewise<T, ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf, Tiling>, bufferNum, paramsCount, needCopyOut, Tiling>;
-    using Operator = UnaryOp<P>;
+    using Base = KernelForeachElewise<T, ForeachImplictOutputV2<T, P, op, bufferNum, paramsCount, needTempBuf, Tiling>, bufferNum, paramsCount, false, Tiling>;
+    using Operator = ImplictOutputOp<P>;
 
-    __aicore__ inline ForeachUnaryV2() : Base(*this) {};
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-                                const Tiling* tilingData);
+    __aicore__ inline ForeachImplictOutputV2() : Base(*this) {};
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, const Tiling* tilingData);
     using Base::Process;
 
 protected:
@@ -106,19 +96,29 @@ protected:
 private:
     __aicore__ inline void Compute(uint32_t index, int64_t dataCount, LocalTensor<float> &float32Tensor, bool isRemainder) {
         LocalTensor<T> dataLocal = Base::dataQueue.template DeQue<T>();
-        LocalTensor<T> outLocal = Base::outQueue.template AllocTensor<T>();
-
         InnerComputer<T, P, op, paramsCount> computer;
         computer.Compute(
             dataLocal,
-            outLocal,
             float32Tensor,
             Base::maxCastDataCount,
             dataCount,
             tempTensor);
 
+        // Transport can be performed only after the Muls is complete.
+        event_t eventIDVToMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+        SetFlag<HardEvent::V_MTE3>(eventIDVToMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventIDVToMTE3);
+        if (isRemainder) {
+            DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(T)), 0, 0, 0}; 
+            DataCopyPad(Base::outTensorsGM[index * Base::maxDataCount], dataLocal, copyParams);
+        } else {
+            DataCopy(Base::outTensorsGM[index * Base::maxDataCount], dataLocal, dataCount);
+        }
+        event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+        SetFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
+
         Base::dataQueue.FreeTensor(dataLocal);
-        Base::outQueue.template EnQue<T>(outLocal);
     }
 
     __aicore__ inline void BeforeProcess() {
@@ -144,13 +144,13 @@ private:
     friend Base;
 };
 
-template <typename T, typename P, UnaryOp<P> *op, int32_t bufferNum, uint8_t paramsCount, bool needCopyOut, bool needTempBuf, typename Tiling>
-__aicore__ inline void ForeachUnaryV2<T, P, op, bufferNum, paramsCount, needCopyOut, needTempBuf, Tiling>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
-    const Tiling* tilingData) {                           
+template <typename T, typename P, ImplictOutputOp<P> *op, int32_t bufferNum, uint8_t paramsCount, bool needTempBuf, typename Tiling>
+__aicore__ inline void ForeachImplictOutputV2<T, P, op, bufferNum, paramsCount, needTempBuf, Tiling>::Init(GM_ADDR x, GM_ADDR y, GM_ADDR workspace,
+                                const Tiling* tilingData) {                           
     Base::Init(x, y, workspace, tilingData);
 }
 
 }  // namespace OpKernel
 }  // namespace Common
 
-#endif  // KERNEL_FOREACH_UNARY_V2_H
+#endif  // KERNEL_FOREACH_UNARY_H

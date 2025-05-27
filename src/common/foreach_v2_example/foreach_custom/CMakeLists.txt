@@ -16,6 +16,7 @@ target_include_directories(op_host_aclnn PRIVATE
 
 target_sources(optiling PRIVATE
 op_host/foreach_custom_tiling.cpp
+${OP_COMMON_DIR}/src/foreach/op_tiling/foreach_tiling_func.cpp
 )
 
 target_include_directories(optiling PRIVATE
