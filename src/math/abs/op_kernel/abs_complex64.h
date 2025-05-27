@@ -62,21 +62,21 @@ public:
             if(i == loopCount -1){
                 this->calcLength = this->lasttileLength;
             }
-            CopyIn(i);
-            Compute(i);
-            CopyOut(i);
+            CopyIn_complex64(i);
+            Compute_complex64(i);
+            CopyOut_complex64(i);
         }
     }
 
 private:
-    __aicore__ inline void CopyIn(int32_t progress)
+    __aicore__ inline void CopyIn_complex64(int32_t progress)
     {
         AscendC::LocalTensor<float> xLocal = inQueueX.AllocTensor<float>();
         AscendC::DataCopy(xLocal, xGm[progress * this->tileLength * 2], this->calcLength * 2);
         inQueueX.EnQue(xLocal);
     }
 
-    __aicore__ inline void Compute(int32_t progress)
+    __aicore__ inline void Compute_complex64(int32_t progress)
     {
         AscendC::LocalTensor<float> xLocal = inQueueX.DeQue<float>();
         AscendC::LocalTensor<float> yLocal = outQueueY.AllocTensor<float>();
@@ -100,7 +100,7 @@ private:
         inQueueX.FreeTensor(xLocal);
     }
 
-    __aicore__ inline void CopyOut(int32_t progress)
+    __aicore__ inline void CopyOut_complex64(int32_t progress)
     {
         AscendC::LocalTensor<float> yLocal = outQueueY.DeQue<float>();
         AscendC::DataCopy(yGm[progress * this->tileLength * 2], yLocal, this->calcLength * 2);

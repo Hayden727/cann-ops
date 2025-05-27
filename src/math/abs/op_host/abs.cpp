@@ -51,8 +51,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     const gert::StorageShape* x1_shape = context->GetInputShape(0);
     auto totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-    // for (int i = 0; i < x1_shape->GetStorageShape().GetDimNum(); i++)
-    //     totalLength *= x1_shape->GetStorageShape().GetDim(i);
     auto dt = context->GetInputTensor(0)->GetDataType();
     uint32_t dataWidth;
     uint32_t ubfactor;  

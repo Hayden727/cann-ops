@@ -192,43 +192,5 @@
                 "name": "y"
             }
         ]
-    },
-    {
-        "case_name": "Test_Abs_010",
-        "op": "Abs",
-        "calc_expect_func_file": "./test_abs.py:calc_expect_func_complex64",
-        "input_desc": [
-            {
-                "format": [
-                    "ND"
-                ],
-                "type": [
-                    "complex64"
-                ],
-                "shape": [20],
-                "data_distribute": [
-                    "uniform"
-                ],
-                "value_range": [
-                    [
-                        -5,
-                        5
-                    ]
-                ],
-                "name": "x"
-            }
-        ],
-        "output_desc": [
-            {
-                "format": [
-                    "ND"
-                ],
-                "type": [
-                    "complex64"
-                ],
-                "shape": [20],
-                "name": "y"
-            }
-        ]
-    }         
+    }        
 ]

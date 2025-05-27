@@ -59,21 +59,21 @@ public:
             {
                 this->calcLength = this->lasttileLength;
             }
-            CopyIn(i);
-            Compute(i);
-            CopyOut(i);
+            CopyIn_int32(i);
+            Compute_int32(i);
+            CopyOut_int32(i);
         }
     }
 
 private:
-    __aicore__ inline void CopyIn(int32_t progress)
+    __aicore__ inline void CopyIn_int32(int32_t progress)
     {
         AscendC::LocalTensor<int32_t> xLocal = inQueueX.AllocTensor<int32_t>();
         AscendC::DataCopy(xLocal, xGm[progress * this->tileLength], this->calcLength);
         inQueueX.EnQue(xLocal);
     }
 
-    __aicore__ inline void Compute(int32_t progress)
+    __aicore__ inline void Compute_int32(int32_t progress)
     {
         AscendC::LocalTensor<int32_t> xLocal = inQueueX.DeQue<int32_t>();
         AscendC::LocalTensor<int32_t> yLocal = outQueueY.AllocTensor<int32_t>();
@@ -90,7 +90,7 @@ private:
         inQueueX.FreeTensor(xLocal);
     }
 
-    __aicore__ inline void CopyOut(int32_t progress)
+    __aicore__ inline void CopyOut_int32(int32_t progress)
     {
         AscendC::LocalTensor<int32_t> yLocal = outQueueY.DeQue<int32_t>();
         AscendC::DataCopy(yGm[progress * this->tileLength], yLocal, this->calcLength);
