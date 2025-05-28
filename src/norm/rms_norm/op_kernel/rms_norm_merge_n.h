@@ -145,10 +145,10 @@ private:
             } else {
                 LocalTensor<float> xFp32 = xFp32Buf.Get<float>();
                 Cast(xFp32, gammaLocal, RoundMode::CAST_NONE, elementNum);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Mul(sqx, sqx, xFp32, elementNum);
             }
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, sqx, RoundMode::CAST_NONE, elementNum);
             } else {
@@ -173,24 +173,24 @@ private:
             xFp32 = xFp32Buf.Get<float>();
             Cast(xFp32, xLocal, RoundMode::CAST_NONE, elementNum);
             inQueueX.FreeTensor(xLocal);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Mul(sqx, xFp32, xFp32, elementNum);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         // 2. Rstd = 1 / sqrt(1 / reduceDim * reducesum(x^2) + eps)
         LocalTensor<float> rstdLocal = outQueueRstd.AllocTensor<float>();
         ReduceSumMultiN(rstdLocal, sqx, tmpLocal, calcRowNum, numCol, numColAlign);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Muls(rstdLocal, rstdLocal, avgFactor, calcRowNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Adds(rstdLocal, rstdLocal, epsilon, calcRowNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Sqrt(rstdLocal, rstdLocal, calcRowNum);
         Duplicate(tmpLocal, ONE, calcRowNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Div(rstdLocal, tmpLocal, rstdLocal, calcRowNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         outQueueRstd.EnQue<float>(rstdLocal);
         CopyOutRstd(iOuter, calcRowNum);
 
@@ -199,7 +199,7 @@ private:
         const uint32_t dstShape[2] = {calcRowNum, numColAlign};
         auto sharedTmpLocal = tmpLocal.ReinterpretCast<uint8_t>();
         BroadCast<float, DIM_NUM, 1>(sqx, rstdLocal, dstShape, srcShape, sharedTmpLocal);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         // 4. Y = x * rstd * gamma
         if constexpr (IsSame<T, float>::value) {  // fp32 use inQueueX store x
@@ -208,9 +208,9 @@ private:
         } else {  // fp16/bf16 use xFp32Buf store x
             Mul(sqx, xFp32, sqx, elementNum);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ComputeMulGammaCast(gammaLocal, elementNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void CopyOutY(uint32_t progress, uint32_t calc_row_num)

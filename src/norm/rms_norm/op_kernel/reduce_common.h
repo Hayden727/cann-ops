@@ -36,7 +36,7 @@ __aicore__ inline void ReduceSumForSmallReduceDimPreRepeat(const LocalTensor<flo
             elemNum,
             repeat,
             {1, 1, 1, ELEM_PER_BLK_FP32, repStride, ELEM_PER_BLK_FP32});
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
     if (unlikely(tailCount != 0)) {
         Add(tmpLocal,
@@ -46,25 +46,14 @@ __aicore__ inline void ReduceSumForSmallReduceDimPreRepeat(const LocalTensor<flo
             repeat,
             {1, 1, 1, ELEM_PER_BLK_FP32, repStride, ELEM_PER_BLK_FP32});
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     AscendCUtils::SetMask<float>(ELEM_PER_REP_FP32);  // set mask = 64
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
     if ASCEND_IS_AIV {
-        vcadd((__ubuf__ float *)dstLocal.GetPhyAddr(),
-            (__ubuf__ float *)tmpLocal.GetPhyAddr(),
-            repeat,
-            1,
-            1,
-            ELEM_PER_BLK_FP32,
-            false);
+        RepeatReduceSum<float, false>(dstLocal, tmpLocal, repeat, ELEM_PER_REP_FP32, 1, 1, 1, ELEM_PER_REP_FP32);
     }
 #else
-    vcadd((__ubuf__ float *)dstLocal.GetPhyAddr(),
-        (__ubuf__ float *)tmpLocal.GetPhyAddr(),
-        repeat,
-        1,
-        1,
-        ELEM_PER_BLK_FP32);
+    WholeReduceSum<float, false>(dstLocal, tmpLocal, MASK_PLACEHOLDER, repeat, 1, 1, ELEM_PER_REP_FP32);
 #endif
 }
 
@@ -119,7 +108,7 @@ __aicore__ inline void ReduceSumMultiN(const LocalTensor<float> &dstLocal, const
     const uint32_t repeat = numRow;
     const uint8_t repStride = numColAlign / ELEM_PER_BLK_FP32;
     Duplicate(tmpLocal, ZERO, numRow * ELEM_PER_REP_FP32);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     ReduceSumForSmallReduceDim(dstLocal, srcLocal, tmpLocal, numColAlign, numCol, tailCount, repeat, repStride);
 }
 
@@ -142,12 +131,12 @@ __aicore__ inline void ReduceSumHalfInterval(
         int32_t tailCount = count - bodyCount;
         if (tailCount > 0) {
             Add(src_local, src_local, src_local[bodyCount], tailCount);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         }
         while (bodyCount > ELEM_PER_REP_FP32) {
             bodyCount = bodyCount / HALf_INTERVAL;
             Add(src_local, src_local, src_local[bodyCount], bodyCount);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         }
 
         AscendCUtils::SetMask<float>(ELEM_PER_REP_FP32);
@@ -156,17 +145,12 @@ __aicore__ inline void ReduceSumHalfInterval(
     }
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        vcadd((__ubuf__ float *)dst_local.GetPhyAddr(), (__ubuf__ float *)src_local.GetPhyAddr(), 1, 0, 1, 0, false);
+        RepeatReduceSum<float, false>(dst_local, src_local, 1, 1, 0, 0, 1, 1);
     }
 #else
-    vcadd((__ubuf__ float *)dst_local.GetPhyAddr(),
-        (__ubuf__ float *)src_local.GetPhyAddr(),
-        1,
-        1,
-        1,
-        DEFAULT_REPEAT_STRIDE);
+    WholeReduceSum<float, false>(dst_local, src_local, MASK_PLACEHOLDER, 1, 1, 1, DEFAULT_REPEAT_STRIDE);
 #endif
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline float ReduceSumHalfInterval(const LocalTensor<float> &src_local, int32_t count)
@@ -176,12 +160,12 @@ __aicore__ inline float ReduceSumHalfInterval(const LocalTensor<float> &src_loca
         int32_t tailCount = count - bodyCount;
         if (tailCount > 0) {
             Add(src_local, src_local, src_local[bodyCount], tailCount);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         }
         while (bodyCount > ELEM_PER_REP_FP32) {
             bodyCount = bodyCount / HALf_INTERVAL;
             Add(src_local, src_local, src_local[bodyCount], bodyCount);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         }
 
         AscendCUtils::SetMask<float>(ELEM_PER_REP_FP32);
@@ -190,15 +174,10 @@ __aicore__ inline float ReduceSumHalfInterval(const LocalTensor<float> &src_loca
     }
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        vcadd((__ubuf__ float *)src_local.GetPhyAddr(), (__ubuf__ float *)src_local.GetPhyAddr(), 1, 0, 1, 0, false);
+        RepeatReduceSum<float, false>(src_local, src_local, 1, 1, 0, 0, 1, 1);
     }
 #else
-    vcadd((__ubuf__ float *)src_local.GetPhyAddr(),
-        (__ubuf__ float *)src_local.GetPhyAddr(),
-        1,
-        1,
-        1,
-        DEFAULT_REPEAT_STRIDE);
+    WholeReduceSum<float, false>(src_local, src_local, MASK_PLACEHOLDER, 1, 1, 1, DEFAULT_REPEAT_STRIDE);
 #endif
     event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
     set_flag(PIPE_V, PIPE_S, event_v_s);

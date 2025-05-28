@@ -64,14 +64,14 @@ public:
         LocalTensor<float> temp_zero_tensor = outTmpZeroBuf.Get<float>();
         Duplicate(temp_zero_tensor, (float)0.0, row_factor_align);
 
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
         uint32_t i_o_max = CeilDiv(row_work, row_factor);
         uint32_t row_tail = row_work - (i_o_max - 1) * row_factor;
         for (uint32_t i_o = 0; i_o < i_o_max - 1; i_o++) {
             DataCopy(rstdGm[i_o * row_factor], temp_zero_tensor, row_factor_align);
         }
         DataCopy(rstdGm[(i_o_max - 1) * row_factor], temp_zero_tensor, ROUND_UP(row_tail, NUM_PER_BLK_FP32));
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
     }
 
     __aicore__ inline void InitVar(const RMSNormTilingData *tiling)
@@ -147,7 +147,7 @@ private:
             if (is_gemma == 1) {
                 LocalTensor<float> gammaFp32 = x_fp32_buf.Get<float>();
                 Adds(gammaFp32, gammaLocal, static_cast<float>(1.0), elementNum);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Mul(yLocal, sqx, gammaFp32, elementNum);
             } else {
                 Mul(yLocal, sqx, gammaLocal, elementNum);
@@ -158,14 +158,14 @@ private:
             } else {
                 LocalTensor<float> gammaFp32 = x_fp32_buf.Get<float>();
                 Cast(gammaFp32, gammaLocal, RoundMode::CAST_NONE, elementNum);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 if (is_gemma == 1) {
                     Adds(gammaFp32, gammaFp32, static_cast<float>(1.0), elementNum);
-                    pipe_barrier(PIPE_V);
+                    AscendC::PipeBarrier<PIPE_V>();
                 }
                 Mul(sqx, sqx, gammaFp32, elementNum);
             }
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, sqx, RoundMode::CAST_NONE, elementNum);
             } else {
@@ -191,11 +191,11 @@ private:
         } else {
             xBufFp32 = x_fp32_buf.Get<float>();
             Cast(xBufFp32, xLocal, RoundMode::CAST_NONE, num_col);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             inQueueX.FreeTensor(xLocal);
             Mul(sqx, xBufFp32, xBufFp32, num_col);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         // 2. Rstd = 1 / sqrt(1 / reduceDim * reducesum(x^2) + eps)
         float reduceOut = ReduceSumHalfInterval(sqx, num_col);
@@ -213,9 +213,9 @@ private:
         } else {  // fp16/bf16 use xFp32Buf store x
             Muls(sqx, xBufFp32, rstdValue, num_col);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ComputeMulGammaCast(gammaLocal, num_col);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void CopyOutRstd(uint32_t outer_progress, uint32_t num)

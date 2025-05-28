@@ -64,14 +64,14 @@ public:
         LocalTensor<float> temp_zero_tensor = outTmpZeroBuf.Get<float>();
         Duplicate(temp_zero_tensor, (float)0.0, row_factor_align);
 
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
         uint32_t i_o_max = CeilDiv(row_work, row_factor);
         uint32_t row_tail = row_work - (i_o_max - 1) * row_factor;
         for (uint32_t i_o = 0; i_o < i_o_max - 1; i_o++) {
             DataCopy(rstdGm[i_o * row_factor], temp_zero_tensor, row_factor_align);
         }
         DataCopy(rstdGm[(i_o_max - 1) * row_factor], temp_zero_tensor, ROUND_UP(row_tail, NUM_PER_BLK_FP32));
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
     }
 
     __aicore__ inline void InitVar(const RMSNormTilingData *tiling)
@@ -122,7 +122,7 @@ public:
         LocalTensor<float> sumLocal = sum_buf.Get<float>();
         LocalTensor<float> rstdLocal = outQueueRstd.AllocTensor<float>();
         Duplicate(rstdLocal, (float)0.0, ROUND_UP(calc_row_num, NUM_PER_BLK_FP32));
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         for (uint32_t j = 0; j < j_max - 1; j++) {
             ComputeFormer(i_o, calc_row_num, j, rstdLocal, sumLocal, ub_factor, left_num, reduce_mask);
         }
@@ -144,7 +144,7 @@ public:
         LocalTensor<float> sumLocal = sum_buf.Get<float>();
         LocalTensor<float> rstdLocal = outQueueRstd.AllocTensor<float>();
         Duplicate(rstdLocal, (float)0.0, ROUND_UP(calcRowNum, NUM_PER_BLK_FP32));
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ComputeFormerPrecision(iOuter, calcRowNum, jTail, jOuterMax, jInnerMax, rstdLocal);
         ComputeRstd(rstdLocal, calcRowNum);
         ComputeLatter(iOuter, calcRowNum, jMax - 1, rstdLocal, jTail);
@@ -224,15 +224,15 @@ private:
             LocalTensor<float> xBufFp32 = x_fp32_buf.Get<float>();
             Cast(xBufFp32, xLocal, RoundMode::CAST_NONE, num);
             inQueueX.FreeTensor(xLocal);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Mul(sqx, xBufFp32, xBufFp32, num);
         } else {
             Mul(sqx, xLocal, xLocal, num);
             inQueueX.FreeTensor(xLocal);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ReduceSumHalfInterval(sumLocal, sqx, num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeFormer(uint32_t i_o_idx, uint32_t calc_row_num, uint32_t j_idx,
@@ -249,7 +249,7 @@ private:
         BlockReduceSumFP32(sumLocal, sumLocal, calc_row_num * NUM_PER_BLK_FP32);
 #endif
         Add(rstdLocal, rstdLocal, sumLocal, calc_row_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeSum(
@@ -262,15 +262,15 @@ private:
             LocalTensor<float> x_fp32 = x_fp32_buf.Get<float>();
             Cast(x_fp32, xLocal, RoundMode::CAST_NONE, num);
             inQueueX.FreeTensor(xLocal);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Mul(sqx, x_fp32, x_fp32, num);
         } else {
             Mul(sqx, xLocal, xLocal, num);
             inQueueX.FreeTensor(xLocal);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Muls(sqx, sqx, avgFactor, num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 100
         ReduceSumHalfIntervalToRepeat(sumLocal[i_i_idx * NUM_PER_BLK_FP32], sqx, num, left_num);
 #else
@@ -283,15 +283,15 @@ private:
         LocalTensor<float> reduce_buf_local = reduce_fp32_buf.Get<float>();
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ != 100
         Muls(rstdLocal, rstdLocal, avgFactor, num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 #endif
         Adds(rstdLocal, rstdLocal, epsilon, num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Sqrt(rstdLocal, rstdLocal, num);
         Duplicate(reduce_buf_local, ONE, num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Div(rstdLocal, reduce_buf_local, rstdLocal, num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeLatter(
@@ -330,33 +330,33 @@ private:
         // 1. Cast x and Mul rstd
         if constexpr (IsSame<T, float>::value) {
             Muls(sqx, xLocal, rstdValue, num);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             if (is_gemma == 1) {
                 LocalTensor<float> gammaFp32 = x_fp32_buf.Get<float>();
                 Adds(gammaFp32, gammaLocal, static_cast<float>(1.0), num);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Mul(yLocal, sqx, gammaFp32, num);
             } else {
                 Mul(yLocal, sqx, gammaLocal, num);
             }
         } else {
             Cast(sqx, xLocal, RoundMode::CAST_NONE, num);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Muls(sqx, sqx, rstdValue, num);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             if constexpr (IS_MIX_DTYPE) {
                 Mul(sqx, sqx, gammaLocal, num);
             } else {
                 LocalTensor<float> gammaFp32 = x_fp32_buf.Get<float>();
                 Cast(gammaFp32, gammaLocal, RoundMode::CAST_NONE, num);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 if (is_gemma == 1) {
                     Adds(gammaFp32, gammaFp32, static_cast<float>(1.0), num);
-                    pipe_barrier(PIPE_V);
+                    AscendC::PipeBarrier<PIPE_V>();
                 }
                 Mul(sqx, sqx, gammaFp32, num);
             }
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, sqx, RoundMode::CAST_NONE, num);
             } else {
@@ -365,7 +365,7 @@ private:
         }
         inQueueX.FreeTensor(xLocal);
         outQueueY.EnQue<T>(yLocal);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void CopyOutY(uint32_t i_idx, uint32_t j_idx, uint32_t num)
