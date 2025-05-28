@@ -74,9 +74,14 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     // 数据对齐到 32B
     uint64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
     // 确定核心数（不超过数据块数）
-    coreNum = (coreNum < inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
-    uint32_t MIN_CORE_NUM = 1;
-    coreNum = (coreNum >= MIN_CORE_NUM) ? coreNum : MIN_CORE_NUM;
+    if (inputNum <= tileDataNum) {
+        coreNum = 1;
+    } else {
+        uint32_t maxCoreNum = inputNum / tileDataNum;
+        coreNum = (coreNum < maxCoreNum) ? coreNum : maxCoreNum;
+        coreNum = (coreNum >= 1) ? coreNum : 1;
+    }
+    
     uint64_t everyCoreInputBlockNum = 0;
     uint64_t tailBlockNum = 0;
     // 计算大核和小核的分块参数

@@ -47,9 +47,14 @@ public:
         yGm.SetGlobalBuffer((__gm__ TYPE_X *)y + globalBufferIndex, this->coreDataNum);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
+        #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
         //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
-        pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float32_t));
-        pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(int32_t));
+        if constexpr (std::is_same_v<TYPE_X, bfloat16_t>){
+            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float32_t));
+        }else if constexpr (std::is_same_v<TYPE_X, int64_t>){
+            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(int32_t));
+        }
+        #endif
     }
     __aicore__ inline void Process()
     {
@@ -58,14 +63,14 @@ public:
         this->processDataNum = this->tileDataNum;
         for (int32_t i = 0; i < loopCount; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 private:
     __aicore__ inline void CopyIn(int32_t progress)
@@ -171,18 +176,19 @@ public:
     }
     __aicore__ inline void Process()
     {
+        //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
         for (int32_t i = 0; i < loopCount; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 private:
     __aicore__ inline void CopyIn(int32_t progress)
@@ -301,18 +307,19 @@ public:
     }
     __aicore__ inline void Process()
     {
+        //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
         for (int32_t i = 0; i < loopCount; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 private:
     __aicore__ inline void CopyIn(int32_t progress)
