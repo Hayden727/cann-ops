@@ -119,9 +119,9 @@ private:
         LocalTensor<T_GAMMA> xLocal = inQueueX.DeQue<T_GAMMA>();
         auto xLocalHalf = xLocal.template ReinterpretCast<T>();
         Cast(xLocalFp32, xLocalHalf, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Mul(xLocal, xLocalFp32, xLocalFp32, numCol);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         // 2. Rstd = 1 / sqrt(1 / reduceDim * reducesum(x^2) + eps)
         float reduceOut = ReduceSumHalfInterval(xLocal, numCol);
@@ -135,16 +135,16 @@ private:
 
         // 3. Y = x * rstd * gamma
         Muls(xLocalFp32, xLocalFp32, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Mul(xLocalFp32, xLocalFp32, gammaLocal, numCol);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         if constexpr (IsSame<T, half>::value) {
             Cast(yLocal, xLocalFp32, RoundMode::CAST_NONE, numCol);
         } else {
             Cast(yLocal, xLocalFp32, RoundMode::CAST_RINT, numCol);
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         outQueueY.EnQue<T>(yLocal);
     }
 

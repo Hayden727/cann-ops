@@ -69,7 +69,7 @@ public:
         CopyInGamma();
         LocalTensor<T> gammaLocal = inQueueGamma.DeQue<T>();
         LocalTensor<float> reduce_buf_local = reduce_fp32_buf.Get<float>();
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Duplicate(reduce_buf_local, ONE, NUM_PER_BLK_FP32);
         uint64_t i_o_max = CeilDiv(row_work, row_factor);
         uint64_t row_tail = row_work - (i_o_max - 1) * row_factor;
@@ -142,7 +142,7 @@ private:
         uint32_t last_repeat_num = calc_row_num % MAX_REAPEAT;
         uint32_t start_index;
         Mul(sqx, x_fp32, x_fp32, once_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         for (uint32_t i_i = 0; i_i < calc_row_num; i_i++) {
             ReduceSumHalfInterval(sqx[i_i * NUM_PER_BLK_FP32], sqx[i_i * num_col_align], num_col);
@@ -151,20 +151,20 @@ private:
         for (uint32_t i_i = 0; i_i < repeat_time; i_i++) {
             start_index = i_i * MAX_REAPEAT * NUM_PER_BLK_FP32;
             Muls(sqx[start_index], sqx[start_index], avgFactor, NUM_PER_BLK_FP32, MAX_REAPEAT, MulsParams);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Adds(sqx[start_index], sqx[start_index], epsilon, NUM_PER_BLK_FP32, MAX_REAPEAT, MulsParams);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Sqrt(sqx[start_index], sqx[start_index], NUM_PER_BLK_FP32, MAX_REAPEAT, MulsParams);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             Div(sqx[start_index], reduce_buf_local, sqx[start_index], NUM_PER_BLK_FP32, MAX_REAPEAT, DivParams);
         }
         start_index = repeat_time * MAX_REAPEAT * NUM_PER_BLK_FP32;
         Muls(sqx[start_index], sqx[start_index], avgFactor, NUM_PER_BLK_FP32, last_repeat_num, MulsParams);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Adds(sqx[start_index], sqx[start_index], epsilon, NUM_PER_BLK_FP32, last_repeat_num, MulsParams);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Sqrt(sqx[start_index], sqx[start_index], NUM_PER_BLK_FP32, last_repeat_num, MulsParams);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Div(sqx[start_index], reduce_buf_local, sqx[start_index], NUM_PER_BLK_FP32, last_repeat_num, DivParams);
         event_t eventId = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         event_t eventId_S_V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -191,15 +191,15 @@ private:
         LocalTensor<float> reduce_buf_local = reduce_fp32_buf.Get<float>();
 
         Cast(x_fp32, xLocal, RoundMode::CAST_NONE, once_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ComputeRstd(inner_progress, rstdLocal, x_fp32, sqx, reduce_buf_local, x_fp32, calc_row_num, once_num);
         inQueueX.FreeTensor(xLocal);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         for (int32_t i_i = 0; i_i < calc_row_num; i_i++) {
             Mul(x_fp32[i_i * num_col_align], gamma_fp32, x_fp32[i_i * num_col_align], num_col_align);
         }
         Cast(yLocal, x_fp32, RoundMode::CAST_NONE, once_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         outQueueY.EnQue<T>(yLocal);
     }
 
@@ -210,20 +210,20 @@ private:
 
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         LocalTensor<float> x_fp32 = yLocal.template ReinterpretCast<float>();
         LocalTensor<float> sqx = xLocal.template ReinterpretCast<float>();
         LocalTensor<float> reduce_buf_local = reduce_fp32_buf.Get<float>();
         Cast(x_fp32, xLocal, RoundMode::CAST_NONE, once_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ComputeRstd(inner_progress, rstdLocal, x_fp32, sqx, reduce_buf_local, x_fp32, calc_row_num, once_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         inQueueX.FreeTensor(xLocal);
 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Cast(yLocal, x_fp32, RoundMode::CAST_NONE, once_num);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         for (int32_t i_i = 0; i_i < calc_row_num; i_i++) {
             Mul(yLocal[i_i * num_col_align], gammaLocal, yLocal[i_i * num_col_align], num_col_align);
@@ -239,7 +239,7 @@ private:
         LocalTensor<float> reduce_buf_local = reduce_fp32_buf.Get<float>();
         DataCopy(yLocal, xLocal, once_num);
 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ComputeRstd(inner_progress, rstdLocal, xLocal, xLocal, reduce_buf_local, yLocal, calc_row_num, once_num);
         inQueueX.FreeTensor(xLocal);
         for (int32_t i_i = 0; i_i < calc_row_num; i_i++) {
@@ -257,12 +257,12 @@ private:
         } else {
             if (row_tail * num_col >= data_per_block) {
                 for (uint32_t i_i = 0; i_i < row_tail - last_block_row; i_i++) {
-                    pipe_barrier(PIPE_MTE3);
+                    AscendC::PipeBarrier<PIPE_MTE3>();
                     DataCopy(
                         yGm[((i_o_max - 1) * row_factor + i_i) * num_col], yLocal[i_i * num_col_align], num_col_align);
                 }
                 if (num_col > data_per_block) {
-                    pipe_barrier(PIPE_MTE3);
+                    AscendC::PipeBarrier<PIPE_MTE3>();
                     DataCopy(yGm[(row_work - 1) * num_col],
                         yLocal[(row_tail - 1) * num_col_align],
                         num_col_align - data_per_block);
@@ -276,7 +276,7 @@ private:
                     yLocal.SetValue(row_tail * num_col_align - 1 - last_data,
                         yLocal.GetValue((row_tail - 1 - row_index) * num_col_align + num_col - 1 - col_index));
                 }
-                pipe_barrier(PIPE_MTE3);
+                AscendC::PipeBarrier<PIPE_MTE3>();
                 event_t eventIdSToMte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_MTE3));
                 SetFlag<HardEvent::S_MTE3>(eventIdSToMte3);
                 WaitFlag<HardEvent::S_MTE3>(eventIdSToMte3);
@@ -303,7 +303,7 @@ private:
             DataCopy(yGm[(i_o * row_factor) * num_col], yLocal, row_factor * num_col);
         } else {
             for (uint32_t i_i = 0; i_i < row_factor; i_i++) {
-                pipe_barrier(PIPE_MTE3);
+                AscendC::PipeBarrier<PIPE_MTE3>();
                 DataCopy(yGm[(i_o * row_factor + i_i) * num_col], yLocal[i_i * num_col_align], num_col_align);
             }
         }
