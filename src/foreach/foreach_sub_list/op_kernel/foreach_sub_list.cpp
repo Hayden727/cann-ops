@@ -29,7 +29,7 @@ template <typename T>
 __aicore__ void SubListNormalAdapter(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal1, const LocalTensor<T>& srcLocal2, const T& scalarVal, const int32_t& uValue) {
     Muls(srcLocal2, srcLocal2, scalarVal, uValue);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(dstLocal, srcLocal1, srcLocal2, uValue);
 }
 
@@ -38,7 +38,7 @@ __aicore__ void SubListFloatAdapter(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal1, const LocalTensor<T>& srcLocal2, const T& scalarVal, const int32_t& uValue) {
     Axpy<T, T>(srcLocal1, srcLocal2, -scalarVal, uValue);
     if(dstLocal.GetPhyAddr() != srcLocal1.GetPhyAddr()){
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (uValue * sizeof(T) % BYTE_PER_BLOCK == 0) {
             DataCopy(dstLocal, srcLocal1, uValue);
         } else {

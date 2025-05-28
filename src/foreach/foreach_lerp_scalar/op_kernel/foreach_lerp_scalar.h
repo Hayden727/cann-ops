@@ -41,24 +41,24 @@ namespace ForeachLerpScalar {
             LocalTensor<float> &float32Tensor,
             uint32_t maxCastDataCount, float localWeight,
             uint16_t index, int64_t dataCount) {
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Cast(float32Tensor, x1Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Cast(float32Tensor[maxCastDataCount], x2Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Sub(float32Tensor[maxCastDataCount], float32Tensor[maxCastDataCount], float32Tensor, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 if (localWeight < FLOAT_NUM_POS && localWeight > FLOAT_NUM_NEG) {
                     Axpy(float32Tensor, float32Tensor[maxCastDataCount], localWeight, dataCount);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Cast(x1Local[index * maxCastDataCount], float32Tensor, RoundMode::CAST_RINT, dataCount);
                 } else {
                     localWeight = localWeight - FLOAT_NUM_ONE;
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Cast(float32Tensor, x2Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Axpy(float32Tensor, float32Tensor[maxCastDataCount], localWeight, dataCount);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Cast(x2Local[index * maxCastDataCount], float32Tensor, RoundMode::CAST_RINT, dataCount);
                 }
                 
@@ -104,20 +104,20 @@ namespace ForeachLerpScalar {
             float weightVal,
             uint32_t maxCastDataCount,
             int64_t dataCount) { 
-            pipe_barrier(PIPE_V);    
+            PipeBarrier<PIPE_V>();    
             
             if (weightVal < FLOAT_NUM_POS && weightVal > FLOAT_NUM_NEG) {
                 Sub(x2Local, x2Local, x1Local, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Axpy(x1Local, x2Local, weightVal, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Sub(x1Local, x2Local, x1Local, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 weightVal = weightVal - FLOAT_NUM_ONE; 
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Axpy(x2Local, x1Local, weightVal, dataCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
     };

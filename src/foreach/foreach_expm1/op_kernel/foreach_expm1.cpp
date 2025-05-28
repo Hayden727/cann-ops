@@ -27,9 +27,9 @@ template <typename T>
 __aicore__ void Expm1Adapter(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const int32_t& uValue) {
     T scalarVal = T(-1);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(dstLocal, srcLocal, uValue);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(dstLocal, srcLocal, scalarVal, uValue);
 }
 

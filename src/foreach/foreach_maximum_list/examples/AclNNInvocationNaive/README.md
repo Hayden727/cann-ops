@@ -33,7 +33,7 @@ aclnnStatus aclnnForeachMaximumList(void *workspace, int64_t workspaceSize, aclO
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/foreach/foreach_abs/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/foreach/foreach_maximum_list/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置

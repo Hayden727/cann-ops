@@ -76,23 +76,23 @@ private:
         LocalTensor<T> &outLocal,
         LocalTensor<float> &float32Tensor,
         int8_t roundModeValue, uint32_t maxCastDataCount, uint16_t index, int64_t dataCount) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(float32Tensor, dataLocal[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if (roundModeValue == CAST_FRAC) {
             Cast(float32Tensor[maxCastDataCount], float32Tensor, RoundMode::CAST_TRUNC, dataCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Sub(float32Tensor[maxCastDataCount], float32Tensor, float32Tensor[maxCastDataCount], dataCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(float32Tensor[maxCastDataCount], float32Tensor, ConvertRoundMode(roundModeValue), dataCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         Cast(outLocal[index * maxCastDataCount], float32Tensor[maxCastDataCount], RoundMode::CAST_RINT, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 public:
     __aicore__ inline void Compute(
@@ -139,7 +139,7 @@ public:
         int64_t dataCount) {
         if (roundModeValue == CAST_FRAC) {
             Cast(outLocal, dataLocal, RoundMode::CAST_TRUNC, dataCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Sub(outLocal, dataLocal, outLocal, dataCount);
         } else {
             Cast(outLocal, dataLocal, ConvertRoundMode(roundModeValue), dataCount);

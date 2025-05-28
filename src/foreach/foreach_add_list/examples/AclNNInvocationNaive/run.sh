@@ -44,7 +44,7 @@ cmake --build build -j
     ./execute_add_op
 )
 
-ret=`python3 verify_result.py output/golden_out1.bin output/output_x1.bin`
+ret=`python3 verify_result.py  output/output_x1.bin output/golden_out1.bin`
 echo $ret
 if [ "x$ret" == "xtest pass" ]; then
     echo ""
@@ -54,7 +54,7 @@ if [ "x$ret" == "xtest pass" ]; then
     echo ""
 fi
 
-ret=`python3 verify_result.py output/golden_out2.bin output/output_x2.bin`
+ret=`python3 verify_result.py output/output_x2.bin output/golden_out2.bin`
 echo $ret
 if [ "x$ret" == "xtest pass" ]; then
     echo ""

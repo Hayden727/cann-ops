@@ -165,6 +165,8 @@ int main(int argc, char **argv)
     std::vector<int64_t> alphaShape = {1};
     void *inputXDeviceAddr = nullptr;
     void *inputYDeviceAddr = nullptr;
+    void *other1DeviceAddr = nullptr;
+    void *other2DeviceAddr = nullptr;
     void *outputXDeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     void* alphaDeviceAddr = nullptr;
@@ -174,7 +176,9 @@ int main(int argc, char **argv)
     aclTensor* other2 = nullptr;
     aclTensor *outputX = nullptr;
     aclTensor *outputY = nullptr;
+    aclTensor *alpha = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
+    size_t inputYShapeSize = inputYShape[0] * inputYShape[1];
     size_t outputXShapeSize = inputXShape[0] * inputXShape[1];
     size_t outputYShapeSize = inputXShape[0] * inputXShape[1];
     std::vector<float> inputXHostData(inputXShape[0] * inputXShape[1]);
@@ -188,9 +192,13 @@ int main(int argc, char **argv)
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
     void ** input2=(void **)(&inputYHostData);
+    void ** otherX=(void **)(&other1HostData);
+    void ** otherY=(void **)(&other2HostData);
     //读取数据
     ReadFile("../input/input_x1.bin", fileSize, *input1, inputXShapeSize * dataType);
-    ReadFile("../input/input_x2.bin", fileSize, *input2, inputXShapeSize * dataType);
+    ReadFile("../input/input_x2.bin", fileSize, *input2, inputYShapeSize * dataType);
+    ReadFile("../input/input_y1.bin", fileSize, *otherX, inputXShapeSize * dataType);
+    ReadFile("../input/input_y2.bin", fileSize, *otherY, inputYShapeSize * dataType);
 
     INFO_LOG("Set input success");
     // 创建inputX aclTensor
@@ -268,9 +276,9 @@ int main(int argc, char **argv)
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
     aclDestroyTensorList(tensorListInput1);
-  aclDestroyTensorList(tensorListInput2);
-  aclDestroyTensorList(tensorListOutput);
-  aclDestroyTensor(alpha);
+    aclDestroyTensorList(tensorListInput2);
+    aclDestroyTensorList(tensorListOutput);
+    aclDestroyTensor(alpha);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(inputXDeviceAddr);

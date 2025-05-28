@@ -24,8 +24,9 @@ def gen_golden_data_simple():
     alpha1 = 1.2
     alpha2 = 2.2
 
-    out1 = x1 + y1 / z1 * alpha1
-    out2 = x2 + y2 / z2 * alpha2
+    out1 = x1 + y1 * z1 * alpha1
+    out2 = x2 + y2 * z2 * alpha2
+
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

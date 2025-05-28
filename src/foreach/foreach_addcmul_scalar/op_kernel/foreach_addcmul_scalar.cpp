@@ -32,7 +32,7 @@ __aicore__ void AddcMulScalarAdapterForFloat(
     const uint32_t maxCastDataCount,
     const int64_t dataCount) {
     Mul(tensorLocal2, tensorLocal2, tensorLocal3, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Axpy<T, T>(tensorLocal1, tensorLocal2, scalarValue, dataCount);
 }
  
@@ -46,9 +46,9 @@ __aicore__ void AddcMulScalarAdapterForInt(
     const uint32_t maxCastDataCount,
     const int64_t dataCount) {
     Mul(tensorLocal2, tensorLocal2, tensorLocal3, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tensorLocal2, tensorLocal2, (int32_t)scalarValue, dataCount);
-    pipe_barrier(PIPE_V); 
+    PipeBarrier<PIPE_V>(); 
     Add(tensorLocal1, tensorLocal1, tensorLocal2, dataCount);
 }
  
@@ -62,17 +62,17 @@ __aicore__ void AddcMulScalarAdapterForInt(
          const uint32_t index, const int64_t dataCount) {
      
      Cast(float32Tensor, tensorLocal2[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-     pipe_barrier(PIPE_V);
+     PipeBarrier<PIPE_V>();
      Cast(float32Tensor[maxCastDataCount], tensorLocal3[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-     pipe_barrier(PIPE_V);
+     PipeBarrier<PIPE_V>();
      Cast(float32Tensor[maxCastDataCount * 2], tensorLocal1[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-     pipe_barrier(PIPE_V);
+     PipeBarrier<PIPE_V>();
      // input + scalar_tensor * (tensor1 / tensor2)
-     pipe_barrier(PIPE_V);
+     PipeBarrier<PIPE_V>();
      Mul(float32Tensor, float32Tensor, float32Tensor[maxCastDataCount], dataCount);
-     pipe_barrier(PIPE_V);
+     PipeBarrier<PIPE_V>();
      Axpy<float, float>(float32Tensor[maxCastDataCount * 2], float32Tensor, scalarValue, dataCount);
-     pipe_barrier(PIPE_V);
+     PipeBarrier<PIPE_V>();
      Cast(tensorLocal1[index * maxCastDataCount], float32Tensor[maxCastDataCount * 2], RoundMode::CAST_RINT, dataCount);
  }
  

@@ -53,13 +53,13 @@ private:
         LocalTensor<float> &float32Tensor,
         float scalarVal,
         uint32_t maxCastDataCount, uint16_t index, int64_t dataCount) {        
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(float32Tensor, dataLocal[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Power<float, false>(float32Tensor[maxCastDataCount], scalarVal, float32Tensor, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(outLocal[index * maxCastDataCount], float32Tensor[maxCastDataCount], RoundMode::CAST_RINT, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 public:
     __aicore__ inline void Compute(
