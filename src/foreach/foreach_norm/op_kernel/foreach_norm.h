@@ -59,9 +59,9 @@ template <typename P, uint8_t modelCode>
 class NormAdapter {
     public:
     __aicore__ inline void AbsAndPowerAdapt(LocalTensor<P> &dataLocal, int64_t dataCount) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Abs(dataLocal, dataLocal, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     __aicore__ inline void ReciprocalPowerAdapt(LocalTensor<P> &dataLocal, LocalTensor<P> &outLocal, int64_t dataCount) {
         uint64_t mask = 64;
@@ -75,14 +75,14 @@ template <typename P>
 class NormAdapter<P,NORM_MODEL_CODE> {
     public:
     __aicore__ inline void AbsAndPowerAdapt(LocalTensor<P> &dataLocal, int64_t dataCount) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dataLocal, dataLocal, dataLocal, dataCount);
-        pipe_barrier(PIPE_V); 
+        PipeBarrier<PIPE_V>(); 
     }
     __aicore__ inline void ReciprocalPowerAdapt(LocalTensor<P> &dataLocal, LocalTensor<P> &outLocal, int64_t dataCount) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(outLocal, dataLocal, dataCount);
-        pipe_barrier(PIPE_V); 
+        PipeBarrier<PIPE_V>(); 
     }
 };
 
@@ -92,11 +92,11 @@ private:
     __aicore__ inline void SquareAndReduceRound1ComputePerCast(NormAdapter<float, modelCode> &normAdapter,
         LocalTensor<T> &dataLocal, LocalTensor<float> &float32Tensor,
         uint32_t maxCastDataCount, uint16_t index, int64_t dataCount) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(float32Tensor, dataLocal[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         normAdapter.AbsAndPowerAdapt(float32Tensor, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSum<float>(float32Tensor, float32Tensor, float32Tensor, dataCount);
 
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -128,7 +128,7 @@ public:
             normAdapter, dataLocal, float32Tensor, maxCastDataCount, castTimes, castDatacountRemainder);
             castTimes++;
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSum<float>(float32Tensor, float32Tensor[maxCastDataCount], float32Tensor[maxCastDataCount], castTimes);
 
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -141,14 +141,14 @@ public:
     __aicore__ inline void ReduceRound2AndSqrtCompute(NormAdapter<float, modelCode> &normAdapter,
         LocalTensor<P> &dataLocal, LocalTensor<T> &outLocal, int64_t dataCount) {
         if (dataCount > 1) {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             ReduceSum<float>(dataLocal, dataLocal, dataLocal, dataCount);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         normAdapter.ReciprocalPowerAdapt(dataLocal, dataLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(outLocal, dataLocal, RoundMode::CAST_RINT, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 };
 
@@ -158,11 +158,11 @@ public:
     __aicore__ inline void SquareAndReduceRound1Compute(NormAdapter<float, modelCode> &normAdapter,
         LocalTensor<float> &dataLocal, LocalTensor<P> &tempLocal, LocalTensor<float> &float32Tensor,
         uint32_t maxCastDataCount, int64_t dataCount, uint16_t tempIndex) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         normAdapter.AbsAndPowerAdapt(dataLocal, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSum<float>(dataLocal, dataLocal, dataLocal, dataCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
         SetValueAdapter<P>(tempLocal, dataLocal.GetValue(0), tempIndex);
@@ -172,12 +172,12 @@ public:
     __aicore__ inline void ReduceRound2AndSqrtCompute(NormAdapter<float, modelCode> &normAdapter,
         LocalTensor<float> &dataLocal, LocalTensor<float> &outLocal, int64_t dataCount) {
         if (dataCount > 1) {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             ReduceSum<float>(dataLocal, dataLocal, dataLocal, dataCount);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         normAdapter.ReciprocalPowerAdapt(dataLocal, outLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 };
 
@@ -297,9 +297,9 @@ private:
             SquareAndReduceRound1(i, tempDataCount, tempLocal);
         }
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSum<P>(tempLocal, tempLocal, tempLocal, copyTimes);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
         set_flag(PIPE_V, PIPE_MTE3, eventID1);

@@ -50,10 +50,10 @@ __aicore__ void AddcMulListFloatAdapter(
     const T& scalarVal,
     const int32_t& uValue) {
     Mul(tensor2Local, tensor2Local, tensor3Local, uValue);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Axpy<T, T>(tensor1Local, tensor2Local, scalarVal, uValue);
     if(dstLocal.GetPhyAddr() != tensor1Local.GetPhyAddr()){
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (uValue * sizeof(T) % BYTE_PER_BLOCK == 0) {
             DataCopy(dstLocal, tensor1Local, uValue);
         } else {

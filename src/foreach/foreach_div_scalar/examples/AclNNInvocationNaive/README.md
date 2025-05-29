@@ -34,7 +34,7 @@ aclnnStatus aclnnForeachDivScalar(void *workspace, int64_t workspaceSize, aclOpE
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/foreach/foreach_abs/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/foreach/foreach_div_scalar/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置

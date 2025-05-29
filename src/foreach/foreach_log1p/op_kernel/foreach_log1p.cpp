@@ -26,7 +26,7 @@ __aicore__ void Log1pAdapter(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const int32_t& uValue) {
     T scalarVal = T(1);
     Adds(dstLocal, srcLocal, scalarVal, uValue);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Log<T>(dstLocal, srcLocal);
 }
 

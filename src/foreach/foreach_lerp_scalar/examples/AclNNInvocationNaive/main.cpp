@@ -164,6 +164,8 @@ int main(int argc, char **argv)
     std::vector<int64_t> outShape2 = {8, 2048};
     void *inputXDeviceAddr = nullptr;
     void *inputYDeviceAddr = nullptr;
+    void *other1DeviceAddr = nullptr;
+    void *other2DeviceAddr = nullptr;
     void *outputXDeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
@@ -186,6 +188,8 @@ int main(int argc, char **argv)
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
     void ** input2=(void **)(&inputYHostData);
+    void ** otherX=(void **)(&other1HostData);
+    void ** otherY=(void **)(&other2HostData);
 
     float weightValue = 1.2f;
 
@@ -193,8 +197,8 @@ int main(int argc, char **argv)
     ReadFile("../input/input_x1.bin", fileSize, *input1, inputXShapeSize * dataType);
     ReadFile("../input/input_x2.bin", fileSize, *input2, inputXShapeSize * dataType);
 
-    ReadFile("../input/input_y1.bin", fileSize, *other1, inputXShapeSize * dataType);
-    ReadFile("../input/input_y2.bin", fileSize, *other2, inputXShapeSize * dataType);
+    ReadFile("../input/input_y1.bin", fileSize, *otherX, inputXShapeSize * dataType);
+    ReadFile("../input/input_y2.bin", fileSize, *otherY, inputXShapeSize * dataType);
 
     INFO_LOG("Set input success");
     // 创建inputX aclTensor
@@ -279,7 +283,8 @@ int main(int argc, char **argv)
     aclrtFree(inputYDeviceAddr);
     aclrtFree(outputXDeviceAddr);
     aclrtFree(outputYDeviceAddr);
-    aclrtFree(alphaDeviceAddr);
+    aclrtFree(other1DeviceAddr);
+    aclrtFree(other2DeviceAddr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }

@@ -32,7 +32,7 @@ __aicore__ void AddcDivScalarAdapterForFloat(
     const uint32_t maxCastDataCount,
     const int64_t dataCount) {
     Div(tensor2Local, tensor2Local, tensor3Local, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Axpy<T, T>(tensor1Local, tensor2Local, scalarVal, dataCount);
 }
  
@@ -45,17 +45,17 @@ __aicore__ void ComputerPerCastForAddcDivScalar(
         const float scalarVal, const uint32_t maxCastDataCount, 
         const uint32_t index, const int64_t dataCount) {
     Cast(float32Tensor, tensor2Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(float32Tensor[maxCastDataCount], tensor3Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(float32Tensor[maxCastDataCount * 2], tensor1Local[index * maxCastDataCount], RoundMode::CAST_NONE, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // input + scalar_tensor * (tensor1 / tensor2)
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Div(float32Tensor, float32Tensor, float32Tensor[maxCastDataCount], dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Axpy<float, float>(float32Tensor[maxCastDataCount * 2], float32Tensor, scalarVal, dataCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tensor1Local[index * maxCastDataCount], float32Tensor[maxCastDataCount * 2], RoundMode::CAST_RINT, dataCount);
 }
  
