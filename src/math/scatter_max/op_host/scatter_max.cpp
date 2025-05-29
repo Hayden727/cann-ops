@@ -55,7 +55,7 @@
      aivNum = aivNum >= 1 ? aivNum : 1;
  
      uint32_t core_size = 1;
-     if(aivNum != 0 && AlIGN_NUM != 0){
+     if(aivNum != 0 && ALIGN_NUM != 0){
         core_size = (totalLength / aivNum) / (ALIGN_NUM * 8) * (ALIGN_NUM * 8);
      }
      
