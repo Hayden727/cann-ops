@@ -69,7 +69,7 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         return out.astype(ans_dtype)
 
 
-def calc_expect_func(x, y, ptr_x={"value":None}, ptr_y={"value":None}, r=1.0, max_num_neighbors=32, ignore_same_index=False, out=None):
+def calc_expect_func(x, y, ptr_x = {"value": None}, ptr_y = {"value": None}, r = 1.0, max_num_neighbors = 32, ignore_same_index = False, out = None):
     """
     calc_expect_func
     """

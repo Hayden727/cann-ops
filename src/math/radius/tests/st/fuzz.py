@@ -468,20 +468,20 @@ def generate_case(case_id, compute_dtype=np.float32):
         ignore_same_index = True
     assign_index = radius_numpy(x, y, r, ptr_x, ptr_y, max_num_neighbors, ignore_same_index)
     if ptr_x is None:
-        return {"input_desc": {"x": {"shape": list(x.shape),"value": x.tolist()}, 
-                           "y": {"shape": list(y.shape),"value": y.tolist()},
+        return {"input_desc": {"x": {"shape": list(x.shape), "value": x.tolist()}, 
+                           "y": {"shape": list(y.shape), "value": y.tolist()},
                            },
-            "attr":{"r":{"value":r}, "max_num_neighbors":{"value":max_num_neighbors}, "ignore_same_index":{"value":ignore_same_index}},
+            "attr": {"r": {"value": r}, "max_num_neighbors": {"value": max_num_neighbors}, "ignore_same_index": {"value": ignore_same_index}},
             "output_desc": {"out": {"shape": list(assign_index.shape)}}
             }
     else:
-        return {"input_desc": {"x": {"shape": list(x.shape),"value": x.tolist()}, 
-                           "y": {"shape": list(y.shape),"value": y.tolist()},
-                           "ptr_x": {"shape": list(ptr_x.shape),"value": ptr_x.tolist()},
-                           "ptr_y": {"shape": list(ptr_y.shape),"value": ptr_y.tolist()},
+        return {"input_desc": {"x": {"shape": list(x.shape), "value": x.tolist()}, 
+                           "y": {"shape": list(y.shape), "value": y.tolist()},
+                           "ptr_x": {"shape": list(ptr_x.shape), "value": ptr_x.tolist()},
+                           "ptr_y": {"shape": list(ptr_y.shape), "value": ptr_y.tolist()},
                            },
                                
-            "attr":{"r":{"value":r}, "max_num_neighbors":{"value":max_num_neighbors}, "ignore_same_index":{"value":ignore_same_index}},
+            "attr": {"r": {"value": r}, "max_num_neighbors": {"value": max_num_neighbors}, "ignore_same_index": {"value": ignore_same_index}},
             "output_desc": {"out": {"shape": list(assign_index.shape)}}
             }
 
