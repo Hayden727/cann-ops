@@ -15,7 +15,6 @@ import numpy as np
 
 
 def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
-    # todo
     ans_dtype = x.dtype
     x = x.astype(np.float32)
     y = y.astype(np.float32)
@@ -27,9 +26,9 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         for i in range(m):
             distances = np.linalg.norm(x - y[i], axis=1)
             neighbors = []
-            for _, t in enumerate(distances):
-                if distances[_] <= r:
-                    neighbors.append(_)
+            for t, _ in enumerate(distances):
+                if _ <= r:
+                    neighbors.append(t)
             neighbors = np.array(neighbors)
             if ignore_same_index:
                 neighbors = neighbors[neighbors != i]
@@ -43,7 +42,6 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         return out.astype(ans_dtype)
     else:
         # 批次情况
-        assert ptr_x is not None and ptr_y is not None
         out_vec = []
         for b in range(len(ptr_x) - 1):
             x_start, x_end = ptr_x[b], ptr_x[b + 1]
@@ -53,9 +51,9 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
             for i in range(y_start, y_end):
                 distances = np.linalg.norm(x[x_start:x_end] - y[i], axis=1)
                 neighbors = []
-                for _, t in enumerate(distances):
-                    if distances[_] <= r:
-                        neighbors.append(_ + x_start)
+                for t, _ in enumerate(distances):
+                    if _ <= r:
+                        neighbors.append(t + x_start)
                 neighbors = np.array(neighbors)
                 if ignore_same_index:
                     neighbors = neighbors[neighbors != i]
