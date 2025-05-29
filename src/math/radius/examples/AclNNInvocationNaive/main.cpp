@@ -43,6 +43,11 @@
         printf(message, ##__VA_ARGS__); \
     } while (0)
 
+#define COMPUTE_TYPE int32_t
+#define TYPE_SIZE 4
+#define ACL_TYPE aclDataType::ACL_INT32
+
+
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {
     struct stat sBuf;
@@ -145,18 +150,6 @@ int CreateAclTensor(const std::vector<T> &hostData, const std::vector<int64_t> &
                               shape.size(), *deviceAddr);
     return SUCCESS;
 }
-
-#define COMPUTE_TYPE int32_t
-#define TYPE_SIZE 4
-#define ACL_TYPE aclDataType::ACL_INT32
-
-// #define COMPUTE_TYPE float
-// #define TYPE_SIZE 4
-// #define ACL_TYPE aclDataType::ACL_FLOAT
-
-// #define COMPUTE_TYPE int16_t
-// #define TYPE_SIZE 2
-// #define ACL_TYPE aclDataType::ACL_FLOAT16
 
 int main(int argc, char **argv)
 {

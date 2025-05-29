@@ -21,10 +21,10 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
     y = y.astype(np.float32)
     if ptr_x is None and ptr_y is None:
         # 单示例情况
-        N = x.shape[0]
-        M = y.shape[0]
+        n = x.shape[0]
+        m = y.shape[0]
         out_vec = []
-        for i in range(M):
+        for i in range(m):
             distances = np.linalg.norm(x - y[i], axis=1)
             neighbors = []
             for _ in range(len(distances)):
@@ -52,7 +52,6 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
                 continue
             for i in range(y_start, y_end):
                 distances = np.linalg.norm(x[x_start:x_end] - y[i], axis=1)
-                # neighbors = np.where(distances <= r)[0] + x_start
                 neighbors = []
                 for _ in range(len(distances)):
                     if distances[_] <= r:
@@ -69,7 +68,8 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         return out.astype(ans_dtype)
 
 
-def calc_expect_func(x, y, ptr_x = {"value": None}, ptr_y = {"value": None}, r = 1.0, max_num_neighbors = 32, ignore_same_index = False, out = None):
+def calc_expect_func(x, y, ptr_x = {"value": None}, ptr_y = {"value": None},
+                    r = 1.0, max_num_neighbors = 32, ignore_same_index = False, out = None):
     """
     calc_expect_func
     """
