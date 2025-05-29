@@ -67,6 +67,7 @@ public:
     this->Attr("lse_square_scale_for_zloss").AttrType(OPTIONAL).Float(0.0);
 
     this->AICore().AddConfig("ascend910b");
+    this->AICore().AddConfig("ascend910_93");
   }
 };
 OP_ADD(CrossEntropyLossGrad);

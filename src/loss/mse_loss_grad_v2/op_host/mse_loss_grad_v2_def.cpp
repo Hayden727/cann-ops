@@ -50,6 +50,7 @@ public:
         this->Attr("reduction").AttrType(OPTIONAL).String("mean");
 
         this->AICore().AddConfig("ascend910b");
+        this->AICore().AddConfig("ascend910_93");
 
         OpAICoreConfig config_310p;
         config_310p.Input("predict")
