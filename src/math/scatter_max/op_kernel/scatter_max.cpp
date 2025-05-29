@@ -59,7 +59,6 @@ public:
             Compute(loopCount - 1, length);
             CopyOut(p, loopCount - 1, length);
         }
-        
     }
 
 private:
@@ -116,7 +115,6 @@ private:
 
 extern "C" __global__ __aicore__ void scatter_max(GM_ADDR var, GM_ADDR indices, GM_ADDR updates, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    // TODO: user kernel impl
     ScatterMaxGrad<DTYPE_VAR, DTYPE_INDICES> op;
     op.Init(var, indices, updates, tiling_data.lastdim, 
             tiling_data.totalLength, tiling_data.ALIGN_NUM,
