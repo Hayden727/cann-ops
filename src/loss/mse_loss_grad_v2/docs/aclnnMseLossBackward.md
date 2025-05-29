@@ -1,9 +1,9 @@
 # aclnnMseLossBackward
 
 ## 支持的产品型号
-- 昇腾310P AI处理器。
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
+- Atlas A2 训练系列产品/Atlas 800I A2推理产品
+- Atlas A3 训练系列产品/Atlas 800I A3推理产品
+- Atlas 推理系列产品
 
 ## 接口原型
 
@@ -35,24 +35,24 @@
 - **参数说明：**
 
   - gradOutput(aclTensor*, 计算输入)：公式中的输入`grad`，Device侧的aclTensor，gradOutput与self、target的数据类型一致，gradOutput与self、target的shape满足[broadcast关系](common/broadcast关系.md)。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND，shape支持0到8维。
-    - 昇腾310P AI处理器、昇腾910 AI处理器：数据类型支持FLOAT16、FLOAT。
-    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT。
+    - Atlas 推理系列产品：数据类型支持FLOAT16、FLOAT。
+    - Atlas A2 训练系列产品/Atlas 800I A2推理产品、Atlas A3 训练系列产品/Atlas 800I A3推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT。
 
   - self(aclTensor*, 计算输入)：公式中的输入`x`，Device侧的aclTensor，gradOutput与self、target的数据类型一致，gradOutput与self、target的shape满足[broadcast关系](common/broadcast关系.md)。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND，shape支持0到8维。
-    - 昇腾310P AI处理器、昇腾910 AI处理器：数据类型支持FLOAT16、FLOAT。
-    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT。
+    - Atlas 推理系列产品：数据类型支持FLOAT16、FLOAT。
+    - Atlas A2 训练系列产品/Atlas 800I A2推理产品、Atlas A3 训练系列产品/Atlas 800I A3推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT。
 
   - target(aclTensor*, 计算输入)：公式中的输入`y`，Device侧的aclTensor，gradOutput与self、target的数据类型一致，gradOutput与self、target的shape满足[broadcast关系](common/broadcast关系.md)。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND，shape支持0到8维。
-    - 昇腾310P AI处理器、昇腾910 AI处理器：数据类型支持FLOAT16、FLOAT。
-    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT。
+    - Atlas 推理系列产品：数据类型支持FLOAT16、FLOAT。
+    - Atlas A2 训练系列产品/Atlas 800I A2推理产品、Atlas A3 训练系列产品/Atlas 800I A3推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT。
 
   - reduction(int64_t, 计算输入)：公式中的参数`reduction`，指定损失函数的计算方式，支持 0('none') | 1('mean') | 2('sum')。
 
     'none' 表示不应用减少，'mean' 表示输出的总和将除以self中的元素数，'sum' 表示输出将被求和。
 
   - out(aclTensor*, 计算输出)：公式中的输出`MselossBackward(grad, x, y)`，Device侧的aclTensor，out与gradOutput、self、target broadcast之后的tensor的shape一致。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
-    - 昇腾310P AI处理器、昇腾910 AI处理器：数据类型支持FLOAT16、FLOAT。
-    - 昇腾910B AI处理器：数据类型支持BFLOAT16、FLOAT16、FLOAT。
+    - Atlas 推理系列产品：数据类型支持FLOAT16、FLOAT。
+    - Atlas A2 训练系列产品/Atlas 800I A2推理产品、Atlas A3 训练系列产品/Atlas 800I A3推理产品：数据类型支持BFLOAT16、FLOAT16、FLOAT。
 
   - workspaceSize(uint64_t*, 出参)：返回需要在Device侧申请的workspace大小。
 

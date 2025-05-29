@@ -1,13 +1,14 @@
 # aclnnCrossEntropyLossGrad
 ## 支持的产品型号
 
-- 昇腾910B AI处理器。
+- Atlas A2 训练系列产品/Atlas 800I A2推理产品
+- Atlas A3 训练系列产品/Atlas 800I A3推理产品
 
 ## 接口原型
 
 每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnCrossEntropyLossGradGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnCrossEntropyLossGrad”接口执行计算。
 
-* `aclnnStatus aclnnCrossEntropyLossGradGetWorkspaceSize(const aclTensor *gradLoss, const aclTensor *logProb, const aclTensor *target, const aclTensor *weightOptional, const aclTensor *gradZlossOptional, const aclTensor *lseForZlossOptional, const char* reduction, int64_t ignoreIndex, float labelSmoothing, float lseSquareScaleForZloss, aclTensor *xGradOut, uint64_t *workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnCrossEntropyLossGradGetWorkspaceSize(const aclTensor *gradLoss, const aclTensor *logProb, const aclTensor *target, const aclTensor *weightOptional, const aclTensor *gradZlossOptional, const aclTensor *lseForZlossOptional, char *reductionOptional, int64_t ignoreIndex, double labelSmoothing, double lseSquareScaleForZloss, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **executor)`
 * `aclnnStatus aclnnCrossEntropyLossGrad(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 ## 功能描述
@@ -118,9 +119,9 @@ $$
   - lseForZlossOptional（aclTensor\*，计算输入）：Device侧的aclTensor，可选输入。zloss相关输入，如果lse_square_scale_for_zloss非0，正向额外输出的lse_for_zloss中间结果给反向用于计算lse。要求为一个维度为1D的Tensor，shape为 (N,)。当前只支持传入nullptr。数据类型支持FLOAT16、FLOAT、BFLOAT16，[数据格式](common/数据格式.md)要求为ND。
   - reduction（char* , 计算输入）：指定要应用于输出的缩减。Host侧的字符串。'none'：不应用缩减，'mean'：取输出的加权平均值，'sum'：求和输出。
   - ignoreIndex（int64_t, 计算输入）：指定忽略不影响输入梯度的目标值。Host侧的整型。数值必须小于**C**，当小于零时视为无忽略标签。
-  - labelSmoothing（float, 计算输入）：表示计算损失时的平滑量。Host侧的浮点型。取值范围在[0.0, 1.0]的浮点数，其中0.0表示不平滑。当前仅支持输入0.0。
-  - lseSquareScaleForZloss（float, 计算输入）：zloss相关属性，0.0走pytorch原生分支，非0.0走zloss新分支。当前仅支持输入0.0。
-  - xGradOut（aclTensor\*，计算输出）：梯度计算结果，要求是一个2D的Tensor，shape为（N, C）。数据类型同gradLoss，支持BFLOAT16、FLOAT16、FLOAT32，[数据格式](common/数据格式.md)要求为ND。
+  - labelSmoothing（double, 计算输入）：表示计算损失时的平滑量。Host侧的浮点型。取值范围在[0.0, 1.0]的浮点数，其中0.0表示不平滑。当前仅支持输入0.0。
+  - lseSquareScaleForZloss（double, 计算输入）：zloss相关属性，0.0走pytorch原生分支，非0.0走zloss新分支。当前仅支持输入0.0。
+  - out（aclTensor\*，计算输出）：梯度计算结果，要求是一个2D的Tensor，shape为（N, C）。数据类型同gradLoss，支持BFLOAT16、FLOAT16、FLOAT32，[数据格式](common/数据格式.md)要求为ND。
   - workspaceSize（uint64\_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 
@@ -153,11 +154,3 @@ $$
   - gradLoss、logProb、gradZlossOptional、lseForZlossOptional、xGradOut数据类型需保持一致。
   - 当前暂不支持zloss功能。gradZlossOptional、lseForZlossOptional不支持传入，且lseSquareScaleForZloss仅支持输入0.0。
   - logProb第零维N需满足N<200000。
-
-## 调用示例
-
-示例代码如下，仅供参考，具体编译和执行过程请参考[编译与运行样例](common/编译与运行样例.md)。
-
-```c++
-
-```

@@ -4,7 +4,8 @@
 
 ## 支持的产品型号
 
-- Atlas A2 训练系列产品
+- Atlas A2 训练系列产品/Atlas 800I A2推理产品
+- Atlas A3 训练系列产品/Atlas 800I A3推理产品
 - Atlas 200I/500 A2推理产品
 - Atlas 推理系列产品
 
