@@ -80,7 +80,9 @@ public:
                 xStart = xEnd;
                 xEnd = ptrXGm.GetValue(q + 1);
             }
-            if(yStart == yEnd || xStart == xEnd) continue;
+            if(yStart == yEnd || xStart == xEnd){
+                continue;
+            }
             for(int i = yStart; i < yEnd; i++){
                 LocalTensor<TYPE_X> itemLocal = itemBuf.Get<TYPE_X>();
                 for(int j = 0; j < itemLength; j ++){
@@ -91,7 +93,9 @@ public:
                 for(int j = xStart; j < xEnd; j++){
                     LocalTensor<TYPE_X> xItemLocal = xItemBuf.Get<TYPE_X>();
                     LocalTensor<int8_t> resLocal = resBuf.Get<int8_t>();
-                    if(j == i && ignoreSameIndex) continue;
+                    if(j == i && ignoreSameIndex){
+                        continue;
+                    }
                     for(int k = 0; k < itemLength; k++){
                         xItemLocal.SetValue(k, (TYPE_X)xGm.GetValue(j * itemLength + k));
                     }

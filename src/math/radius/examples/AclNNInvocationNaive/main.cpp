@@ -43,10 +43,9 @@
         printf(message, ##__VA_ARGS__); \
     } while (0)
 
-#define COMPUTE_TYPE int32_t
-#define TYPE_SIZE 4
 #define ACL_TYPE aclDataType::ACL_INT32
-
+typedef int32_t COMPUTE_TYPE;
+constexpr int32_t  TYPE_SIZE = 4;
 
 bool ReadFile(const std::string &filePath, size_t fileSize, void *buffer, size_t bufferSize)
 {

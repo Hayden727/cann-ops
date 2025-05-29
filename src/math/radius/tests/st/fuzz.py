@@ -23,7 +23,7 @@ def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_s
         for i in range(m):
             distances = np.linalg.norm(x - y[i], axis=1)
             neighbors = []
-            for _ in range(len(distances)):
+            for _, t in enumerate(distances):
                 if distances[_] <= r:
                     neighbors.append(_)
             neighbors = np.array(neighbors)
@@ -39,7 +39,6 @@ def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_s
         return out
     else:
         # 批次情况
-        assert ptr_x is not None and ptr_y is not None
         out_vec = []
         for b in range(len(ptr_x) - 1):
             x_start, x_end = ptr_x[b], ptr_x[b + 1]
@@ -49,7 +48,7 @@ def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_s
             for i in range(y_start, y_end):
                 distances = np.linalg.norm(x[x_start:x_end] - y[i], axis=1)
                 neighbors = []
-                for _ in range(len(distances)):
+                for _, t in enumerate(distances):
                     if distances[_] <= r:
                         neighbors.append(_ + x_start)
                 neighbors = np.array(neighbors)

@@ -18,7 +18,6 @@
 namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
   RadiusTilingData tiling;
   const gert::StorageShape* x_shape = context->GetInputShape(0);
   const gert::StorageShape* y_shape = context->GetInputShape(1);
@@ -110,7 +109,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 

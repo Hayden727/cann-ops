@@ -31,7 +31,7 @@ def verify_result(real_result, golden):
         print(len(real_result), len(golden))
         print("[ERROR] result error")
         return False
-    for i in range(len(real_result)):
+    for i, _ in enumerate(real_result):
         if real_result[i] != golden[i]:
             print("[ERROR] result error %d except %d but %d", i, golden[i], real_result[i])
             return False

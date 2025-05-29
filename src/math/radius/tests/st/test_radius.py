@@ -27,7 +27,7 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         for i in range(m):
             distances = np.linalg.norm(x - y[i], axis=1)
             neighbors = []
-            for _ in range(len(distances)):
+            for _, t in enumerate(distances):
                 if distances[_] <= r:
                     neighbors.append(_)
             neighbors = np.array(neighbors)
@@ -53,7 +53,7 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
             for i in range(y_start, y_end):
                 distances = np.linalg.norm(x[x_start:x_end] - y[i], axis=1)
                 neighbors = []
-                for _ in range(len(distances)):
+                for _, t in enumerate(distances):
                     if distances[_] <= r:
                         neighbors.append(_ + x_start)
                 neighbors = np.array(neighbors)
@@ -68,10 +68,12 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         return out.astype(ans_dtype)
 
 
-def calc_expect_func(x, y, ptr_x = {"value": None}, ptr_y = {"value": None},
-                    r = 1.0, max_num_neighbors = 32, ignore_same_index = False, out = None):
+def calc_expect_func(x, y, ptr_x = None, ptr_y = None, r = 1.0, max_num_neighbors = 32, ignore_same_index = False, out = None):
     """
     calc_expect_func
     """
-    res = radius_test(x['value'], y['value'], ptr_x['value'], ptr_y['value'], r, max_num_neighbors, ignore_same_index)
+    if ptr_x is None:
+        res = radius_test(x['value'], y['value'], None, None, r, max_num_neighbors, ignore_same_index)
+    else:
+        res = radius_test(x['value'], y['value'], ptr_x['value'], ptr_y['value'], r, max_num_neighbors, ignore_same_index)
     return [res]

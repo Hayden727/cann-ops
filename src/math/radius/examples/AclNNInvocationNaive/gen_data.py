@@ -10,8 +10,8 @@
 # ======================================================================================================================
 
 import os
-import numpy as np
 import sys
+import numpy as np
 
 
 def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_same_index=False):
@@ -36,7 +36,7 @@ def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_s
         for i in range(m):
             distances = np.linalg.norm(x - y[i], axis=1)
             neighbors = []
-            for _ in range(len(distances)):
+            for _, t in enumerate(distances):
                 if distances[_] <= r:
                     neighbors.append(_)
             neighbors = np.array(neighbors)
@@ -62,7 +62,7 @@ def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_s
             for i in range(y_start, y_end):
                 distances = np.linalg.norm(x[x_start:x_end] - y[i], axis=1)
                 neighbors = []
-                for _ in range(len(distances)):
+                for _, t in enumerate(distances):
                     if distances[_] <= r:
                         neighbors.append(_ + x_start)
                 neighbors = np.array(neighbors)
