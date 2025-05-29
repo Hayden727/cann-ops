@@ -36,7 +36,6 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
             for neighbor in neighbors:
                 if count < max_num_neighbors:
                     out_vec.extend([neighbor, i])
-                    
                     count += 1
         out = np.array(out_vec).reshape(-1, 2).T
         return out.astype(ans_dtype)
@@ -66,12 +65,14 @@ def radius_test(x, y, ptr_x, ptr_y, r, max_num_neighbors, ignore_same_index):
         return out.astype(ans_dtype)
 
 
-def calc_expect_func(x, y, ptr_x = None, ptr_y = None, r = 1.0, max_num_neighbors = 32, ignore_same_index = False, out = None):
+def calc_expect_func(x, y, ptr_x = None, ptr_y = None, r = 1.0,
+                    max_num_neighbors = 32, ignore_same_index = False, out = None):
     """
     calc_expect_func
     """
     if ptr_x is None:
         res = radius_test(x['value'], y['value'], None, None, r, max_num_neighbors, ignore_same_index)
     else:
-        res = radius_test(x['value'], y['value'], ptr_x['value'], ptr_y['value'], r, max_num_neighbors, ignore_same_index)
+        res = radius_test(x['value'], y['value'], ptr_x['value'], ptr_y['value'],
+                            r, max_num_neighbors, ignore_same_index)
     return [res]

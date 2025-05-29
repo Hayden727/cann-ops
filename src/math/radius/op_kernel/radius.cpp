@@ -154,11 +154,9 @@ public:
                             }
                         }
                     }
-                    
                 }
             }
         }
-        
         if(totalCount < maxSize){
             for(int i = 0; i < totalCount; i++){
                 outGm.SetValue(totalCount + i, (TYPE_X)outGm.GetValue(maxSize + i));
