@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_same_index=False):
     """
     用numpy实现radius_cuda算子的功能
@@ -62,6 +63,7 @@ def radius_numpy(x, y, r, ptr_x=None, ptr_y=None, max_num_neighbors=32, ignore_s
                         count += 1
         out = np.array(out_vec).reshape(-1, 2).T
         return out
+
 
 def generate_case(case_id, compute_dtype=np.float32):
     if case_id == 1:
@@ -483,152 +485,202 @@ def generate_case(case_id, compute_dtype=np.float32):
             "output_desc": {"out": {"shape": list(assign_index.shape)}}
             }
 
+
 def fuzz_branch_001():
     return generate_case(1)
+
 
 def fuzz_branch_002():
     return generate_case(2)
 
+
 def fuzz_branch_003():
     return generate_case(3)
+
 
 def fuzz_branch_004():
     return generate_case(4)
 
+
 def fuzz_branch_005():
     return generate_case(5)
+
 
 def fuzz_branch_006():
     return generate_case(6)
 
+
 def fuzz_branch_007():
     return generate_case(7)
+
 
 def fuzz_branch_008():
     return generate_case(8)
 
+
 def fuzz_branch_009():
     return generate_case(9)
+
 
 def fuzz_branch_010():
     return generate_case(10)
 
+
 def fuzz_branch_011():
     return generate_case(11)
+
 
 def fuzz_branch_012():
     return generate_case(12)
 
+
 def fuzz_branch_013():
     return generate_case(13)
+
 
 def fuzz_branch_014():
     return generate_case(14)
 
+
 def fuzz_branch_015():
     return generate_case(15)
+
 
 def fuzz_branch_016():
     return generate_case(16)
 
+
 def fuzz_branch_017():
     return generate_case(17)
+
 
 def fuzz_branch_018():
     return generate_case(18)
 
+
 def fuzz_branch_019():
     return generate_case(19)
+
 
 def fuzz_branch_020():
     return generate_case(20)
 
+
 def fuzz_branch_021():
     return generate_case(21)
+
 
 def fuzz_branch_022():
     return generate_case(22)
 
+
 def fuzz_branch_023():
     return generate_case(23)
+
 
 def fuzz_branch_024():
     return generate_case(24)
 
+
 def fuzz_branch_025():
     return generate_case(25)
+
 
 def fuzz_branch_026():
     return generate_case(26)
 
+
 def fuzz_branch_027():
     return generate_case(27)
+
 
 def fuzz_branch_028():
     return generate_case(28)
 
+
 def fuzz_branch_029():
     return generate_case(29)
+
 
 def fuzz_branch_030():
     return generate_case(30)
 
+
 def fuzz_branch_031():
     return generate_case(31)
+
 
 def fuzz_branch_032():
     return generate_case(32)
 
+
 def fuzz_branch_033():
     return generate_case(33)
+
 
 def fuzz_branch_034():
     return generate_case(34)
 
+
 def fuzz_branch_035():
     return generate_case(35)
+
 
 def fuzz_branch_036():
     return generate_case(36)
 
+
 def fuzz_branch_037():
     return generate_case(37)
+
 
 def fuzz_branch_038():
     return generate_case(38)
 
+
 def fuzz_branch_039():
     return generate_case(39)
+
 
 def fuzz_branch_040():
     return generate_case(40)
 
+
 def fuzz_branch_041():
     return generate_case(41)
+
 
 def fuzz_branch_042():
     return generate_case(42)
 
+
 def fuzz_branch_043():
     return generate_case(43)
+
 
 def fuzz_branch_044():
     return generate_case(44)
 
+
 def fuzz_branch_045():
     return generate_case(45)
+
 
 def fuzz_branch_046():
     return generate_case(46)
 
+
 def fuzz_branch_047():
     return generate_case(47)
+
 
 def fuzz_branch_048():
     return generate_case(48)
 
+
 def fuzz_branch_049():
     return generate_case(49)
+
 
 def fuzz_branch_050():
     return generate_case(50)
