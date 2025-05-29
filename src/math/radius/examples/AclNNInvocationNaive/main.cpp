@@ -264,11 +264,11 @@ int main(int argc, char **argv)
     } else if (caseId == 5) {
         inputXShape.push_back(1025);
         inputXShape.push_back(2049);
-        inputXShapeSize_1 = 1025 * 2049;
+        inputXShapeSize_1 = 2100225;
 
         inputYShape.push_back(120);
         inputYShape.push_back(2049);
-        inputYShapeSize_1 = 120 * 2049;
+        inputYShapeSize_1 = 245880;
 
         r = 100.0f;
         max_num_neighbors = 12;
@@ -276,11 +276,11 @@ int main(int argc, char **argv)
     } else if (caseId == 6) {
         inputXShape.push_back(1026);
         inputXShape.push_back(2050);
-        inputXShapeSize_1 = 1026 * 2050;
+        inputXShapeSize_1 = 2103300;
 
         inputYShape.push_back(150);
         inputYShape.push_back(2050);
-        inputYShapeSize_1 = 150 * 2050;
+        inputYShapeSize_1 = 307500;
 
         r = 160.0f;
         max_num_neighbors = 18;
@@ -288,11 +288,11 @@ int main(int argc, char **argv)
     } else if (caseId == 7) {
         inputXShape.push_back(1027);
         inputXShape.push_back(2051);
-        inputXShapeSize_1 = 1027 * 2051;
+        inputXShapeSize_1 = 2106377;
 
         inputYShape.push_back(40);
         inputYShape.push_back(2051);
-        inputYShapeSize_1 = 40 * 2051;
+        inputYShapeSize_1 = 82040;
 
         r = 88.0f;
         max_num_neighbors = 8;
@@ -1054,11 +1054,11 @@ int main(int argc, char **argv)
     } else if (caseId == 50) {
         inputXShape.push_back(2048);
         inputXShape.push_back(1024);
-        inputXShapeSize_1 = 2048 * 1024;
+        inputXShapeSize_1 = 2097152;
 
         inputYShape.push_back(1024);
         inputYShape.push_back(1024);
-        inputYShapeSize_1 = 1024 * 1024;
+        inputYShapeSize_1 = 1048576;
 
         inputPtrXShape.push_back(2);
         inputPtrXHostData.push_back(0);
