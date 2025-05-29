@@ -169,9 +169,9 @@ int main(int argc, char **argv)
     size_t dataType2 = sizeof(uint32_t);
     size_t fileSize = 0;
     bool use_locking = false;
-    void ** input1=(void **)(&inputXHostData);
-    void ** input2=(void **)(&inputYHostData);
-    void ** input3=(void **)(&inputDHostData);
+    void** input1=(void**)(&inputXHostData);
+    void** input2=(void**)(&inputYHostData);
+    void** input3=(void**)(&inputDHostData);
     //读取数据
     ReadFile("../input/input_var.bin", fileSize, *input1, inputXShapeSize * dataType1);
     ReadFile("../input/input_indices.bin", fileSize, *input2, inputYShapeSize * dataType2);
