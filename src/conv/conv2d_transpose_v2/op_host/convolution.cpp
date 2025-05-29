@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ const int64_t PAD_W_INDEX = 1;
 const int64_t DIM_0 = 0;
 const int64_t DIM_1 = 1;
 const int64_t DIM_2 = 2;
+const int64_t C0_DIM_NDC1HWC0_INDEX = 5;
+const int64_t C0_BF16 = 16;
 const size_t CONV3D_TRANSPOSE_V2_WHITE_LIST_CASE_SIZE = 29;
 const size_t CONV3D_V2_WHITE_LIST_CASE_SIZE = 22;
 const int64_t D_DIM_NCDHW_INDEX = 2;
@@ -536,12 +538,12 @@ static aclnnStatus Conv3dWithFlag(const aclTensor *input, const aclTensor *weigh
     return ACLNN_SUCCESS;
 }
 
-static aclnnStatus Conv3dv2WithFlag(const aclTensor *input, const aclTensor *weight, const aclTensor *bias,
-                                    const aclIntArray *stride, const aclIntArray *padding,
-                                    const aclIntArray *dilation, int groups,
-                                    bool useHf32, aclTensor *&output, aclOpExecutor *executor)
+static aclnnStatus Conv3dv2WithFlag(const aclTensor *input, const aclTensor *weight, const aclTensor *bias, 
+                                    const aclTensor *scale, const aclTensor *offset, const aclIntArray *stride,
+                                    const aclIntArray *padding, const aclIntArray *dilation,
+                                    int groups, bool useHf32, aclTensor *&output, aclOpExecutor *executor)
 {
-    L0_DFX(Conv3dv2WithFlag, input, weight, bias, stride, padding, dilation, groups, useHf32);
+    L0_DFX(Conv3dv2WithFlag, input, weight, bias, scale, offset, stride, padding, dilation, groups, useHf32);
 
    if (!IsSupportConv3DToConv3DV2()) {
         OP_LOGE(ACLNN_ERR_PARAM_INVALID, "Conv3dv2 only support Ascend910B/910_93");
@@ -563,7 +565,6 @@ static aclnnStatus Conv3dv2WithFlag(const aclTensor *input, const aclTensor *wei
 
     ge::AscendString originalFormat = op::ToString(input->GetOriginalFormat());
     const char *dataFormat = originalFormat.GetString();
-
     if (bias) {
       auto ret = INFER_SHAPE(Conv3DV2, OP_INPUT(input, weight, bias), OP_OUTPUT(output),
                              OP_ATTR(stride5, pad6, dilation5, groups, dataFormat, 0, useHf32));
@@ -572,8 +573,19 @@ static aclnnStatus Conv3dv2WithFlag(const aclTensor *input, const aclTensor *wei
         output = nullptr;
         return ACLNN_ERR_INNER_INFERSHAPE_ERROR;
       }
+      if (input->GetDataType() != output->GetDataType()) {
+        auto storageShape = input->GetStorageShape();  // storageShape dim of output is same as input
+        auto viewShape = output->GetViewShape();
+        storageShape[DIM_0] = viewShape[DIM_0];
+        storageShape[DIM_1] = viewShape[DIM_2];
+        storageShape[DIM_2] = (viewShape[DIM_1] + C0_BF16 - 1) / C0_BF16;
+        storageShape[H_DIM_NCDHW_INDEX] = viewShape[H_DIM_NCDHW_INDEX];
+        storageShape[W_DIM_NCDHW_INDEX] = viewShape[W_DIM_NCDHW_INDEX];
+        storageShape[C0_DIM_NDC1HWC0_INDEX] = C0_BF16;
+        output->SetStorageShape(storageShape);
+      }
       ADD_TO_LAUNCHER_LIST_AICORE(
-        Conv3DV2, OP_INPUT(input, weight, bias, nullptr), OP_OUTPUT(output),
+        Conv3DV2, OP_INPUT(input, weight, bias, scale, offset, nullptr), OP_OUTPUT(output),
         OP_ATTR(stride5, pad6, dilation5, groups, dataFormat, 0, useHf32));
     } else {
       auto ret = INFER_SHAPE(Conv3DV2, OP_INPUT(input, weight), OP_OUTPUT(output),
@@ -584,7 +596,7 @@ static aclnnStatus Conv3dv2WithFlag(const aclTensor *input, const aclTensor *wei
         return ACLNN_ERR_INNER_INFERSHAPE_ERROR;
       }
       ADD_TO_LAUNCHER_LIST_AICORE(
-        Conv3DV2, OP_INPUT(input, weight, nullptr, nullptr), OP_OUTPUT(output),
+        Conv3DV2, OP_INPUT(input, weight, nullptr, scale, offset, nullptr), OP_OUTPUT(output),
         OP_ATTR(stride5, pad6, dilation5, groups, dataFormat, 0, useHf32));
     }
     return ACLNN_SUCCESS;
@@ -601,7 +613,7 @@ const aclTensor *Conv3d6HdFp16(const aclTensor *input, const aclTensor *weight, 
         Conv3dWithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
     } else {
         OP_LOGD("Conv3dFp16 to Conv3dv2Fp16!");
-        Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
+        Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, false, output, executor);
     }
     return output;
 }
@@ -617,7 +629,7 @@ const aclTensor *Conv3d6HdFp32(const aclTensor *input, const aclTensor *weight, 
         Conv3dWithFlag(input, weight, bias, stride, padding, dilation, groups, useHf32, output, executor);
     } else {
         OP_LOGD("Conv3dFp32 to Conv3dv2Fp32!");
-        Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, useHf32, output, executor);
+        Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, useHf32, output, executor);
     }
     return output;
 }
@@ -633,7 +645,7 @@ const aclTensor *Conv3d6HdBf16(const aclTensor *input, const aclTensor *weight, 
         Conv3dWithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
     } else {
         OP_LOGD("Conv3dBf16 to Conv3dv2Bf16!");
-        Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
+        Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, false, output, executor);
     }
     return output;
 }
@@ -645,7 +657,7 @@ const aclTensor *Conv3dv26HdBf16(const aclTensor *input, const aclTensor *weight
     L0_DFX(Conv3dv26HdBf16, input, weight, bias, stride, padding, dilation, groups);
     auto output =
         executor->AllocTensor(op::DataType::DT_BF16, input->GetStorageFormat(), input->GetOriginalFormat());
-    Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
+    Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, false, output, executor);
     return output;
 }
 
@@ -656,7 +668,7 @@ const aclTensor *Conv3dv26HdFp32(const aclTensor *input, const aclTensor *weight
     L0_DFX(Conv3dv26HdFp32, input, weight, bias, stride, padding, dilation, groups, useHf32);
     auto output =
         executor->AllocTensor(op::DataType::DT_FLOAT, input->GetStorageFormat(), input->GetOriginalFormat());
-    Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, useHf32, output, executor);
+    Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, useHf32, output, executor);
     return output;
 }
 
@@ -667,7 +679,19 @@ const aclTensor *Conv3dv26HdFp16(const aclTensor *input, const aclTensor *weight
     L0_DFX(Conv3dv26HdFp16, input, weight, bias, stride, padding, dilation, groups);
     auto output =
         executor->AllocTensor(op::DataType::DT_FLOAT16, input->GetStorageFormat(), input->GetOriginalFormat());
-    Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
+    Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, false, output, executor);
+    return output;
+}
+
+const aclTensor *QuantConv3d6HdInt8(const aclTensor *input, const aclTensor *weight, const aclTensor *bias, 
+                                    const aclTensor *scale, const aclTensor *offset, const aclIntArray *stride, 
+                                    const aclIntArray *padding, const aclIntArray *dilation, int groups,
+                                    aclOpExecutor *executor)
+{
+    L0_DFX(QuantConv3d6HdInt8, input, weight, bias, scale, offset, stride, padding, dilation, groups);
+    auto output =
+        executor->AllocTensor(op::DataType::DT_BF16, input->GetStorageFormat(), input->GetOriginalFormat());
+    Conv3dv2WithFlag(input, weight, bias, scale, offset, stride, padding, dilation, groups, 0, output, executor);
     return output;
 }
 
@@ -678,7 +702,7 @@ const aclTensor *Conv3dv2NCDHWFp32(const aclTensor *input, const aclTensor *weig
     L0_DFX(Conv3dv2NCDHWFp32, input, weight, bias, stride, padding, dilation, groups, useHf32);
     auto output =
         executor->AllocTensor(op::DataType::DT_FLOAT, input->GetStorageFormat(), input->GetOriginalFormat());
-    Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, useHf32, output, executor);
+    Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, useHf32, output, executor);
     return output;
 }
 
@@ -689,7 +713,7 @@ const aclTensor *Conv3dv2NCDHWBf16(const aclTensor *input, const aclTensor *weig
     L0_DFX(Conv3dv2NCDHWBf16, input, weight, bias, stride, padding, dilation, groups);
     auto output =
         executor->AllocTensor(op::DataType::DT_BF16, input->GetStorageFormat(), input->GetOriginalFormat());
-    Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
+    Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, false, output, executor);
     return output;
 }
 
@@ -700,7 +724,7 @@ const aclTensor *Conv3dv2NCDHWFp16(const aclTensor *input, const aclTensor *weig
     L0_DFX(Conv3dv2NCDHWFp16, input, weight, bias, stride, padding, dilation, groups);
     auto output =
         executor->AllocTensor(op::DataType::DT_FLOAT16, input->GetStorageFormat(), input->GetOriginalFormat());
-    Conv3dv2WithFlag(input, weight, bias, stride, padding, dilation, groups, false, output, executor);
+    Conv3dv2WithFlag(input, weight, bias, nullptr, nullptr, stride, padding, dilation, groups, false, output, executor);
     return output;
 }
 
