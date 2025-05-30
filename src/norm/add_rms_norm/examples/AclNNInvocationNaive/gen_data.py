@@ -38,8 +38,6 @@ def add_rms_golden_milan(x1, x2, gamma, eps=1e-6):
 
 
 def add_rms_golden_torino(x1, x2, gamma, eps=1e-6):
-    import torch
-
     x = (x1.type(torch.float32) + x2.type(torch.float32))
 
     rstd = torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + eps)

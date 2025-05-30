@@ -11,8 +11,8 @@
 
 import os
 import torch
-import numpy as np
 import copy
+import numpy as np
 
 
 def gen_golden_data_simple():

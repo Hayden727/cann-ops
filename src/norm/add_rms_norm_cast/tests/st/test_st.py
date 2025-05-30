@@ -2,8 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 # Third-Party Packages
-import numpy as np
 import subprocess
+import numpy as np
+
 
 def x_norm(x, eps=1e-6):
     """

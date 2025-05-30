@@ -15,12 +15,15 @@ import numpy as np
 
 
 def gen_golden_data_simple():
-    input_x1 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=np.float16).reshape(2, 16)
-    input_x2 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=np.float16).reshape(2, 16)
+    input_x1 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0], dtype=np.float16).reshape(2, 16)
+    input_x2 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0], dtype=np.float16).reshape(2, 16)
     input_gamma = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=np.float16).reshape(16)
     input_scales1 = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], dtype=np.float16).reshape(16)
     input_scales2 = None
-    input_zero_points1 = np.array([100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100], dtype=np.float16).reshape(16)
+    input_zero_points1 = np.array([100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+                                  100, 100, 100, 100], dtype=np.float16).reshape(16)
     input_zero_points2 = None
 
     epsilon = 1e-6
