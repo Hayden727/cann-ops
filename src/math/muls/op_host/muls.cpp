@@ -81,7 +81,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         coreNum = (coreNum < maxCoreNum) ? coreNum : maxCoreNum;
         coreNum = (coreNum >= 1) ? coreNum : 1;
     }
-    
     uint64_t everyCoreInputBlockNum = 0;
     uint64_t tailBlockNum = 0;
     // 计算大核和小核的分块参数
@@ -115,9 +114,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_finalSmallTileNum((uint32_t)finalSmallTileNum);
     tiling.set_finalBigTileNum((uint32_t)finalBigTileNum);
     tiling.set_tailBlockNum((uint32_t)tailBlockNum);
-    const gert::RuntimeAttrs *attrs = context->GetAttrs();
-    const float *value = attrs->GetAttrPointer<float>(0);
-    tiling.set_value(*value);
     // 设置核心数和 Tiling 数据
     context->SetBlockDim(coreNum);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
@@ -147,8 +143,11 @@ public:
             .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64, ge::DT_COMPLEX64})
             .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND});
-        float DEFAULT_ATTR_VALUE = 1.0f;
-        this->Attr("value").AttrType(REQUIRED).Float(DEFAULT_ATTR_VALUE);
+        this->Input("value")
+            .ParamType(REQUIRED)
+            .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64, ge::DT_COMPLEX64})
+            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND})
+            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND}).Scalar();
         this->Output("y")
             .ParamType(REQUIRED)
             .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64, ge::DT_COMPLEX64})
