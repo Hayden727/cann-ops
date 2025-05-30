@@ -1,6 +1,6 @@
 add_ops_compile_options(
         OP_NAME UpsampleTrilinear3dBackward
-        OPTIONS --cce-auto-sync=on
+        OPTIONS --cce-auto-sync=off
                 -Wno-deprecated-declarations
                 -Werror
 )

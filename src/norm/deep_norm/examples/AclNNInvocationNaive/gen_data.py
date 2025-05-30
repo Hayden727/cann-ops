@@ -15,20 +15,46 @@ import numpy as np
 
 
 def gen_golden_data_simple():
-    dtype = np.float16
-    input_shape = [8, 2048]
-    output_shape = [8, 2048]
+    input_x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], dtype=np.float32).reshape(3, 1, 4)
+    input_gx = np.array([2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8], dtype=np.float32).reshape(3, 1, 4)
+    input_beta = np.array([0, 1, 2, 3], dtype=np.float32).reshape(4)
+    input_gamma = np.array([0, 1, 2, 3], dtype=np.float32).reshape(4)
+    alpha = 0.3
+    eps = 1e-06
 
-    x = np.random.uniform(-1, 1, input_shape).astype(dtype)
-    y = np.random.uniform(-1, 1, input_shape).astype(dtype)
+    dtype = input_x.dtype
+    input_shape = input_x.shape
+    reduce_axis = -1
 
-    golden = np.add(x, y)
+    if "float16" in str(dtype):
+        input_x = input_x.astype(np.float32)
+        input_gx = input_gx.astype(np.float32)
+        input_beta = input_beta.astype(np.float32)
+        input_gamma = input_gamma.astype(np.float32)
 
-    os.system("mkdir -p input")
-    os.system("mkdir -p output")
-    x.astype(dtype).tofile("./input/input_x.bin")
-    y.astype(dtype).tofile("./input/input_y.bin")
-    golden.tofile("./output/golden.bin")
+    x = torch.from_numpy(input_x)
+    gx = torch.from_numpy(input_gx)
+    beta = torch.from_numpy(input_beta)
+    gamma = torch.from_numpy(input_gamma)
+
+    x_add = x * alpha + gx
+    mean = x_add.mean(-1, keepdim=True)
+    diff = x_add - mean
+    variance = diff.pow(2).mean(-1, keepdim=True)
+    rstd = torch.rsqrt(variance + eps)
+    res = gamma * diff * rstd + beta
+
+    res = res.numpy()
+    if "float16" in str(dtype):
+        res = res.astype(dtype)
+    else:
+        res = res.astype(np.float32)
+    mean = mean.numpy().astype(np.float32)
+    rstd = rstd.numpy().astype(np.float32)
+
+    mean.tofile("./output/golden_mean.bin")
+    rstd.tofile("./output/golden_rstd.bin")
+    res.tofile("./output/golden_y.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()

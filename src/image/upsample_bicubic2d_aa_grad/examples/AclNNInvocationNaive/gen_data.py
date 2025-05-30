@@ -12,23 +12,27 @@
 import os
 import torch
 import numpy as np
+from torch.nn.functional import interpolate
 
 
 def gen_golden_data_simple():
-    dtype = np.float16
-    input_shape = [8, 2048]
-    output_shape = [8, 2048]
+    # 输入张量
+    input_shape = (1, 1, 8, 4)
+    input_tensor = torch.randn(input_shape, dtype=torch.float32) * 255 
+    input_tensor.requires_grad = True
 
-    x = np.random.uniform(-1, 1, input_shape).astype(dtype)
-    y = np.random.uniform(-1, 1, input_shape).astype(dtype)
+    # 插值参数
+    output_size = [4, 2]    # 输出shape
+    mode = 'bicubic'    # 插值模式
+    align_corners = True    # 角对齐
 
-    golden = np.add(x, y)
+    # 调用函数
+    output_tensor = interpolate(input_tensor, size=output_size, mode=mode, align_corners=align_corners, antialias=True)
+    output_grad = torch.tensor([0, 1, 2, 3, 4, 5, 6, 7]).reshape(1, 1, 4, 2).type(torch.float32)
+    output_tensor.backward(output_grad)
+    input_grad = input_tensor.grad
 
-    os.system("mkdir -p input")
-    os.system("mkdir -p output")
-    x.astype(dtype).tofile("./input/input_x.bin")
-    y.astype(dtype).tofile("./input/input_y.bin")
-    golden.tofile("./output/golden.bin")
+    input_grad.numpy().tofile("./output/golden.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()

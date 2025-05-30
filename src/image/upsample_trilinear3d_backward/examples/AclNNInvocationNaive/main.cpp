@@ -259,6 +259,10 @@ int main()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output_out = (void **)(&resultData);
+    WriteFile("../output/output_out.bin", *output_out, size * sizeof(resultData[0]));
+    INFO_LOG("Write output success");
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(gradOut);

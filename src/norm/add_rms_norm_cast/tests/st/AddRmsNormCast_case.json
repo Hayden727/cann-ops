@@ -2,6 +2,7 @@
     {
         "case_name": "Test_AddRmsNormCast_001",
         "op": "AddRmsNormCast",
+        "calc_expect_func_file":"test_st.py:add_rms_norm_cast",
         "input_desc": [
             {
                 "format": ["ND"],
@@ -44,7 +45,7 @@
             {
                 "format": ["ND"],
                 "type": ["float"],
-                "shape": [2],
+                "shape": [1],
                 "name": "rstd"
             },
             {

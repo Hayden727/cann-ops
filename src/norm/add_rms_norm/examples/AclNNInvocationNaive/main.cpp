@@ -243,8 +243,43 @@ int main()
         ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return ret);
     for (int64_t i = 0; i < size; i++) {
-        LOG_PRINT("result[%ld] is: %f\n", i, resultData[i]);
+        LOG_PRINT("y result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output = (void **)(&resultData);
+    WriteFile("../output/output_y.bin", *output, size * sizeof(resultData[0]));
+
+    // 6. 获取输出的rstd值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
+    auto rstdsize = GetShapeSize(rstdShape);
+    std::vector<float> resultDatarstd(rstdsize, 0);
+    ret = aclrtMemcpy(resultDatarstd.data(),
+        resultDatarstd.size() * sizeof(resultDatarstd[0]),
+        rstdDeviceAddr,
+        rstdsize * sizeof(float),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return ret);
+    for (int64_t i = 0; i < rstdsize; i++) {
+        LOG_PRINT("rstd result[%ld] is: %f\n", i, resultDatarstd[i]);
+    }
+    // 写出数据
+    void **output_rstd = (void **)(&resultDatarstd);
+    WriteFile("../output/output_rstd.bin", *output_rstd, rstdsize * sizeof(resultDatarstd[0]));
+
+    // 7. 获取输出的rstd值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
+    auto xsize = GetShapeSize(xShape);
+    std::vector<float> resultDataX(xsize, 0);
+    ret = aclrtMemcpy(resultDataX.data(),
+        resultDataX.size() * sizeof(resultDataX[0]),
+        xDeviceAddr,
+        xsize * sizeof(float),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return ret);
+    for (int64_t i = 0; i < xsize; i++) {
+        LOG_PRINT("x result[%ld] is: %f\n", i, resultDataX[i]);
+    }
+    // 写出数据
+    void **output_x = (void **)(&resultDataX);
+    WriteFile("../output/output_x.bin", *output_x, xsize * sizeof(resultDataX[0]));
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(x1);
