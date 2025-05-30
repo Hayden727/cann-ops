@@ -55,12 +55,19 @@ def add_rms_golden_torino(x1, x2, gamma, eps=1e-6):
 
 
 def get_soc_version():
-    command="npu-smi info -m | awk '{print $4$5}' | sed -n '2p'"
-    try:
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
-        return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        return None
+    # 获取原始输出
+    raw_output = subprocess.check_output(["npu-smi", "info", "-m"], text=True)
+    lines = raw_output.strip().split("\n")
+    if len(lines) >= 2:
+        second_line = lines[1]
+        fields = second_line.split()
+        if len(fields) >= 5:
+            result = fields[3] + fields[4]
+            return result
+        else:
+            return None
+    else:
+        return None 
 
 
 def add_rms_norm_cast(x1, x2, gamma, y1, y2, rstd, x, epsilon):
