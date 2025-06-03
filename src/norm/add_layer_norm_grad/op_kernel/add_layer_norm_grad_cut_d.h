@@ -171,7 +171,7 @@ public:
         for (int32_t nInnerIndex = 0; nInnerIndex < nInOneCore; ++nInnerIndex) {
             Duplicate(tmpMeanPdLocal, 0.0f, blockNumber);
             Duplicate(tmpVarPdLocal, 0.0f, blockNumber);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int32_t DOuterUbIndex = 0; DOuterUbIndex < dOuterLength; ++DOuterUbIndex) {
                 uint32_t DInOnceUb = (DOuterUbIndex != dOuterLength - 1) ? dInnerLength : dInnerLengthTail;
                 uint32_t offsetUbXY = DOuterUbIndex * dInnerLength + nInnerIndex * numLastDim;
@@ -242,7 +242,7 @@ public:
                 set_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
                 wait_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
                 CopyOutBetaGamma(offsetUbGamma, elemCoutXYUb);
-                pipe_barrier(PIPE_ALL);
+                PipeBarrier<PIPE_ALL>();
             }
 
             for (int32_t DOuterUbIndex = 0; DOuterUbIndex < dOuterLength; ++DOuterUbIndex) {
@@ -280,7 +280,7 @@ public:
                     if constexpr (HAS_ADDITIONAL_INPUT) {
                         Cast(dSumFp32Local, inputDx, RoundMode::CAST_NONE, elemCoutXYUb);
                     }
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     MainComputeSecondPart(dyFp32Local,
                         x1Fp32Local,
                         x2Fp32Local,
@@ -294,10 +294,10 @@ public:
                         elemCoutXYUb);
                     if constexpr (IsSame<T, half>::value) {
                         Cast(outputDx, dXLocal, RoundMode::CAST_NONE, elemCoutXYUb);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     } else {
                         Cast(outputDx, dXLocal, RoundMode::CAST_RINT, elemCoutXYUb);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     }
                 } else {
                     MainComputeSecondPart(inputDy,
@@ -393,7 +393,7 @@ private:
 
 #endif
 
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         dyQue.EnQue(dyLocal);
         x1Que.EnQue(x1Local);
         x2Que.EnQue(x2Local);
@@ -424,7 +424,7 @@ private:
         float inputRstdNum = inputRstd.GetValue(0);
         Duplicate<float>(outputDx, inputMeanNum, elem_cout_d_x_y);
         Duplicate<float>(inputX2, inputRstdNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float tmpLocalNum = inputRstdNum * inputRstdNum * inputRstdNum;
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         set_flag(PIPE_S, PIPE_V, event_s_v);
@@ -434,13 +434,13 @@ private:
         // 3. pd_var = np.sum((-0.5) * x1Tensor * x2Tensor * np.power(inputRstd, 3))
         // 3.1. duplicate
         Duplicate<float>(inputX1, tmpLocalNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3.2. res1 = (-0.5) * x1Tensor * (x2Tensor) * res
         Mul(inputX1, outputDx, inputX1, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(inputX1, inputGamma, inputX1, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3.3. pd_var = np.sum(res1)
         auto aveLocalTemp = ReduceSumCustom(inputX1, elem_cout_d_x_y);
@@ -448,21 +448,21 @@ private:
         // 3.4. pd_mean = np.sum((-1.0) * x1Tensor * inputRstd)
         // gamma = x2Tensor * rstd * inputDy
         Mul(inputX1, outputDx, inputX2, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(outputDgamma, inputX1, inputDy, elem_cout_d_x_y);
 
         // 5.1. res1 = (-1.0) * x1Tensor * rstd
         Mul(inputX1, inputGamma, inputX2, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(inputX2, inputX1, -1.0f, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5.2. pd_mean = np.sum(res1)
         auto aveLocalTemp2 = ReduceSumCustom(inputX2, elem_cout_d_x_y);
 
         Adds(tmpVarPdLocal, tmpVarPdLocal, aveLocalTemp, blockNumber);
         Adds(tmpMeanPdLocal, tmpMeanPdLocal, aveLocalTemp2, blockNumber);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void MainComputeSecondPart(const LocalTensor<float> &inputDy, const LocalTensor<float> &inputX1,
@@ -475,10 +475,10 @@ private:
         Add(inputX1, inputX1, inputX2, elem_cout_d_x_y);
         Mul(inputGamma, inputDy, inputGamma, elem_cout_d_x_y);
         // 2. x2Tensor = inputX - inputMean
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(inputX1, inputX1, -1.0f * inputMean.GetValue(0), elem_cout_d_x_y);
         Muls(inputDy, inputGamma, inputRstd.GetValue(0), elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5. d_x = x1Tensor * inputRstd +
         //           pd_var * (2.0 / reduceAxisSize) * x2Tensor +
@@ -492,19 +492,19 @@ private:
         // 5.3. res2 = pd_mean*(1.0 / reduceAxisSize)
         float inputMeanNum = tmpMeanPdLocal.GetValue(0) * reduceAxisSize;
         Duplicate<float>(inputGamma, inputMeanNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
 
         // 5.4. d_x = res0 + res1 + res2
         Add(inputX2, inputGamma, inputX2, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(outputDx, inputX2, inputDy, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (HAS_ADDITIONAL_INPUT) {
             Add(outputDx, outputDx, inputDx, elem_cout_d_x_y);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -515,12 +515,12 @@ private:
 
         SetAtomicAdd<float>();
         DataCopyAutomicAdd(dGammaGm, d_gammaLocal, elem_cout_d_x_y, offsetUbGamma, (uint16_t)1);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         SetAtomicNone();
 
         SetAtomicAdd<float>();
         DataCopyAutomicAdd(dBetaGm, d_beta_local, elem_cout_d_x_y, offsetUbGamma, (uint16_t)1);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         SetAtomicNone();
 
         dGammaQue.FreeTensor(d_gammaLocal);
@@ -532,7 +532,7 @@ private:
         LocalTensor<T> dXLocal = dXQue.DeQue<T>();
 
         DataCopyCustom<T>(dXGm, dXLocal, d_y_in_ub, offsetUbXY, false, (uint16_t)n_in_once_ub);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
 
         dXQue.FreeTensor(dXLocal);
     }

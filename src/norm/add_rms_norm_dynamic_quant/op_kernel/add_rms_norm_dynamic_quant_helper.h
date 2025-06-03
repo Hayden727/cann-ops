@@ -88,9 +88,9 @@ __aicore__ inline float ReduceMaxFP32(const LocalTensor<float> &srcLocal, int32_
     float value = 0.0;
 #if __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        set_mask_count();
-        set_vector_mask(0, count);
-        vcmax(nullptr, (__ubuf__ float *)srcLocal.GetPhyAddr(), 1, 1, 1, 8, Order_t::ONLY_VALUE);
+        AscendCUtils::SetMaskCount<float>();
+        SetVectorMask<float>(0, count);
+        ReduceMax(srcLocal, srcLocal, srcLocal, 1);
         PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
@@ -98,7 +98,7 @@ __aicore__ inline float ReduceMaxFP32(const LocalTensor<float> &srcLocal, int32_
         uint64_t reg_val = get_max_min_cnt();
         value = *reinterpret_cast<float *>(&reg_val);
         set_mask_norm();
-        set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
+        SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else
     ReduceMax(srcLocal, srcLocal, srcLocal, count);
@@ -142,9 +142,9 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &srcLocal, int32_
     float value = 0.0;
 #if __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        set_mask_count();
-        set_vector_mask(0, count);
-        vcadd(nullptr, (__ubuf__ float *)srcLocal.GetPhyAddr(), 1, 1, 1, 8, true);
+        AscendCUtils::SetMaskCount<float>();
+        SetVectorMask<float>(0, count);
+        ReduceSum(srcLocal, srcLocal, srcLocal, 1);
         PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
@@ -152,7 +152,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &srcLocal, int32_
         uint64_t acc_val = GetAccVal();
         value = *reinterpret_cast<float *>(&acc_val);
         set_mask_norm();
-        set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
+        SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else
     ReduceSum(srcLocal, srcLocal, srcLocal, count);

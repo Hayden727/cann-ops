@@ -59,7 +59,7 @@ public:
         if (g_coreType == AIV) {
             if (likely(repeatTimes > 0)) {
                 AscendCUtils::SetMask<float>(elementNumPerRep);
-                vcadd(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), repeatTimes, 1, 1, 8, true);
+                ReduceSum(src_local, src_local, src_local, repeatTimes);
                 set_flag(PIPE_V, PIPE_S, EVENT_ID0);
                 wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
 #ifdef __CCE_KT_TEST__
@@ -71,7 +71,7 @@ public:
             }
             if (unlikely(tailCount != 0)) {
                 AscendCUtils::SetMask<float>(tailCount);
-                vcadd(nullptr, (__ubuf__ float *)src_local[bodyCount].GetPhyAddr(), 1, 1, 1, 8, true);
+                ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
                 set_flag(PIPE_V, PIPE_S, EVENT_ID0);
                 wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
 #ifdef __CCE_KT_TEST__
@@ -99,15 +99,15 @@ public:
         int32_t repeatTail = repeat % elementNum * elementNum;
 
         Duplicate<float>(tmp_local, ZERO, repeat * elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (index = 0; index + elementNum <= num_last_dim; index += elementNum) {
             Add(tmp_local, tmp_local, src_local[index], elementNum, repeat, {1, 1, 1, 1, 1, repStride});
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         if (unlikely(tailCount != 0)) {
             Add(tmp_local, tmp_local, src_local[index], tailCount, repeat, {1, 1, 1, 1, 1, repStride});
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (repeatTimes != 0) {
             BlockReduceSum<float>(dst_local, tmp_local, repeatTimes, maxRepeat, 1, 1, elementNum);
         }
@@ -580,13 +580,13 @@ private:
         LocalTensor<float> local_y_fp32 = calc_y_fp32.Get<float>();
 
         Cast(local_y_fp32, x_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(local_x_fp32, gx_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
         Axpy(local_x_fp32, local_y_fp32, alphaVal, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(local_y_fp32, local_x_fp32, 1.0f, stepSize);
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -608,13 +608,13 @@ private:
         mean_que_fp32.EnQue(mean_local);
 
         Mul(local_x_fp32, local_y_fp32, local_y_fp32, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
         Cast(z_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
         Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t rid = 0; rid < nums; ++rid) {
             uint32_t offset = rid * realLen;
 
@@ -626,12 +626,12 @@ private:
             rstd_local[rid].SetValue(0, rstd_local_temp);
 
             Muls(local_y_fp32[offset], local_y_fp32[offset], rstd_local_temp, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(local_y_fp32[offset], local_y_fp32[offset], z_local_fp32, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(local_y_fp32[offset], local_y_fp32[offset], y_local_fp32, num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(z_local, local_y_fp32, RoundMode::CAST_NONE, stepSize);
         set_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
         wait_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
@@ -661,13 +661,13 @@ private:
         LocalTensor<float> local_y_fp32 = calc_y_fp32.Get<float>();
 
         Cast(local_y_fp32, x_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(local_x_fp32, gx_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
         Axpy(local_x_fp32, local_y_fp32, alphaVal, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(local_y_fp32, local_x_fp32, 1.0f, stepSize);
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -688,13 +688,13 @@ private:
         wait_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
         mean_que_fp32.EnQue(mean_local);
         Mul(local_x_fp32, local_y_fp32, local_y_fp32, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
         Cast(z_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
         Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t rid = 0; rid < nums; ++rid) {
             uint32_t offset = rid * realLen;
             float var_local_temp = ReduceSumCustom(local_x_fp32[offset], num_last_dim) * meanNum;
@@ -705,12 +705,12 @@ private:
             rstd_local[rid].SetValue(0, rstd_local_temp);
 
             Muls(local_y_fp32[offset], local_y_fp32[offset], rstd_local_temp, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(local_y_fp32[offset], local_y_fp32[offset], z_local_fp32, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(local_y_fp32[offset], local_y_fp32[offset], y_local_fp32, num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(z_local, local_y_fp32, RoundMode::CAST_RINT, stepSize);
         set_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
         wait_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
@@ -738,7 +738,7 @@ private:
         uint32_t stepSize = nums * realLen;
 
         Axpy(gx_local, x_local, alphaVal, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(z_local, gx_local, 1.0f, stepSize);
         x_que.FreeTensor(x_local);
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -760,7 +760,7 @@ private:
         wait_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
         mean_que_fp32.EnQue(mean_local);
         Mul(gx_local, z_local, z_local, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -775,12 +775,12 @@ private:
             rstd_local[rid].SetValue(0, rstd_local_temp);
 
             Muls(z_local[offset], z_local[offset], rstd_local_temp, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(z_local[offset], z_local[offset], gamma_local, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(z_local[offset], z_local[offset], beta_local, num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         gx_que.FreeTensor(gx_local);
         set_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
         wait_flag(PIPE_S, PIPE_MTE3, event_s_mte3);
@@ -805,23 +805,23 @@ private:
         uint32_t realLen = ROUND_UP(num_last_dim);
         uint32_t stepSize = nums * realLen;
         Cast(x_local_fp32, x_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(y_local_fp32, gx_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
 
         PrecisionComputeMeanShort(nums, z_local_fp32, x_local_fp32, y_local_fp32, mean_local);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         mean_que_fp32.EnQue(mean_local);
         PrecisionComputeRstdShort(nums, z_local_fp32, x_local_fp32, y_local_fp32, rstd_local);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         rstd_que_fp32.EnQue(rstd_local);
 
         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
         Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
         PrecisionComputeResultShort(nums, z_local_fp32, y_local_fp32, x_local_fp32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(z_local, z_local_fp32, RoundMode::CAST_NONE, stepSize);
         z_que.EnQue(z_local);
     }
@@ -843,23 +843,23 @@ private:
         uint32_t realLen = ROUND_UP(num_last_dim);
         uint32_t stepSize = nums * realLen;
         Cast(x_local_fp32, x_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(y_local_fp32, gx_local, RoundMode::CAST_NONE, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
 
         PrecisionComputeMeanShort(nums, z_local_fp32, x_local_fp32, y_local_fp32, mean_local);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         mean_que_fp32.EnQue(mean_local);
         PrecisionComputeRstdShort(nums, z_local_fp32, x_local_fp32, y_local_fp32, rstd_local);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         rstd_que_fp32.EnQue(rstd_local);
 
         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
         Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
         PrecisionComputeResultShort(nums, z_local_fp32, y_local_fp32, x_local_fp32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(z_local, z_local_fp32, RoundMode::CAST_RINT, stepSize);
         z_que.EnQue(z_local);
     }
@@ -875,10 +875,10 @@ private:
         LocalTensor<float> rstd_local = rstd_que_fp32.AllocTensor<float>();
 
         PrecisionComputeMeanShort(nums, z_local, x_local, gx_local, mean_local);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         mean_que_fp32.EnQue(mean_local);
         PrecisionComputeRstdShort(nums, z_local, x_local, gx_local, rstd_local);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         rstd_que_fp32.EnQue(rstd_local);
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
@@ -894,13 +894,13 @@ private:
 
         // compute mean
         Axpy(gx_local, x_local, alphaVal, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(z_local, gx_local, 1.0f, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumShort(mean_local, z_local, x_local, realLen, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(mean_local, mean_local, meanNum, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
         for (int32_t idx = nums - 1; idx >= 0; idx--) {
@@ -910,7 +910,7 @@ private:
             wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
             Adds(z_local[offset], gx_local[offset], meanTmp * (-1), num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void PrecisionComputeRstdShort(int32_t nums, LocalTensor<float> &z_local,
@@ -927,16 +927,16 @@ private:
 
         // compute rstd
         Mul(gx_local, z_local, z_local, stepSize);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumShort(rstd_local, gx_local, x_local, realLen, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(rstd_local, rstd_local, meanNum, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(rstd_local, rstd_local, eps, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(rstd_local, rstd_local, nums);
         Duplicate<float>(x_local, (float)1, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(rstd_local, x_local, rstd_local, nums);
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -947,7 +947,7 @@ private:
             wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
             Muls(z_local[offset], z_local[offset], rstdTmp, num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void PrecisionComputeResultShort(
@@ -960,7 +960,7 @@ private:
         uint32_t index = 0;
 
         // compute result
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (; index + betaIter <= num_last_dim; index += betaIter) {
             Mul(z_local[index],
                 z_local[index],
@@ -968,7 +968,7 @@ private:
                 betaIter,
                 nums,
                 {1, 1, 1, repeatStride, repeatStride, 0});
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(z_local[index],
                 z_local[index],
                 beta_local[index],
@@ -983,7 +983,7 @@ private:
                 betaTail,
                 nums,
                 {1, 1, 1, repeatStride, repeatStride, 0});
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(z_local[index],
                 z_local[index],
                 beta_local[index],
@@ -1134,9 +1134,9 @@ private:
             ExtraCopyBetaGamma(k * updated_last_dim, size);
             ComputeResFp16Bf16(k, size);
             LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(z_local[k * updated_last_dim], z_local_fp32, RoundMode::CAST_NONE, size);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         z_que.EnQue(z_local);
@@ -1192,9 +1192,9 @@ private:
             ExtraCopyBetaGamma(k * updated_last_dim, size);
             ComputeResFp16Bf16(k, size);
             LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(z_local[k * updated_last_dim], z_local_fp32, RoundMode::CAST_RINT, size);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         z_que.EnQue(z_local);
         mean_que_fp32.EnQue(mean);
@@ -1250,9 +1250,9 @@ private:
             ComputeResFp32(k, size);
             LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
             float mask = 0;
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(z_local[k * updated_last_dim], z_local_fp32, mask, size);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         z_que.EnQue(z_local);
         mean_que_fp32.EnQue(mean);
@@ -1419,20 +1419,20 @@ private:
         LocalTensor<float> x_local_fp32 = x_buf_fp32.Get<float>();
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, x_local, RoundMode::CAST_NONE, size);  // 16bit -> 32bit
         Cast(y_local_fp32, gx_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_local_fp32, x_local_fp32, alphaVal, size);
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_local_fp32[index * updated_last_dim], x_local_fp32, y_local_fp32, size);  // x_new = x_new + gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(mean_local_fp32, new_x_local_fp32[index * updated_last_dim], 1.0f, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeMeanFp32(int32_t index, int32_t size)
@@ -1445,15 +1445,15 @@ private:
         LocalTensor<float> x_local_fp32 = x_buf_fp32.Get<float>();
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_local_fp32, x_local, alphaVal, size);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_local_fp32[index * updated_last_dim], x_local_fp32, gx_local, size);  // x_new = x_new + gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(mean_local_fp32, new_x_local_fp32[index * updated_last_dim], 1.0f, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
@@ -1466,11 +1466,11 @@ private:
         LocalTensor<float> x_local_fp32 = x_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], meanVal * (-1), size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(z_local_fp32, new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeVarCommonFp16(int32_t index, int32_t size)
@@ -1483,23 +1483,23 @@ private:
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, x_local, RoundMode::CAST_NONE, size);  // 16bit -> 32bit
         Cast(y_local_fp32, gx_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
         Muls(x_local_fp32, x_local_fp32, alphaVal, size);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_fp32[index * updated_last_dim], x_local_fp32, y_local_fp32, size);  // x_new = x_new + gx
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], meanVal * (-1), size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(z_local_fp32, new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeVarCommonFp32(int32_t index, int32_t size)
@@ -1511,19 +1511,19 @@ private:
         LocalTensor<float> x_local_fp32 = x_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_local_fp32, x_local, alphaVal, size);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_fp32[index * updated_last_dim], x_local_fp32, gx_local, size);  // x_new = x_new + gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
         Adds(new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], meanVal * (-1), size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(z_local_fp32, new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeResFp16Bf16(int32_t index, int32_t size)
@@ -1537,15 +1537,15 @@ private:
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(z_local_fp32, new_x_fp32[index * updated_last_dim], varVal, size);
         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(z_local_fp32, z_local_fp32, x_local_fp32, size);
         Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(z_local_fp32, z_local_fp32, y_local_fp32, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         beta_que.FreeTensor(beta_local);
         gamma_que.FreeTensor(gamma_local);
@@ -1560,13 +1560,13 @@ private:
         LocalTensor<float> new_x_fp32 = calc_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(z_local_fp32, new_x_fp32[index * updated_last_dim], varVal, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(z_local_fp32, z_local_fp32, gamma_local, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(z_local_fp32, z_local_fp32, beta_local, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         beta_que.FreeTensor(beta_local);
         gamma_que.FreeTensor(gamma_local);
@@ -1585,31 +1585,31 @@ private:
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, x_local, RoundMode::CAST_NONE, size);  // 16bit -> 32bit
         Cast(y_local_fp32, gx_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
         Muls(x_local_fp32, x_local_fp32, alphaVal, size);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_fp32[index * updated_last_dim], x_local_fp32, y_local_fp32, size);  // x_new = x_new + gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], meanVal * (-1), size);
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(y_local_fp32, new_x_fp32[index * updated_last_dim], varVal, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(y_local_fp32, x_local_fp32, y_local_fp32, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, beta_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(z_local_fp32, y_local_fp32, x_local_fp32, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(z_local[index * updated_last_dim], z_local_fp32, RoundMode::CAST_NONE, size);
 
         beta_que.FreeTensor(beta_local);
@@ -1630,31 +1630,31 @@ private:
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, x_local, RoundMode::CAST_NONE, size);  // 16bit -> 32bit
         Cast(y_local_fp32, gx_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
         Muls(x_local_fp32, x_local_fp32, alphaVal, size);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_fp32[index * updated_last_dim], x_local_fp32, y_local_fp32, size);  // x_new = x_new + gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], meanVal * (-1), size);
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(y_local_fp32, new_x_fp32[index * updated_last_dim], varVal, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(y_local_fp32, x_local_fp32, y_local_fp32, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_local_fp32, beta_local, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(z_local_fp32, y_local_fp32, x_local_fp32, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(z_local[index * updated_last_dim], z_local_fp32, RoundMode::CAST_RINT, size);
 
         beta_que.FreeTensor(beta_local);
@@ -1675,24 +1675,24 @@ private:
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
         LocalTensor<float> z_local_fp32 = z_buf_fp32.Get<float>();
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_local_fp32, x_local, alphaVal, size);
 
         // check x val
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(new_x_fp32[index * updated_last_dim], x_local_fp32, gx_local, size);  // x_new = x_new + gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         x_que.FreeTensor(x_local);
         gx_que.FreeTensor(gx_local);
 
         Adds(new_x_fp32[index * updated_last_dim], new_x_fp32[index * updated_last_dim], meanVal * (-1), size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(y_local_fp32, new_x_fp32[index * updated_last_dim], varVal, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(y_local_fp32, y_local_fp32, gamma_local, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(z_local, y_local_fp32, beta_local, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         beta_que.FreeTensor(beta_local);
         gamma_que.FreeTensor(gamma_local);

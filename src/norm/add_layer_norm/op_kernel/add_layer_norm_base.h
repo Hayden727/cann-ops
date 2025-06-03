@@ -107,7 +107,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
     if (g_coreType == AIV) {
         if (likely(repeatTimes > 0)) {
             AscendCUtils::SetMask<float>(elementNumPerRep);
-            vcadd(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), repeatTimes, 1, 1, 8, true);
+            ReduceSum(src_local, src_local, src_local, repeatTimes);
             set_flag(PIPE_V, PIPE_S, EVENT_ID0);
             wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
 #ifdef __CCE_KT_TEST__
@@ -119,7 +119,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
-            vcadd(nullptr, (__ubuf__ float *)src_local[bodyCount].GetPhyAddr(), 1, 1, 1, 8, true);
+            ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             set_flag(PIPE_V, PIPE_S, EVENT_ID0);
             wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
 #ifdef __CCE_KT_TEST__
@@ -151,15 +151,15 @@ __aicore__ inline void ReduceSumShort(const LocalTensor<float> &dst_local, const
     int32_t repeatTail = repeat % elementNum * elementNum;
 
     Duplicate<float>(tmp_local, ZERO, repeat * elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     for (index = 0; index + elementNum <= data_len; index += elementNum) {
         Add(tmp_local, tmp_local, src_local[index], elementNum, repeat, {1, 1, 1, 1, 1, repStride});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (unlikely(tailCount != 0)) {
         Add(tmp_local, tmp_local, src_local[index], tailCount, repeat, {1, 1, 1, 1, 1, repStride});
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (repeatTimes != 0) {
         BlockReduceSum<float>(dst_local, tmp_local, repeatTimes, maxRepeat, 1, 1, elementNum);
     }
@@ -180,7 +180,7 @@ __aicore__ inline void ReduceSumForSmallReduceDimPreRepeat(const LocalTensor<flo
             elemNum,
             repeat,
             {1, 1, 1, FLOAT_BLOCK_ELEM, repStride, FLOAT_BLOCK_ELEM});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (unlikely(tailCount != 0)) {
         Add(tmpLocal,
@@ -190,25 +190,14 @@ __aicore__ inline void ReduceSumForSmallReduceDimPreRepeat(const LocalTensor<flo
             repeat,
             {1, 1, 1, FLOAT_BLOCK_ELEM, repStride, FLOAT_BLOCK_ELEM});
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     AscendCUtils::SetMask<float>(ELEM_PER_REP_FP32);  // set mask = 64
 #if __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        vcadd((__ubuf__ float *)dstLocal.GetPhyAddr(),
-            (__ubuf__ float *)tmpLocal.GetPhyAddr(),
-            repeat,
-            1,
-            1,
-            FLOAT_BLOCK_ELEM,
-            false);
+        RepeatReduceSum<float, false>(dstLocal, tmpLocal, repeat, MASK_PLACEHOLDER, 1, 1, 1, ELEM_PER_REP_FP32);
     }
 #else
-    vcadd((__ubuf__ float *)dstLocal.GetPhyAddr(),
-        (__ubuf__ float *)tmpLocal.GetPhyAddr(),
-        repeat,
-        1,
-        1,
-        FLOAT_BLOCK_ELEM);
+    WholeReduceSum<float, false>(dstLocal, tmpLocal, MASK_PLACEHOLDER, repeat, 1, 1, ELEM_PER_REP_FP32);
 #endif
 }
 
@@ -298,14 +287,14 @@ __aicore__ inline void CCEBroadCastShort(__ubuf__ int16_t *dstAddr, __ubuf__ flo
     __ubuf__ int16_t *transposeDstAddr, __ubuf__ int16_t *transposeSrcAddr, __ubuf__ int16_t *orOffsetINT16Addr,
     const uint32_t forCount, const uint32_t tailCount, const uint32_t repeat, const uint8_t repStride)
 {
-    set_vector_mask(0x0, 0xffff);
+    SetVectorMask<float>(0x0, 0xffff);
     vector_dup(orOffsetINT16Addr, (int16_t)0, 1, 0, 0, (uint8_t)0, (uint8_t)0);  // all zero
     copy_ubuf_to_ubuf((__ubuf__ float *)transposeSrcAddr, srcAddr, 0, 1, repStride, 0, 0);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     vtranspose((__ubuf__ uint16_t *)transposeDstAddr, (__ubuf__ uint16_t *)transposeSrcAddr);
     AscendCUtils::SetMask<half>(ELEM_PER_REP_FP16);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     vor(transposeSrcAddr, transposeDstAddr, orOffsetINT16Addr, 8, 1, 1, 0, 16, 0, 0);
     vor(transposeSrcAddr + (int64_t)ELEM_PER_REP_FP16,
@@ -318,9 +307,9 @@ __aicore__ inline void CCEBroadCastShort(__ubuf__ int16_t *dstAddr, __ubuf__ flo
         16,
         0,
         0);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     scatter_vnchwconv_b16(VA0, VA2, 8, 1, 2);  // transpose
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     for (int64_t forIndex = 0; forIndex < (int64_t)forCount; ++forIndex) {
         vor(dstAddr + (forIndex * (int64_t)ELEM_PER_REP_FP16),
             transposeDstAddr,

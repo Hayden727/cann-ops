@@ -97,7 +97,7 @@ private:
         if constexpr (!IsSame<T, float>::value) {
             // total size of meanvar is 2 cfactor
             Cast(meanVarTensorOutType, meanVarTensor, RoundMode::CAST_NONE, this->cAxisFactor * 2);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
         }
         outDataQue.EnQue(fakeTensor);
@@ -122,7 +122,7 @@ private:
         event_t eventVS;
 
         Muls(yFp32Tensor, xFp32Tensor, this->avgFactor, this->reduceNums);  // yFp32Tensor <- x / N
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSum(yFp32Tensor, yFp32Tensor, yFp32Tensor, this->reduceNums);
 
         eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
@@ -136,11 +136,11 @@ private:
         wait_flag(PIPE_S, PIPE_V, eventSV);
 
         Adds(xFp32Tensor, xFp32Tensor, aveLocalTemp * -1, this->reduceNums);  // xFp32Tensor <- x - E(x)
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(yFp32Tensor, xFp32Tensor, xFp32Tensor, this->reduceNums);  // yFp32Tensor <- (x - E(x)) ** 2
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(yFp32Tensor, yFp32Tensor, this->avgFactor, this->reduceNums);  // yFp32Tensor <- (x - E(x)) ** 2 / N
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         ReduceSum(yFp32Tensor, yFp32Tensor, yFp32Tensor, this->reduceNums);
 
@@ -155,10 +155,10 @@ private:
         wait_flag(PIPE_S, PIPE_V, eventSV);
 
         Muls(xFp32Tensor, xFp32Tensor, rstdLocalTemp, this->reduceNums);  // xFp32Tensor <- (x - E(x)) * rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(yFp32Tensor, xFp32Tensor, gammaScalar, this->reduceNums);  // yFp32Tensor <- (x - E(x)) * rstd * gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<T> yLocal = outDataQue.template AllocTensor<T>();
         if constexpr (IsSame<T, float>::value) {
@@ -168,10 +168,10 @@ private:
                 yFp32Tensor,
                 betaScalar,
                 this->reduceNums);  // xFp32Tensor <- (x - E(x)) * rstd * gamma + beta
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(yLocal, xFp32Tensor, RoundMode::CAST_NONE, this->reduceNums);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outDataQue.EnQue(yLocal);
     }
 
@@ -206,7 +206,7 @@ private:
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, eventVS);
             wait_flag(PIPE_V, PIPE_S, eventVS);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -222,7 +222,7 @@ private:
         } else {
             Cast(xFp32Tensor, xLocal, RoundMode::CAST_NONE, size);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inDataQue.FreeTensor(xLocal);
     }
 

@@ -262,14 +262,14 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ClipCoordinates(L
     auto tmpIntLocal1 = tmpLocal[calHWBlock * 3].ReinterpretCast<int32_t>();
     auto tmpIntLocal2 = tmpLocal[calHWBlock * 4].ReinterpretCast<int32_t>();
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(inputXIntTmpUb, iXIntUb, 0, calHWBlock);
     Adds(inputYIntTmpUb, iYIntUb, 0, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Cast(iXFpUb, inputXIntTmpUb, RoundMode::CAST_NONE, calHWBlock);
     Cast(iYFpUb, inputYIntTmpUb, RoundMode::CAST_NONE, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     LocalTensor<uint8_t> maskUb = maskBuf_.Get<uint8_t>(maskUbSize * 3);
     LocalTensor<uint8_t> maskXUb = weightMaskUb;
     LocalTensor<uint8_t> maskYUb = maskUb;
@@ -285,20 +285,20 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ClipCoordinates(L
     // maskXUbTmp：合法的点的mask
     And(maskXUbTmp, maskYUbTmp, maskXUbTmp, maskNum);
     weightMaskUb = maskXUbTmp.ReinterpretCast<uint8_t>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 重计算坐标，使坐标不超过边界
     Mins(tmpIntLocal1, inputXIntTmpUb, (int32_t)(inputW_ - 1), calHWBlock);
     Mins(tmpIntLocal2, inputYIntTmpUb, (int32_t)(inputH_ - 1), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(inputXIntTmpUb, tmpIntLocal1, 0, calHWBlock);
     Maxs(inputYIntTmpUb, tmpIntLocal2, 0, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Muls(inputYIntTmpUb, inputYIntTmpUb, (int32_t)inputW_, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(coorUb, coorUb, inputYIntTmpUb, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -321,7 +321,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::CoordinatesGetMas
     CompareScalar(maskTmpYUb, iYFpUb, 0.0f, CMPMODE::GE, calHWBlock);
     CompareScalar(maskYUb, iYFpUb, static_cast<float>(inputH_ - 1), CMPMODE::LE, calHWBlock);
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     int32_t maskNum = (maskUbSize + 1) / 2;  // 除2数据量按照uint16类型折半
     auto maskTmpXUbTmp = maskTmpXUb.ReinterpretCast<uint16_t>();
@@ -330,7 +330,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::CoordinatesGetMas
     auto maskYUbTmp = maskYUb.ReinterpretCast<uint16_t>();
     And(maskXUbTmp, maskTmpXUbTmp, maskXUbTmp, maskNum);
     And(maskYUbTmp, maskTmpYUbTmp, maskYUbTmp, maskNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     maskXUb = maskXUbTmp.ReinterpretCast<uint8_t>();
     maskYUb = maskYUbTmp.ReinterpretCast<uint8_t>();
 }
@@ -348,7 +348,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::CoordinatesSelect
     repParams.dstRepStride = B32_REPEAT_STRIDE;
     uint8_t repeat = (calNum + B32_VECTOR_MASK - 1) / B32_VECTOR_MASK;
     Select(oFpUb, maskUb, iFpUb, scalarVal, SELMODE::VSEL_TENSOR_SCALAR_MODE, B32_VECTOR_MASK, repeat, repParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -364,7 +364,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::CoordinatesSelect
     repParams.dstRepStride = B32_REPEAT_STRIDE;
     uint8_t repeat = (calHWBlock + B32_VECTOR_MASK - 1) / B32_VECTOR_MASK;
     Select(coorUb, maskUb, src0, src1, SELMODE::VSEL_TENSOR_TENSOR_MODE, B32_VECTOR_MASK, repeat, repParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -380,33 +380,33 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::BorderClip(LocalT
     Mins(tmpLocal1, tmpLocal3, (float)(inputW_ - 1), calHWBlock);
     // tmpBuf[1,x,x,4,x,x]->tmpBuf[1,2,x,x,x,x]
     Mins(tmpLocal2, tmpLocal4, (float)(inputH_ - 1), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // tmpBuf[1,2,X,x,x,x]->tmpBuf[x,2,3,x,x,x]
     Maxs(tmpLocal3, tmpLocal1, (float)0, calHWBlock);
     // tmpBuf[x,2,3,x,x,x]->tmpBuf[x,x,3,4,x,x]
     Maxs(tmpLocal4, tmpLocal2, (float)0, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // weightMaskBuf_作tmpBuf用，和weight无关
     LocalTensor<uint8_t> maskUb = weightMaskBuf_.Get<uint8_t>(maskUbSize);
     // +INF/-INF/NAN 场景下，+INF/-INF * 0 = NAN，消INF
     Muls(tmpLocal5, tmpLocal3, (float)(0.0), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // NAN eq NAN = FALSE，maskUb是NAN的mask
     Compare(maskUb, tmpLocal5, tmpLocal5, CMPMODE::EQ, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // 对上一步mask的位置置0，即+INF/-INF/NAN 全置0
     CoordinatesSelectScalar(tmpLocal3, tmpLocal3, maskUb, 0.0f, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // Y同理
     Muls(tmpLocal5, tmpLocal4, (float)(0.0), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(maskUb, tmpLocal5, tmpLocal5, CMPMODE::EQ, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CoordinatesSelectScalar(tmpLocal4, tmpLocal4, maskUb, 0.0f, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -433,36 +433,36 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ReflectClip(Local
 
     ReflectCoordinatesGeneral(
         tmpLocal4, tmpLocal4, tmpLocal1, tmpLocal2, maskUb, tmpLocal5, tmpLocal6tmp, twiceLow, twiceLowY);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     ReflectCoordinatesGeneral(
         tmpLocal3, tmpLocal3, tmpLocal1, tmpLocal2, maskUb, tmpLocal5, tmpLocal6tmp, twiceLow, twiceLowX);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     tmpLocal6 = tmpLocal6tmp.ReinterpretCast<float>();
 
     // LocalTensor<T> tmpUb = inputXYFPBuf_.Get<float>();
     Muls(tmpLocal1, tmpLocal3, (float)(0.0), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(maskUb, tmpLocal1, tmpLocal1, CMPMODE::EQ, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CoordinatesSelectScalar(tmpLocal3, tmpLocal3, maskUb, 0.0f, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tmpLocal1, tmpLocal4, (float)(0.0), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(maskUb, tmpLocal1, tmpLocal1, CMPMODE::EQ, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CoordinatesSelectScalar(tmpLocal4, tmpLocal4, maskUb, 0.0f, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mins(tmpLocal3, tmpLocal3, (float)(inputW_ - 1), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(tmpLocal3, tmpLocal3, (float)0, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mins(tmpLocal4, tmpLocal4, (float)(inputH_ - 1), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(tmpLocal4, tmpLocal4, (float)0, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -482,29 +482,29 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ReflectCoordinate
 
     // new relative position
     Adds(coorSubUb, iFpUb, negMinS, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Abs(coorSubUb, coorSubUb, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // extra
     Muls(extraFpUb, coorSubUb, static_cast<float>(1.0f / spanS), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tmpIntUb, extraFpUb, RoundMode::CAST_FLOOR, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(extraFpUb, tmpIntUb, RoundMode::CAST_NONE, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(extraFpUb, extraFpUb, spanS, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(extraFpUb, coorSubUb, extraFpUb, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // flip
     Muls(coorSubUb, coorSubUb, static_cast<float>(1.0f / spanS), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tmpIntUb, coorSubUb, RoundMode::CAST_FLOOR, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(coorSubUb, tmpIntUb, RoundMode::CAST_NONE, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // coordinate
     /*
@@ -519,25 +519,25 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ReflectCoordinate
 
     Adds(out1, extraFpUb, minS, calHWBlock);
     Muls(out2, extraFpUb, -1.0f, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(out2, out2, spanS, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(out2, out2, minS, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Muls(mods, coorSubUb, static_cast<float>(1 / 2.0), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tmpIntUb, mods, RoundMode::CAST_FLOOR, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(mods, tmpIntUb, RoundMode::CAST_NONE, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(mods, mods, 2.0f, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(mods, coorSubUb, mods, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     CompareScalar(maskUb, mods, static_cast<float>(0.0), CMPMODE::EQ, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     CoordinatesSelectTensor(out1, out2, coorSubUb, maskUb);
 }
@@ -801,7 +801,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
         CoordinatesSelectScalar(weightUb, weightUb, weightMaskUb, 0.0f, calHWBlock);
     }
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(coordinatesUb, coordinatesUb, (int32_t)(sizeof(T) * inputC_), calHWBlock);
     int64_t outBaseOffset = nIdx * gridHW_ * inputC_ + hwIdx * calHWBlock;
     auto coorUb = coordinatesUb.ReinterpretCast<uint32_t>();
@@ -816,7 +816,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
             if (cIdx == channelLoop_ - 1) {
                 calCElems = lastLoopChannel_;
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventIdVToS);
             WaitFlag<HardEvent::V_S>(eventIdVToS);
@@ -826,7 +826,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
                 Gather(outValueFP16Local[c_idx * calHWBlock], xLocal, coorUb, srcBaseAddr, calHWBlock);
             }
 
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (size_t i = 0; i < calCElems; i++) {
                 ubOffset = i * calHWBlock;
                 Select(outValueFP16Local[ubOffset],
@@ -837,10 +837,10 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
                     calHWBlock);
             }
 
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(outValueUb, outValueFP16Local, RoundMode::CAST_NONE, calCElems * calHWBlock);
 
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             MTE3ForNCHWToWorkSpace(cIdx, calCElems, loop_elems, weightUb, outValueUb, isAutomicAdd);
             event_t eventMte3V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
             SetFlag<HardEvent::MTE3_V>(eventMte3V);
@@ -852,7 +852,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
             if (cIdx == channelLoop_ - 1) {
                 calCElems = lastLoopChannel_;
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventIdVToS);
             WaitFlag<HardEvent::V_S>(eventIdVToS);
@@ -862,7 +862,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
                 Gather(outValueUb[c_idx * calHWBlock], xLocal, coorUb, srcBaseAddr, calHWBlock);
             }
 
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (size_t i = 0; i < calCElems; i++) {
                 ubOffset = i * calHWBlock;
                 Select(outValueUb[ubOffset],
@@ -873,7 +873,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinear(int
                     calHWBlock);
             }
 
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             MTE3ForNCHW(cIdx, calCElems, loop_elems, outBaseOffset, weightUb, outValueUb, isAutomicAdd);
             event_t eventMte3V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
             SetFlag<HardEvent::MTE3_V>(eventMte3V);
@@ -892,7 +892,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
         CoordinatesSelectScalar(weightUb, weightUb, weightMaskUb, 0.0f, calHWBlock);
     }
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(coordinatesUb, coordinatesUb, (int32_t)(sizeof(T) * inputC_), calHWBlock);
     int64_t outBaseOffset = nIdx * gridHW_ * inputC_ + hwIdx * calHWBlock;
     auto coorUb = coordinatesUb.ReinterpretCast<uint32_t>();
@@ -916,7 +916,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
                 if (HWLoop == loop_num_tmp - 1) {
                     loop_elems_tmp = loop_elems - HWLoop * C32_H_W_BLOCK;
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
                 SetFlag<HardEvent::V_S>(eventIdVToS);
                 WaitFlag<HardEvent::V_S>(eventIdVToS);
@@ -930,9 +930,9 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
                     repeatTime,
                     params);
 
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 OutTranspose(32 / sizeof(T), tmpBufTotal[2 * 1024 / sizeof(uint16_t)], outValueFP16Local);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (size_t i = 0; i < calCElems; i++) {
                     ubOffset = i * C32_H_W_BLOCK;
                     Select(outValueFP16Local[ubOffset],
@@ -943,10 +943,10 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
                         C32_H_W_BLOCK);
                 }
 
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Cast(outValueUb, outValueFP16Local, RoundMode::CAST_NONE, calCElems * C32_H_W_BLOCK);
 
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 int64_t gmYBaseOffset = calHWBlock * inputC_ * blockIDX + (int64_t)cIdx * perLoopChannel_ * calHWBlock +
                                         HWLoop * C32_H_W_BLOCK;
                 MTE3ForC32(gmWorkspace_[gmYBaseOffset],
@@ -971,7 +971,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
                 if (HWLoop == loop_num_tmp - 1) {
                     loop_elems_tmp = loop_elems - HWLoop * C32_H_W_BLOCK;
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
                 SetFlag<HardEvent::V_S>(eventIdVToS);
                 WaitFlag<HardEvent::V_S>(eventIdVToS);
@@ -985,9 +985,9 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
                     repeatTime,
                     params);
 
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 OutTranspose(32 / sizeof(T), outValueUb[perLoopChannel_ * C32_H_W_BLOCK], outValueUb);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (size_t i = 0; i < calCElems; i++) {
                     ubOffset = i * C32_H_W_BLOCK;
                     Select(outValueUb[ubOffset],
@@ -998,7 +998,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC32(
                         C32_H_W_BLOCK);
                 }
 
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 int64_t gmYBaseOffset = outBaseOffset + HWLoop * C32_H_W_BLOCK + cIdx * CHANNEL_BLOCK * gridHW_;
                 MTE3ForC32(gmY_[gmYBaseOffset],
                     calCElems,
@@ -1022,9 +1022,9 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC1(i
     LocalTensor<float> tmpFPLocal = tmpLocal.ReinterpretCast<float>();
     LocalTensor<float> outValueUb = tmpFPLocal[calHWBlock * 5];
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(coordinatesUb, coordinatesUb, (int32_t)(sizeof(T) * inputC_), calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     auto coorUb = coordinatesUb.ReinterpretCast<uint32_t>();
     LocalTensor<T> xLocal = xBuf_.Get<T>();
@@ -1035,22 +1035,22 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PointBilinearC1(i
     if constexpr (IsSameType<T, half>::value) {
         LocalTensor<half> outValueFP16Local = outValueFP16Buf_.Get<half>();
         Gather(outValueFP16Local, xLocal, coorUb, 0, calHWBlock);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Cast(outValueUb, outValueFP16Local, RoundMode::CAST_NONE, inputC_ * calHWBlock);
     } else {
         Gather(outValueUb, xLocal, coorUb, 0, calHWBlock);
     }
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(outValueUb, outValueUb, weightUb, calHWBlock);
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Select(outValueUb, weightMaskUb, outValueUb, 0.0f, SELMODE::VSEL_TENSOR_SCALAR_MODE, calHWBlock);
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(addUb, addUb, outValueUb, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -1083,7 +1083,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ProcessingCoordin
         SetFlag<HardEvent::MTE2_V>(eventMte2V);
         WaitFlag<HardEvent::MTE2_V>(eventMte2V);
         Cast(tmpLocal1, gridFp16Local, RoundMode::CAST_NONE, calHWBlock * 2);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     } else {
         // grid put in tmpBuf[1,2,x,x,x,x]
         //  搬入2份calHWBlock
@@ -1094,7 +1094,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ProcessingCoordin
 
     // put in tmpBuf[x,x,3,4,x,x]
     Adds(tmpLocal3, tmpLocal1, (float)1.0, calHWBlock * 2);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     uint32_t mask = calHWBlock * 2;
     uint64_t rsvdCnt = 0;
@@ -1106,7 +1106,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ProcessingCoordin
     // weight put in tmpBuf[1,2,x,x,x,x]   1->x  2->y
     GatherMask(tmpLocal1, tmpLocal3, xPattern, true, mask, {1, 1, src0RepeatStride, src1RepeatStride}, rsvdCnt);
     GatherMask(tmpLocal2, tmpLocal3, yPattern, true, mask, {1, 1, src0RepeatStride, src1RepeatStride}, rsvdCnt);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // alignCorner流程
     if (alignCorners_ == 1) {
@@ -1117,12 +1117,12 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::ProcessingCoordin
         // put in tmpBuf[x,x,x,x,5,6]
         Muls(tmpLocal5, tmpLocal1, (float)((float)0.5 * inputW_), calHWBlock);
         Muls(tmpLocal6, tmpLocal2, (float)((float)0.5 * inputH_), calHWBlock);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // put in tmpBuf[x,x,3,4,x,x]
         Adds(tmpLocal3, tmpLocal5, (float)(-0.5), calHWBlock);
         Adds(tmpLocal4, tmpLocal6, (float)(-0.5), calHWBlock);
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T, int templateCNum>
@@ -1163,7 +1163,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PerLoopCompute(
 
     Cast(inputXWIntLocal, tmpLocal3, RoundMode::CAST_FLOOR, calHWBlock);
     Cast(inputYWIntLocal, tmpLocal4, RoundMode::CAST_FLOOR, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(WeightTmpLocal1, inputXWIntLocal, RoundMode::CAST_NONE, calHWBlock);
     Cast(WeightTmpLocal2, inputYWIntLocal, RoundMode::CAST_NONE, calHWBlock);
 
@@ -1171,13 +1171,13 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PerLoopCompute(
     // int型Y坐标从左到右 inputYWIntLocal inputYEIntLocal
     Adds(inputXEIntLocal, inputXWIntLocal, 1, calHWBlock);
     Adds(inputYEIntLocal, inputYWIntLocal, 1, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // float型X坐标从左到右 WeightTmpLocal1 tmpLocal3 WeightTmpLocal3
     // float型Y坐标从左到右 WeightTmpLocal2 tmpLocal4 WeightTmpLocal4
     Adds(WeightTmpLocal3, WeightTmpLocal1, (float)1.0, calHWBlock);
     Adds(WeightTmpLocal4, WeightTmpLocal2, (float)1.0, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // tmpLocal1:ceilX   tmpLocal2:ceilY
     // tmpLocal5:floorX  tmpLocal6:floorY
@@ -1185,7 +1185,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PerLoopCompute(
     Sub(tmpLocal2, WeightTmpLocal4, tmpLocal4, calHWBlock);
     Sub(tmpLocal5, tmpLocal3, WeightTmpLocal1, calHWBlock);
     Sub(tmpLocal6, tmpLocal4, WeightTmpLocal2, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<float> nwWeightLocal = WeightTmpLocal1;
     LocalTensor<float> neWeightLocal = WeightTmpLocal2;
@@ -1198,7 +1198,7 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PerLoopCompute(
     Mul(neWeightLocal, tmpLocal5, tmpLocal2, calHWBlock);
     Mul(swWeightLocal, tmpLocal1, tmpLocal6, calHWBlock);
     Mul(seWeightLocal, tmpLocal5, tmpLocal6, calHWBlock);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<uint8_t> weightMaskUb = weightMaskBuf_.Get<uint8_t>();
     LocalTensor<int32_t> coordinatesLocal = coorBuf_.Get<int32_t>();
@@ -1246,9 +1246,9 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PerLoopCompute(
         PointBilinearC32(nIdx, hwIdx, calHWElems, coordinatesLocal, seWeightLocal, weightMaskUb, outValueLocal, true);
 
         if constexpr (IsSameType<T, half>::value) {
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
             CopyOut(nIdx, hwIdx, calHWElems);
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
         }
     } else {
         LocalTensor<float> outValueLocal = outValueBuf_.Get<float>();
@@ -1263,9 +1263,9 @@ __aicore__ inline void GridSampler2DFullLoad<T, templateCNum>::PerLoopCompute(
         PointBilinear(nIdx, hwIdx, calHWElems, coordinatesLocal, seWeightLocal, weightMaskUb, outValueLocal, true);
 
         if constexpr (IsSameType<T, half>::value) {
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
             CopyOut(nIdx, hwIdx, calHWElems);
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
         }
     }
 }

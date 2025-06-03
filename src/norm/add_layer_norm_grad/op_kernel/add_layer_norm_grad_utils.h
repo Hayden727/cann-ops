@@ -88,7 +88,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
     if (g_coreType == AIV) {
         if (likely(repeatTimes > 0)) {
             AscendCUtils::SetMask<float>(elementNumPerRep);
-            vcadd(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), repeatTimes, 1, 1, 8, true);
+            ReduceSum(src_local, src_local, src_local, repeatTimes);
             event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, event_v_s);
             wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -101,7 +101,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
-            vcadd(nullptr, (__ubuf__ float *)src_local[bodyCount].GetPhyAddr(), 1, 1, 1, 8, true);
+            ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, event_v_s);
             wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -195,7 +195,7 @@ __aicore__ inline void InitGmData(GlobalTensor<float> outputPdGammaGm, GlobalTen
         } else {
             Duplicate(dbeta, 0.0f, elemWithDInUBFp32);
         }
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         for (uint32_t idx = 0; idx < loopNum; idx++) {
             uint32_t curOffset = idx * maxCopyLenth;
             SafeDataCopy(outputPdGammaGm[curOffset], dbeta, maxCopyLenth);
@@ -211,7 +211,7 @@ __aicore__ inline void InitGmData(GlobalTensor<float> outputPdGammaGm, GlobalTen
                 SafeDataCopy(outputPdBetaGm[maxCopyLenth * loopNum], dbeta, tail);
             }
         }
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
     }
 #endif
 }

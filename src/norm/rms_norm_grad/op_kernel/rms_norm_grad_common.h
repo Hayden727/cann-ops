@@ -70,25 +70,19 @@ __aicore__ inline void ReduceSumFP32(uint32_t idx, LocalTensor<float> &dst_local
         repeatParams.dstRepStride = 0;
         repeatParams.dstBlkStride = 1;
         Duplicate(work_local, 0.0f, elementNumPerRep);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         int32_t start_addr = idx * col_val_align;
         if (likely(repeatTimes > 0)) {
             Add(work_local, src_local[start_addr], work_local, mask, repeatTimes, repeatParams);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         if (unlikely(tailCount != 0)) {
             Add(work_local, src_local[start_addr + bodyCount], work_local, tailCount, 1, repeatParams);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         AscendCUtils::SetMask<float>(elementNumPerRep);
-        vcadd((__ubuf__ float *)dst_local[start_addr].GetPhyAddr(),
-            (__ubuf__ float *)work_local.GetPhyAddr(),
-            1,
-            0,
-            1,
-            0,
-            false);
-        pipe_barrier(PIPE_V);
+        RepeatReduceSum<float, false>(dst_local[start_addr], work_local, 1, elementNumPerRep, 1, 1, 0, 0);
+        PipeBarrier<PIPE_V>();
     }
 }
 
@@ -108,7 +102,7 @@ __aicore__ inline float ReduceSumFP32_V2(const LocalTensor<float> &src_local, in
     if (g_coreType == AIV) {
         if (likely(repeatTimes > 0)) {
             AscendCUtils::SetMask<float>(elementNumPerRep);
-            vcadd(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), repeatTimes, 1, 1, 8, true);
+            ReduceSum(src_local, src_local, src_local, repeatTimes);
             event_t eventId = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, eventId);
             wait_flag(PIPE_V, PIPE_S, eventId);
@@ -121,7 +115,7 @@ __aicore__ inline float ReduceSumFP32_V2(const LocalTensor<float> &src_local, in
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
-            vcadd(nullptr, (__ubuf__ float *)src_local[bodyCount].GetPhyAddr(), 1, 1, 1, 8, true);
+            ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             event_t eventId = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, eventId);
             wait_flag(PIPE_V, PIPE_S, eventId);
@@ -142,7 +136,7 @@ __aicore__ inline void Cast2FloatIf(LocalTensor<float> &castLocal, uint32_t srcO
     if constexpr (!IsSame<T, float>::value) {
         LocalTensor<T> castLocalB16 = castLocal.ReinterpretCast<T>();
         Cast(castLocal, castLocalB16[srcOffset], RoundMode::CAST_NONE, calcCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 }
 
@@ -175,7 +169,7 @@ __aicore__ inline void DataCopyCustom(GlobalTensor<T> &dstTensor, LocalTensor<T>
             dstTensor.SetValue(dstOffset + calcLenAlign32 + i, srcTensor.GetValue(srcOffset + calcLenAlign32 + i));
         }
         DataCacheCleanAndInvalid<T, CacheLine::ENTIRE_DATA_CACHE>(dstTensor);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
         wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
     }
@@ -189,7 +183,7 @@ __aicore__ inline void InitGmZero(
     LocalTensor<T> temp_zero_tensor = TmpZeroTBuf.Get<T>();
 
     Duplicate(temp_zero_tensor, (T)0.0, zeroLen);
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
     set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
     wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
 
@@ -197,7 +191,7 @@ __aicore__ inline void InitGmZero(
     set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
     wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
 
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
 }
 
 __aicore__ inline uint32_t FindDichotomizeAddDiffSize(uint32_t parallelN)

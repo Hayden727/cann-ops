@@ -43,9 +43,9 @@ class DynamicQuant : public DynamicQuantBase {
       smoothLocal = smooth_buf_.Get<float>();
       SmoothCopyIn();
       smoothHalfLocal = smoothQueue.DeQue<xDtype>();
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(smoothLocal, smoothHalfLocal, RoundMode::CAST_NONE, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
 
     DuplicateConst();
@@ -148,15 +148,15 @@ class DynamicQuant : public DynamicQuantBase {
       index = i * sizeHalfLen;
       // x fp16->fp32
       Cast(tempFp32, inLocal[index], RoundMode::CAST_NONE, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (tilingData_.hasSmooth) {
         Mul(tempFp32, tempFp32, smoothLocal, tilingData_.rowLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
       }
       Abs(temp, tempFp32, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       ReduceMaxInplace(temp, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Div(temp, constScale, temp, MAX_VALUE_NUM);
       event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
       set_flag(PIPE_V, PIPE_S, event_v_s);
@@ -164,13 +164,13 @@ class DynamicQuant : public DynamicQuantBase {
       float scale = temp.GetValue(0);
       scaleLocal.SetValue(i, 1 / scale);
       Muls(tempFp32, tempFp32, scale, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempInt32, tempFp32, RoundMode::CAST_RINT, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       SetDeqScale(static_cast<half>(1.0));
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempHalf, tempInt32, RoundMode::CAST_ROUND, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(outLocal[i * outAlignLen], tempHalf, RoundMode::CAST_TRUNC, tilingData_.rowLen);
     }
     outQueue.EnQue<yDtype>(outLocal);
@@ -197,31 +197,31 @@ class DynamicQuant : public DynamicQuantBase {
       index = i * sizeHalfLen;
       // x fp16->fp32
       Cast(tempFp32, inLocal[index], RoundMode::CAST_NONE, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (tilingData_.hasSmooth) {
         Mul(tempFp32, tempFp32, smoothLocal, tilingData_.rowLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
       }
       ReduceMax(temp, tempFp32, temp, tilingData_.rowLen, false);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       max_value = temp.GetValue(0);
       ReduceMin(temp, tempFp32, temp, tilingData_.rowLen, false);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       min_value = temp.GetValue(0);
       GetScaleAndOffset(max_value, min_value, scale, offset);
       back_scale = 1 / scale;
       scaleLocal.SetValue(i, scale);
       offsetLocal.SetValue(i, offset);
       Muls(tempFp32, tempFp32, back_scale, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Adds(tempFp32, tempFp32, offset, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempInt32, tempFp32, RoundMode::CAST_RINT, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       SetDeqScale(static_cast<half>(1.0));
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempHalf, tempInt32, RoundMode::CAST_ROUND, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(outLocal[i * outAlignLen], tempHalf, RoundMode::CAST_TRUNC, tilingData_.rowLen);
     }
     outQueue.EnQue<yDtype>(outLocal);

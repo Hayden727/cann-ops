@@ -257,7 +257,7 @@ private:
         }
 #endif
 
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         dyQue.EnQue(dyLocal);
         x1Que.EnQue(x1Local);
         x2Que.EnQue(x2Local);
@@ -314,7 +314,7 @@ private:
                 Cast(x1Fp32Local, inputX1[offsetDXY], RoundMode::CAST_NONE, numLastDim);
                 Cast(x2Fp32Local, inputX2[offsetDXY], RoundMode::CAST_NONE, numLastDim);
                 Cast(gammaFp32Local, inputGamma, RoundMode::CAST_NONE, numLastDim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
 
                 MainCompute(dyFp32Local,
                     x1Fp32Local,
@@ -371,7 +371,7 @@ private:
         const uint32_t numLastDim, const float reduceAxisSize)
     {
         Add(inputX1, inputX1, inputX2, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // 1. x1Tensor = inputDy * inputGamma
         Mul(inputX2, inputDy, inputGamma, elem_cout_d_x_y);
 
@@ -386,15 +386,15 @@ private:
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         Adds(outputDx, inputX1, inputMeanNum * (-1.0f), elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3. pd_var = np.sum((-0.5) * x1Tensor * x2Tensor * np.power(inputRstd, 3))
         // 3.1. duplicate
         Muls(inputX1, outputDx, tmpLocalNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Mul(inputX1, inputX2, inputX1, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3.2. pd_var = np.sum(res1)
         auto aveLocalTemp = ReduceSumCustom(inputX1, numLastDim);
@@ -405,21 +405,21 @@ private:
         // 4. pd_mean = np.sum((-1.0) * x1Tensor * inputRstd)
         // output: gamma = x2Tensor * rstd * inputDy
         Muls(inputX1, outputDx, inputRstdNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Mul(inputX1, inputX1, inputDy, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(outputDgamma, outputDgamma, inputX1, elem_cout_d_x_y);
         Add(outputDbeta, outputDbeta, inputDy, elem_cout_d_x_y);
 
         // 4.1. res1 = (-1.0) * x1Tensor * rstd
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         Muls(inputX1, outputDx, inputMeanNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(outputDx, inputX2, inputRstdNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(inputDy, outputDx, -1.0f, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4.2. pd_mean = np.sum(res1)
         Add(inputX2, inputX1, outputDx, elem_cout_d_x_y);
@@ -437,10 +437,10 @@ private:
         // 5.4. d_x = res0 + res1 + res2
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         Adds(outputDx, inputX2, inputMeanNum, elem_cout_d_x_y);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (HAS_ADDITIONAL_INPUT) {
             Add(outputDx, outputDx, input_dx, elem_cout_d_x_y);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -449,18 +449,18 @@ private:
         LocalTensor<T> outputDx = dXQue.DeQue<T>();
         LocalTensor<float> outputDgamma = dGammaQue.DeQue<float>();
         LocalTensor<float> outputDbeta = dBetaQue.DeQue<float>();
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         DataCopyCustom<T>(dXGm, outputDx, d_y_in_ub, offsetUbXY, false, (uint16_t)nInOnceUb);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
 
         SetAtomicAdd<float>();
         DataCopyAutomicAdd(dBetaGm, outputDbeta, numLastDim, 0, (uint16_t)1);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         SetAtomicNone();
 
         SetAtomicAdd<float>();
         DataCopyAutomicAdd(dGammaGm, outputDgamma, numLastDim, 0, (uint16_t)1);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         SetAtomicNone();
 
         dXQue.FreeTensor(outputDx);

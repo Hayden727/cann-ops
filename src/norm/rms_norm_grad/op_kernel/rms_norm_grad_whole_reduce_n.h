@@ -111,9 +111,9 @@ __aicore__ inline void RmsNormGradWholeReduceN<T>::Init(
     if (blockIdx == 0) {
         LocalTensor<float> initGmZeros = ndBufFp32Buf1.Get<float>();
         Duplicate(initGmZeros, 0.0f, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         DataCopy(dgammaGm, initGmZeros, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         fixed_output_sync[0] = 0;
     }
     SyncAll();
@@ -249,7 +249,7 @@ __aicore__ inline void RmsNormGradWholeReduceN<T>::CopyDgammaOutInOrder()
             whileMax = 0;
         }
     }
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
     LocalTensor<float> dgammaOut = outQueDgamma.DeQue<float>();
     SetAtomicAdd<float>();
     DataCopy(dgammaGm, dgammaOut, colVal);
@@ -275,31 +275,31 @@ __aicore__ inline void RmsNormGradWholeReduceN<half>::ComputeMain(LocalTensor<ha
     LocalTensor<half> &dy, LocalTensor<float> &rstd, LocalTensor<half> &gamma, LocalTensor<float> &dgamma,
     uint32_t calcLen)
 {
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
     LocalTensor<float> dySum = ndBufFp32Buf1.Get<float>();
     LocalTensor<float> tmp32Buf = ndBufFp32Buf3.Get<float>();
     LocalTensor<float> tmp32Buf2 = ndBufFp32Buf2.Get<float>();
     Cast(tmp32Buf2, x, RoundMode::CAST_NONE, colVal * calcLen);
     Duplicate(dySum, 0.0f, colVal * calcLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     for (uint32_t i = 0; i < calcLen; i++) {
         float rstdValue = rstd.GetValue(i);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         set_flag(PIPE_S, PIPE_V, eventSV);
         wait_flag(PIPE_S, PIPE_V, eventSV);
         Muls(tmp32Buf2[i * colVal], tmp32Buf2[i * colVal], rstdValue, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(tmp32Buf[i * colVal], gamma, RoundMode::CAST_NONE, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(dySum[i * colVal], dy[i * colVal], RoundMode::CAST_NONE, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp32Buf[i * colVal], tmp32Buf[i * colVal], dySum[i * colVal], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (i == calcLen - 1) {
             inQueRstd.FreeTensor(rstd);
         }
         Mul(dySum[i * colVal], tmp32Buf[i * colVal], tmp32Buf2[i * colVal], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         uint32_t colSplitNum = colVal;
         uint32_t colSplitTailNum = 0;
         while (colSplitNum >= 32) {
@@ -307,10 +307,10 @@ __aicore__ inline void RmsNormGradWholeReduceN<half>::ComputeMain(LocalTensor<ha
             if (colSplitTailNum != 0) {
                 colSplitNum = colSplitNum - colSplitTailNum;
                 Add(dySum[i * colVal], dySum[i * colVal], dySum[i * colVal + colSplitNum], colSplitTailNum);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             Add(dySum[i * colVal], dySum[i * colVal], dySum[i * colVal + colSplitNum / 2], colSplitNum / 2);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             colSplitNum = colSplitNum / 2;
         }
         WholeReduceSum(dySum[i * colVal], dySum[i * colVal], colSplitNum, 1, 1, 1, 8);
@@ -322,39 +322,39 @@ __aicore__ inline void RmsNormGradWholeReduceN<half>::ComputeMain(LocalTensor<ha
         set_flag(PIPE_S, PIPE_V, eventSV2);
         wait_flag(PIPE_S, PIPE_V, eventSV2);
         Muls(dySum[i * colVal], tmp32Buf2[i * colVal], dySumVal, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sub(dySum[i * colVal], tmp32Buf[i * colVal], dySum[i * colVal], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(dySum[i * colVal], dySum[i * colVal], rstdValue, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     Cast(dx, dySum, RoundMode::CAST_NONE, colVal * calcLen);
     Cast(tmp32Buf, dy, RoundMode::CAST_NONE, colVal * calcLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(tmp32Buf, tmp32Buf2, tmp32Buf, colVal * calcLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueX.FreeTensor(x);
     inQueDY.FreeTensor(dy);
     Duplicate(dySum, 0.0f, colVal);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     uint32_t calcHalfRemain = calcLen % 2;
     uint32_t calcHalf = calcLen / 2;
     if (calcHalfRemain != 0) {
         Add(dySum, dySum, tmp32Buf[calcHalf * colVal * 2], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     while (calcHalf > 0) {
         Add(tmp32Buf, tmp32Buf, tmp32Buf[calcHalf * colVal], calcHalf * colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         calcHalfRemain = calcHalf % 2;
         calcHalf = calcHalf / 2;
         if (calcHalfRemain != 0) {
             Add(dySum, dySum, tmp32Buf[calcHalf * colVal * 2], colVal);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
     Add(dgamma, dySum, dgamma, colVal);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <>
@@ -363,7 +363,7 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
     uint32_t calcLen)
 {
     LocalTensor<float> tmp_buf = ndBufFp32Buf1.Get<float>(calcLen * colVal);
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
     for (uint32_t i = 0; i < calcLen; i++) {
         float rstdValue = rstd.GetValue(i);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -373,36 +373,36 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
         Mul(tmp_buf[i * colVal], dy[i * colVal], gamma, colVal);
         // y = x * rstd
         Muls(x[i * colVal], x[i * colVal], rstdValue, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy[i * colVal], dy[i * colVal], x[i * colVal], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     Duplicate(dx, 0.0f, colVal);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     uint32_t calcHalfRemain = calcLen % 2;
     uint32_t calcHalf = calcLen / 2;
     if (calcHalfRemain != 0) {
         Add(dx, dx, dy[calcHalf * colVal * 2], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     while (calcHalf > 0) {
         Add(dy, dy, dy[calcHalf * colVal], calcHalf * colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         calcHalfRemain = calcHalf % 2;
         calcHalf = calcHalf / 2;
         if (calcHalfRemain != 0) {
             Add(dx, dx, dy[calcHalf * colVal * 2], colVal);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
     Add(dgamma, dx, dgamma, colVal);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     for (uint32_t i = 0; i < calcLen; i++) {
         // mean = sum(grad_y * y) * avg_factor
         Duplicate(dy[i * colVal], 0.0f, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy[i * colVal], tmp_buf[i * colVal], x[i * colVal], colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         uint32_t colSplitNum = colVal;
         uint32_t colSplitTailNum = 0;
         while (colSplitNum >= 32) {
@@ -410,10 +410,10 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
             if (colSplitTailNum != 0) {
                 colSplitNum = colSplitNum - colSplitTailNum;
                 Add(dy[i * colVal], dy[i * colVal], dy[i * colVal + colSplitNum], colSplitTailNum);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             Add(dy[i * colVal], dy[i * colVal], dy[i * colVal + colSplitNum / 2], colSplitNum / 2);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             colSplitNum = colSplitNum / 2;
         }
         WholeReduceSum(dy[i * colVal], dy[i * colVal], colSplitNum, 1, 1, 1, 8);
@@ -425,7 +425,7 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
         set_flag(PIPE_S, PIPE_V, eventSV2);
         wait_flag(PIPE_S, PIPE_V, eventSV2);
         Muls(x[i * colVal], x[i * colVal], dySumVal, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sub(tmp_buf[i * colVal], tmp_buf[i * colVal], x[i * colVal], colVal);
         event_t eventVS2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, eventVS2);
@@ -440,7 +440,7 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
             inQueRstd.FreeTensor(rstd);
         }
         Muls(dx[i * colVal], tmp_buf[i * colVal], rstdValue, colVal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 }
 

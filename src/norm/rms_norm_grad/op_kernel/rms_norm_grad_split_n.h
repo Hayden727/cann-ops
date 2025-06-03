@@ -132,7 +132,7 @@ public:
         LocalTensor<T> gamma_ub = inQueGamma.DeQue<T>();
         LocalTensor<float> dgamma = outQueDgamma.AllocTensor<float>();
         Duplicate(dgamma, 0.0f, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (core_calc_tail == 0) {
             for (uint32_t i = 0; i < (ub_calc_tail == 0 ? ub_calc_loop : ub_calc_loop - 1); i++) {
                 CopyIn(i, ub_calc_num);
@@ -281,7 +281,7 @@ public:
         }
         LocalTensor<float> dgamma = outQueDgamma.AllocTensor<float>();
         LocalTensor<float> tmp_buf1 = ndBufFp32Buf1.Get<float>(col_val_align);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         DataCopyParams data_copy_params{(uint16_t)1, (uint16_t)(col_val * sizeof(float)), 0, 0};
         uint8_t rightPadding = (uint8_t)(col_val_align - col_val);
         if (rightPadding > ALIGN_32) {
@@ -293,9 +293,9 @@ public:
                 DataCopyPad(dgamma, workspace_gm[blockidx * col_val], data_copy_params, pad_params);
             } else {
                 DataCopyPad(tmp_buf1, workspace_gm[blockidx * col_val], data_copy_params, pad_params);
-                pipe_barrier(PIPE_ALL);
+                PipeBarrier<PIPE_ALL>();
                 Add(dgamma, dgamma, tmp_buf1, col_val_align);
-                pipe_barrier(PIPE_ALL);
+                PipeBarrier<PIPE_ALL>();
             }
         }
         outQueDgamma.EnQue(dgamma);
@@ -327,7 +327,7 @@ public:
         LocalTensor<float> &dx, LocalTensor<float> &dy, LocalTensor<float> &rstd, LocalTensor<float> &gamma,
         LocalTensor<float> &dgamma, uint32_t calc_len)
     {
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         LocalTensor<float> tmp_rstd_buf = nFp32Buf.Get<float>();
         LocalTensor<float> tmp_reduce_buf = tmpBuf.Get<float>();
 
@@ -339,16 +339,16 @@ public:
         auto shared_tmp = tmp_reduce_buf.ReinterpretCast<uint8_t>();
         BroadCast<float, DIM_NUM, DIM_D>(dx, rstd, dst_nd_shape, src_n1_shape, shared_tmp);
         inQueRstd.FreeTensor(rstd);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(x, x, dx, element_num);  // x save x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // dg=sum(dy * (x * rstd), dim=0)
         Mul(tmp_32_buf, dy, x, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         for (uint32_t i = 0; i < calc_len; i++) {
             Add(dgamma, tmp_32_buf[i * col_val_align], dgamma, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         // gamma
@@ -357,33 +357,33 @@ public:
             tmp_32_buf, gamma, dst_nd_shape, src_1d_shape, shared_tmp);  // x reuse gamma_nd
 
         // dy * gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy, dy, tmp_32_buf, element_num);  // dy save dy*gamma
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp_32_buf, dy, x, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumMultiN(tmp_rstd_buf, tmp_32_buf, tmp_reduce_buf, calc_len, col_val, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(tmp_rstd_buf, tmp_rstd_buf, avg_factor, calc_len);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, tmp_rstd_buf, dst_nd_shape, src_n1_shape, shared_tmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp_32_buf, tmp_32_buf, x, element_num);
         inQueX.FreeTensor(x);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sub(dy, dy, tmp_32_buf, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dx, dy, dx, element_num);
         inQueDY.FreeTensor(dy);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeMain(LocalTensor<float> &x, LocalTensor<float> &tmp_buf, LocalTensor<float> &dx,
         LocalTensor<float> &dy, LocalTensor<float> &rstd, LocalTensor<float> &gamma, LocalTensor<float> &dgamma,
         uint32_t calc_len)
     {
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         for (uint32_t i = 0; i < calc_len; i++) {
             float rstd_value = rstd.GetValue(i);
             event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -393,32 +393,32 @@ public:
             Mul(tmp_buf[i * col_val_align], dy[i * col_val_align], gamma, col_val_align);
             // y = x * rstd
             Muls(x[i * col_val_align], x[i * col_val_align], rstd_value, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueRstd.FreeTensor(rstd);
             }
             // dg = sum(dy * (x * rstd), dim=0)
             Mul(dy[i * col_val_align], dy[i * col_val_align], x[i * col_val_align], col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(dgamma, dgamma, dy[i * col_val_align], col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             // mean = sum(grad_y * y) * avg_factor
             Duplicate(dy[i * col_val_align], 0.0f, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(dy[i * col_val_align], tmp_buf[i * col_val_align], x[i * col_val_align], col_val);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             float reduce_val = ReduceSumFP32_V2(dy[i * col_val_align], col_val_align);
             float dy_sum_val = reduce_val * avg_factor;
             Muls(x[i * col_val_align], x[i * col_val_align], dy_sum_val, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Sub(tmp_buf[i * col_val_align], tmp_buf[i * col_val_align], x[i * col_val_align], col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueX.FreeTensor(x);
                 inQueDY.FreeTensor(dy);
             }
             Muls(dx[i * col_val_align], tmp_buf[i * col_val_align], rstd_value, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -428,7 +428,7 @@ public:
         LocalTensor<T> gamma_ub = inQueGamma.DeQue<T>();
         LocalTensor<float> dgamma = outQueDgamma.AllocTensor<float>();
         Duplicate(dgamma, 0.0f, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (core_calc_tail == 0) {
             for (uint32_t i = 0; i < (ub_calc_tail == 0 ? ub_calc_loop : ub_calc_loop - 1); i++) {
                 CopyIn(i, ub_calc_num);
@@ -494,7 +494,7 @@ public:
     __aicore__ inline void ComputeMainFp16SmallD(LocalTensor<T> &x, LocalTensor<T> &dx, LocalTensor<T> &dy,
         LocalTensor<float> &rstd, LocalTensor<T> &gamma, LocalTensor<float> &dgamma, uint32_t calc_len)
     {
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         LocalTensor<float> dy_sum = ndBufFp32Buf1.Get<float>();
         LocalTensor<float> tmp_32_buf = ndBufFp32Buf3.Get<float>();
         LocalTensor<float> tmp_32_buf_2 = ndBufFp32Buf2.Get<float>();
@@ -503,26 +503,26 @@ public:
 
         uint32_t element_num = col_val_align * calc_len;
         Cast(tmp_32_buf_2, x, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // y = x * rstd
         const uint32_t src_n1_shape[2] = {calc_len, 1};
         const uint32_t dst_nd_shape[2] = {calc_len, col_val_align};
         auto shared_tmp = tmp_reduce_buf.ReinterpretCast<uint8_t>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, rstd, dst_nd_shape, src_n1_shape, shared_tmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp_32_buf_2, tmp_32_buf_2, tmp_32_buf, element_num);  // tmp_32_buf_2 save x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // dg=sum(dy * (x * rstd), dim=0)
         Cast(x, tmp_32_buf_2, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(x, dy, x, element_num);  // mul_1
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(dy_sum, x, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (uint32_t i = 0; i < calc_len; i++) {
             Add(dgamma, dy_sum[i * col_val_align], dgamma, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         // gamma
@@ -530,40 +530,40 @@ public:
         BroadCast<half, DIM_NUM, DIM_N>(x, gamma, dst_nd_shape, src_1d_shape, shared_tmp);  // x reuse gamma_nd
 
         // dy * gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy, dy, x, element_num);
         inQueX.FreeTensor(x);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Cast(dy_sum, dy, RoundMode::CAST_NONE, element_num);  // dy_sum save dy * gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         inQueDY.FreeTensor(dy);
         Mul(tmp_32_buf, dy_sum, tmp_32_buf_2, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumMultiN(tmp_rstd_buf, tmp_32_buf, tmp_reduce_buf, calc_len, col_val, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(tmp_rstd_buf, tmp_rstd_buf, avg_factor, calc_len);  // muls_0
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, tmp_rstd_buf, dst_nd_shape, src_n1_shape, shared_tmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp_32_buf_2, tmp_32_buf, tmp_32_buf_2, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sub(dy_sum, dy_sum, tmp_32_buf_2, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, rstd, dst_nd_shape, src_n1_shape, shared_tmp);
         inQueRstd.FreeTensor(rstd);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy_sum, dy_sum, tmp_32_buf, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(dx, dy_sum, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeMainFp16(LocalTensor<T> &x, LocalTensor<T> &dx, LocalTensor<T> &dy,
         LocalTensor<float> &rstd, LocalTensor<T> &gamma, LocalTensor<float> &dgamma, uint32_t calc_len)
     {
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         LocalTensor<float> dy_sum = ndBufFp32Buf1.Get<float>();
         LocalTensor<float> tmp_32_buf = ndBufFp32Buf3.Get<float>();
         LocalTensor<float> tmp_32_buf_2 = ndBufFp32Buf2.Get<float>();
@@ -575,42 +575,42 @@ public:
             wait_flag(PIPE_S, PIPE_V, event_s_v);
             // y = x * rstd
             Cast(tmp_32_buf_2[i * col_val_align], x[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueRstd.FreeTensor(rstd);
             }
             Muls(tmp_32_buf_2[i * col_val_align], tmp_32_buf_2[i * col_val_align], rstd_value, col_val_align);
             Mul(d_tmp_buf_fp16, dy[i * col_val_align], gamma, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(tmp_32_buf[i * col_val_align], d_tmp_buf_fp16, RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             // mean = sum (grad_y * y) * avg_factor
             Duplicate(dy_sum[i * col_val_align], 0.0f, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(dy_sum[i * col_val_align], tmp_32_buf[i * col_val_align], tmp_32_buf_2[i * col_val_align], col_val);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             float reduce_val = ReduceSumFP32_V2(dy_sum[i * col_val_align], col_val_align);
             float dy_sum_val = reduce_val * avg_factor;
             // dx = (grad_y - y * mean) * rstd
             Muls(dy_sum[i * col_val_align], tmp_32_buf_2[i * col_val_align], dy_sum_val, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Sub(dy_sum[i * col_val_align], tmp_32_buf[i * col_val_align], dy_sum[i * col_val_align], col_val_align);
             Cast(x[i * col_val_align], tmp_32_buf_2[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Muls(dy_sum[i * col_val_align], dy_sum[i * col_val_align], rstd_value, col_val_align);
             Mul(dy[i * col_val_align], x[i * col_val_align], dy[i * col_val_align], col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueX.FreeTensor(x);
             }
             Cast(dx[i * col_val_align], dy_sum[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
             Cast(tmp_32_buf[i * col_val_align], dy[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueDY.FreeTensor(dy);
             }
             Add(dgamma, tmp_32_buf[i * col_val_align], dgamma, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -620,7 +620,7 @@ public:
         LocalTensor<T> gamma_ub = inQueGamma.DeQue<T>();
         LocalTensor<float> dgamma = outQueDgamma.AllocTensor<float>();
         Duplicate(dgamma, 0.0f, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (core_calc_tail == 0) {
             for (uint32_t i = 0; i < (ub_calc_tail == 0 ? ub_calc_loop : ub_calc_loop - 1); i++) {
                 CopyIn(i, ub_calc_num);
@@ -694,70 +694,70 @@ public:
         LocalTensor<float> tmp_reduce_buf = tmpBuf.Get<float>();
         uint32_t element_num = col_val_align * calc_len;
         Cast(tmp_32_buf_2, x, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // y = x * rstd
         const uint32_t src_n1_shape[2] = {calc_len, 1};
         const uint32_t dst_nd_shape[2] = {calc_len, col_val_align};
         auto shared_tmp = tmp_reduce_buf.ReinterpretCast<uint8_t>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, rstd, dst_nd_shape, src_n1_shape, shared_tmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp_32_buf_2, tmp_32_buf_2, tmp_32_buf, element_num);  // tmp_32_buf_2 save x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // dg=sum(dy * (x * rstd), dim=0)
         Cast(x, tmp_32_buf_2, RoundMode::CAST_RINT, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(tmp_32_buf, x, RoundMode::CAST_NONE, element_num);
         Cast(dy_sum, dy, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy_sum, tmp_32_buf, dy_sum, element_num);
         Cast(x, dy_sum, RoundMode::CAST_RINT, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(dy_sum, x, RoundMode::CAST_NONE, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (uint32_t i = 0; i < calc_len; i++) {
             Add(dgamma, dy_sum[i * col_val_align], dgamma, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         // gamma
         Cast(gamma_fp32, gamma, RoundMode::CAST_NONE, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         const uint32_t src_1d_shape[2] = {1, col_val_align};
         BroadCast<float, DIM_NUM, DIM_N>(tmp_32_buf, gamma_fp32, dst_nd_shape, src_1d_shape, shared_tmp);
 
         // dy * gamma
         Cast(dy_sum, dy, RoundMode::CAST_NONE, element_num);
         inQueDY.FreeTensor(dy);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy_sum, dy_sum, tmp_32_buf, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Cast(x, dy_sum, RoundMode::CAST_RINT, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(dy_sum, x, RoundMode::CAST_NONE, element_num);  // dy_sum save dy * gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inQueX.FreeTensor(x);
 
         Mul(tmp_32_buf, dy_sum, tmp_32_buf_2, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumMultiN(tmp_rstd_buf, tmp_32_buf, tmp_reduce_buf, calc_len, col_val, col_val_align);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(tmp_rstd_buf, tmp_rstd_buf, avg_factor, calc_len);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, tmp_rstd_buf, dst_nd_shape, src_n1_shape, shared_tmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmp_32_buf_2, tmp_32_buf, tmp_32_buf_2, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sub(dy_sum, dy_sum, tmp_32_buf_2, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(tmp_32_buf, rstd, dst_nd_shape, src_n1_shape, shared_tmp);
         inQueRstd.FreeTensor(rstd);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dy_sum, dy_sum, tmp_32_buf, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(dx, dy_sum, RoundMode::CAST_RINT, element_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeMainBf16(LocalTensor<T> &x, LocalTensor<T> &dx, LocalTensor<T> &dy,
@@ -771,7 +771,7 @@ public:
             Cast(gamma_fp32, gamma, RoundMode::CAST_NONE, col_val_align);
             Cast(tmp_32_buf_2[i * col_val_align], x[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
             Cast(tmp_32_buf[i * col_val_align], dy[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
             set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
             wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
@@ -781,49 +781,49 @@ public:
             wait_flag(PIPE_S, PIPE_V, event_s_v);
             // y = x * rstd
             Muls(tmp_32_buf_2[i * col_val_align], tmp_32_buf_2[i * col_val_align], rstd_value, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(tmp_32_buf[i * col_val_align], tmp_32_buf[i * col_val_align], gamma_fp32, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             // mean = sum (grad_y * y) * avg_factor
             Duplicate(dy_sum[i * col_val_align], 0.0f, col_val_align);
             Cast(x[i * col_val_align], tmp_32_buf[i * col_val_align], RoundMode::CAST_RINT, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(tmp_32_buf[i * col_val_align], x[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueRstd.FreeTensor(rstd);
                 inQueX.FreeTensor(x);
             }
             Mul(dy_sum[i * col_val_align], tmp_32_buf[i * col_val_align], tmp_32_buf_2[i * col_val_align], col_val);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             float reduce_val = ReduceSumFP32_V2(dy_sum[i * col_val_align], col_val_align);
             float dy_sum_val = reduce_val * avg_factor;
             // dx = (grad_y - y * mean) * rstd
             Muls(dy_sum[i * col_val_align], tmp_32_buf_2[i * col_val_align], dy_sum_val, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Sub(dy_sum[i * col_val_align], tmp_32_buf[i * col_val_align], dy_sum[i * col_val_align], col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Muls(dy_sum[i * col_val_align], dy_sum[i * col_val_align], rstd_value, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(dx[i * col_val_align], dy_sum[i * col_val_align], RoundMode::CAST_RINT, col_val_align);
             Cast(tmp_32_buf[i * col_val_align], dy[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             // dg=sum(dy * (x * rstd), dim=0)
             Cast(dy[i * col_val_align], tmp_32_buf_2[i * col_val_align], RoundMode::CAST_RINT, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(dy_sum[i * col_val_align], dy[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(dy_sum[i * col_val_align], tmp_32_buf[i * col_val_align], dy_sum[i * col_val_align], col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(dy[i * col_val_align], dy_sum[i * col_val_align], RoundMode::CAST_RINT, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(dy_sum[i * col_val_align], dy[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (i == calc_len - 1) {
                 inQueDY.FreeTensor(dy);
             }
             Add(dgamma, dy_sum[i * col_val_align], dgamma, col_val_align);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 

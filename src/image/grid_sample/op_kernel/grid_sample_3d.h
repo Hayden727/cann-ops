@@ -681,7 +681,7 @@ __aicore__ inline void GridSampler3D<T>::PointBilinear(
     pointBilinearParam.loopElems = TRANSE_REP_STRIDE;
     pointBilinearParam.outBaseOffset =
         processParam.nIdx * commonParam.gridDHW_ * commonParam.inputC_ + processParam.hwIdx * CAL_D_H_W_BLOCK;
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
     for (int32_t loop_idx = 0; loop_idx < trans_loop; loop_idx++) {
         if (loop_idx == trans_loop - 1) {
             pointBilinearParam.loopElems = processParam.calDHWElems - TRANSE_REP_STRIDE * (trans_loop - 1);
@@ -754,7 +754,7 @@ __aicore__ inline void GridSampler3D<T>::calculatePointBilinear(ProcessParam pro
             SELMODE::VSEL_TENSOR_SCALAR_MODE,
             TRANSE_REP_STRIDE);
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     if (pointBilinearParam.calCElems == 1) {
         // 乘以权重

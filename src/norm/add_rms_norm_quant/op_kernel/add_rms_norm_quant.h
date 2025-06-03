@@ -116,22 +116,22 @@ private:
         if constexpr (IsSame<TX, half>::value) {
             LocalTensor<float> x1Fp32Local = xFp32Buf.Get<float>();
             Add(xLocal, x1Local, x2Local, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(x1Fp32Local, xLocal, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else if constexpr (IsSame<TX, bfloat16_t>::value) {
             LocalTensor<float> x1Fp32Local = xFp32Buf.Get<float>();
             LocalTensor<float> x2_fp32 = sqxBuf.Get<float>();
             Cast(x1Fp32Local, x1Local, RoundMode::CAST_NONE, numCol);
             Cast(x2_fp32, x2Local, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x1Fp32Local, x1Fp32Local, x2_fp32, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xLocal, x1Fp32Local, RoundMode::CAST_RINT, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Add(x1Local, x1Local, x2Local, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(xLocal, x1Local, (float)0, numCol);
         }
         inQueueX.FreeTensor(x1Local);
@@ -155,7 +155,7 @@ private:
             set_flag(PIPE_MTE2, PIPE_V, eventMte2V);
             wait_flag(PIPE_MTE2, PIPE_V, eventMte2V);
             Cast(scales1Local, scales1Bf16, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         if (hasZeroPoints1) {
@@ -167,7 +167,7 @@ private:
                 set_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
                 wait_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
                 Cast(zeroPoints1Fp32, zeroPoints1Int32, RoundMode::CAST_NONE, numCol);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 LocalTensor<bfloat16_t> zeroPoints1Bf16 = zeroPoints1Buf.Get<bfloat16_t>()[ubFactor];
                 DataCopyCustom<bfloat16_t>(zeroPoints1Bf16, zeroPoints1Gm, numCol);
@@ -175,7 +175,7 @@ private:
                 set_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
                 wait_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
                 Cast(zeroPoints1Fp32, zeroPoints1Bf16, RoundMode::CAST_NONE, numCol);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
         LocalTensor<TX> gammaLocal = inQueueGamma.AllocTensor<TX>();
@@ -190,22 +190,22 @@ private:
         LocalTensor<float> reduceLocal = reduceFp32Buf.Get<float>();
 
         Mul(sqx, xFp32Local, xFp32Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(sqx, sqx, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         ReduceSumCustom(sqx, sqx, reduceLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Adds(sqx, sqx, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(sqx, sqx, 1);
         Duplicate(reduceLocal, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqx, reduceLocal, sqx, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
         wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -214,21 +214,21 @@ private:
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if constexpr (IsSame<TX, half>::value) {
             LocalTensor<half> xFp16Cast = sqxBuf.Get<half>();
             Cast(xFp16Cast, xFp32Local, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(xFp16Cast, gammaLocal, xFp16Cast, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xFp32Local, xFp16Cast, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {  // bfloat16
             Cast(sqx, gammaLocal, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(xFp32Local, sqx, xFp32Local, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         event_t event_v_mte = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
@@ -237,12 +237,12 @@ private:
 
         LocalTensor<float> scales1Local = scales1Buf.Get<float>();
         Div(xFp32Local, xFp32Local, scales1Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if (hasZeroPoints1) {
             LocalTensor<float> zeroPoints1Fp32 = zeroPoints1Buf.Get<float>();
             Add(xFp32Local, xFp32Local, zeroPoints1Fp32, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         LocalTensor<int8_t> y1Local = outQueueY1.AllocTensor<int8_t>();

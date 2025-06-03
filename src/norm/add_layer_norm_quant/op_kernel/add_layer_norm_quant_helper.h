@@ -114,16 +114,16 @@ __aicore__ inline float ReduceMaxFP32(const LocalTensor<float> &src_local, int32
     float value = 0.0;
 #if __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        set_mask_count();
-        set_vector_mask(0, count);
-        vcmax(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), 1, 1, 1, 8, Order_t::ONLY_VALUE);
+        AscendCUtils::SetMaskCount<float>();
+        SetVectorMask<float>(0, count);
+        ReduceMax(src_local, src_local, src_local, 1);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
         wait_flag(PIPE_V, PIPE_S, event_v_s);
         uint64_t reg_val = get_max_min_cnt();
         value = *reinterpret_cast<float *>(&reg_val);
         set_mask_norm();
-        set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
+        SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else
     ReduceMax(src_local, src_local, src_local, count);
@@ -145,11 +145,11 @@ __aicore__ inline void ReduceMaxInplace(const LocalTensor<float> &src_local, int
     if (likely(repsFp32 > 1)) {
         // 8 is rep stride
         Max(src_local, src_local[ELEM_PER_REP_FP32], src_local, ELEM_PER_REP_FP32, repsFp32 - 1, {1, 1, 1, 0, 8, 0});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (unlikely(remsFp32 > 0)) {
         Max(src_local, src_local[offsetsFp32], src_local, remsFp32, 1, {1, 1, 1, 0, 8, 0});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     uint32_t mask = (repsFp32 > 0) ? ELEM_PER_REP_FP32 : count;
     // 8 is rep stride
@@ -165,16 +165,16 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
     float value = 0.0;
 #if __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        set_mask_count();
-        set_vector_mask(0, count);
-        vcadd(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), 1, 1, 1, 8, true);
+        AscendCUtils::SetMaskCount<float>();
+        SetVectorMask<float>(0, count);
+        ReduceSum(src_local, src_local, src_local, 1);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
         wait_flag(PIPE_V, PIPE_S, event_v_s);
         uint64_t acc_val = GetAccVal();
         value = *reinterpret_cast<float *>(&acc_val);
         set_mask_norm();
-        set_vector_mask(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
+        SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else
     ReduceSum(src_local, src_local, src_local, count);
@@ -196,11 +196,11 @@ __aicore__ inline void ReduceSumInplace(const LocalTensor<float> &src_local, int
     if (likely(repsFp32 > 1)) {
         // 8 is rep stride
         Add(src_local, src_local[ELEM_PER_REP_FP32], src_local, ELEM_PER_REP_FP32, repsFp32 - 1, {1, 1, 1, 0, 8, 0});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (unlikely(remsFp32 > 0)) {
         Add(src_local, src_local[offsetsFp32], src_local, remsFp32, 1, {1, 1, 1, 0, 8, 0});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     uint32_t mask = (repsFp32 > 0) ? ELEM_PER_REP_FP32 : count;
     // 8 is rep stride
@@ -214,7 +214,7 @@ __aicore__ inline void DivScalarFP32(LocalTensor<float> &dstTensor, LocalTensor<
     uint32_t offsetsFp32 = count & 0xffffffc0;              // 0xffffffc0 is floor by 64
     uint32_t remsFp32 = count & 0x3f;                       // 0x3f is mod(64)
     Duplicate(tmpTensor, divisorScalar, FLOAT_BLOCK_ELEM);  // FLOAT_BLOCK_ELEM);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Div(dstTensor, dividendTensor, tmpTensor, ELEM_PER_REP_FP32, repsFp32, {1, 1, 0, 8, 8, 0});
     if ((remsFp32 > 0)) {
         Div(dstTensor[offsetsFp32], dividendTensor[offsetsFp32], tmpTensor, remsFp32, 1, {1, 1, 0, 8, 8, 0});
@@ -224,11 +224,11 @@ __aicore__ inline void DivScalarFP32(LocalTensor<float> &dstTensor, LocalTensor<
 __aicore__ inline void RoundFloat2Int8(LocalTensor<int8_t> &dstTensor, LocalTensor<float> &srcTensor, int32_t size)
 {
     Cast(srcTensor.ReinterpretCast<int32_t>(), srcTensor, RoundMode::CAST_RINT, size);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     SetDeqScale((half)1.000000e+00f);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(srcTensor.ReinterpretCast<half>(), srcTensor.ReinterpretCast<int32_t>(), RoundMode::CAST_NONE, size);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(dstTensor, srcTensor.ReinterpretCast<half>(), RoundMode::CAST_TRUNC, size);
 }
 

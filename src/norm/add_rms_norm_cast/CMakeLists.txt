@@ -1,6 +1,6 @@
 add_ops_compile_options(
         OP_NAME AddRmsNormCast
-        OPTIONS --cce-auto-sync=off
+        OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
                 -Wno-c++20-extensions

@@ -1,6 +1,6 @@
 add_ops_compile_options(
         OP_NAME UpsampleNearest3d
-        OPTIONS --cce-auto-sync=off
+        OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
 )

@@ -257,25 +257,25 @@ private:
         // Use add as
         if constexpr (IsSame<float, T>::value) {
             Add(addBufLocal, x2Local, x1Local, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int i = 0; i < rowCount; i++) {
                 Add(addBufLocal[i * numLastDimAligned], biasLocal, addBufLocal[i * numLastDimAligned], numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(addBufLocal, x1Local, RoundMode::CAST_NONE, elementCount);
             Cast(xBufLocal, x2Local, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(xBufLocal, addBufLocal, xBufLocal, elementCount);
             Cast(x1x2Local.template ReinterpretCast<float>(), biasLocal, RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int i = 0; i < rowCount; i++) {
                 Add(addBufLocal[i * numLastDimAligned],
                     x1x2Local.template ReinterpretCast<float>(),
                     xBufLocal[i * numLastDimAligned],
                     numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         x1x2Que.FreeTensor(x1x2Local);
     }
@@ -292,13 +292,13 @@ private:
         // Use add as
         if constexpr (IsSame<float, T>::value) {
             Add(addBufLocal, x2Local, x1Local, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(addBufLocal, x1Local, RoundMode::CAST_NONE, elementCount);
             Cast(xLocalFp32, x2Local, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(addBufLocal, addBufLocal, xLocalFp32, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         x1x2Que.FreeTensor(x1x2Local);
     }
@@ -317,7 +317,7 @@ private:
             } else {
                 Cast(xLocal, addBufLocal, RoundMode::CAST_RINT, elementCount);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             yQue.template EnQue<T>(xLocal);
 
             auto x = yQue.template DeQue<T>();
@@ -344,7 +344,7 @@ private:
         Muls(xLocalFp32, zLocalFp32, aveNum, elementCount);
         // 1.2. init buffer for reduce
         Duplicate(yLocalFp32, ZERO, nums * ELEM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 2. mean end: reduce(1/N * x_sum)
         const uint32_t tailCount = numLastDim % ELEM_PER_REP_FP32;
@@ -367,27 +367,27 @@ private:
             wait_flag(PIPE_S, PIPE_V, eventSV);
             Adds(zLocalFp32[roundOffset], zLocalFp32[roundOffset], meanTemp * -1, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4. rstd process: (x - mean) ^ 2
         Mul(xLocalFp32, zLocalFp32, zLocalFp32, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5. rstd process: reduce( 1 / N * (x - mean) ^ 2 )
         Muls(xLocalFp32, xLocalFp32, aveNum, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Duplicate(yLocalFp32, ZERO, nums * ELEM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumForSmallReduceDim(
             xLocalFp32, xLocalFp32, yLocalFp32, numLastDimAligned, numLastDim, tailCount, repeat, repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 6. rstd end: 1 / sqrt( 1 / N * reduce( (x - mean) ^ 2 ) )
         Adds(xLocalFp32, xLocalFp32, eps, repeat);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(xLocalFp32, xLocalFp32, repeat);
         Duplicate(yLocalFp32, float(1), repeat);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(xLocalFp32, yLocalFp32, xLocalFp32, repeat);
 
         // 7. y process: (x - mean) / rstd
@@ -404,7 +404,7 @@ private:
             wait_flag(PIPE_S, PIPE_V, eventSV);
             Muls(zLocalFp32[roundOffset], zLocalFp32[roundOffset], rstdTmp, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 8. y = (x - mean) / rstd * beta + gamma
         LocalTensor<T> yLocal = yQue.template AllocTensor<T>();
@@ -412,11 +412,11 @@ private:
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Mul(zLocalFp32[rid * numLastDimAligned], zLocalFp32[rid * numLastDimAligned], gammaLocal, numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Add(zLocalFp32[rid * numLastDimAligned], zLocalFp32[rid * numLastDimAligned], betaLocal, numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, zLocalFp32, RoundMode::CAST_NONE, elementCount);
@@ -427,11 +427,11 @@ private:
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Mul(zLocalFp32[rid * numLastDimAligned], zLocalFp32[rid * numLastDimAligned], gammaLocal, numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Add(yLocal[rid * numLastDimAligned], zLocalFp32[rid * numLastDimAligned], betaLocal, numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
 #if OUTPUT_MEAN_RSTD == 1
@@ -472,7 +472,7 @@ private:
         Muls(xLocalFp32, zLocalFp32, aveNum, elementNum);
         // 1.2. init buffer for reduce
         Duplicate(yLocalFp32, ZERO, nums * ELEM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 2.1. reducesum
         const uint32_t forCount = numLastDim / ELEM_PER_REP_FP32;
@@ -481,7 +481,7 @@ private:
         const uint8_t repStride = numLastDimAligned / FLOAT_BLOCK_ELEM;
         ReduceSumForSmallReduceDim(
             xLocalFp32, xLocalFp32, yLocalFp32, numLastDimAligned, numLastDim, tailCount, repeat, repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 2.2. broadcast reducesum value
         InitVAForTranspose(
@@ -495,32 +495,32 @@ private:
             tailCount,
             repeat,
             repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3. rstd process: x - mean
         Sub(zLocalFp32, zLocalFp32, xLocalFp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4. rstd process: (x - mean) ^ 2
         Mul(xLocalFp32, zLocalFp32, zLocalFp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5. rstd process: reduce( 1 / N * (x - mean) ^ 2 )
         Muls(xLocalFp32, xLocalFp32, aveNum, elementNum);
         Duplicate(yLocalFp32, ZERO, nums * ELEM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumForSmallReduceDim(
             xLocalFp32, xLocalFp32, yLocalFp32, numLastDimAligned, numLastDim, tailCount, repeat, repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 6. rstd end: 1 / sqrt( 1 / N * reduce( (x - mean) ^ 2 ) )
         Adds(xLocalFp32, xLocalFp32, eps, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(xLocalFp32, xLocalFp32, nums);
         Duplicate(yLocalFp32, (float)1, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(xLocalFp32, yLocalFp32, xLocalFp32, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 7. broadcast reducesum value
         CCEBroadCastShort((__ubuf__ int16_t *)xLocalFp32.GetPhyAddr(),
@@ -532,29 +532,29 @@ private:
             tailCount,
             repeat,
             repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(zLocalFp32, zLocalFp32, xLocalFp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 8. y = (x - mean) / rstd * beta + gamma
         LocalTensor<T> yLocal = yQue.template AllocTensor<T>();
         if constexpr (!IsSame<T, float>::value) {
             Level0MulFp32Short(zLocalFp32, gammaLocal, zLocalFp32, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Level0AddFp32Short(zLocalFp32, betaLocal, zLocalFp32, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, zLocalFp32, RoundMode::CAST_NONE, elementNum);
             } else {
                 Cast(yLocal, zLocalFp32, RoundMode::CAST_RINT, elementNum);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Level0MulFp32Short(yLocal, gammaLocal, zLocalFp32, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Level0AddFp32Short(yLocal, betaLocal, yLocal, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         yQue.EnQue(yLocal);
@@ -580,7 +580,7 @@ private:
         Muls(xLocalFp32, zLocalFp32, aveNum, elementNum);
         // 1.2. init buffer for reduce
         Duplicate(yLocalFp32, ZERO, nums * ELEM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 2.1. reducesum
         const uint32_t tailCount = numLastDim % ELEM_PER_REP_FP32;
@@ -588,7 +588,7 @@ private:
         const uint8_t repStride = numLastDimAligned / FLOAT_BLOCK_ELEM;
         ReduceSumForSmallReduceDim(
             meanLocal, xLocalFp32, yLocalFp32, numLastDimAligned, numLastDim, tailCount, repeat, repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 2.2. broadcast reducesum value
         const uint32_t broadcastDim = BROADCAST_ND_DIM_NUM;
@@ -597,58 +597,58 @@ private:
         uint32_t srcShape[broadcastDim] = {(uint32_t)nums, 1};
         auto sharedTmpBuffer = yLocalFp32.ReinterpretCast<uint8_t>();
         BroadCast<float, broadcastDim, broadcastAxis>(xLocalFp32, meanLocal, dstShape, srcShape, sharedTmpBuffer);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3. rstd process: x - mean
         Sub(zLocalFp32, zLocalFp32, xLocalFp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4. rstd process: (x - mean) ^ 2
         Mul(xLocalFp32, zLocalFp32, zLocalFp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5. rstd process: reduce( 1 / N * (x - mean) ^ 2 )
         Muls(xLocalFp32, xLocalFp32, aveNum, elementNum);
         Duplicate(yLocalFp32, ZERO, nums * ELEM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumForSmallReduceDim(
             rstdLocal, xLocalFp32, yLocalFp32, numLastDimAligned, numLastDim, tailCount, repeat, repStride);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 6. rstd end: 1 / sqrt( 1 / N * reduce( (x - mean) ^ 2 ) )
         Adds(rstdLocal, rstdLocal, eps, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(rstdLocal, rstdLocal, nums);
         Duplicate(yLocalFp32, (float)1, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(rstdLocal, yLocalFp32, rstdLocal, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 7. broadcast reducesum value
         BroadCast<float, broadcastDim, broadcastAxis>(xLocalFp32, rstdLocal, dstShape, srcShape, sharedTmpBuffer);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(zLocalFp32, zLocalFp32, xLocalFp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 8. y = (x - mean) / rstd * beta + gamma
         LocalTensor<T> yLocal = yQue.template AllocTensor<T>();
         if constexpr (!IsSame<T, float>::value) {
             Level0MulFp32Short(zLocalFp32, gammaLocal, zLocalFp32, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Level0AddFp32Short(zLocalFp32, betaLocal, zLocalFp32, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, zLocalFp32, RoundMode::CAST_NONE, elementNum);
             } else {
                 Cast(yLocal, zLocalFp32, RoundMode::CAST_RINT, elementNum);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Level0MulFp32Short(yLocal, gammaLocal, zLocalFp32, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Level0AddFp32Short(yLocal, betaLocal, yLocal, numLastDimAligned, nums, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         meanQue.EnQue(meanLocal);

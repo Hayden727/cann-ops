@@ -93,7 +93,7 @@ private:
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Add(x1Local, x1Local, x2Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
         event_t eventVMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
@@ -112,22 +112,22 @@ private:
         set_flag(PIPE_MTE2, PIPE_V, eventMTE2V3);
 
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(sqxLocal, xFp32Local, xFp32Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(sqxLocal, sqxLocal, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumHalfInterval(sqxLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(sqxLocal, sqxLocal, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(sqxLocal, sqxLocal, 1);
         Duplicate(xFp32Local, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqxLocal, xFp32Local, sqxLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, eventVS);
@@ -139,20 +139,20 @@ private:
         wait_flag(PIPE_S, PIPE_V, eventSV);
         set_flag(PIPE_S, PIPE_MTE2, eventSMTE2);
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
         Cast(x1Local, xFp32Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Mul(x1Local, x1Local, x2Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // Quant scales use sqxLocal, zeropoint use tmpLocal
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V3);
         Div(xFp32Local, xFp32Local, tmpLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_S, PIPE_MTE2, eventSMTE2);
         if (hasZeroPoints1) {
             DataCopyCustom<TOffset>(sqxLocal.ReinterpretCast<TOffset>(), zeroPoints1Gm, numCol);
@@ -160,10 +160,10 @@ private:
         set_flag(PIPE_MTE2, PIPE_V, eventMTE2V3);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V3);
         Cast(sqxLocal, sqxLocal.ReinterpretCast<TOffset>(), RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (hasZeroPoints1) {
             Add(xFp32Local, xFp32Local, sqxLocal, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         LocalTensor<int8_t> y1Local = tmpLocal.ReinterpretCast<int8_t>();
         RoundFloat2Int8(y1Local, xFp32Local, numCol);
@@ -192,11 +192,11 @@ private:
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Cast(sqxLocal, x2Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xFp32Local, xFp32Local, sqxLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x1Local, xFp32Local, RoundMode::CAST_RINT, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
         set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
@@ -214,20 +214,20 @@ private:
         set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
 
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(sqxLocal, xFp32Local, xFp32Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(sqxLocal, sqxLocal, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumCustom(sqxLocal, sqxLocal, tmpLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(sqxLocal, sqxLocal, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(sqxLocal, sqxLocal, 1);
         Duplicate(tmpLocal, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqxLocal, tmpLocal, sqxLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
         wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
         // copy in scales
@@ -247,21 +247,21 @@ private:
         set_flag(PIPE_S, PIPE_V, eventSV);
         wait_flag(PIPE_S, PIPE_V, eventSV);
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Cast(sqxLocal, x2Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(xFp32Local, xFp32Local, sqxLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V3);
         if constexpr (IsSame<TScale, bfloat16_t>::value) {
             Cast(tmpLocal, tmpLocal.template ReinterpretCast<TScale>()[ubFactor], RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         Div(xFp32Local, xFp32Local, tmpLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
         if (hasZeroPoints1) {
             if constexpr (IsSame<TOffset, bfloat16_t>::value) {
@@ -277,10 +277,10 @@ private:
         } else {  // int32
             Cast(sqxLocal, sqxLocal.ReinterpretCast<TOffset>(), RoundMode::CAST_NONE, numCol);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (hasZeroPoints1) {
             Add(xFp32Local, xFp32Local, sqxLocal, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         LocalTensor<int8_t> y1Local = tmpLocal.ReinterpretCast<int8_t>();
         RoundFloat2Int8(y1Local, xFp32Local, numCol);

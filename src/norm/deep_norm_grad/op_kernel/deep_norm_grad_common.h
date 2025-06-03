@@ -77,7 +77,7 @@ public:
         if (g_coreType == AIV) {
             if (likely(repeatTimes > 0)) {
                 AscendCUtils::SetMask<float>(elementNumPerRep);
-                vcadd(nullptr, (__ubuf__ float *)srcLocal.GetPhyAddr(), repeatTimes, 1, 1, REDUCE_REP_STRIDE, true);
+                ReduceSum(srcLocal, srcLocal, srcLocal, repeatTimes);
                 event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
                 set_flag(PIPE_V, PIPE_S, event_v_s);
                 wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -90,7 +90,7 @@ public:
             }
             if (unlikely(tailCount != 0)) {
                 AscendCUtils::SetMask<float>(tailCount);
-                vcadd(nullptr, (__ubuf__ float *)srcLocal[bodyCount].GetPhyAddr(), 1, 1, 1, REDUCE_REP_STRIDE, true);
+                ReduceSum(srcLocal[bodyCount], srcLocal[bodyCount], srcLocal[bodyCount], 1);
                 event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
                 set_flag(PIPE_V, PIPE_S, event_v_s);
                 wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -153,7 +153,7 @@ public:
             elemIndex = 0;
             for (elemIndex = 0; elemIndex + elemNum <= processElem; elemIndex += elemNum) {
                 Add(tmpLocal, tmpLocal, srcLocal[elemIndex], elemNum, repeat, {1, 1, 1, 1, 1, repStride});
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             if (unlikely(tailCount != 0)) {
                 Add(tmpLocal, tmpLocal, srcLocal[elemIndex], tailCount, repeat, {1, 1, 1, 1, 1, repStride});
@@ -174,7 +174,7 @@ public:
                         elemNum,
                         MAX_REP_NUM,
                         {1, 1, 1, 1, 1, repStride});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 if (unlikely(tailCount != 0)) {
                     index = repElem + elemIndex;
@@ -184,7 +184,7 @@ public:
                         tailCount,
                         MAX_REP_NUM,
                         {1, 1, 1, 1, 1, repStride});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
             }
             if (repTailNum != 0) {
@@ -199,7 +199,7 @@ public:
                         elemNum,
                         repTailNum,
                         {1, 1, 1, 1, 1, repStride});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 if (unlikely(tailCount != 0)) {
                     index = repElem + elemIndex;
@@ -213,7 +213,7 @@ public:
             }
         }
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BlockReduceSumFp32Short(dstLocal, tmpLocal, repeat);
     }
 
@@ -236,7 +236,7 @@ public:
                     maxElemFp32,
                     repeat,
                     {1, 1, 1, repStride, repStride, 0});
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             if (tailCount != 0) {
                 Mul(dstLocal[elemIndex],
@@ -261,7 +261,7 @@ public:
                         maxElemFp32,
                         MAX_REP_NUM,
                         {1, 1, 1, repStride, repStride, 0});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 if (tailCount != 0) {
                     index = repElem + elemIndex;
@@ -271,7 +271,7 @@ public:
                         tailCount,
                         MAX_REP_NUM,
                         {1, 1, 1, repStride, repStride, 0});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
             }
             if (repTailNum != 0) {
@@ -285,7 +285,7 @@ public:
                         maxElemFp32,
                         repTailNum,
                         {1, 1, 1, repStride, repStride, 0});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 if (tailCount != 0) {
                     index = repElem + elemIndex;
@@ -320,7 +320,7 @@ public:
                     maxElemFp32,
                     repeat,
                     {1, 1, 1, 0, repStride, 0});
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             if (tailCount != 0) {
                 Add(dstLocal[elemIndex],
@@ -345,7 +345,7 @@ public:
                         maxElemFp32,
                         MAX_REP_NUM,
                         {1, 1, 1, 0, repStride, 0});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 if (tailCount != 0) {
                     index = repElem + elemIndex;
@@ -355,7 +355,7 @@ public:
                         tailCount,
                         MAX_REP_NUM,
                         {1, 1, 1, 0, repStride, 0});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
             }
             if (repTailNum != 0) {
@@ -369,7 +369,7 @@ public:
                         maxElemFp32,
                         repTailNum,
                         {1, 1, 1, 0, repStride, 0});
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 if (tailCount != 0) {
                     index = repElem + elemIndex;
@@ -403,7 +403,7 @@ public:
             } else {
                 Duplicate(dbeta, 0.0f, maxCopyLenth);
             }
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
             for (uint32_t idx = 0; idx < loopNum; idx++) {
                 uint32_t curOffset = idx * maxCopyLenth;
                 DataCopy(outputPdGammaGm[curOffset], dbeta, maxCopyLenth);
@@ -420,7 +420,7 @@ public:
                     DataCopy(outputPdBetaGm[maxCopyLenth * loopNum], dbeta, this->BlockAlign(tail, FLOAT_BLOCK_ELEM));
                 }
             }
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
         }
 #endif
     }

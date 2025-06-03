@@ -627,9 +627,9 @@ private:
             Add(calcTensor, calcTensor, calcTensor[sumNum], sumNum);
             PipeBarrier<PIPE_V>();
         }
-        set_mask_count();
-        set_vector_mask(0x0, sumNum);
-        vcadd(nullptr, (__ubuf__ float *)calcTensor.GetPhyAddr(), 1, 1, 1, BLOCK_NUM_PER_REP, 1);
+        AscendCUtils::SetMaskCount<float>();
+        SetVectorMask<float>(0x0, sumNum);
+        ReduceSum(calcTensor, calcTensor, calcTensor, 1);
         PipeBarrier<PIPE_V>();
         acc_val = GetAccVal();
         sumValue = *reinterpret_cast<float *>(&acc_val);

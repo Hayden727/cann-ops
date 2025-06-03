@@ -155,12 +155,12 @@ __aicore__ inline void AscendQuantV2Base<T>::CastOut(const AscendQuantV2TilingDa
   } else if (runTilingData.roundMode == MODE_TRUNC) {
     Cast(xLocal[inOffset].ReinterpretCast<int32_t>(), xLocal[inOffset], RoundMode::CAST_TRUNC, dataCount);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   SetDeqScale((half)1.000000e+00f);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Cast(xLocal[inOffset].ReinterpretCast<half>(), xLocal[inOffset].ReinterpretCast<int32_t>(), RoundMode::CAST_NONE,
        dataCount);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   if (ORIG_DTYPE_Y == DT_INT4) {
     Cast(outLocal[outOffset].ReinterpretCast<int4b_t>(),

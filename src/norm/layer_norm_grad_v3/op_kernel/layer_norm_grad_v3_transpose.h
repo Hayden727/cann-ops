@@ -453,15 +453,9 @@ private:
         */
         LocalTensor<float> TempReduceResult = tmpBuf0.Get<float>();
         AscendCUtils::SetMaskCount<float>();
-        set_vector_mask(0, colLineElements);
+        SetVectorMask<float>(0, colLineElements);
         for (int64_t i = 0; i < col; i++) {
-            vcadd(nullptr,
-                (__ubuf__ float *)srcTensor[i * colLineElements].GetPhyAddr(),
-                1,
-                1,
-                1,
-                BLOCK_NUM_PER_REP,
-                true);
+            ReduceSum(srcTensor[i * colLineElements], srcTensor[i * colLineElements], srcTensor[i * colLineElements], 1);
             PipeBarrier<PIPE_V>();
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventVS);
