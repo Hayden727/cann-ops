@@ -50,6 +50,7 @@ aclnnStatus aclnnComplexMatDot(void *workspace, uint64_t workspaceSize, aclOpExe
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     
     ```bash
+    python3 gen_data.py
     mkdir -p build
     cd build
     cmake .. && make
