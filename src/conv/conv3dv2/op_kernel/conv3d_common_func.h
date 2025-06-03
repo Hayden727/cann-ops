@@ -333,7 +333,7 @@ struct Iterate {
             wait_flag(PIPE_MTE2, PIPE_M, l0abFlag);
         }
 
-        pipe_barrier(PIPE_M);
+        PipeBarrier<PIPE_M>();
         self->ctx.madIns.Mad();
         set_flag(PIPE_M, PIPE_MTE1, l0abFlag);
         if constexpr (Intf::bl1bypass) {
