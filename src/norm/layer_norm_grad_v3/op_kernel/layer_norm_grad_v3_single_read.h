@@ -573,10 +573,9 @@ private:
         const int64_t curRowsNum, const LayerNormGradV3TilingDataSingleRead *tilingData)
     {
         AscendCUtils::SetMaskCount<float>();
-        set_vector_mask(0, tilingData->colAlignV);
+        SetVectorMask<float>(0, tilingData->colAlignV);
         for (int64_t i = 0; i < curRowsNum; i++) {
-            vcadd(
-                nullptr, (__ubuf__ float *)src[i * tilingData->colAlignV].GetPhyAddr(), 1, 1, 1, CONSTANT_EIGHT, true);
+            ReduceSum(src[i * tilingData->colAlignV], src[i * tilingData->colAlignV], src[i * tilingData->colAlignV], 1);
             PipeBarrier<PIPE_V>();
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventVS);

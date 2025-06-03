@@ -182,7 +182,7 @@ private:
 
         // 2. add x1x2
         LocalTensor<T_NOCAST> xNoCastLocal = inputOutputQue.template DeQue<T_NOCAST>();
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xBufLocal, yBufLocal, xNoCastLocal, size);
         inputOutputQue.FreeTensor(xNoCastLocal);
     }
@@ -224,11 +224,11 @@ private:
         LocalTensor<float> tmpLocal = tmpQueFp32.template DeQue<float>();
         auto tmpLocalHalf = tmpLocal.ReinterpretCast<T>();
         Cast(xBufLocal, tmpLocalHalf, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(tmpLocal, inputLocal, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xBufLocal, xBufLocal, tmpLocal, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3. cast x_sum
         if constexpr (IsSame<T, half>::value) {
@@ -236,7 +236,7 @@ private:
         } else {
             Cast(inputLocal, xBufLocal, RoundMode::CAST_RINT, size);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inputOutputQue.EnQue(inputLocal);
         tmpQueFp32.FreeTensor(tmpLocal);
     }
@@ -265,11 +265,11 @@ private:
         LocalTensor<float> tmpLocal = tmpQueFp32.template DeQue<float>();
         auto tmpLocalHalf = tmpLocal.ReinterpretCast<T>();
         Cast(xBufLocal, tmpLocalHalf, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(tmpLocal, inputLocal, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xBufLocal, xBufLocal, tmpLocal, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inputOutputQue.FreeTensor(inputLocal);
         tmpQueFp32.FreeTensor(tmpLocal);
 
@@ -286,15 +286,15 @@ private:
         tmpQueFp32.EnQue(tmpLocalIn2);
         LocalTensor<float> tmpLocal2 = tmpQueFp32.template DeQue<float>();
         Cast(tmpLocal2, yLocalHalf, RoundMode::CAST_NONE, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xBufLocal, xBufLocal, tmpLocal2, size);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (IsSame<T, half>::value) {
             Cast(xOutLocal, xBufLocal, RoundMode::CAST_NONE, size);
         } else {
             Cast(xOutLocal, xBufLocal, RoundMode::CAST_RINT, size);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inputOutputQue.EnQue(xOutLocal);
     }
 
@@ -402,7 +402,7 @@ private:
 
         // 1. mean process: 1/N * x_sum
         Muls(yLocalFp32, xLocalFp32, aveNum, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // 2. mean end: reduce(1/N * x_sum)
         float meanLocalTemp = ReduceSumFP32(yLocalFp32, numLastDim);
         set_flag(PIPE_S, PIPE_V, eventSV);
@@ -410,15 +410,15 @@ private:
 
         // 3. rstd process: x - mean
         Adds(yLocalFp32, xLocalFp32, meanLocalTemp * -1, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);  // need make sure xout MTE3 finish.
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
         // 4. rstd process: (x - mean) ^ 2
         Mul(xLocalFp32, yLocalFp32, yLocalFp32, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // 5. rstd process: reduce( 1 / N * (x - mean) ^ 2 )
         Muls(xLocalFp32, xLocalFp32, aveNum, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float varLocalTemp = ReduceSumFP32(xLocalFp32, numLastDim);
         // 6. rstd end: 1 / sqrt( 1 / N * reduce( (x - mean) ^ 2 ) )
         float rstdLocalTemp = 1 / sqrt(varLocalTemp + eps);
@@ -431,7 +431,7 @@ private:
         wait_flag(PIPE_S, PIPE_V, eventSV);
         // 7. y process: (x - mean) / rstd
         Muls(xLocalFp32, yLocalFp32, rstdLocalTemp, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
 #if OUTPUT_MEAN_RSTD == 1
         meanQue.EnQue(meanLocal);
@@ -454,21 +454,21 @@ private:
         auto yLocalFp32 = yBufFp32.Get<float>();
 
         Mul(xLocalFp32, xLocalFp32, gammaLocal, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);  // unuse deque, need make sure MTE2 finish.
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
         if constexpr (IsSame<T, float>::value) {
             Add(yLocalFp32, xLocalFp32, yLocalFp32, numLastDim);
         } else if constexpr (IsSame<T, half>::value) {
             Add(xLocalFp32, xLocalFp32, yLocalFp32, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(yLocalFp32.ReinterpretCast<T>(), xLocalFp32, RoundMode::CAST_NONE, numLastDim);
         } else {
             Add(xLocalFp32, xLocalFp32, yLocalFp32, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(yLocalFp32.ReinterpretCast<T>(), xLocalFp32, RoundMode::CAST_RINT, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if constexpr (IS_X_B16_GAMMA_B32) {
             tmpQueFp32.FreeTensor(gammaLocal);

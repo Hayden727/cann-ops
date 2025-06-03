@@ -268,7 +268,7 @@ private:
                     1,
                     0);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         if ((bFormerFactor * BLOCK_NUM_PER_REP) < MAX_REP_NUM) {
             if (repeatTimes) {
@@ -314,7 +314,7 @@ private:
         uint64_t nowRows = row;
         if (nowRows == 1) {
             Adds<float>(dstTensor, srcTensor, 0, rowLineElements);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             return;
         }
         // row为非二次幂，先将二次幂差值行加到前面
@@ -323,7 +323,7 @@ private:
                 srcTensor,
                 srcTensor[(nowRows - dichotomizeAddDiffSize) * rowLineElements],
                 dichotomizeAddDiffSize * rowLineElements);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             nowRows = nowRows - dichotomizeAddDiffSize;
         }
         while (nowRows > 1) {
@@ -333,7 +333,7 @@ private:
             } else {
                 Add(srcTensor, srcTensor, srcTensor[nowRows * rowLineElements], nowRows * rowLineElements);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -455,7 +455,7 @@ private:
             float gammaValue = gammaFp32.GetValue(i);
             Muls(dstTensor[i * rowLineElements], dstTensor[i * rowLineElements], gammaValue, rowLineElements);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void DoAddBeta(LocalTensor<float> &dstTensor)
@@ -467,7 +467,7 @@ private:
             float betaValue = betaFp32.GetValue(i);
             Adds(dstTensor[i * rowLineElements], dstTensor[i * rowLineElements], betaValue, rowLineElements);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void DoPostReshape(LocalTensor<Tfm> &dstTensor, LocalTensor<Tfm> &srcTensor)
@@ -579,7 +579,7 @@ private:
         lineLength表示ub中，一行的长度
         */
         // pipe_s等pipe_v
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         uint32_t blockAlignNum = BLOCK / sizeof(T);
         uint32_t setValueNum = 0;
         uint32_t curNum = 0;
@@ -605,7 +605,7 @@ private:
             }
         }
         // pipe_mte3等pipe_s
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
     }
 
     __aicore__ inline void CopyOutMeanOrRstd(GlobalTensor<float> outGm, LocalTensor<float> &srcTensor)
@@ -635,14 +635,14 @@ private:
                     (copyParams.blockLen > 1)) {
                     copyParams.blockLen = copyParams.blockLen - 1;
                     DataCopy(outGm[meanGmOffset + gmOffset], srcTensor[ubOffset], copyParams);
-                    pipe_barrier(PIPE_MTE3);
+                    PipeBarrier<PIPE_MTE3>();
                     ubOffset += copyParams.blockLen * B32_BLOCK_ALIGN_NUM;
                     gmOffset += copyParams.blockLen * B32_BLOCK_ALIGN_NUM;
                 }
                 break;
             }
             DataCopy(outGm[meanGmOffset + gmOffset], srcTensor[ubOffset], copyParams);
-            pipe_barrier(PIPE_MTE3);
+            PipeBarrier<PIPE_MTE3>();
             ubOffset += (bFormerFactor + TRANSPOSE_C0_SIZE - 1) / TRANSPOSE_C0_SIZE * TRANSPOSE_C0_SIZE;
             gmOffset += curNum;
         }
@@ -681,14 +681,14 @@ private:
                     (copyParams.blockLen > 1)) {
                     copyParams.blockLen = copyParams.blockLen - 1;
                     DataCopy(yGm[xGmOffset + gmOffset], srcTensor[ubOffset], copyParams);
-                    pipe_barrier(PIPE_MTE3);
+                    PipeBarrier<PIPE_MTE3>();
                     ubOffset += copyParams.blockLen * X_NUM_PER_BLOCK;
                     gmOffset += copyParams.blockLen * X_NUM_PER_BLOCK;
                 }
                 break;
             }
             DataCopy(yGm[xGmOffset + gmOffset], srcTensor[ubOffset], copyParams);
-            pipe_barrier(PIPE_MTE3);
+            PipeBarrier<PIPE_MTE3>();
             ubOffset += rFormerAxisAlign;
             gmOffset += curNum;
         }
@@ -708,23 +708,23 @@ private:
 
         LocalTensor<Tfm> transposeXLocal = tmpBuf.Get<Tfm>();
         DoTranspose(transposeXLocal, xLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<Tfm> xLocalSecond = xLocal[TRANSPOSE_C0_SIZE * rFormerAxisAlign];
         DoReshape(xLocalSecond, transposeXLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> xLocalFp32 = xLocal.template ReinterpretCast<float>();
         Cast(xLocalFp32, xLocalSecond, RoundMode::CAST_NONE, calcXElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> mulTempTensor = tmpBuf.Get<float>();
         // xLocalFp32需要驻留
         Muls(mulTempTensor, xLocalFp32, coefficient, calcXElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<float> outTempTensor = outQueueRstd.AllocTensor<float>();
         DoReduce(outTempTensor, mulTempTensor);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         DoSub(xLocalFp32, outTempTensor);
         LocalTensor<float> outMeanTensor = outQueueMean.AllocTensor<float>();
@@ -738,32 +738,32 @@ private:
         // do mul2, xLocalFp32需要驻留
         LocalTensor<float> mul2TempTensor = tmpBuf.Get<float>();
         Mul(mul2TempTensor, xLocalFp32, xLocalFp32, calcXElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(mul2TempTensor, mul2TempTensor, coefficient, calcXElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // do reduce1
         LocalTensor<float> outMTensor = outQueueMean.AllocTensor<float>();
         DoReduce(outMTensor, mul2TempTensor);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> tempTensor = tmpBuf.Get<float>();
         Adds(tempTensor, outMTensor, eps, rowLineElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(tempTensor, tempTensor, rowLineElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> oneTensor = outQueueY.AllocTensor<float>();
         Duplicate<float>(oneTensor, 1, B32_BLOCK_ALIGN_NUM);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         DoDiv(outMTensor, oneTensor, tempTensor);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.FreeTensor(oneTensor);
 
         DoMul(xLocalFp32, outMTensor);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // output rstd
         LocalTensor<float> outRstdTensor = outQueueRstd.AllocTensor<float>();
         DoMeanOrRstdTranspose(outRstdTensor, outMTensor);
@@ -780,12 +780,12 @@ private:
         LocalTensor<Tfm> outputYTensor = outQueueY.AllocTensor<Tfm>();
         // 310P not support CAST_ROUND
         Cast(outputYTensor, xLocalFp32, RoundMode::CAST_NONE, calcXElements);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inQueueX.FreeTensor(xLocalFp32);
 
         LocalTensor<Tfm> postReshapeTensor = tmpBuf.Get<Tfm>();
         DoPostReshape(postReshapeTensor, outputYTensor);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         DoPostTranspose(outputYTensor, postReshapeTensor);
 

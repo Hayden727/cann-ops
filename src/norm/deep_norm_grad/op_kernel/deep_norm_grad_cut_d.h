@@ -408,7 +408,7 @@ private:
             Cast(xFp32Local, inputX, RoundMode::CAST_NONE, processElem);
             Cast(gxFp32Local, inputGx, RoundMode::CAST_NONE, processElem);
             Cast(gammaFp32Local, inputGamma, RoundMode::CAST_NONE, processElem);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             dyQue.FreeTensor(inputDy);
             xQue.FreeTensor(inputX);
             gxQue.FreeTensor(inputGx);
@@ -446,7 +446,7 @@ private:
         Axpy(inputGx, inputX, alphaVal, processElem);
         // 1.2. tmpTensor1 = dy * gamma
         Mul(inputGamma, inputDy, inputGamma, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t event_mte2_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -464,13 +464,13 @@ private:
         Adds(inputGx, inputGx, inputMeanNum * (-1.0f), processElem);
         // 3.2. dvar part process: tmpTensor1 * rstd^3
         Muls(inputX, inputGamma, rstdSqrtTmpNum, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4.1. dvar part process: tmpTensor1 * rstd^3 * tmpTensor2
         Mul(inputX, inputX, inputGx, processElem);
         // 4.2. dmean part process: tmpTensor1 * rstd
         Muls(inputGamma, inputGamma, inputRstdNum, processElem);  // can't use in d_gx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5.1. dvar part end: reducesum(tmpTensor1 * rstd^3 * tmpTensor2)
         // 5.2. dmean part end: reducesum(tmpTensor1 * rstd)
@@ -478,12 +478,12 @@ private:
         auto reduceTmpNum2 = this->ReduceSumCustom(inputGamma, processElem);
         reduceTmpNum = reduceTmpNum * oneDivD;
         reduceTmpNum2 = reduceTmpNum2 * oneDivD;
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 6.1. add to tmp for second cal part
         Adds(tmpVarPdLocal, tmpVarPdLocal, reduceTmpNum, blockElemFp32);
         Adds(tmpMeanPdLocal, tmpMeanPdLocal, reduceTmpNum2, blockElemFp32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void PrecisionComputeCutDSecondPart(const LocalTensor<float> &dyFp32Local,
@@ -524,7 +524,7 @@ private:
             Cast(xFp32Local, inputX, RoundMode::CAST_NONE, processElem);
             Cast(gxFp32Local, inputGx, RoundMode::CAST_NONE, processElem);
             Cast(gammaFp32Local, inputGamma, RoundMode::CAST_NONE, processElem);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             dyQue.FreeTensor(inputDy);
             xQue.FreeTensor(inputX);
             gxQue.FreeTensor(inputGx);
@@ -549,7 +549,7 @@ private:
                 Cast(outputPdX, outputPdXLocal, RoundMode::CAST_RINT, processElem);
                 Cast(outputPdGx, outputPdGxLocal, RoundMode::CAST_RINT, processElem);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         meanQue.EnQue(inputMean);
@@ -567,7 +567,7 @@ private:
         Axpy(inputGx, inputX, alphaVal, processElem);
         // 1.2. tmpTensor1 = dy * gamma
         Mul(inputGamma, inputDy, inputGamma, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t event_mte2_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -586,21 +586,21 @@ private:
         Adds(inputGx, inputGx, inputMeanNum * (-1.0f), processElem);
         // 2.2. dgx process: tmpTensor1 * rstd
         Muls(inputX, inputGamma, inputRstdNum, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3.1. dgx process: (-1.0/D) * d_var * tmpTensor2
         Muls(outputPdGx, inputGx, tmpVarPdNum, processElem);
         // 3.2. dgx process:  (-1.0/D * d_mean) + (tmpTensor1 * rstd)
         Adds(inputX, inputX, tmpMeanPdNum, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4.1. dgx end: (-1.0/D * d_var * tmpTensor1) + (-1.0/D * d_mean) + (tmpTensor1 * rstd)
         Add(outputPdGx, outputPdGx, inputX, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5.1. dx end: dx = alpha * dgx
         Muls(outputPdX, outputPdGx, alphaVal, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void PrecisionComputeCutDThirdPart(const LocalTensor<float> &dyFp32Local,
@@ -620,7 +620,7 @@ private:
             Cast(dyFp32Local, inputDy, RoundMode::CAST_NONE, processElem);
             Cast(xFp32Local, inputX, RoundMode::CAST_NONE, processElem);
             Cast(gxFp32Local, inputGx, RoundMode::CAST_NONE, processElem);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             dyQue.FreeTensor(inputDy);
             xQue.FreeTensor(inputX);
             gxQue.FreeTensor(inputGx);
@@ -656,23 +656,23 @@ private:
 
         rstdQue.FreeTensor(inputRstd);
         meanQue.FreeTensor(inputMean);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3.1. tmpTensor2 = x_sum - mean
         Adds(inputGx, inputGx, inputMeanNum * (-1.0f), processElem);
         // 3.2. dgamma process: rstd * dy
         Muls(inputX, inputDy, inputRstdNum, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4.1. dgamma process: tmpTensor2 * rstd * dy
         Mul(inputGx, inputGx, inputX, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5.1. dgamma end: atomicadd (tmpTensor2 * rstd * dy)
         Add(outputPdGamma, outputPdGamma, inputGx, processElem);
         // 5.2. dbeta end: atomicadd(dy)
         Add(outputPdBeta, outputPdBeta, inputDy, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
 public:

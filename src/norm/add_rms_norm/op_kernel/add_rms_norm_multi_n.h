@@ -129,7 +129,7 @@ private:
         inQueueX.FreeTensor(x1Local);
         inQueueX.FreeTensor(x2Local);
         outQueueY.EnQue(xLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         return xLocal;
     }
 
@@ -154,23 +154,23 @@ private:
         LocalTensor<float> sqx = sqxBuf.Get<float>();
         LocalTensor<float> reduce_buf_local = reduceFp32Buf.Get<float>();
         Cast(x_fp32, xLocal, RoundMode::CAST_NONE, calc_row_num * numColAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Mul(sqx, x_fp32, x_fp32, calc_row_num * numColAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(sqx, sqx, avgFactor, calc_row_num * numColAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         for (uint32_t i_i = 0; i_i < calc_row_num; i_i++) {
             ReduceSumCustom(rstdLocal[i_i * NUM_PER_BLK_FP32], sqx[i_i * numColAlign], reduce_buf_local, numCol);
         }
         Adds(rstdLocal, rstdLocal, epsilon, calc_row_num * NUM_PER_BLK_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(rstdLocal, rstdLocal, calc_row_num * NUM_PER_BLK_FP32);
         Duplicate(reduce_buf_local, ONE, NUM_PER_BLK_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         int32_t repeatTimes = calc_row_num * NUM_PER_BLK_FP32 / NUM_PER_REP_FP32;
         int32_t tailCount = calc_row_num * NUM_PER_BLK_FP32 % NUM_PER_REP_FP32;
@@ -192,7 +192,7 @@ private:
                 1,
                 {1, 0, 1, DEFAULT_REPEAT_STRIDE, 0, DEFAULT_REPEAT_STRIDE});
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeY(
@@ -201,7 +201,7 @@ private:
         LocalTensor<float> x_fp32 = xFp32Buf.Get<float>();
         LocalTensor<uint32_t> offsetLocal = offsetBuf.Get<uint32_t>();
         Gather(rstdLocal, rstdLocal, offsetLocal, ZERO_UINT, calc_row_num * NUM_PER_BLK_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         int32_t repeatTimes = numCol / NUM_PER_REP_FP32;
         int32_t tailCount = numCol % NUM_PER_REP_FP32;
         int32_t bodyCount = repeatTimes * NUM_PER_REP_FP32;
@@ -223,15 +223,15 @@ private:
                     {1, 1, 0, DEFAULT_REPEAT_STRIDE, DEFAULT_REPEAT_STRIDE, 0});
             }
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         Cast(yLocal, x_fp32, RoundMode::CAST_NONE, calc_row_num * numColAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         for (uint32_t i_i = 0; i_i < calc_row_num; i_i++) {
             Mul(yLocal[i_i * numColAlign], gammaLocal, yLocal[i_i * numColAlign], numCol);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<T>(yLocal);
     }
 

@@ -173,14 +173,14 @@ public:
         CopyGammaIn();
         LocalTensor<float> gammaLocal = inQueGamma_.DeQue<float>();
         Cast2FloatIf<T_GAMMA>(gammaLocal, colValAlign_, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 #if defined(__CCE_AICORE__) && (__CCE_AICORE__ == 220)
         if (colValAlign_ > SMALLD_THRESHOLD) {
 #endif
             for (uint32_t i = 0; i < totalLine; i++) {
                 LocalTensor<float> dgammaLocal = outQueDgamma_.AllocTensor<float>();
                 Duplicate(dgammaLocal, 0.0f, colValAlign_);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 CopyIn(i, 1);
                 Compute(gammaLocal, dgammaLocal);
                 CopyOut(i, 1);
@@ -203,7 +203,7 @@ public:
             for (uint32_t i = 0; i < calcLoop; i++) {
                 LocalTensor<float> dgammaLocal = outQueDgamma_.AllocTensor<float>();
                 Duplicate(dgammaLocal, 0.0f, calcLen * colValAlign_);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 CopyIn(i * ubFactor_, calcLen);
                 ComputeSmallD(i, calcLen, gammaLocal, dgammaLocal);
                 CopyOut(i * ubFactor_, calcLen);
@@ -214,7 +214,7 @@ public:
             if (calcTailLen > 0) {
                 LocalTensor<float> dgammaLocal = outQueDgamma_.AllocTensor<float>();
                 Duplicate(dgammaLocal, 0.0f, calcTailLen * colValAlign_);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 CopyIn(calcLoop * ubFactor_, calcTailLen);
                 ComputeSmallD(calcLoop, calcTailLen, gammaLocal, dgammaLocal);
                 CopyOut(calcLoop * ubFactor_, calcTailLen);
@@ -368,7 +368,7 @@ public:
         }
         LocalTensor<float> dgammaLocal = outQueDgamma2_.AllocTensor<float>();
         Duplicate(dgammaLocal, 0.0f, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         DataCopyParams dataCopyParams{
             static_cast<uint16_t>(1), static_cast<uint16_t>((colValAlign_ * sizeof(float)) / 32), 0, 0};
         DataCopyPadExtParams<float> padParams{true, 0, 0, 0};
@@ -382,7 +382,7 @@ public:
             inQueGamma2_.EnQue(dgammaPart);
             LocalTensor<float> dgammaPartLocal = inQueGamma2_.DeQue<float>();
             Add(dgammaLocal, dgammaLocal, dgammaPartLocal, colValAlign_);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             inQueGamma2_.FreeTensor(dgammaPartLocal);
         }
         outQueDgamma2_.EnQue(dgammaLocal);
@@ -411,24 +411,24 @@ public:
         wait_flag(PIPE_S, PIPE_V, eventSV);
         // x*rstd
         Muls(xLocal, xLocal, rstd_value, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> dyLocal = inQueDY_.DeQue<float>();
         Cast2FloatIf<T_DY>(dyLocal, colValAlign_, colValAlign_);
         LocalTensor<float> dxLocal = outQueDX_.AllocTensor<float>();
         // y * x * rstd
         Mul(dxLocal, dyLocal, xLocal, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Add(dgammaLocal, dgammaLocal, dxLocal, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // y * gamma
         Mul(dyLocal, dyLocal, gammaLocal, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         //  y * gamma * x * rstd
         Mul(dxLocal, dyLocal, xLocal, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float sumValue = ReduceSumHalfInterval(dxLocal, colVal_);
         float meanValue = sumValue * avgFactor_;
         event_t eventSV2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -436,22 +436,22 @@ public:
         wait_flag(PIPE_S, PIPE_V, eventSV2);
         // meanValue * x * rstd
         Muls(dxLocal, xLocal, meanValue, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // y * gamma - meanValue * x * rstd
         Sub(dxLocal, dyLocal, dxLocal, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(dxLocal, dxLocal, rstd_value, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (IsSame<T_DY, half>::value) {
             LocalTensor<T_DY> dxLocalB16 = dxLocal.ReinterpretCast<T_DY>();
             Cast(dxLocalB16, dxLocal, RoundMode::CAST_NONE, colValAlign_);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 #if defined(__CCE_AICORE__) && (__CCE_AICORE__ == 220)
         else if constexpr (IsSame<T_DY, bfloat16_t>::value) {
             LocalTensor<T_DY> dxLocalB16 = dxLocal.ReinterpretCast<T_DY>();
             Cast(dxLocalB16, dxLocal, RoundMode::CAST_RINT, colValAlign_);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 #endif
         inQueX_.FreeTensor(xLocal);
@@ -472,58 +472,58 @@ public:
         const uint32_t dstNDShape[2] = {calcLen, colValAlign_};
         auto sharedTmp = tmp_reduce_buf.ReinterpretCast<uint8_t>();
         BroadCast<float, DIM_NUM, DIM_D>(dxLocal, rstdLocal, dstNDShape, srcN1Shape, sharedTmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> xLocal = inQueX_.DeQue<float>();
         Cast2FloatIf<T_DY>(xLocal, elementNum, elementNum);
 
         Mul(xLocal, xLocal, dxLocal, elementNum);  // x save x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> dyLocal = inQueDY_.DeQue<float>();
         Cast2FloatIf<T_DY>(dyLocal, elementNum, elementNum);
         // dg=sum(dy * (x * rstd), dim=0)
         Mul(dxLocal, dyLocal, xLocal, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Add(dgammaLocal, dxLocal, dgammaLocal, calcLen * colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // broadcast gamma
         const uint32_t src1DShape[2] = {1, colValAlign_};
         BroadCast<float, DIM_NUM, DIM_N>(dxLocal, gammaLocal, dstNDShape, src1DShape, sharedTmp);  // x reuse gamma_nd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // dy * gamma
         Mul(dyLocal, dyLocal, dxLocal, elementNum);  // dy save dy*gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dxLocal, dyLocal, xLocal, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<float> tmpMeanLocal = tmpMeanBuf_.Get<float>();
         ReduceSumMultiN(tmpMeanLocal, dxLocal, tmp_reduce_buf, calcLen, colVal_, colValAlign_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(tmpMeanLocal, tmpMeanLocal, avgFactor_, calcLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(dxLocal, tmpMeanLocal, dstNDShape, srcN1Shape, sharedTmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(dxLocal, xLocal, dxLocal, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sub(dxLocal, dyLocal, dxLocal, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         BroadCast<float, DIM_NUM, DIM_D>(dyLocal, rstdLocal, dstNDShape, srcN1Shape, sharedTmp);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inQueRstd_.FreeTensor(rstdLocal);
         Mul(dxLocal, dxLocal, dyLocal, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (IsSame<T_DY, half>::value) {
             LocalTensor<T_DY> dxLocalB16 = dxLocal.ReinterpretCast<T_DY>();
             Cast(dxLocalB16, dxLocal, RoundMode::CAST_NONE, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 #if defined(__CCE_AICORE__) && (__CCE_AICORE__ == 220)
         else if constexpr (IsSame<T_DY, bfloat16_t>::value) {
             LocalTensor<T_DY> dxLocalB16 = dxLocal.ReinterpretCast<T_DY>();
             Cast(dxLocalB16, dxLocal, RoundMode::CAST_RINT, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 #endif
         inQueX_.FreeTensor(xLocal);
@@ -638,7 +638,7 @@ public:
         LocalTensor<float> srcTensor = inQueMiddleDagamma_.DeQue<float>();
         if (nowRows == 1) {
             Adds<float>(dstTensor[idx * cutInColNum], srcTensor, 0, lineLength);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             inQueMiddleDagamma_.FreeTensor(srcTensor);
             return;
         }
@@ -649,7 +649,7 @@ public:
         if (dichotomizeAddDiffSize != 0) {
             uint32_t newNum = (nowRows - dichotomizeAddDiffSize) * lineLength;
             Add(srcTensor, srcTensor, srcTensor[newNum], dichotomizeAddDiffSize * lineLength);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             nowRows = nowRows - dichotomizeAddDiffSize;
         }
 
@@ -657,10 +657,10 @@ public:
             nowRows = nowRows / 2;
             if (nowRows == 1) {
                 Add(dstTensor[idx * cutInColNum], srcTensor, srcTensor[lineLength], lineLength);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Add(srcTensor, srcTensor, srcTensor[nowRows * lineLength], nowRows * lineLength);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
 
@@ -673,7 +673,7 @@ public:
             for (uint32_t calcRowIdx = 0; calcRowIdx < cutInRowLoop; calcRowIdx++) {
                 LocalTensor<float> middleGammaLocal = outQueMiddleDgamma_.AllocTensor<float>();
                 Duplicate(middleGammaLocal, 0.0f, colValAlign_);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 // 每循环一次会得到一整行的结果
                 uint32_t blockCounts = cutInRowNum;
                 if (calcRowIdx == cutInRowLoop - 1 && cutInRowTail > 0) {

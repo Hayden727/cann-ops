@@ -80,7 +80,7 @@ private:
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Add(x1Local, x1Local, x2Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
@@ -99,20 +99,20 @@ private:
         set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
 
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(sqxLocal, xFp32Local, xFp32Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(sqxLocal, sqxLocal, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumCustom(sqxLocal, sqxLocal, tmpLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(sqxLocal, sqxLocal, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(sqxLocal, sqxLocal, 1);
         Duplicate(tmpLocal, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqxLocal, tmpLocal, sqxLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // copyout rstd
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
@@ -129,10 +129,10 @@ private:
         wait_flag(PIPE_S, PIPE_V, eventSV);
 
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
         Cast(x1Local, xFp32Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Mul(x1Local, x1Local, x2Local, numCol);
         set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
@@ -157,7 +157,7 @@ private:
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Add(x1Local, x1Local, x2Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
@@ -176,18 +176,18 @@ private:
         set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
 
         Mul(sqxLocal, x1Local, x1Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(sqxLocal, sqxLocal, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumCustom(sqxLocal, sqxLocal, tmpLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(sqxLocal, sqxLocal, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(sqxLocal, sqxLocal, 1);
         Duplicate(tmpLocal, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqxLocal, tmpLocal, sqxLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // copyout rstd
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
@@ -204,7 +204,7 @@ private:
         wait_flag(PIPE_S, PIPE_V, eventSV);
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
         Muls(x1Local, x1Local, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Mul(x1Local, x1Local, x2Local, numCol);
         set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
@@ -232,11 +232,11 @@ private:
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
         Cast(sqxLocal, x2Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xFp32Local, xFp32Local, sqxLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x1Local, xFp32Local, RoundMode::CAST_RINT, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
         set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
@@ -254,20 +254,20 @@ private:
         set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
 
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(sqxLocal, xFp32Local, xFp32Local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(sqxLocal, sqxLocal, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumCustom(sqxLocal, sqxLocal, tmpLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(sqxLocal, sqxLocal, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(sqxLocal, sqxLocal, 1);
         Duplicate(tmpLocal, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqxLocal, tmpLocal, sqxLocal, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // copyout rstd
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
@@ -285,20 +285,20 @@ private:
         set_flag(PIPE_S, PIPE_V, eventSV);
         wait_flag(PIPE_S, PIPE_V, eventSV);
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
         Cast(x1Local, xFp32Local, RoundMode::CAST_RINT, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
         wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V2);
 #endif
         Cast(sqxLocal, x2Local, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(xFp32Local, xFp32Local, sqxLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x1Local, xFp32Local, RoundMode::CAST_RINT, numCol);
         set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
         wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);

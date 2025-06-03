@@ -216,17 +216,17 @@ class DynamicQuantLargeShapeOpt : public DynamicQuantBase {
     AscendC::LocalTensor<float> temp = fp32_buf_.Get<float>();
     LocalTensor<int32_t> tempCastInt32 = fp32_buf_.Get<int32_t>();
     Cast(tempFp32, inLocal, RoundMode::CAST_NONE, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (tilingData_.hasSmooth) {
       smoothScalsLocal = smoothQueue.DeQue<T1>();
       Cast(temp, smoothScalsLocal, RoundMode::CAST_NONE, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Mul(tempFp32, tempFp32, temp, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       smoothQueue.FreeTensor(smoothScalsLocal);
     }
     Abs(temp, tempFp32, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     ReduceMaxInplace(temp, elementNum);
     event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
     set_flag(PIPE_V, PIPE_S, event_v_s);
@@ -235,14 +235,14 @@ class DynamicQuantLargeShapeOpt : public DynamicQuantBase {
     maxUpdateValue = (maxUpdateValue > maxValue) ? maxUpdateValue : maxValue;
     GetScale(maxUpdateValue, scale);
     Muls(tempFp32, tempFp32, scale, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tempCastInt32, tempFp32, RoundMode::CAST_RINT, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     AscendC::LocalTensor<half> tempHalfCast = temp.ReinterpretCast<half>();
     SetDeqScale(static_cast<half>(1.0));
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tempHalfCast, tempCastInt32, RoundMode::CAST_ROUND, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(outLocal, tempHalfCast, RoundMode::CAST_TRUNC, elementNum);
     outQueue.EnQue<yDtype>(outLocal);
     inQueue.FreeTensor(inLocal);
@@ -255,17 +255,17 @@ class DynamicQuantLargeShapeOpt : public DynamicQuantBase {
     AscendC::LocalTensor<float> temp = fp32_buf_.Get<float>();
 
     Cast(tempFp32, inLocal, RoundMode::CAST_NONE, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (tilingData_.hasSmooth) {
       smoothLocal = smoothQueue.DeQue<T1>();
       Cast(temp, smoothLocal, RoundMode::CAST_NONE, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Mul(tempFp32, tempFp32, temp, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       smoothQueue.FreeTensor(smoothLocal);
     }
     Abs(temp, tempFp32, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     ReduceMaxInplace(temp, elementNum);
     event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
     set_flag(PIPE_V, PIPE_S, event_v_s);
@@ -288,21 +288,21 @@ class DynamicQuantLargeShapeOpt : public DynamicQuantBase {
     AscendC::LocalTensor<float> temp = fp32_buf_.Get<float>();
 
     Cast(tempFp32, inLocal, RoundMode::CAST_NONE, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (tilingData_.hasSmooth) {
       smoothLocal = smoothQueue.DeQue<T1>();
       Cast(temp, smoothLocal, RoundMode::CAST_NONE, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Mul(tempFp32, tempFp32, temp, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       smoothQueue.FreeTensor(smoothLocal);
     }
     ReduceMax(temp, tempFp32, temp, elementNum, false);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     float maxValue = temp.GetValue(0);
     maxUpdateValue = (maxUpdateValue > maxValue) ? maxUpdateValue : maxValue;
     ReduceMin(temp, tempFp32, temp, elementNum, false);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     float minValue = temp.GetValue(0);
     minUpdateValue = (minUpdateValue > minValue) ? minValue : minUpdateValue;
     inQueue.FreeTensor(inLocal);
@@ -317,30 +317,30 @@ class DynamicQuantLargeShapeOpt : public DynamicQuantBase {
     LocalTensor<int32_t> tempInt32 = fp32_buf_.Get<int32_t>();
 
     Cast(tempFp32, inLocal, RoundMode::CAST_NONE, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (tilingData_.hasSmooth) {
       smoothScalsLocal = smoothQueue.DeQue<T1>();
       Cast(temp, smoothScalsLocal, RoundMode::CAST_NONE, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Mul(tempFp32, tempFp32, temp, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       smoothQueue.FreeTensor(smoothScalsLocal);
     }
     if (isAsymmetrical) {
       Muls(tempFp32, tempFp32, 1 / scale, elementNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Adds(tempFp32, tempFp32, offset, elementNum);
     } else {
       Muls(tempFp32, tempFp32, scale, elementNum);
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tempInt32, tempFp32, RoundMode::CAST_RINT, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     AscendC::LocalTensor<half> tempHalfCast = temp.ReinterpretCast<half>();
     SetDeqScale(static_cast<half>(1.0));
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tempHalfCast, tempInt32, RoundMode::CAST_ROUND, elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(outLocal, tempHalfCast, RoundMode::CAST_TRUNC, elementNum);
     outQueue.EnQue<yDtype>(outLocal);
     inQueue.FreeTensor(inLocal);

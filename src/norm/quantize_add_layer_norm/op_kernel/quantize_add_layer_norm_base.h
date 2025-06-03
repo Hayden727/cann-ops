@@ -101,7 +101,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
     if (g_coreType == AIV) {
         if (likely(repeatTimes > 0)) {
             AscendCUtils::SetMask<float>(elementNumPerRep);
-            vcadd(nullptr, (__ubuf__ float *)src_local.GetPhyAddr(), repeatTimes, 1, 1, 8, true);
+            ReduceSum(src_local, src_local, src_local, repeatTimes);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, eventVS);
             wait_flag(PIPE_V, PIPE_S, eventVS);
@@ -114,7 +114,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
-            vcadd(nullptr, (__ubuf__ float *)src_local[bodyCount].GetPhyAddr(), 1, 1, 1, 8, true);
+            ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, eventVS);
             wait_flag(PIPE_V, PIPE_S, eventVS);
@@ -147,15 +147,15 @@ __aicore__ inline void ReduceSumShort(const LocalTensor<float> &dst_local, const
     int32_t repeatTail = repeat % elementNum * elementNum;
 
     Duplicate<float>(tmp_local, ZERO, repeat * elementNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     for (index = 0; index + elementNum <= data_len; index += elementNum) {
         Add(tmp_local, tmp_local, src_local[index], elementNum, repeat, {1, 1, 1, 1, 1, repStride});
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (unlikely(tailCount != 0)) {
         Add(tmp_local, tmp_local, src_local[index], tailCount, repeat, {1, 1, 1, 1, 1, repStride});
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (repeatTimes != 0) {
         BlockReduceSum<float>(dst_local, tmp_local, repeatTimes, maxRepeat, 1, 1, elementNum);
     }

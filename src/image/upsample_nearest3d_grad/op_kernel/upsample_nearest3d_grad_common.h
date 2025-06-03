@@ -35,7 +35,7 @@ __aicore__ inline void InitGmZero(
     LocalTensor<T> temp_zero_tensor = TmpZeroTBuf.Get<T>();
 
     Duplicate(temp_zero_tensor, (T)0.0, zeroLen);
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
     set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
     wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
 
@@ -43,6 +43,6 @@ __aicore__ inline void InitGmZero(
     set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
     wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
 
-    pipe_barrier(PIPE_ALL);
+    PipeBarrier<PIPE_ALL>();
 }
 #endif  // UPSAMPLE_NEAREST3D_GRAD_COMMON_H

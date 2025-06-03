@@ -125,7 +125,7 @@ private:
         set_flag(PIPE_S, PIPE_V, eventSV);
         wait_flag(PIPE_S, PIPE_V, eventSV);
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         hwGmOffset = gmOffset;
         for (uint32_t hwIdx = 0; hwIdx < hwLoops; ++hwIdx) {
@@ -146,11 +146,11 @@ private:
     {
         LocalTensor<float> xFp32Tensor = xBufFp32.Get<float>();
         Axpy(xSumTensor, xFp32Tensor, this->avgFactor, size);  // xSumTensor <- xSumTensor + x / N
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(xFp32Tensor, xFp32Tensor, xFp32Tensor, size);  // xFp32Tensor <- x**2
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Axpy(xSquareSumTensor, xFp32Tensor, this->avgFactor, size);  // xSquareSumTensor <- xSquareSumTensor + x**2 / N
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void CopyOutMeanVar(uint32_t gmOffset, uint32_t size)
@@ -165,7 +165,7 @@ private:
         if constexpr (!IsSame<T, float>::value) {
             // total size of meanvar is 2 cfactor
             Cast(meanVarTensorOutType, meanVarTensor, RoundMode::CAST_NONE, this->cAxisFactor * 2);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
         }
         outDataQue.EnQue(fakeTensor);
@@ -185,21 +185,21 @@ private:
         LocalTensor<float> zFp32Tensor = zBufFp32.Get<float>();
 
         Adds(yFp32Tensor, xFp32Tensor, meanScalar * -1, size);  // yFp32Tensor <- x - E(x)
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(xFp32Tensor, yFp32Tensor, rstdScalar, size);  // yFp32Tensor <- (x - E(x)) * rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(yFp32Tensor, xFp32Tensor, gammaScalar, size);  // yFp32Tensor <- (x - E(x)) * rstd * gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<T> yLocal = outDataQue.template AllocTensor<T>();
         if constexpr (IsSame<T, float>::value) {
             Adds(yLocal, yFp32Tensor, betaScalar, size);  // yLocal <- (x - E(x)) * rstd * gamma + beta
         } else {
             Adds(xFp32Tensor, yFp32Tensor, betaScalar, size);  // xFp32Tensor <- (x - E(x)) * rstd * gamma + beta
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(yLocal, xFp32Tensor, RoundMode::CAST_NONE, size);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outDataQue.EnQue(yLocal);
     }
 
@@ -234,7 +234,7 @@ private:
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             set_flag(PIPE_V, PIPE_S, eventVS);
             wait_flag(PIPE_V, PIPE_S, eventVS);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -250,7 +250,7 @@ private:
         } else {
             Cast(xFp32Tensor, xLocal, RoundMode::CAST_NONE, size);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inDataQue.FreeTensor(xLocal);
     }
 

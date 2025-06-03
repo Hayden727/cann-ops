@@ -381,7 +381,7 @@ private:
         Cast(dyFp32Local, inputDy, RoundMode::CAST_NONE, processElemND);
         Cast(xFp32Local, inputX, RoundMode::CAST_NONE, processElemND);
         Cast(gxFp32Local, inputGx, RoundMode::CAST_NONE, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         MainCompute(dyFp32Local,
             xFp32Local,
@@ -441,7 +441,7 @@ private:
         for (uint32_t elemIndex = 0; elemIndex < elemWithDInUB; elemIndex += FLOAT_BLOCK_ELEM) {
             Brcb(brcbNDBufLocal2[elemIndex], inputRstd, brcbRepTimes, {brcbBlockStride, brcbRepStride});
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 2.1. tmpTensor2 = x_sum - mean
         Sub(inputGx, inputGx, brcbNDBufLocal1, processElemND);
@@ -449,23 +449,23 @@ private:
         Mul(inputX, inputRstd, inputRstd, processNCount);
         // 2.3. d_mean/d_gx process: tmpTensor1 * rstd
         Mul(tmpNDBufLocal, outputDgx, brcbNDBufLocal2, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3.1. d_gamma process: tmpTensor2 * rstd
         Mul(outputDx, inputGx, brcbNDBufLocal2, processElemND);
         // 3.2. d_var process: rstd^3
         Mul(inputRstd, inputRstd, inputX, processNCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 4.1. brcb rstd^3
         for (uint32_t elemIndex = 0; elemIndex < elemWithDInUB; elemIndex += FLOAT_BLOCK_ELEM) {
             Brcb(brcbNDBufLocal1[elemIndex], inputRstd, brcbRepTimes, {brcbBlockStride, brcbRepStride});
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5.1. d_var process: tmpTensor2 * rstd^3
         Mul(inputX, inputGx, brcbNDBufLocal1, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 6.1. d_beta end: add(dy)
         this->Level0AddFp32Short(outputDbeta, inputDy, elemWithDInUB, processNCount, processElem);
@@ -473,22 +473,22 @@ private:
         Mul(outputDx, outputDx, inputDy, processElemND);
         // 6.3. d_var process: tmpTensor2 * rstd^3 * tmpTensor1
         Mul(inputX, inputX, outputDgx, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 7.1. d_var end = reducesum(tmpTensor2 * rstd^3 * tmpTensor1)
         Duplicate<float>(inputDy, 0, processNCount * FLOAT_BLOCK_ELEM);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         this->ReduceSumFp32Short(inputMean, inputX, inputDy, elemWithDInUB, processNCount, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 8.1. d_gx process: -1/D * d_var
         Muls(inputMean, inputMean, oneDivD, processNCount);
         Duplicate<float>(inputDy, 0, processNCount * FLOAT_BLOCK_ELEM);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 9.1. d_mean end: reducesum(tmpTensor1 * rstd)
         this->ReduceSumFp32Short(inputRstd, tmpNDBufLocal, inputDy, elemWithDInUB, processNCount, processElem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 10.1. d_gx process: -1/D * d_mean
         Muls(inputRstd, inputRstd, oneDivD, processNCount);
@@ -496,7 +496,7 @@ private:
         for (uint32_t elemIndex = 0; elemIndex < elemWithDInUB; elemIndex += FLOAT_BLOCK_ELEM) {
             Brcb(brcbNDBufLocal1[elemIndex], inputMean, brcbRepTimes, {brcbBlockStride, brcbRepStride});
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 11.1. d_gx process: -1/D * d_var * tmpTensor2
         Mul(outputDgx, inputGx, brcbNDBufLocal1, processElemND);
@@ -504,22 +504,22 @@ private:
         for (uint32_t elemIndex = 0; elemIndex < elemWithDInUB; elemIndex += FLOAT_BLOCK_ELEM) {
             Brcb(brcbNDBufLocal2[elemIndex], inputRstd, brcbRepTimes, {brcbBlockStride, brcbRepStride});
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 12.1. d_gx end: (-1/D * d_var * tmpTensor1) + (-1/D * d_mean)
         Add(outputDgx, outputDgx, brcbNDBufLocal2, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 13.1. d_gamma end: add(tmpTensor2 * rstd * dy)
         this->Level0AddFp32Short(outputDgamma, outputDx, elemWithDInUB, processNCount, processElem);
 
         // 13.2. d_gx process: (-1/D * d_var * tmpTensor1) + (-1/D * d_mean) + (tmpTensor1 * rstd)
         Add(outputDgx, outputDgx, tmpNDBufLocal, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 14.1. d_x end: alpha * dgx
         Muls(outputDx, outputDgx, alphaVal, processElemND);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
 public:

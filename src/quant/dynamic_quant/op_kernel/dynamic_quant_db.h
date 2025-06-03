@@ -43,9 +43,9 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
       smoothLocal = smooth_buf_.Get<float>();
       SmoothCopyIn();
       smoothHalfLocal = smoothQueue.DeQue<xDtype>();
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(smoothLocal, smoothHalfLocal, RoundMode::CAST_NONE, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     DuplicateConst();
     CopyIn(multiRowNum, 0);
@@ -167,10 +167,10 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
     for (uint32_t i = 0; i < multiRow; i++) {
       // cast to fp32
       Cast(tempCast, inLocal[i * sizeHalfLen], RoundMode::CAST_NONE, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (tilingData_.hasSmooth) {
         Mul(tempCast, tempCast, smoothLocal, sizeHalfLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
       }
       ReduceMax(temp, tempCast, temp, tilingData_.rowLen, false);
       event_t event_v_s_max = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
@@ -196,14 +196,14 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
       scaleLocal.SetValue(i, scale);
       offsetLocal.SetValue(i, offset);
       Muls(tempCast, tempCast, back_scale, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Adds(tempCast, tempCast, offset, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempInt32, tempCast, RoundMode::CAST_RINT, tilingData_.rowLen);
       SetDeqScale(static_cast<half>(1.0));
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempHalfCast, tempInt32, RoundMode::CAST_ROUND, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (unlikely(i == 0)) {
         wait_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
       }
@@ -247,15 +247,15 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
       // cast to fp32
       index = i * sizeHalfLen;
       Cast(tempCast, inLocal[index], RoundMode::CAST_NONE, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (tilingData_.hasSmooth) {
         Mul(tempCast, tempCast, smoothLocal, sizeHalfLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
       }
       Abs(temp, tempCast, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       ReduceMaxInplace(temp, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Div(temp, constScale, temp, MAX_VALUE_NUM);
       event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
       set_flag(PIPE_V, PIPE_S, event_v_s);
@@ -266,13 +266,13 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
       }
       scaleLocal.SetValue(i, 1 / scale);
       Muls(tempCast, tempCast, scale, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempInt32, tempCast, RoundMode::CAST_RINT, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       SetDeqScale(static_cast<half>(1.0));
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempHalf, tempInt32, RoundMode::CAST_ROUND, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (unlikely(i == 0)) {
         wait_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
       }
@@ -315,21 +315,21 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
       index = i * sizeHalfLen;
       Cast(tempCast, inLocal[index], RoundMode::CAST_NONE, tilingData_.rowLen);
       if (tilingData_.hasSmooth) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tempCast, tempCast, smoothLocal, sizeHalfLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Abs(temp, tempCast, tilingData_.rowLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceMaxInplace(temp, tilingData_.rowLen);
       } else {
         auto x = inLocal[index];
         Abs(x, x, tilingData_.rowLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceMaxInplace(x, tilingData_.rowLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(temp, x, RoundMode::CAST_NONE, tilingData_.rowLen);
       }
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Div(temp, constScale, temp, MAX_VALUE_NUM);
       event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
       set_flag(PIPE_V, PIPE_S, eventVS);
@@ -340,13 +340,13 @@ class DynamicQuantDbOpt : public DynamicQuantBase {
       }
       scaleLocal.SetValue(i, 1 / scale);
       Muls(tempCast, tempCast, scale, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempInt32, tempCast, RoundMode::CAST_RINT, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       SetDeqScale(static_cast<half>(1.0));
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       Cast(tempHalfCast, tempInt32, RoundMode::CAST_ROUND, tilingData_.rowLen);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       if (unlikely(i == 0)) {
         wait_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
       }

@@ -143,16 +143,16 @@ private:
         } else {
             Cast(xLocalFp32, x1Local, RoundMode::CAST_NONE, elementCount);
             Cast(yLocalFp32, x2Local, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(addBufLocal, xLocalFp32, yLocalFp32, elementCount);
         }
         inRowsQue.FreeTensor(x1x2Local);
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int i = 0; i < row_count; i++) {
             Add(addBufLocal[i * numLastDimAligned], biasLocal, addBufLocal[i * numLastDimAligned], numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void CopyOutAdditionalOutput(int32_t proc_id, int32_t row_count)
@@ -188,44 +188,44 @@ private:
         for (int32_t rid = 0; rid < nums; ++rid) {
             auto roundOffset = rid * numLastDimAligned;
             Muls(yLocalFp32, zLocalFp32[roundOffset], aveNum, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             auto ave_local_temp = ReduceSumFP32(yLocalFp32, numLastDim);
             event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
             set_flag(PIPE_S, PIPE_V, eventSV);
             wait_flag(PIPE_S, PIPE_V, eventSV);
             Adds(zLocalFp32[roundOffset], zLocalFp32[roundOffset], ave_local_temp * -1, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(xLocalFp32, zLocalFp32[roundOffset], zLocalFp32[roundOffset], numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Muls(yLocalFp32, xLocalFp32, aveNum, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             float var_local_temp = ReduceSumFP32(yLocalFp32, numLastDim);
             float rstd_local_temp = 1 / sqrt(var_local_temp + eps);
             eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
             set_flag(PIPE_S, PIPE_V, eventSV);
             wait_flag(PIPE_S, PIPE_V, eventSV);
             Muls(xLocalFp32, zLocalFp32[roundOffset], rstd_local_temp, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             Mul(yLocalFp32, xLocalFp32, gammaLocal, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(zLocalFp32[roundOffset], yLocalFp32, betaLocal, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             LocalTensor<half> tmpHalfTensor = yLocalFp32.ReinterpretCast<half>();
             Cast(tmpHalfTensor, zLocalFp32[roundOffset], RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Muls(tmpHalfTensor, tmpHalfTensor, scale, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(tmpHalfTensor, tmpHalfTensor, offset, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             Cast(xLocalFp32.ReinterpretCast<int32_t>(), tmpHalfTensor, RoundMode::CAST_RINT, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(tmpHalfTensor, xLocalFp32.ReinterpretCast<int32_t>(), RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(yLocal[roundOffset], tmpHalfTensor, RoundMode::CAST_TRUNC, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         yQue.EnQue(yLocal);
     }
@@ -285,7 +285,7 @@ private:
             Cast(betaFp32, betaIn, RoundMode::CAST_NONE, numLastDim);
             Cast(biasFp32, biasIn, RoundMode::CAST_NONE, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inRowsQue.FreeTensor(constLocal);
     }
 

@@ -949,7 +949,7 @@ __aicore__ inline void GridSamplerBicubic2D<T>::CubicInterp1d(int32_t nIdx, int6
                 SELMODE::VSEL_TENSOR_SCALAR_MODE,
                 TRANSE_REP_STRIDE);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     ApplyCoeffTx(calCElems, loopOffset, weightTx, outValueUb, interp1dUb, interp1dIdx);

@@ -112,10 +112,10 @@ private:
 
         if constexpr (IsSame<float, T>::value) {
             Add(x1In, x1In, x2In, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x1In, x1In, biasTensor, numLastDim);
             auto xOutTensor = rowOutQue.template AllocTensor<T>();
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(xOutTensor, x1In, ZERO, numLastDim);
             rowOutQue.template EnQue<T>(xOutTensor);
             auto xOut = rowOutQue.template DeQue<T>();
@@ -123,23 +123,23 @@ private:
             rowOutQue.FreeTensor(xOut);
         } else {
             Cast(x1Fp32, x1In, RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(x2Fp32, x2In, RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x1Fp32, x1Fp32, x2Fp32, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(x2Fp32, biasTensor, RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x1Fp32, x1Fp32, x2Fp32, numLastDim);
             auto xOutTensor = rowOutQue.template AllocTensor<T>();
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xOutTensor, x1Fp32, RoundMode::CAST_RINT, numLastDim);
             rowOutQue.template EnQue<T>(xOutTensor);
             auto xOut = rowOutQue.template DeQue<T>();
             DataCopyEx(xGm[gm_offset], xOut, numLastDim);
             rowOutQue.FreeTensor(xOut);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         rowInQue.FreeTensor(biasTensor);
     }
 
@@ -154,17 +154,17 @@ private:
         LocalTensor<T> betaTensor = gammaBetaTensor[numLastDimAligned];
 
         Muls(tmpTensor, xTensor, aveNum, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float aveLocalTemp = ReduceSumFP32(tmpTensor, numLastDim);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         set_flag(PIPE_S, PIPE_V, eventSV);
         wait_flag(PIPE_S, PIPE_V, eventSV);
         Adds(xTensor, xTensor, -1 * aveLocalTemp, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(tmpTensor, xTensor, xTensor, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(tmpTensor, tmpTensor, aveNum, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float varLocalTemp = ReduceSumFP32(tmpTensor, numLastDim);
         float rstdLocalTemp = 1 / sqrt(varLocalTemp + eps);
         eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
@@ -179,28 +179,28 @@ private:
 
         Cast(tmpTensor, gammaTensor, RoundMode::CAST_NONE, numLastDim);
         Muls(xTensor, xTensor, rstdLocalTemp, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Mul(xTensor, tmpTensor, xTensor, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(tmpTensor, betaTensor, RoundMode::CAST_NONE, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(xTensor, tmpTensor, xTensor, numLastDim);
 
         // // small operator action
         if constexpr (!IsSame<float, T>::value) {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(tmpTensor.ReinterpretCast<T>(), xTensor, RoundMode::CAST_RINT, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xTensor, tmpTensor.ReinterpretCast<T>(), RoundMode::CAST_NONE, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t eventMTE2V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
         set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
         wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
         Cast(tmpTensor, inTensor, RoundMode::CAST_NONE, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t eventVMTE2;
         if (hasOffset) {
@@ -215,16 +215,16 @@ private:
         } else {
             Div(xTensor, xTensor, tmpTensor, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if (hasOffset) {
             eventMTE2V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
             set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
             wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
             Cast(tmpTensor, inTensor, RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(xTensor, xTensor, tmpTensor, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         rowOutQue.FreeTensor(inTensor);
@@ -234,11 +234,11 @@ private:
 
         LocalTensor<int8_t> yLocal = quantizeOutQue.template AllocTensor<int8_t>();
         Cast(xTensor.ReinterpretCast<int32_t>(), xTensor, RoundMode::CAST_RINT, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         SetDeqScale((half)1.000000e+00f);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(xTensor.ReinterpretCast<half>(), xTensor.ReinterpretCast<int32_t>(), RoundMode::CAST_NONE, numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(yLocal, xTensor.ReinterpretCast<half>(), RoundMode::CAST_TRUNC, numLastDim);
         quantizeOutQue.EnQue(yLocal);
         auto yOut = quantizeOutQue.template DeQue<int8_t>();

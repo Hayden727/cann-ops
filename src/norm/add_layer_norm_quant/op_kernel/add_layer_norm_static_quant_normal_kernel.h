@@ -142,7 +142,7 @@ private:
             if constexpr (IS_BIAS_BROADCAST) {
                 auto biasLocal = biasBuf.template Get<T>();
                 Add(xLocalFp32, x1Local, x2Local, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (int i = 0; i < rowCount; i++) {
                     Add(xLocalFp32[i * this->numLastDimAligned],
                         biasLocal,
@@ -151,7 +151,7 @@ private:
                 }
             } else {
                 Add(xLocalFp32, x1Local, x2Local, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(xLocalFp32, yLocalFp32, xLocalFp32, elementCount);
             }
         } else {
@@ -159,10 +159,10 @@ private:
                 auto biasLocal = biasBuf.template Get<T>();
                 Cast(xLocalFp32, x1Local, RoundMode::CAST_NONE, elementCount);
                 Cast(yLocalFp32, x2Local, RoundMode::CAST_NONE, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(xLocalFp32, xLocalFp32, yLocalFp32, elementCount);
                 Cast(x1x2Local.template ReinterpretCast<float>(), biasLocal, RoundMode::CAST_NONE, this->numLastDim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (int i = 0; i < rowCount; i++) {
                     Add(xLocalFp32[i * this->numLastDimAligned],
                         x1x2Local.template ReinterpretCast<float>(),
@@ -173,15 +173,15 @@ private:
                 auto biasLocal = yLocalFp32.ReinterpretCast<T>()[elementCount];
                 Cast(xLocalFp32, x1Local, RoundMode::CAST_NONE, elementCount);
                 Cast(yLocalFp32, biasLocal, RoundMode::CAST_NONE, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(xLocalFp32, xLocalFp32, yLocalFp32, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Cast(yLocalFp32, x2Local, RoundMode::CAST_NONE, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(xLocalFp32, xLocalFp32, yLocalFp32, elementCount);
             }
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         inRowsQue.FreeTensor(x1x2Local);
     }
 
@@ -197,7 +197,7 @@ private:
             } else {
                 Cast(xLocal, addBufLocal, RoundMode::CAST_RINT, elementCount);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             outRowQue.template EnQue<T>(xLocal);
 
             auto x = outRowQue.template DeQue<T>();
@@ -213,7 +213,7 @@ private:
         LocalTensor<float> yLocalFp32 = yBufFp32.Get<float>();
 
         Muls(yLocalFp32, xLocalFp32, this->aveNum, elementCount);  // yLocalFp32 <-- x / N
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // reduce#1 for mean
         for (int32_t rid = 0; rid < nums; ++rid) {
@@ -227,12 +227,12 @@ private:
                 aveLocalTemp * -1,
                 this->numLastDim);  // xLocalFp32 <-- x - E(x)
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Mul(yLocalFp32, xLocalFp32, xLocalFp32, elementCount);  // yLocalFp32 <-- (x - E(x))**2
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(yLocalFp32, yLocalFp32, this->aveNum, elementCount);  // yLocalFp32 <-- (x - E(x))**2 / N
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // reduce#2 for var
         for (int32_t rid = 0; rid < nums; ++rid) {
@@ -247,33 +247,33 @@ private:
                 xLocalFp32[roundOffset],
                 rstdLocalTemp,
                 this->numLastDim);  // xLocalFp32 <-- (x - E(x)) * rstd
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if constexpr (!is_same<T, float>::value) {
                 Cast(yLocalFp32, gammaLocal, RoundMode::CAST_NONE, this->numLastDim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Mul(xLocalFp32[roundOffset], yLocalFp32, xLocalFp32[roundOffset], this->numLastDim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Cast(yLocalFp32, betaLocal, RoundMode::CAST_NONE, this->numLastDim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(xLocalFp32[roundOffset], yLocalFp32, xLocalFp32[roundOffset], this->numLastDim);
             } else {
                 Mul(yLocalFp32, xLocalFp32[roundOffset], gammaLocal, this->numLastDim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(xLocalFp32[roundOffset], yLocalFp32, betaLocal, this->numLastDim);
             }
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if constexpr (is_same<T, half>::value) {
             Cast(yLocalFp32.template ReinterpretCast<T>(), xLocalFp32, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xLocalFp32, yLocalFp32.template ReinterpretCast<T>(), RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else if constexpr (is_same<T, bfloat16_t>::value) {
             Cast(yLocalFp32.template ReinterpretCast<T>(), xLocalFp32, RoundMode::CAST_RINT, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xLocalFp32, yLocalFp32.template ReinterpretCast<T>(), RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -298,17 +298,17 @@ private:
 
         // compute smooth1
         Cast(yLocalFp32, scalesLocal, RoundMode::CAST_NONE, this->numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t rid = 0; rid < nums; ++rid) {
             Div(xLocalFp32[rid * this->numLastDimAligned],
                 xLocalFp32[rid * this->numLastDimAligned],
                 yLocalFp32,
                 this->numLastDim);  // xLocalFp32 <-- y / scales1
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (isZeroPoint1Exist) {
             Cast(tmpLocal, offsetsLocal, RoundMode::CAST_NONE, this->numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Add(xLocalFp32[rid * this->numLastDimAligned],
                     xLocalFp32[rid * this->numLastDimAligned],
@@ -317,10 +317,10 @@ private:
             }
         }
         inRowsQue.FreeTensor(scalesOffsetLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<int8_t> yLocal = outRowQue.template AllocTensor<int8_t>();
         RoundFloat2Int8(yLocal, xLocalFp32, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outRowQue.EnQue(yLocal);
     }
 
@@ -337,17 +337,17 @@ private:
         // compute scales1
         auto scales1Fp32 = yLocalFp32[(nums - 1) * this->numLastDimAligned];
         Cast(scales1Fp32, scalesLocal, RoundMode::CAST_NONE, this->numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t rid = 0; rid < nums; ++rid) {
             Div(yLocalFp32[rid * this->numLastDimAligned],
                 xLocalFp32[rid * this->numLastDimAligned],
                 scales1Fp32,
                 this->numLastDim);  // yLocalFp32 <-- y / scales1
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (isZeroPoint1Exist) {
             Cast(tmpLocal, offsetsLocal, RoundMode::CAST_NONE, this->numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Add(yLocalFp32[rid * this->numLastDimAligned],
                     yLocalFp32[rid * this->numLastDimAligned],
@@ -356,7 +356,7 @@ private:
             }
         }
         inRowsQue.FreeTensor(scalesOffsetLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         CopyInScaleOffset(scales2Gm, zeroPoints2Gm, isZeroPoint2Exist);
 
@@ -364,7 +364,7 @@ private:
         auto y1Local = y12Local[0];
         auto y2Local = y12Local[nums * this->numLastDimAligned];
         RoundFloat2Int8(y1Local, yLocalFp32, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // compute scales2
         scalesOffsetLocal = inRowsQue.template DeQue<S>();
@@ -373,17 +373,17 @@ private:
         offsetsLocal = scalesOffsetLocal[this->numLastDimAligned];
 
         Cast(yLocalFp32, scalesLocal, RoundMode::CAST_NONE, this->numLastDim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t rid = 0; rid < nums; ++rid) {
             Div(xLocalFp32[rid * this->numLastDimAligned],
                 xLocalFp32[rid * this->numLastDimAligned],
                 yLocalFp32,
                 this->numLastDim);  // xLocalFp32 <-- y / scales2
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (isZeroPoint2Exist) {
             Cast(tmpLocal, offsetsLocal, RoundMode::CAST_NONE, this->numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int32_t rid = 0; rid < nums; ++rid) {
                 Add(xLocalFp32[rid * this->numLastDimAligned],
                     xLocalFp32[rid * this->numLastDimAligned],
@@ -392,10 +392,10 @@ private:
             }
         }
         inRowsQue.FreeTensor(scalesOffsetLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         RoundFloat2Int8(y2Local, xLocalFp32, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         outRowQue.EnQue(y12Local);
     }

@@ -146,20 +146,21 @@ private:
         // cast xLocal to float
         if (sizeof(Tfm) == 2) {
             Cast(xLocal, xLocal.ReinterpretCast<Tfm>()[tileLength], RoundMode::CAST_NONE, tileLength);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         // calculate x * coefficient
         set_mask_norm();
         Muls(yLocal, xLocal, coefficient, tileLength);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // calculate mean row-by-row
         for (uint32_t rowIdx = 0; rowIdx < nRow; ++rowIdx) {
             uint32_t currentRowOffset = rowIdx * rowAlign;
-            set_mask_count();
-            set_vector_mask(0x0, rowSize);
-            vcadd(nullptr, (__ubuf__ float *)yLocal.GetPhyAddr() + currentRowOffset, 1, 1, 1, 8, 1);
+
+            AscendCUtils::SetMaskCount<float>();
+            SetVectorMask<float>(0x0, rowSize);
+            ReduceSum(yLocal, yLocal, yLocal, 1);
             acc_val = GetAccVal();
             value = *reinterpret_cast<float *>(&acc_val);
             meanLocal.SetValue(rowIdx, static_cast<float>(value));
@@ -182,11 +183,11 @@ private:
         outQueueMean.FreeTensor(meanLocal);
 
         // calculate square and muls coefficient
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(xLocal, yLocal, yLocal, tileLength);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(xLocal, xLocal, coefficient, tileLength);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // set load weight data copy pad params
         DataCopyExtParams dataCopyParams;
@@ -200,9 +201,9 @@ private:
         // process rstd row-by-row
         for (uint32_t rowIdx = 0; rowIdx < nRow; ++rowIdx) {
             uint32_t currentRowOffset = rowIdx * rowAlign;
-            set_mask_count();
-            set_vector_mask(0x0, rowSize);
-            vcadd(nullptr, (__ubuf__ float *)xLocal.GetPhyAddr() + currentRowOffset, 1, 1, 1, 8, 1);
+            AscendCUtils::SetMaskCount<float>();
+            SetVectorMask<float>(0x0, rowSize);
+            ReduceSum(xLocal, xLocal, xLocal, 1);
             acc_val = GetAccVal();
             value = *reinterpret_cast<float *>(&acc_val);
             float rstdValue = static_cast<float>(1.0) / sqrt(value + static_cast<float>(eps));
@@ -268,7 +269,7 @@ private:
             SetFlag<HardEvent::MTE2_V>(eventIdMte2ToV);
             WaitFlag<HardEvent::MTE2_V>(eventIdMte2ToV);
         } else {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         // calculate y = x * gamma
@@ -293,10 +294,10 @@ private:
             WaitFlag<HardEvent::MTE2_V>(eventIdMte2ToV);
             if (sizeof(Tweight) == 2) {
                 Cast(xLocal, xLocal.ReinterpretCast<Tweight>()[rowAlign], RoundMode::CAST_NONE, rowAlign);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         } else {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         // calculate y = y + beta
@@ -310,7 +311,7 @@ private:
 
         // cast xLocal to Tfm
         if (sizeof(Tfm) == 2) {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if (std::is_same<Tfm, bfloat16_t>::value) {
                 Cast(yLocal.ReinterpretCast<Tfm>(), yLocal, RoundMode::CAST_ROUND, tileLength);
             }

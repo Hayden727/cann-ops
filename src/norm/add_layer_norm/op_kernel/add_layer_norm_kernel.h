@@ -296,21 +296,21 @@ public:
                     if constexpr (IS_X1_NEEDCAST) {
                         auto y_local_buffer = y_local_fp32.template ReinterpretCast<T_X1>();
                         Cast(x1_local, y_local_buffer, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     }
                     if constexpr (IS_X2_NEEDCAST) {
                         auto y_local_buffer = y_local_fp32.template ReinterpretCast<T_X2>();
                         Cast(x2_local, y_local_buffer, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     }
                     Add(x_local_fp32[col_offset], x1_local, x2_local, process_count);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 } else {
                     Cast(x_local_fp32[col_offset], x1_local, RoundMode::CAST_NONE, process_count);
                     Cast(y_local_fp32, x2_local, RoundMode::CAST_NONE, process_count);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Add(x_local_fp32[col_offset], x_local_fp32[col_offset], y_local_fp32, process_count);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 x1_que.FreeTensor(x1_local);
                 x2_que.FreeTensor(x2_local);
@@ -323,23 +323,23 @@ public:
                     auto x3_local = x1_que.template DeQue<T>();
                     if constexpr (IsSame<T, float>::value) {
                         Add(x_local_fp32[col_offset], x3_local, x_local_fp32[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     } else {
                         Cast(y_local_fp32, x3_local, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(x_local_fp32[col_offset], y_local_fp32, x_local_fp32[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     }
                     x1_que.FreeTensor(x3_local);
                 } else if constexpr (IS_BIAS_BROADCAST) {
                     if constexpr (IsSame<T, float>::value) {
                         Add(x_local_fp32[col_offset], bias_local[col_offset], x_local_fp32[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     } else {
                         Cast(y_local_fp32, bias_local[col_offset], RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(x_local_fp32[col_offset], y_local_fp32, x_local_fp32[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     }
                 }
 
@@ -356,7 +356,7 @@ public:
                     CopyOutSlicePhase0(row_idx, process_count, last_dim_per_time * col_idx);
                 }
                 Mul(y_local_fp32, x_local_fp32[col_offset], z_local_fp32, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
                 set_flag(PIPE_V, PIPE_S, EVENT_ID0);
                 wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -368,11 +368,11 @@ public:
                 auto col_offset = col_idx * last_dim_per_time;
                 int process_count = col_idx < col_move_cnt - 1 ? last_dim_per_time : col_tail;
                 Adds(x_local_fp32[col_offset], x_local_fp32[col_offset], -1 * ave_tmp, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Mul(y_local_fp32, x_local_fp32[col_offset], x_local_fp32[col_offset], process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Muls(y_local_fp32, y_local_fp32, aveNum, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
                 set_flag(PIPE_V, PIPE_S, EVENT_ID0);
                 wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -390,24 +390,24 @@ public:
                 LocalTensor<T> y_local = y_que.template AllocTensor<T>();
                 // x_local_fp32[col_offset] = (x - ave)
                 Muls(y_local_fp32, x_local_fp32[col_offset], rstd_tmp, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 if constexpr (IS_BETAGAMMA_NEEDCAST) {
                     if constexpr (IsSame<T, float>::value) {
                         Cast(x_local_fp32[col_offset], gamma_local[col_offset], RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Mul(y_local_fp32, x_local_fp32[col_offset], y_local_fp32, process_count);
                         Cast(x_local_fp32[col_offset], beta_local[col_offset], RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local, y_local_fp32, x_local_fp32[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                     } else {
                         Cast(x_local_fp32[col_offset], gamma_local[col_offset], RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Mul(y_local_fp32, x_local_fp32[col_offset], y_local_fp32, process_count);
                         Cast(x_local_fp32[col_offset], beta_local[col_offset], RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local_fp32, y_local_fp32, x_local_fp32[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         if constexpr (IsSame<T, half>::value) {
                             Cast(y_local, y_local_fp32, RoundMode::CAST_NONE, process_count);
                         } else {
@@ -417,13 +417,13 @@ public:
                 } else {
                     if constexpr (IsSame<T, float>::value) {
                         Mul(y_local_fp32, gamma_local[col_offset], y_local_fp32, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local, y_local_fp32, beta_local[col_offset], process_count);
                     } else {
                         Mul(y_local_fp32, gamma_local[col_offset], y_local_fp32, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local_fp32, y_local_fp32, beta_local[col_offset], process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         if constexpr (IsSame<T, half>::value) {
                             Cast(y_local, y_local_fp32, RoundMode::CAST_NONE, process_count);
                         } else {
@@ -457,21 +457,21 @@ public:
             if constexpr (IS_X1_NEEDCAST) {
                 auto y_local_buffer = y_local_fp32.template ReinterpretCast<T_X1>();
                 Cast(x1_local, y_local_buffer, RoundMode::CAST_NONE, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             if constexpr (IS_X2_NEEDCAST) {
                 auto y_local_buffer = y_local_fp32.template ReinterpretCast<T_X2>();
                 Cast(x2_local, y_local_buffer, RoundMode::CAST_NONE, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             Add(x_local_fp32, x1_local, x2_local, process_count);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(x_local_fp32, x1_local, RoundMode::CAST_NONE, process_count);
             Cast(y_local_fp32, x2_local, RoundMode::CAST_NONE, process_count);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x_local_fp32, x_local_fp32, y_local_fp32, process_count);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         x1_que.FreeTensor(x1_local);
         x2_que.FreeTensor(x2_local);
@@ -483,12 +483,12 @@ public:
             auto x3_local = x1_que.template DeQue<T>();
             if constexpr (IsSame<T, float>::value) {
                 Add(x_local_fp32, x3_local, x_local_fp32, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Cast(y_local_fp32, x3_local, RoundMode::CAST_NONE, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(x_local_fp32, y_local_fp32, x_local_fp32, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             x1_que.FreeTensor(x3_local);
         } else if constexpr (IS_BIAS_BROADCAST) {
@@ -498,12 +498,12 @@ public:
             auto bias_local = bias_que.template DeQue<T>();
             if constexpr (IsSame<T, float>::value) {
                 Add(x_local_fp32, bias_local, x_local_fp32, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Cast(y_local_fp32, bias_local, RoundMode::CAST_NONE, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(x_local_fp32, y_local_fp32, x_local_fp32, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             bias_que.FreeTensor(bias_local);
         }
@@ -542,7 +542,7 @@ public:
                 int process_count = col_idx < col_move_cnt - 1 ? last_dim_per_time : col_tail;
                 CopyInAddSlice(row_idx, process_count, col_offset);
                 Muls(y_local_fp32, x_local_fp32, aveNum, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
                 set_flag(PIPE_V, PIPE_S, EVENT_ID0);
                 wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -555,11 +555,11 @@ public:
                 int process_count = col_idx < col_move_cnt - 1 ? last_dim_per_time : col_tail;
                 CopyInAddSlice(row_idx, process_count, col_offset);
                 Adds(x_local_fp32, x_local_fp32, -1 * ave_tmp, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Mul(y_local_fp32, x_local_fp32, x_local_fp32, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Muls(y_local_fp32, y_local_fp32, aveNum, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
                 set_flag(PIPE_V, PIPE_S, EVENT_ID0);
                 wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -586,26 +586,26 @@ public:
                 LocalTensor<T_GAMMA> gamma_local = gamma_que.template DeQue<T_GAMMA>();
                 LocalTensor<T> y_local = y_que.template AllocTensor<T>();
                 Adds(x_local_fp32, x_local_fp32, -1 * ave_tmp, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Muls(y_local_fp32, x_local_fp32, rstd_tmp, process_count);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
 
                 if constexpr (IS_BETAGAMMA_NEEDCAST) {
                     if constexpr (IsSame<T, float>::value) {
                         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Mul(y_local_fp32, x_local_fp32, y_local_fp32, process_count);
                         Cast(x_local_fp32, beta_local, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local, y_local_fp32, x_local_fp32, process_count);
                     } else {
                         Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Mul(y_local_fp32, x_local_fp32, y_local_fp32, process_count);
                         Cast(x_local_fp32, beta_local, RoundMode::CAST_NONE, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local_fp32, y_local_fp32, x_local_fp32, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         if constexpr (IsSame<T, half>::value) {
                             Cast(y_local, y_local_fp32, RoundMode::CAST_NONE, process_count);
                         } else {
@@ -615,13 +615,13 @@ public:
                 } else {
                     if constexpr (IsSame<T, float>::value) {
                         Mul(y_local_fp32, gamma_local, y_local_fp32, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local, y_local_fp32, beta_local, process_count);
                     } else {
                         Mul(y_local_fp32, gamma_local, y_local_fp32, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         Add(y_local_fp32, y_local_fp32, beta_local, process_count);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         if constexpr (IsSame<T, half>::value) {
                             Cast(y_local, y_local_fp32, RoundMode::CAST_NONE, process_count);
                         } else {
@@ -751,7 +751,7 @@ private:
             } else {
                 Adds(add_buf_local, x1_local, ZERO, elementCount);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(add_buf_local, x1_local, RoundMode::CAST_NONE, elementCount);
         }
@@ -783,18 +783,18 @@ private:
                         RoundMode::CAST_NONE,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(add_buf_local, x2_local, add_buf_local, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Add(add_buf_local, x2_local, add_buf_local, elementCount);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         } else {
             Cast(y_buf_local, x2_local, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(add_buf_local, y_buf_local, add_buf_local, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         x2_que.FreeTensor(x2_local);
     }
@@ -813,7 +813,7 @@ private:
             } else {
                 Cast(x_local, add_buf_local, RoundMode::CAST_RINT, elementCount);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             x_que.template EnQue<T>(x_local);
 
             auto x = x_que.template DeQue<T>();
@@ -832,17 +832,17 @@ private:
                     bias_local,
                     add_buf_local[i * num_last_dim_aligned],
                     num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         } else {
             Cast(y_buf_local, bias_local, RoundMode::CAST_NONE, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int i = 0; i < row_count; i++) {
                 Add(add_buf_local[i * num_last_dim_aligned],
                     y_buf_local,
                     add_buf_local[i * num_last_dim_aligned],
                     num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
     }
@@ -865,12 +865,12 @@ private:
         auto x3_local = x1_que.template DeQue<T>();
         if constexpr (IsSame<float, T>::value) {
             Add(add_buf_local, x3_local, add_buf_local, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(y_buf_local, x3_local, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(add_buf_local, y_buf_local, add_buf_local, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         x1_que.FreeTensor(x3_local);
     }
@@ -899,7 +899,7 @@ private:
             } else {
                 Adds(add_buf_local, x1_local, ZERO, size);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(add_buf_local, x1_local, RoundMode::CAST_NONE, size);
         }
@@ -921,15 +921,15 @@ private:
                 if constexpr (IS_X2_NEEDCAST) {
                     auto y_local_buffer = y_buf_local.template ReinterpretCast<T_X2>();
                     Cast(x2_local, y_local_buffer, RoundMode::CAST_NONE, size);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 Add(add_buf_local, x2_local, add_buf_local, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Cast(y_buf_local, x2_local, RoundMode::CAST_NONE, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(add_buf_local, y_buf_local, add_buf_local, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             x1_que.FreeTensor(x2_local);
         } else {
@@ -948,15 +948,15 @@ private:
                 if constexpr (IS_X2_NEEDCAST) {
                     auto y_local_buffer = y_buf_local.template ReinterpretCast<T_X2>();
                     Cast(x2_local, y_local_buffer, RoundMode::CAST_NONE, size);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
                 Add(add_buf_local, x2_local, add_buf_local, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Cast(y_buf_local, x2_local, RoundMode::CAST_NONE, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(add_buf_local, y_buf_local, add_buf_local, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             x2_que.FreeTensor(x2_local);
         }
@@ -972,12 +972,12 @@ private:
             auto x3_local = x1_que.template DeQue<T>();
             if constexpr (IsSame<float, T>::value) {
                 Add(add_buf_local, x3_local, add_buf_local, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Cast(y_buf_local, x3_local, RoundMode::CAST_NONE, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(add_buf_local, y_buf_local, add_buf_local, size);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
             x1_que.FreeTensor(x3_local);
         }
@@ -992,7 +992,7 @@ private:
                 } else {
                     Cast(x_local, add_buf_local, RoundMode::CAST_RINT, size);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 y_que.template EnQue<T>(x_local);
 
                 auto x = y_que.template DeQue<T>();
@@ -1007,7 +1007,7 @@ private:
                 } else {
                     Cast(x_local, add_buf_local, RoundMode::CAST_RINT, size);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 x_que.template EnQue<T>(x_local);
 
                 auto x = x_que.template DeQue<T>();
@@ -1031,16 +1031,16 @@ private:
         for (int32_t rid = 0; rid < nums; ++rid) {
             auto roundOffset = rid * num_last_dim_aligned;
             Muls(y_local_fp32, z_local_fp32[roundOffset], aveNum, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             auto ave_local_temp = ReduceSumFP32(y_local_fp32, num_last_dim);
             set_flag(PIPE_S, PIPE_V, EVENT_ID0);
             wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
             Adds(z_local_fp32[roundOffset], z_local_fp32[roundOffset], ave_local_temp * -1, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(x_local_fp32, z_local_fp32[roundOffset], z_local_fp32[roundOffset], num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Muls(y_local_fp32, x_local_fp32, aveNum, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             float var_local_temp = ReduceSumFP32(y_local_fp32, num_last_dim);
             float rstd_local_temp = 1 / sqrt(var_local_temp + eps);
 #if OUTPUT_MEAN_RSTD == 1
@@ -1050,48 +1050,48 @@ private:
             set_flag(PIPE_S, PIPE_V, EVENT_ID0);
             wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
             Muls(x_local_fp32, z_local_fp32[roundOffset], rstd_local_temp, num_last_dim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if constexpr (IS_BETAGAMMA_NEEDCAST) {
                 if constexpr (!IsSame<T, float>::value) {
                     Cast(z_local_fp32[roundOffset], gamma_local, RoundMode::CAST_NONE, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Mul(y_local_fp32, x_local_fp32, z_local_fp32[roundOffset], num_last_dim);
                     Cast(x_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Add(z_local_fp32[roundOffset], y_local_fp32, x_local_fp32, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     if constexpr (IsSame<T, half>::value) {
                         Cast(y_local[roundOffset], z_local_fp32[roundOffset], RoundMode::CAST_NONE, num_last_dim);
                     } else {
                         Cast(y_local[roundOffset], z_local_fp32[roundOffset], RoundMode::CAST_RINT, num_last_dim);
                     }
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 } else {
                     Cast(z_local_fp32[roundOffset], gamma_local, RoundMode::CAST_NONE, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Mul(y_local_fp32, x_local_fp32, z_local_fp32[roundOffset], num_last_dim);
                     Cast(x_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Add(y_local[roundOffset], y_local_fp32, x_local_fp32, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
             } else {
                 if constexpr (!IsSame<T, float>::value) {
                     Mul(y_local_fp32, x_local_fp32, gamma_local, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Add(z_local_fp32[roundOffset], y_local_fp32, beta_local, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     if constexpr (IsSame<T, half>::value) {
                         Cast(y_local[roundOffset], z_local_fp32[roundOffset], RoundMode::CAST_NONE, num_last_dim);
                     } else {
                         Cast(y_local[roundOffset], z_local_fp32[roundOffset], RoundMode::CAST_RINT, num_last_dim);
                     }
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 } else {
                     Mul(y_local_fp32, x_local_fp32, gamma_local, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Add(y_local[roundOffset], y_local_fp32, beta_local, num_last_dim);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                 }
             }
         }
@@ -1118,7 +1118,7 @@ private:
 #endif
         int32_t elementNum = num_last_dim_aligned * nums;
         Muls(y_local_fp32, z_local_fp32, aveNum, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumShort(mean_local, y_local_fp32, x_local_fp32, num_last_dim_aligned, num_last_dim, nums);
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -1127,18 +1127,18 @@ private:
             float meanTmp = mean_local.GetValue(idx);
             Adds(z_local_fp32[offset], z_local_fp32[offset], meanTmp * (-1), num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(y_local_fp32, z_local_fp32, z_local_fp32, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(y_local_fp32, y_local_fp32, aveNum, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumShort(rstd_local, y_local_fp32, x_local_fp32, num_last_dim_aligned, num_last_dim, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(rstd_local, rstd_local, eps, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(rstd_local, rstd_local, nums);
         Duplicate(y_local_fp32, (float)1, nums);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(rstd_local, y_local_fp32, rstd_local, nums);
         set_flag(PIPE_V, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
@@ -1147,27 +1147,27 @@ private:
             float rstdTmp = rstd_local.GetValue(idx);
             Muls(z_local_fp32[offset], z_local_fp32[offset], rstdTmp, num_last_dim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if constexpr (IS_BETAGAMMA_NEEDCAST) {
             if constexpr (!IsSame<T, float>::value) {
                 Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
                 Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (auto i = 0; i < nums; i++) {
                     Mul(z_local_fp32[i * num_last_dim_aligned],
                         z_local_fp32[i * num_last_dim_aligned],
                         x_local_fp32,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (auto i = 0; i < nums; i++) {
                     Add(z_local_fp32[i * num_last_dim_aligned],
                         z_local_fp32[i * num_last_dim_aligned],
                         y_local_fp32,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 if constexpr (IsSame<T, half>::value) {
                     Cast(y_local, z_local_fp32, RoundMode::CAST_NONE, elementNum);
                 } else {
@@ -1176,21 +1176,21 @@ private:
             } else {
                 Cast(x_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
                 Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (auto i = 0; i < nums; i++) {
                     Mul(z_local_fp32[i * num_last_dim_aligned],
                         z_local_fp32[i * num_last_dim_aligned],
                         x_local_fp32,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (auto i = 0; i < nums; i++) {
                     Add(y_local[i * num_last_dim_aligned],
                         z_local_fp32[i * num_last_dim_aligned],
                         y_local_fp32,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         } else {
             if constexpr (!IsSame<T, float>::value) {
@@ -1200,14 +1200,14 @@ private:
                         gamma_local,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (auto i = 0; i < nums; i++) {
                     Add(z_local_fp32[i * num_last_dim_aligned],
                         z_local_fp32[i * num_last_dim_aligned],
                         beta_local,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 if constexpr (IsSame<T, half>::value) {
                     Cast(y_local, z_local_fp32, RoundMode::CAST_NONE, elementNum);
                 } else {
@@ -1220,11 +1220,11 @@ private:
                         gamma_local,
                         num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 for (auto i = 0; i < nums; i++) {
                     Add(y_local[i * num_last_dim_aligned], y_local[i * num_last_dim_aligned], beta_local, num_last_dim);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
 
@@ -1245,16 +1245,16 @@ private:
         LocalTensor<float> x_local_fp32 = x_buf_fp32.Get<float>();
         LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
         Muls(y_local_fp32, x_local_fp32, aveNum, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float ave_local_temp = ReduceSumFP32(y_local_fp32, num_last_dim);
         set_flag(PIPE_S, PIPE_V, EVENT_ID0);
         wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
         Adds(x_local_fp32, x_local_fp32, ave_local_temp * -1, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(y_local_fp32, x_local_fp32, x_local_fp32, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(y_local_fp32, y_local_fp32, aveNum, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float var_local_temp = ReduceSumFP32(y_local_fp32, num_last_dim);
         float rstd_local_temp = 1 / sqrt(var_local_temp + eps);
 #if OUTPUT_MEAN_RSTD == 1
@@ -1264,18 +1264,18 @@ private:
         set_flag(PIPE_S, PIPE_V, EVENT_ID0);
         wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
         Muls(x_local_fp32, x_local_fp32, rstd_local_temp, num_last_dim);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<T> y_local = y_que.template AllocTensor<T>();
 
         if constexpr (IS_BETAGAMMA_NEEDCAST) {
             if constexpr (!IsSame<T, float>::value) {
                 Cast(y_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Mul(x_local_fp32, x_local_fp32, y_local_fp32, num_last_dim);
                 Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(x_local_fp32, x_local_fp32, y_local_fp32, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 if constexpr (IsSame<T, half>::value) {
                     Cast(y_local, x_local_fp32, RoundMode::CAST_NONE, num_last_dim);
                 } else {
@@ -1283,19 +1283,19 @@ private:
                 }
             } else {
                 Cast(y_local_fp32, gamma_local, RoundMode::CAST_NONE, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Mul(x_local_fp32, x_local_fp32, y_local_fp32, num_last_dim);
                 Cast(y_local_fp32, beta_local, RoundMode::CAST_NONE, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(y_local, x_local_fp32, y_local_fp32, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         } else {
             if constexpr (!IsSame<T, float>::value) {
                 Mul(x_local_fp32, x_local_fp32, gamma_local, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(x_local_fp32, x_local_fp32, beta_local, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 if constexpr (IsSame<T, half>::value) {
                     Cast(y_local, x_local_fp32, RoundMode::CAST_NONE, num_last_dim);
                 } else {
@@ -1303,7 +1303,7 @@ private:
                 }
             } else {
                 Mul(y_local_fp32, x_local_fp32, gamma_local, num_last_dim);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(y_local, y_local_fp32, beta_local, num_last_dim);
             }
         }

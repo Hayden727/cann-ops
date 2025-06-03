@@ -136,15 +136,15 @@ private:
             LocalTensor<float> x2Fp32 = sqxBuf.Get<float>();
             Cast(x1Fp32, x1Local, RoundMode::CAST_NONE, elementNum);
             Cast(x2Fp32, x2Local, RoundMode::CAST_NONE, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x1Fp32, x1Fp32, x2Fp32, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xLocal, x1Fp32, RoundMode::CAST_RINT, elementNum);
         }
         inQueueX.FreeTensor(x1Local);
         inQueueX.FreeTensor(x2Local);
         outQueueY.EnQue(xLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         return xLocal;
     }
 
@@ -188,27 +188,27 @@ private:
         if constexpr (!IsSame<T, float>::value) {
             LocalTensor<float> x_fp32 = xFp32Buf.Get<float>();
             Cast(x_fp32, xLocal, RoundMode::CAST_NONE, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(sqx, x_fp32, x_fp32, elementNum);
         } else {
             Mul(sqx, xLocal, xLocal, elementNum);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(sqx, sqx, avgFactor, elementNum);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         ReduceSumMultiN(rstdLocal, sqx, tmpLocal, calc_row_num, numCol, numColAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(rstdLocal, rstdLocal, epsilon, calc_row_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(rstdLocal, rstdLocal, calc_row_num);
         Duplicate(tmpLocal, ONE, calc_row_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Div(rstdLocal, tmpLocal, rstdLocal, calc_row_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeY(
@@ -220,13 +220,13 @@ private:
         const uint32_t srcShape[2] = {calc_row_num, 1};
         const uint32_t dstShape[2] = {calc_row_num, numColAlign};
         BroadCast<float, DIM_NUM, 1>(sqx, rstdLocal, dstShape, srcShape, sharedTmpLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         if constexpr (!IsSame<T, float>::value) {
             LocalTensor<float> x_fp32 = xFp32Buf.Get<float>();
             Mul(x_fp32, x_fp32, sqx, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, x_fp32, RoundMode::CAST_NONE, elementNum);
             } else {
@@ -235,7 +235,7 @@ private:
         } else {
             Mul(yLocal, xLocal, sqx, elementNum);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if constexpr (!IsSame<T, bfloat16_t>::value) {
             Mul(yLocal, yLocal, gammaLocal, elementNum);
@@ -243,12 +243,12 @@ private:
             LocalTensor<float> x_fp32 = xFp32Buf.Get<float>();
             Cast(x_fp32, yLocal, RoundMode::CAST_NONE, elementNum);
             Cast(sqx, gammaLocal, RoundMode::CAST_NONE, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(x_fp32, x_fp32, sqx, elementNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(yLocal, x_fp32, RoundMode::CAST_RINT, elementNum);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<T>(yLocal);
     }
 

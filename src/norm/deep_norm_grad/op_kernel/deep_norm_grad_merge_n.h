@@ -372,7 +372,7 @@ private:
             Cast(dy_fp32_local, inputDy[offset_ND_in_ub], RoundMode::CAST_NONE, process_elem);
             Cast(x_fp32_local, inputX[offset_ND_in_ub], RoundMode::CAST_NONE, process_elem);
             Cast(gx_fp32_local, inputGx[offset_ND_in_ub], RoundMode::CAST_NONE, process_elem);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             MainCompute(dy_fp32_local,
                 x_fp32_local,
@@ -415,7 +415,7 @@ private:
     {
         // 0. x_sum = alpha * x1 + x2
         Axpy(inputX2, inputX1, alpha_val, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 1. x1Tensor = dy * gamma
         Mul(inputX1, inputDy, inputGamma, process_elem);
@@ -433,14 +433,14 @@ private:
         wait_flag(PIPE_S, PIPE_V, event_s_v);
 
         Adds(inputX2, inputX2, input_mean_num * (-1.0f), process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 3. d_var = sum((-0.5) * x1Tensor * x2Tensor * np.power(inputRstd, 3))
         // 3.1. tmp = (-0.5) * x1Tensor * x2Tensor * rstd^3
         Muls(outputPdGx, inputX2, rstd_sqrt_tmp_num, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(outputPdGx, outputPdGx, inputX1, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // 3.2. d_var = sum(tmp)
         auto reduce_tmp_num = this->ReduceSumCustom(outputPdGx, process_elem);
         input_mean_num = reduce_tmp_num * one_div_D;
@@ -453,7 +453,7 @@ private:
         // 4. d_mean = np.sum( (-1.0) * x1Tensor * rstd) )
         // 4.1. tmp1 = (-1.0) * x1Tensor * rstd
         Muls(outputPdX, inputX1, input_rstd_num, process_elem);  // use in d_gx cal
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // other: (x2Tensor * rstd) + (2 / D * d_var * x1Tensor)
         Add(outputPdGx, outputPdGx, outputPdX, process_elem);
@@ -461,21 +461,21 @@ private:
         // 4.2. d_mean = np.sum(tmp1)
         reduce_tmp_num = this->ReduceSumCustom(outputPdX, process_elem);
         input_mean_num = reduce_tmp_num * one_div_D;
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 5. d_gx = x2Tensor * rstd + d_var * (2.0 / D) * x1Tensor (already)
         //           + d_mean * (1.0 / D)
         Adds(outputPdGx, outputPdGx, input_mean_num, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(outputPdX, outputPdGx, alpha_val, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // 6. d_gamma_part = add ( x2Tensor * rstd * dy )
         Muls(inputX2, inputX2, input_rstd_num, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(inputX2, inputX2, inputDy, process_elem);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(outputPdGamma, outputPdGamma, inputX2, process_elem);
 
         // 7. d_beta_part = add ( dy )

@@ -231,8 +231,8 @@ public:
     __aicore__ inline float ReducePhase0(const LocalTensor<float> &src, int64_t reduceNum)
     {
         AscendCUtils::SetMaskCount<float>();
-        set_vector_mask(0, reduceNum);
-        vcadd(nullptr, (__ubuf__ float *)src.GetPhyAddr(), 1, 1, 1, 8, true);
+        SetVectorMask<float>(0, reduceNum);
+        ReduceSum(src, src, src, 1);
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         SetFlag<HardEvent::V_S>(eventVS);
         WaitFlag<HardEvent::V_S>(eventVS);

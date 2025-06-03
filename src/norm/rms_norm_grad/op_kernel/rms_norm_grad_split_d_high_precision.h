@@ -246,7 +246,7 @@ public:
             loopColProcessBeforeReduce(iOuter, loopMainCol_, calcRow, tailCol_, rstdLocal);
         }
         Muls(meanLocal, meanLocal, avgFactor_, calcRow);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (uint32_t j = 0; j < loopMainCol_; j++) {
             loopColProcessAfterReduce(iOuter, j, calcRow, ubFactor_, rstdLocal);
         }
@@ -283,7 +283,7 @@ public:
         LocalTensor<float> meanTmpLocal = meanTmpBuf_.Get<float>();
         LocalTensor<float> meanLocal = meanBuf_.Get<float>();
         Add(meanLocal, meanLocal, meanTmpLocal, calcRow);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void loopColProcessAfterReduce(
@@ -437,16 +437,16 @@ public:
         LocalTensor<float> xLocal = inQueX_.DeQue<float>();
         Cast2FloatIf<T_DY>(xLocal, ubFactor_, calcLen);
         Muls(xLocal, xLocal, rstdValue, calcLen);  // x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor<float> dyLocal = inQueDY_.DeQue<float>();
         Cast2FloatIf<T_DY>(dyLocal, ubFactor_, calcLen);
         Mul(xLocal, dyLocal, xLocal, calcLen);  // dy*x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(dgamma, dgamma, xLocal, calcLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(xLocal, xLocal, gammaLocal, calcLen);  // dy*gamma*x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         float sumValue = ReduceSumHalfInterval(xLocal, calcLen);
         LocalTensor<float> meanTmpLocal = meanTmpBuf_.Get<float>();
         meanTmpLocal.SetValue(iInner, sumValue);
@@ -463,27 +463,27 @@ public:
         LocalTensor<float> xLocal = inQueX_.DeQue<float>();
         Cast2FloatIf<T_DY>(xLocal, ubFactor_, calcLen);
         Muls(xLocal, xLocal, rstdValue, calcLen);  // x*rstd
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(xLocal, xLocal, meanValue, calcLen);  // x*rstd*mean
         LocalTensor<float> dyLocal = inQueDY_.DeQue<float>();
         Cast2FloatIf<T_DY>(dyLocal, ubFactor_, calcLen);
         Mul(dyLocal, dyLocal, gammaLocal, calcLen);  // dy*gamma
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<float> dxLocal = outQueDX_.AllocTensor<float>();
         Sub(dxLocal, dyLocal, xLocal, calcLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(dxLocal, dxLocal, rstdValue, calcLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (IsSame<T_DY, half>::value) {
             LocalTensor<T_DY> dxLocalB16 = dxLocal.ReinterpretCast<T_DY>();
             Cast(dxLocalB16, dxLocal, RoundMode::CAST_NONE, calcLen);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 #if defined(__CCE_AICORE__) && (__CCE_AICORE__ == 220)
         else if constexpr (IsSame<T_DY, bfloat16_t>::value) {
             LocalTensor<T_DY> dxLocalB16 = dxLocal.ReinterpretCast<T_DY>();
             Cast(dxLocalB16, dxLocal, RoundMode::CAST_RINT, calcLen);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 #endif
         inQueX_.FreeTensor(xLocal);
@@ -512,7 +512,7 @@ public:
                 dxGm_.SetValue(gmOffset + calcLenAlign32 + i, dx.GetValue(calcLenAlign32 + i));
             }
             DataCacheCleanAndInvalid<T_DY, CacheLine::ENTIRE_DATA_CACHE>(dxGm_);
-            pipe_barrier(PIPE_ALL);
+            PipeBarrier<PIPE_ALL>();
             set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
             wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
         }
@@ -540,7 +540,7 @@ public:
             inQueGamma2_.EnQue(dgammaPart);
             LocalTensor<float> dgammaPartLocal = inQueGamma2_.DeQue<float>();
             Add(dgamma, dgamma, dgammaPartLocal, calcCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             inQueGamma2_.FreeTensor(dgammaPartLocal);
         }
         outQueDgamma2_.EnQue(dgamma);
@@ -657,7 +657,7 @@ public:
         LocalTensor<float> srcTensor = inQueMiddleDagamma_.DeQue<float>();
         if (nowRows == 1) {
             Adds<float>(dstTensor[idx * cutInColNum], srcTensor, 0, lineLength);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             inQueMiddleDagamma_.FreeTensor(srcTensor);
             return;
         }
@@ -668,7 +668,7 @@ public:
         if (dichotomizeAddDiffSize != 0) {
             uint32_t newNum = (nowRows - dichotomizeAddDiffSize) * lineLength;
             Add(srcTensor, srcTensor, srcTensor[newNum], dichotomizeAddDiffSize * lineLength);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             nowRows = nowRows - dichotomizeAddDiffSize;
         }
 
@@ -676,10 +676,10 @@ public:
             nowRows = nowRows / 2;
             if (nowRows == 1) {
                 Add(dstTensor[idx * cutInColNum], srcTensor, srcTensor[lineLength], lineLength);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Add(srcTensor, srcTensor, srcTensor[nowRows * lineLength], nowRows * lineLength);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
 
@@ -692,7 +692,7 @@ public:
             for (uint32_t calcRowIdx = 0; calcRowIdx < cutInRowLoop; calcRowIdx++) {
                 LocalTensor<float> middleGammaLocal = outQueMiddleDgamma_.AllocTensor<float>();
                 Duplicate(middleGammaLocal, 0.0f, ubFactor_);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 // 每循环一次会得到一整行的结果
                 uint32_t blockCounts = cutInRowNum;
                 if (calcRowIdx == cutInRowLoop - 1 && cutInRowTail > 0) {

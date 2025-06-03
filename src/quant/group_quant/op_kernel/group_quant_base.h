@@ -610,7 +610,7 @@ __aicore__ inline void GroupQuantBase<T1, T2, T3, T4, T5>::VecCompute(uint32_t d
     PipeBarrier<PIPE_V>();
 
     SetDeqScale((half)1.000000e+00f);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     
     // int32->fp16
     Cast(mulLocal.ReinterpretCast<half>(), mulLocal.ReinterpretCast<int32_t>(), RoundMode::CAST_NONE, dataCount);

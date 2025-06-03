@@ -239,25 +239,25 @@ private:
         // Use add as
         if constexpr (IsSame<float, T>::value) {
             Add(addBufLocal, x2Local, x1Local, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int i = 0; i < rowCount; i++) {
                 Add(addBufLocal[i * numLastDimAligned], biasLocal, addBufLocal[i * numLastDimAligned], numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Cast(addBufLocal, x1Local, RoundMode::CAST_NONE, elementCount);
             Cast(yBufLocal, x2Local, RoundMode::CAST_NONE, elementCount);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(yBufLocal, addBufLocal, yBufLocal, elementCount);
             Cast(x1x2Local.template ReinterpretCast<float>(), biasLocal, RoundMode::CAST_NONE, numLastDim);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             for (int i = 0; i < rowCount; i++) {
                 Add(addBufLocal[i * numLastDimAligned],
                     x1x2Local.template ReinterpretCast<float>(),
                     yBufLocal[i * numLastDimAligned],
                     numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         x1x2Que.FreeTensor(x1x2Local);
     }
@@ -273,7 +273,7 @@ private:
         LocalTensor<float> yLocalFp32 = yBufFp32.Get<float>();
 
         Muls(yLocalFp32, xLocalFp32, aveNum, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // Reduce#1 for E(x)
         for (int32_t rid = 0; rid < nums; ++rid) {
@@ -288,12 +288,12 @@ private:
                 aveLocalTemp * -1,
                 numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Mul(xLocalFp32, yLocalFp32, yLocalFp32, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(xLocalFp32, xLocalFp32, aveNum, elementCount);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // Reduce#2 for Var(x)
         for (int32_t rid = 0; rid < nums; ++rid) {
@@ -306,14 +306,14 @@ private:
             wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
             Muls(xLocalFp32[rid * numLastDimAligned], yLocalFp32[rid * numLastDimAligned], rstdLocalTemp, numLastDim);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<T> yLocal = yQue.template AllocTensor<T>();
 
         if constexpr (!IsSame<T, float>::value) {
             for (int32_t rid = 0; rid < nums; ++rid) {
                 FusedMulAdd(xLocalFp32[rid * numLastDimAligned], gammaLocal, betaLocal, numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if constexpr (IsSame<T, half>::value) {
                 Cast(yLocal, xLocalFp32, RoundMode::CAST_NONE, elementCount);
             } else {
@@ -323,7 +323,7 @@ private:
             for (int32_t rid = 0; rid < nums; ++rid) {
                 FusedMulAdd(xLocalFp32[rid * numLastDimAligned], gammaLocal, betaLocal, numLastDim);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(yLocal, xLocalFp32, (float)0.0, elementCount);
         }
 
@@ -366,7 +366,7 @@ private:
             } else {
                 Cast(xLocal, addBufLocal, RoundMode::CAST_RINT, elementCount);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             yQue.template EnQue<T>(xLocal);
             auto x = yQue.template DeQue<T>();
 

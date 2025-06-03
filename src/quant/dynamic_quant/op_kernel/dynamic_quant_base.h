@@ -188,11 +188,11 @@ class DynamicQuantBase {
     if (likely(repsFp32 > 1)) {
       // 8 is rep stride
       Max(src_local, src_local[ELEM_PER_REP_FP32], src_local, ELEM_PER_REP_FP32, repsFp32 - 1, {1, 1, 1, 0, 8, 0});
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     if (unlikely(remsFp32 > 0) && unlikely(offsetsFp32 > 0)) {
       Max(src_local, src_local[offsetsFp32], src_local, remsFp32, 1, {1, 1, 1, 0, 8, 0});
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     uint32_t mask = repsFp32 > 0 ? ELEM_PER_REP_FP32 : count;
     // 8 is rep stride
@@ -207,11 +207,11 @@ class DynamicQuantBase {
     if (likely(repsHalf > 1)) {
       // 8 is rep stride
       Max(src_local, src_local[ELEM_PER_REP_HALF], src_local, ELEM_PER_REP_HALF, repsHalf - 1, {1, 1, 1, 0, 8, 0});
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     if (unlikely(remsHalf > 0) && unlikely(offsetsHalf > 0)) {
       Max(src_local, src_local[offsetsHalf], src_local, remsHalf, 1, {1, 1, 1, 0, 8, 0});
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     uint32_t mask = repsHalf > 0 ? ELEM_PER_REP_HALF : count;
     // 8 is rep stride

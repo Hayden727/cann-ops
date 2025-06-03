@@ -85,7 +85,7 @@ public:
 
         LocalTensor<float> rstdLocal = outQueueRstd.AllocTensor<float>();
         Duplicate(rstdLocal, (float)0.0, calc_row_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (uint32_t j = 0; j < j_max - 1; j++) {
             ComputeFormer(i_o, calc_row_num, j, rstdLocal, sumLocal, ubFactor);
         }
@@ -121,27 +121,27 @@ private:
             LocalTensor<float> x1_fp32 = xFp32Buf.Get<float>();
 
             Add(xLocal, x1Local, x2Local, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(x1_fp32, xLocal, RoundMode::CAST_NONE, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             // x1+x2 saved in x1_fp32
         } else if constexpr (IsSame<T, bfloat16_t>::value) {
             LocalTensor<float> x1_fp32 = xFp32Buf.Get<float>();
             LocalTensor<float> x2_fp32 = x1x2Local.template ReinterpretCast<float>();
 
             Cast(x1_fp32, x1Local, RoundMode::CAST_NONE, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(x2_fp32, x2Local, RoundMode::CAST_NONE, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             Add(x1_fp32, x1_fp32, x2_fp32, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xLocal, x1_fp32, RoundMode::CAST_RINT, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             // x1+x2 saved in x1_fp32
         } else {
             Add(x1Local, x1Local, x2Local, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(xLocal, x1Local, (float)0.0, num);
             // x1+x2 saved in inQueueX
         }
@@ -163,7 +163,7 @@ private:
         }
         BlockReduceSumFP32(sumLocal, sumLocal, calc_row_num * NUM_PER_BLK_FP32);
         Add(rstdLocal, rstdLocal, sumLocal, calc_row_num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeSum(uint32_t i_i_idx, LocalTensor<float> &sumLocal, uint32_t num)
@@ -172,17 +172,17 @@ private:
         LocalTensor<float> reduce_buf_local = reduceFp32Buf.Get<float>();
         if constexpr (IsSame<T, half>::value || IsSame<T, bfloat16_t>::value) {
             LocalTensor<float> x_fp32 = xFp32Buf.Get<float>();
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(sqx, x_fp32, x_fp32, num);
         } else {
             LocalTensor<T> xLocal = inQueueX.AllocTensor<float>();
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Mul(sqx, xLocal, xLocal, num);
             inQueueX.FreeTensor(xLocal);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(sqx, sqx, avgFactor, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // 8 means 8 fp32 pre block
         ReduceSumFP32ToBlock(sumLocal[i_i_idx * 8], sqx, reduce_buf_local, num);
     }
@@ -191,12 +191,12 @@ private:
     {
         LocalTensor<float> reduce_buf_local = reduceFp32Buf.Get<float>();
         Adds(rstdLocal, rstdLocal, epsilon, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Sqrt(rstdLocal, rstdLocal, num);
         Duplicate(reduce_buf_local, ONE, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(rstdLocal, reduce_buf_local, rstdLocal, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeLatter(
@@ -228,7 +228,7 @@ private:
             LocalTensor<float> x_fp32 = xFp32Buf.Get<float>();
             LocalTensor<T> xLocal = inQueueX.DeQue<T>();
             Cast(x_fp32, xLocal, RoundMode::CAST_NONE, num);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             inQueueX.FreeTensor(xLocal);
         }
     }
@@ -245,14 +245,14 @@ private:
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_fp32, x_fp32, rstdValue, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<half> yLocal = outQueueY.AllocTensor<half>();
         Cast(yLocal, x_fp32, RoundMode::CAST_NONE, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(yLocal, gammaLocal, yLocal, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<half>(yLocal);
     }
 
@@ -271,9 +271,9 @@ private:
         LocalTensor<float> yLocal = outQueueY.AllocTensor<float>();
         Muls(yLocal, xLocal, rstdValue, num);
         inQueueX.FreeTensor(xLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(yLocal, gammaLocal, yLocal, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<float>(yLocal);
     }
 
@@ -289,20 +289,20 @@ private:
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_fp32, x_fp32, rstdValue, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<bfloat16_t> yLocal = outQueueY.AllocTensor<bfloat16_t>();
         Cast(yLocal, x_fp32, RoundMode::CAST_RINT, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_fp32, yLocal, RoundMode::CAST_NONE, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(sqx, gammaLocal, RoundMode::CAST_NONE, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(x_fp32, x_fp32, sqx, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(yLocal, x_fp32, RoundMode::CAST_RINT, num);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<bfloat16_t>(yLocal);
     }
 

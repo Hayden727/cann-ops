@@ -111,22 +111,22 @@ private:
         if constexpr (IsSame<T, half>::value) {
             LocalTensor<float> x1_fp32 = xFp32Buf.Get<float>();
             Add(xLocal, x1Local, x2Local, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(x1_fp32, xLocal, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else if constexpr (IsSame<T, bfloat16_t>::value) {
             LocalTensor<float> x1_fp32 = xFp32Buf.Get<float>();
             LocalTensor<float> x2_fp32 = sqxBuf.Get<float>();
             Cast(x1_fp32, x1Local, RoundMode::CAST_NONE, numCol);
             Cast(x2_fp32, x2Local, RoundMode::CAST_NONE, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Add(x1_fp32, x1_fp32, x2_fp32, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Cast(xLocal, x1_fp32, RoundMode::CAST_RINT, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         } else {
             Add(x1Local, x1Local, x2Local, numCol);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             Adds(xLocal, x1Local, (float)0, numCol);
         }
         inQueueX.FreeTensor(x1Local);
@@ -151,21 +151,21 @@ private:
         LocalTensor<float> sqx = sqxBuf.Get<float>();
         LocalTensor<float> reduce_buf_local = reduceFp32Buf.Get<float>();
         Mul(sqx, xLocal, xLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(sqx, sqx, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         ReduceSumCustom(sqx, sqx, reduce_buf_local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(sqx, sqx, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(sqx, sqx, 1);
         Duplicate(reduce_buf_local, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqx, reduce_buf_local, sqx, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
         wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -174,13 +174,13 @@ private:
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         rstdLocal.SetValue(inner_progress, rstdValue);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<float> yLocal = outQueueY.AllocTensor<float>();
         Muls(yLocal, xLocal, rstdValue, numCol);
         inQueueX.FreeTensor(xLocal);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(yLocal, gammaLocal, yLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<float>(yLocal);
     }
 
@@ -192,21 +192,21 @@ private:
         LocalTensor<float> reduce_buf_local = reduceFp32Buf.Get<float>();
 
         Mul(sqx, x_fp32, x_fp32, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(sqx, sqx, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSumCustom(sqx, sqx, reduce_buf_local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Adds(sqx, sqx, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(sqx, sqx, 1);
         Duplicate(reduce_buf_local, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqx, reduce_buf_local, sqx, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
         wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -215,20 +215,20 @@ private:
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         rstdLocal.SetValue(inner_progress, rstdValue);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_fp32, x_fp32, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<bfloat16_t> yLocal = outQueueY.AllocTensor<bfloat16_t>();
         Cast(yLocal, x_fp32, RoundMode::CAST_RINT, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(x_fp32, yLocal, RoundMode::CAST_NONE, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(sqx, gammaLocal, RoundMode::CAST_NONE, numCol);  // gamma_fp32 reuse sqx
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(x_fp32, x_fp32, sqx, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(yLocal, x_fp32, RoundMode::CAST_RINT, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         event_t event_v_mte = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
         set_flag(PIPE_V, PIPE_MTE2, event_v_mte);
@@ -244,22 +244,22 @@ private:
         LocalTensor<float> reduce_buf_local = reduceFp32Buf.Get<float>();
 
         Mul(sqx, x_fp32, x_fp32, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Muls(sqx, sqx, avgFactor, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         ReduceSumCustom(sqx, sqx, reduce_buf_local, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Adds(sqx, sqx, epsilon, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Sqrt(sqx, sqx, 1);
         Duplicate(reduce_buf_local, ONE, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(sqx, reduce_buf_local, sqx, 1);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         set_flag(PIPE_V, PIPE_S, event_v_s);
         wait_flag(PIPE_V, PIPE_S, event_v_s);
@@ -268,9 +268,9 @@ private:
         set_flag(PIPE_S, PIPE_V, event_s_v);
         wait_flag(PIPE_S, PIPE_V, event_s_v);
         rstdLocal.SetValue(inner_progress, rstdValue);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(x_fp32, x_fp32, rstdValue, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<half> yLocal = outQueueY.AllocTensor<half>();
         Cast(yLocal, x_fp32, RoundMode::CAST_NONE, numCol);
 
@@ -278,9 +278,9 @@ private:
         set_flag(PIPE_V, PIPE_MTE2, event_v_mte);
         wait_flag(PIPE_V, PIPE_MTE2, event_v_mte);
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(yLocal, gammaLocal, yLocal, numCol);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         outQueueY.EnQue<half>(yLocal);
     }
 

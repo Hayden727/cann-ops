@@ -62,18 +62,18 @@ __aicore__ inline void ReduceSumFP32(const LocalTensor<float> &dst_local, const 
         repeatParams.dstRepStride = 0;
         repeatParams.dstBlkStride = 1;
         Duplicate(work_local, ZERO, NUM_PER_REP_FP32);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (likely(repeatTimes > 0)) {
             Add(work_local, src_local, work_local, mask, repeatTimes, repeatParams);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         if (unlikely(tailCount != 0)) {
             Add(work_local, src_local[bodyCount], work_local, tailCount, 1, repeatParams);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         AscendCUtils::SetMask<float>(NUM_PER_REP_FP32);
-        vcadd((__ubuf__ float *)dst_local.GetPhyAddr(), (__ubuf__ float *)work_local.GetPhyAddr(), 1, 0, 1, 0, false);
-        pipe_barrier(PIPE_V);
+        ReduceSum(dst_local, src_local, dst_local, 1);
+        PipeBarrier<PIPE_V>();
     }
 }
 
@@ -103,17 +103,17 @@ __aicore__ inline void ReduceSumFP32ToBlock(const LocalTensor<float> &dst_local,
     repeatParams.dstRepStride = 0;
     repeatParams.dstBlkStride = 1;
     Duplicate(work_local, ZERO, NUM_PER_REP_FP32);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (likely(repeatTimes > 0)) {
         Add(work_local, src_local, work_local, mask, repeatTimes, repeatParams);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (unlikely(tailCount != 0)) {
         Add(work_local, src_local[bodyCount], work_local, tailCount, 1, repeatParams);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     BlockReduceSum(dst_local, work_local, 1, mask, 1, 1, DEFAULT_REPEAT_STRIDE);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void BlockReduceSumFP32(
@@ -126,11 +126,11 @@ __aicore__ inline void BlockReduceSumFP32(
     int32_t srcAddr = repeatTimes * NUM_PER_REP_FP32;
     if (likely(repeatTimes > 0)) {
         BlockReduceSum(dst_local, src_local, repeatTimes, NUM_PER_REP_FP32, 1, 1, DEFAULT_REPEAT_STRIDE);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
     if (tailCount != 0) {
         BlockReduceSum(dst_local[dstAddr], src_local[srcAddr], 1, tailCount, 1, 1, DEFAULT_REPEAT_STRIDE);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 }
 

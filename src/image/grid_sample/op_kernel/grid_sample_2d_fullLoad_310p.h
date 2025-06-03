@@ -274,14 +274,14 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ClipCoordinates(LocalTensor
     auto tmpIntLocal1 = tmpLocal[calHWBlockAlign * 3].ReinterpretCast<int32_t>();
     auto tmpIntLocal2 = tmpLocal[calHWBlockAlign * 4].ReinterpretCast<int32_t>();
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(inputXIntTmpUb, iXIntUb, 0, calHWBlockAlign);
     Adds(inputYIntTmpUb, iYIntUb, 0, calHWBlockAlign);  // x，y值深拷贝到临时变量中
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Cast(iXFpUb, inputXIntTmpUb, RoundMode::CAST_NONE, calHWBlockAlign);
     Cast(iYFpUb, inputYIntTmpUb, RoundMode::CAST_NONE, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     LocalTensor<uint8_t> maskUb = maskBuf_.Get<uint8_t>(maskUbSize * 3);
     LocalTensor<uint8_t> maskXUb = weightMaskUb;
     LocalTensor<uint8_t> maskYUb = maskUb;
@@ -298,21 +298,21 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ClipCoordinates(LocalTensor
     // maskXUbTmp：合法的点的mask
     And(maskXUbTmp, maskYUbTmp, maskXUbTmp, maskNum);
     weightMaskUb = maskXUbTmp.ReinterpretCast<uint8_t>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 重计算坐标，使坐标不超过边界
     Mins(tmpIntLocal1, inputXIntTmpUb, (int32_t)(inputW_ - 1), calHWBlockAlign);
     Mins(tmpIntLocal2, inputYIntTmpUb, (int32_t)(inputH_ - 1), calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(inputXIntTmpUb, tmpIntLocal1, 0, calHWBlockAlign);
     Maxs(inputYIntTmpUb, tmpIntLocal2, 0, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 这里是y* inputW + x，计算点坐标偏移
     Muls(inputYIntTmpUb, inputYIntTmpUb, (int32_t)inputW_, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(coorUb, coorUb, inputYIntTmpUb, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -343,7 +343,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::CoordinatesGetMaskWithRange
         CMPMODE::LE,
         (calHWBlockAlign + 63) / 64 * 64);  // y < inputH - 1
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     int32_t maskNum = (maskUbSize + 1) / 2;  // 除2数据量按照uint16类型折半
     auto maskTmpXUbTmp = maskTmpXUb.ReinterpretCast<uint16_t>();
@@ -352,7 +352,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::CoordinatesGetMaskWithRange
     auto maskYUbTmp = maskYUb.ReinterpretCast<uint16_t>();
     And(maskXUbTmp, maskTmpXUbTmp, maskXUbTmp, maskNum);
     And(maskYUbTmp, maskTmpYUbTmp, maskYUbTmp, maskNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     maskXUb = maskXUbTmp.ReinterpretCast<uint8_t>();
     maskYUb = maskYUbTmp.ReinterpretCast<uint8_t>();
 }
@@ -370,7 +370,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::CoordinatesSelectScalar(Loc
     repParams.dstRepStride = B32_REPEAT_STRIDE;
     uint8_t repeat = (calNum + B32_VECTOR_MASK - 1) / B32_VECTOR_MASK;
     Select(oFpUb, maskUb, iFpUb, scalarVal, SELMODE::VSEL_TENSOR_SCALAR_MODE, B32_VECTOR_MASK, repeat, repParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -386,7 +386,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::CoordinatesSelectTensor(
     repParams.dstRepStride = B32_REPEAT_STRIDE;
     uint8_t repeat = (calHWBlockAlign + B32_VECTOR_MASK - 1) / B32_VECTOR_MASK;
     Select(coorUb, maskUb, src0, src1, SELMODE::VSEL_TENSOR_TENSOR_MODE, B32_VECTOR_MASK, repeat, repParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -402,33 +402,33 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::BorderClip(LocalTensor<floa
     Mins(tmpLocal1, tmpLocal3, (float)(inputW_ - 1), calHWBlockAlign);
     // tmpBuf[1,x,x,4,x,x]->tmpBuf[1,2,x,x,x,x]
     Mins(tmpLocal2, tmpLocal4, (float)(inputH_ - 1), calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // tmpBuf[1,2,X,x,x,x]->tmpBuf[x,2,3,x,x,x]
     Maxs(tmpLocal3, tmpLocal1, (float)0, calHWBlockAlign);
     // tmpBuf[x,2,3,x,x,x]->tmpBuf[x,x,3,4,x,x]
     Maxs(tmpLocal4, tmpLocal2, (float)0, calHWBlockAlign);
-    pipe_barrier(PIPE_V);  // 上下界处理，border直接取边界值
+    PipeBarrier<PIPE_V>();  // 上下界处理，border直接取边界值
 
     // weightMaskBuf_作tmpBuf用，和weight无关
     LocalTensor<uint8_t> maskUb = weightMaskBuf_.Get<uint8_t>(maskUbSize);
     // +INF/-INF/NAN 场景下，+INF/-INF * 0 = NAN，消INF
     Muls(tmpLocal5, tmpLocal3, (float)(0.0), calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // NAN eq NAN = FALSE，maskUb是NAN的mask
     Compare(maskUb, tmpLocal5, tmpLocal5, CMPMODE::EQ, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // 对上一步mask的位置置0，即+INF/-INF/NAN 全置0
     CoordinatesSelectScalar(tmpLocal3, tmpLocal3, maskUb, 0.0f, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // Y同理
     Muls(tmpLocal5, tmpLocal4, (float)(0.0), calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(maskUb, tmpLocal5, tmpLocal5, CMPMODE::EQ, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CoordinatesSelectScalar(tmpLocal4, tmpLocal4, maskUb, 0.0f, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -455,36 +455,36 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ReflectClip(LocalTensor<flo
 
     ReflectCoordinatesGeneral(
         tmpLocal4, tmpLocal4, tmpLocal1, tmpLocal2, maskUb, tmpLocal5, tmpLocal6tmp, twiceLow, twiceLowY);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     ReflectCoordinatesGeneral(
         tmpLocal3, tmpLocal3, tmpLocal1, tmpLocal2, maskUb, tmpLocal5, tmpLocal6tmp, twiceLow, twiceLowX);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     tmpLocal6 = tmpLocal6tmp.ReinterpretCast<float>();
 
     // LocalTensor<T> tmpUb = inputXYFPBuf_.Get<float>();
     Muls(tmpLocal1, tmpLocal3, (float)(0.0), calHWBlockAlign);  // 去除inf值
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(maskUb, tmpLocal1, tmpLocal1, CMPMODE::EQ, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CoordinatesSelectScalar(tmpLocal3, tmpLocal3, maskUb, 0.0f, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tmpLocal1, tmpLocal4, (float)(0.0), calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(maskUb, tmpLocal1, tmpLocal1, CMPMODE::EQ, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CoordinatesSelectScalar(tmpLocal4, tmpLocal4, maskUb, 0.0f, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mins(tmpLocal3, tmpLocal3, (float)(inputW_ - 1), calHWBlockAlign);  // 边界值处理
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(tmpLocal3, tmpLocal3, (float)0, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mins(tmpLocal4, tmpLocal4, (float)(inputH_ - 1), calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(tmpLocal4, tmpLocal4, (float)0, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -504,29 +504,29 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ReflectCoordinatesGeneral(L
 
     // new relative position
     Adds(coorSubUb, iFpUb, negMinS, calHWBlockAlign);  // x + 0.5
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Abs(coorSubUb, coorSubUb, calHWBlockAlign);  // |x + 0.5|
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // extra
     Muls(extraFpUb, coorSubUb, static_cast<float>(1.0f / spanS), calHWBlockAlign);  // |x + 0.5| * 2 / size
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tmpIntUb, extraFpUb, RoundMode::CAST_FLOOR, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(extraFpUb, tmpIntUb, RoundMode::CAST_NONE, calHWBlockAlign);  // 向下取整, double_flips
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(extraFpUb, extraFpUb, spanS, calHWBlockAlign);  // extraFpUb * twice_span
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(extraFpUb, coorSubUb, extraFpUb, calHWBlockAlign);  // extra
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // flip
     Muls(coorSubUb, coorSubUb, static_cast<float>(1.0f / spanS), calHWBlockAlign);  // |x + 0.5| / twice_span
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tmpIntUb, coorSubUb, RoundMode::CAST_FLOOR, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(coorSubUb, tmpIntUb, RoundMode::CAST_NONE, calHWBlockAlign);  // 向下取整, double_flips
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // coordinate
     /*
@@ -542,25 +542,25 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ReflectCoordinatesGeneral(L
 
     Adds(out1, extraFpUb, minS, calHWBlockAlign);   // tmpLocal5 = extra - 0.5
     Muls(out2, extraFpUb, -1.0f, calHWBlockAlign);  // extraFpUb * -1
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(out2, out2, spanS, calHWBlockAlign);  // （extraFpUb * -1） + twice_span
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(out2, out2, minS, calHWBlockAlign);  // （extraFpUb * -1） + twice_span - 0.5
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Muls(mods, coorSubUb, static_cast<float>(1 / 2.0), calHWBlockAlign);  // double_flips / 2
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(tmpIntUb, mods, RoundMode::CAST_FLOOR, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(mods, tmpIntUb, RoundMode::CAST_NONE, calHWBlockAlign);  // 向下取整
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(mods, mods, 2.0f, calHWBlockAlign);  // FLOOR(double_flips / 2) * 2
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(mods, coorSubUb, mods, calHWBlockAlign);  // double_flips - FLOOR(double_flips / 2) * 2
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     CompareScalar(maskUb, mods, static_cast<float>(0.0), CMPMODE::EQ, calHWBlockAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     CoordinatesSelectTensor(out1, out2, coorSubUb, maskUb);
 }
@@ -595,7 +595,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::MTE3ForNCHW(int32_t cIdx, i
                 if (calHWElems != loopElems) {
                     GatherMask(
                         tmpLocal1, outValueUb[calHWElems - BLOCK_NUM], bufPattern, true, mask, {1, 1, 8, 8}, rsvdCnt);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     DataCopy(gmY_[gmYBaseOffset + calHWElems - BLOCK_NUM], tmpLocal1, BLOCK_NUM);
                     PipeBarrier<PIPE_MTE3>();
                     event_t eventIDMTE3ToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
@@ -650,7 +650,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::MTE3ForNCHW(int32_t cIdx, i
                             mask,
                             {1, 1, 8, 8},
                             rsvdCnt);
-                        pipe_barrier(PIPE_V);
+                        PipeBarrier<PIPE_V>();
                         DataCopy(gmY_[gmYBaseOffset + i * (outputH_ * outputW_) + calHWElems - BLOCK_NUM],
                             tmpLocal1,
                             BLOCK_NUM);
@@ -681,7 +681,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinear(int32_t nIdx,
         CoordinatesSelectScalar(weightUb, weightUb, weightMaskUb, 0.0f, calHWBlockAlign);
     }
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(coordinatesUb,
         coordinatesUb,
         (int32_t)(sizeof(T) * inputC_),
@@ -701,7 +701,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinear(int32_t nIdx,
         if (cIdx == channelLoop_ - 1) {
             calCElems = lastLoopChannel_;
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         SetFlag<HardEvent::V_S>(eventIdVToS);
         WaitFlag<HardEvent::V_S>(eventIdVToS);
@@ -715,7 +715,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinear(int32_t nIdx,
                 calHWElems);  // 从xLocal的coorUb地址，偏移srcBaseAddr，放到outValueUb中
         }                     // 一次拷贝8个calHWBlock数量
 
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (size_t i = 0; i < calCElems; i++) {
             ubOffset = i * calHWBlockAlign;
             Select(outValueUb[ubOffset],
@@ -725,7 +725,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinear(int32_t nIdx,
                 SELMODE::VSEL_TENSOR_SCALAR_MODE,
                 calHWBlockAlign);  // 判断值是否有效
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         MTE3ForNCHW(cIdx,
             calCElems,
             calHWElems,
@@ -748,12 +748,12 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinearC1(int32_t nId
     LocalTensor<float> tmpFPLocal = tmpLocal.ReinterpretCast<float>();
     LocalTensor<float> outValueUb = tmpFPLocal[calHWBlockAlign * 5];
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(coordinatesUb,
         coordinatesUb,
         (int32_t)(sizeof(T) * inputC_),
         calHWElems);  // inputC_ = 1，C在最后一维，*C获取真实迁移
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     auto coorUb = coordinatesUb.ReinterpretCast<uint32_t>();
     LocalTensor<T> xLocal = xBuf_.Get<T>();  // 一个D维度的输入
@@ -763,18 +763,18 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinearC1(int32_t nId
 
     if (inputC_ == 1) {
         Gather(outValueUb, xLocal, coorUb, 0, calHWBlockAlign);  // 从xLocal的coorUb地址拷贝calHWBlock个数量
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(outValueUb, outValueUb, weightUb, calHWElems);  // 值 * 权重
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Select(outValueUb,
             weightMaskUb,
             outValueUb,
             0.0f,
             SELMODE::VSEL_TENSOR_SCALAR_MODE,
             calHWBlockAlign);  // 判断是否是有效值
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Add(addUb, addUb, outValueUb, calHWElems);  // 累加到UB的输出位置
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     } else {  // 只有C *情况会走入
         for (int32_t c_idx = 0; c_idx < inputC_; c_idx++) {
             uint32_t srcBaseAddr = (uint32_t)c_idx * sizeof(T);
@@ -784,7 +784,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinearC1(int32_t nId
                 srcBaseAddr,
                 BLOCK_NUM);  // if逻辑其实一样，inputC_ < 8, 只是方便好懂
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t c_idx = 0; c_idx < inputC_; c_idx++) {
             int32_t ubOffset = c_idx * BLOCK_NUM;
             Select(outValueUb[ubOffset],
@@ -794,17 +794,17 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PointBilinearC1(int32_t nId
                 SELMODE::VSEL_TENSOR_SCALAR_MODE,
                 BLOCK_NUM);  // if逻辑其实一样，inputC_ < 8, 只是方便好懂
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t c_idx = 0; c_idx < inputC_; c_idx++) {
             int32_t ubOffset = c_idx * BLOCK_NUM;
             Mul(outValueUb[ubOffset], outValueUb[ubOffset], weightUb, BLOCK_NUM);
         }  // 值 * 权重
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int32_t c_idx = 0; c_idx < inputC_; c_idx++) {
             int32_t ubOffset = c_idx * BLOCK_NUM;
             Add(addUb[ubOffset], addUb[ubOffset], outValueUb[ubOffset], calHWElems);  // 累加到UB的输出位置
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 }
 
@@ -839,7 +839,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ProcessingCoordinates(
 
     // put in tmpBuf[x,x,3,4,x,x]
     Adds(tmpLocal3, tmpLocal1, (float)1.0, calHWElemsAlign * 2);  // 加1后，grid的datarange从-1~1到0~2
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     uint32_t mask = calHWBlockAlign * 2;
     uint64_t rsvdCnt = 0;
@@ -859,7 +859,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ProcessingCoordinates(
     GatherMask(
         tmpLocal2, tmpLocal3, yPattern, true, mask, {1, 1, src0RepeatStride, src1RepeatStride}, rsvdCnt);  // tensor（y
                                                                                                            // + 1.0）
-    pipe_barrier(PIPE_V);  // x值放到inputXFpLocal， y值放到inputYFpLocal
+    PipeBarrier<PIPE_V>();  // x值放到inputXFpLocal， y值放到inputYFpLocal
     // alignCorner流程
     if (alignCorners_ == 1) {
         // put in tmpBuf[x,x,3,4,x,x]
@@ -869,13 +869,13 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::ProcessingCoordinates(
         // put in tmpBuf[x,x,x,x,5,6]
         Muls(tmpLocal5, tmpLocal1, (float)((float)0.5 * inputW_), calHWElemsAlign);
         Muls(tmpLocal6, tmpLocal2, (float)((float)0.5 * inputH_), calHWElemsAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // put in tmpBuf[x,x,3,4,x,x]
         Adds(tmpLocal3, tmpLocal5, (float)(-0.5), calHWElemsAlign);
         Adds(tmpLocal4, tmpLocal6, (float)(-0.5), calHWElemsAlign);
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -916,7 +916,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PerLoopCompute(
 
     Cast(inputXWIntLocal, tmpLocal3, RoundMode::CAST_FLOOR, calHWElemsAlign);
     Cast(inputYWIntLocal, tmpLocal4, RoundMode::CAST_FLOOR, calHWElemsAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(WeightTmpLocal1, inputXWIntLocal, RoundMode::CAST_NONE, calHWElemsAlign);
     Cast(WeightTmpLocal2, inputYWIntLocal, RoundMode::CAST_NONE, calHWElemsAlign);
 
@@ -924,13 +924,13 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PerLoopCompute(
     // int型Y坐标从左到右 inputYWIntLocal inputYEIntLocal
     Adds(inputXEIntLocal, inputXWIntLocal, 1, calHWElemsAlign);
     Adds(inputYEIntLocal, inputYWIntLocal, 1, calHWElemsAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // float型X坐标从左到右 WeightTmpLocal1 tmpLocal3 WeightTmpLocal3
     // float型Y坐标从左到右 WeightTmpLocal2 tmpLocal4 WeightTmpLocal4
     Adds(WeightTmpLocal3, WeightTmpLocal1, (float)1.0, calHWElemsAlign);
     Adds(WeightTmpLocal4, WeightTmpLocal2, (float)1.0, calHWElemsAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // tmpLocal1:ceilX   tmpLocal2:ceilY
     // tmpLocal5:floorX  tmpLocal6:floorY
@@ -938,7 +938,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PerLoopCompute(
     Sub(tmpLocal2, WeightTmpLocal4, tmpLocal4, calHWElemsAlign);
     Sub(tmpLocal5, tmpLocal3, WeightTmpLocal1, calHWElemsAlign);
     Sub(tmpLocal6, tmpLocal4, WeightTmpLocal2, calHWElemsAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<float> nwWeightLocal = WeightTmpLocal1;
     LocalTensor<float> neWeightLocal = WeightTmpLocal2;
@@ -951,7 +951,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PerLoopCompute(
     Mul(neWeightLocal, tmpLocal5, tmpLocal2, calHWElemsAlign);
     Mul(swWeightLocal, tmpLocal1, tmpLocal6, calHWElemsAlign);
     Mul(seWeightLocal, tmpLocal5, tmpLocal6, calHWElemsAlign);  // 四个点权重
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<uint8_t> weightMaskUb = weightMaskBuf_.Get<uint8_t>();
     LocalTensor<int32_t> coordinatesLocal = coorBuf_.Get<int32_t>();
@@ -1083,7 +1083,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PerLoopCompute(
                                 mask,
                                 {1, 1, 8, 8},
                                 rsvdCnt);
-                            pipe_barrier(PIPE_V);
+                            PipeBarrier<PIPE_V>();
                             DataCopy(gmY_[gmYBaseOffset + outputLength - BLOCK_NUM], tmpLocal1, BLOCK_NUM);
                             PipeBarrier<PIPE_MTE3>();
                         } else {
@@ -1109,7 +1109,7 @@ __aicore__ inline void GridSampler2DFullLoad310P<T>::PerLoopCompute(
                     uint64_t rsvdCnt = 0;
                     GatherMask(
                         tmpLocal1, outAddLocal[calHWElems - BLOCK_NUM], bufPattern, true, mask, {1, 1, 8, 8}, rsvdCnt);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     DataCopy(gmY_[gmYBaseOffset + calHWElems - BLOCK_NUM], tmpLocal1, BLOCK_NUM);
                     PipeBarrier<PIPE_MTE3>();
                 } else {
