@@ -12,24 +12,30 @@
 import os
 import torch
 import numpy as np
+from torch.nn import functional as F
 
 
-def gen_golden_data_simple():
-    dtype = np.float16
-    input_shape = [8, 2048]
-    output_shape = [8, 2048]
+def grid_sampler_2d_golden():
 
-    x = np.random.uniform(-1, 1, input_shape).astype(dtype)
-    y = np.random.uniform(-1, 1, input_shape).astype(dtype)
+    x_tensor = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+            24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]).reshape(1, 1, 5, 8).type(torch.float32)
+    grid_tensor = torch.tensor([-1, -1, 0, -1, 1, -1, -1, 0, 0, 0, 
+                               1, 0, -1, 1, 0, 1, 1, 1]).reshape(1, 3, 3, 2).type(torch.float32)
+    interpolation_mode = "bilinear"
+    padding_mode = "zeros"
+    align_corners = False
+    x_tensor.requires_grad = True
+    grid_tensor.requires_grad = True
 
-    golden = np.add(x, y)
+    y_tensor = F.grid_sample(x_tensor, grid_tensor, interpolation_mode, padding_mode, align_corners)
+    loss = torch.sum(y_tensor)
+    loss.backward()
 
-    os.system("mkdir -p input")
-    os.system("mkdir -p output")
-    x.astype(dtype).tofile("./input/input_x.bin")
-    y.astype(dtype).tofile("./input/input_y.bin")
-    golden.tofile("./output/golden.bin")
+    res = x_tensor.grad.numpy()
+    res.tofile("./output/golden1.bin")
+    res = grid_tensor.grad.numpy()
+    res.tofile("./output/golden2.bin")
 
 if __name__ == "__main__":
-    gen_golden_data_simple()
+    grid_sampler_2d_golden()
 

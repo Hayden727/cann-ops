@@ -262,6 +262,10 @@ int UpsampleNearest1dBackward()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("UpsampleNearest1dBackward result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output_out = (void **)(&resultData);
+    WriteFile("../output/output_out1.bin", *output_out, size * sizeof(resultData[0]));
+    INFO_LOG("Write UpsampleNearest1dBackward output success");
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(self);
@@ -384,6 +388,10 @@ int UpsampleNearest2dBackward()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("UpsampleNearest2dBackward result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output_out = (void **)(&resultData);
+    WriteFile("../output/output_out2.bin", *output_out, size * sizeof(resultData[0]));
+    INFO_LOG("Write UpsampleNearest2dBackward output success");
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(gradOut);
@@ -417,11 +425,11 @@ int UpsampleNearestExact1dBackward()
     void *outDeviceAddr = nullptr;
     aclTensor *input = nullptr;
     aclTensor *out = nullptr;
-    std::vector<float> inputHostData = {0, 1, 2, 3, 4, 5, 6, 7};
-    std::vector<float> outHostData(32, 0);
+    std::vector<float> inputHostData = {0, 1};
+    std::vector<float> outHostData(4, 0);
     std::vector<int64_t> outputSize = {2};
-    std::vector<int64_t> inputSize = {1, 1, 2};
-    double scales = 2.0;
+    std::vector<int64_t> inputSize = {1, 1, 4};
+    double scales = 0.5;
 
     // 创建input aclTensor
     ret = CreateAclNclTensor(inputHostData, inputShape, &inputDeviceAddr, aclDataType::ACL_FLOAT, &input);
@@ -468,6 +476,10 @@ int UpsampleNearestExact1dBackward()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("UpsampleNearestExact1dBackward result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output_out = (void **)(&resultData);
+    WriteFile("../output/output_out4.bin", *output_out, size * sizeof(resultData[0]));
+    INFO_LOG("Write UpsampleNearestExact1dBackward output success");
 
     // 6. 释放aclTensor和aclIntArray，需要根据具体API的接口定义修改
     aclDestroyTensor(input);
@@ -505,8 +517,8 @@ int UpsampleNearestExact2dBackward()
     std::vector<float> outHostData(32, 0);
     std::vector<int64_t> outputSize = {4, 2};
     std::vector<int64_t> inputSize = {1, 1, 8, 4};
-    double scalesH = 2.0;
-    double scalesW = 2.0;
+    double scalesH = 0.5;
+    double scalesW = 0.5;
     // 创建input aclTensor
     ret = CreateAclNchTensor(inputHostData, inputShape, &inputDeviceAddr, aclDataType::ACL_FLOAT, &input);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -552,6 +564,10 @@ int UpsampleNearestExact2dBackward()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("UpsampleNearestExact2dBackward result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output_out = (void **)(&resultData);
+    WriteFile("../output/output_out3.bin", *output_out, size * sizeof(resultData[0]));
+    INFO_LOG("Write UpsampleNearestExact2dBackward output success");
 
     // 6. 释放aclTensor和aclIntArray，需要根据具体API的接口定义修改
     aclDestroyTensor(input);

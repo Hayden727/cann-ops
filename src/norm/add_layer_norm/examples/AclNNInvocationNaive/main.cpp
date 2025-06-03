@@ -356,6 +356,9 @@ int main()
     for (int64_t i = 0; i < outputYSize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataY[i]);
     }
+    // 写出数据
+    void **output_out = (void **)(&resultDataY);
+    WriteFile("../output/output_y.bin", *output_out, outputYSize * sizeof(resultDataY[0]));
 
     auto outputMeanSize = GetShapeSize(outputMeanShape);
     std::vector<float> resultDataMean(outputMeanSize, 0);
@@ -369,6 +372,9 @@ int main()
     for (int64_t i = 0; i < outputMeanSize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataMean[i]);
     }
+    // 写出数据
+    void **output_out_mean = (void **)(&resultDataMean);
+    WriteFile("../output/output_mean.bin", *output_out_mean, outputMeanSize * sizeof(resultDataMean[0]));
 
     auto outputRstdSize = GetShapeSize(outputRstdShape);
     std::vector<float> resultDataRstd(outputRstdSize, 0);
@@ -382,6 +388,9 @@ int main()
     for (int64_t i = 0; i < outputRstdSize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataRstd[i]);
     }
+    // 写出数据
+    void **output_out_rstd = (void **)(&resultDataRstd);
+    WriteFile("../output/output_rstd.bin", *output_out_rstd, outputRstdSize * sizeof(resultDataRstd[0]));
 
     auto outputXSize = GetShapeSize(outputXShape);
     std::vector<float> resultDataX(outputXSize, 0);
@@ -395,6 +404,9 @@ int main()
     for (int64_t i = 0; i < outputXSize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataX[i]);
     }
+    // 写出数据
+    void **output_out_x = (void **)(&resultDataX);
+    WriteFile("../output/output_x.bin", *output_out_x, outputXSize * sizeof(resultDataX[0]));
 
     // 5.2 考出带bias的输出
     auto outputYSizeBias = GetShapeSize(outputYShape);
@@ -409,6 +421,9 @@ int main()
     for (int64_t i = 0; i < outputYSizeBias; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataYBias[i]);
     }
+    // 写出数据
+    void **output_out_ybias = (void **)(&resultDataYBias);
+    WriteFile("../output/output_ybias.bin", *output_out_ybias, outputYSizeBias * sizeof(resultDataYBias[0]));
 
     auto outputMeanSizeBias = GetShapeSize(outputMeanShape);
     std::vector<float> resultDataMeanBias(outputMeanSizeBias, 0);
@@ -422,6 +437,9 @@ int main()
     for (int64_t i = 0; i < outputMeanSizeBias; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataMeanBias[i]);
     }
+    // 写出数据
+    void **output_meanbias = (void **)(&resultDataMeanBias);
+    WriteFile("../output/output_meanbias.bin", *output_meanbias, outputMeanSizeBias * sizeof(resultDataMeanBias[0]));
 
     auto outputRstdSizeBias = GetShapeSize(outputRstdShape);
     std::vector<float> resultDataRstdBias(outputRstdSizeBias, 0);
@@ -435,6 +453,9 @@ int main()
     for (int64_t i = 0; i < outputRstdSizeBias; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataRstdBias[i]);
     }
+    // 写出数据
+    void **output_rstdbias = (void **)(&resultDataRstdBias);
+    WriteFile("../output/output_rstdbias.bin", *output_rstdbias, outputRstdSizeBias * sizeof(resultDataRstdBias[0]));
 
     auto outputXSizeBias = GetShapeSize(outputXShape);
     std::vector<float> resultDataXBias(outputXSizeBias, 0);
@@ -448,6 +469,9 @@ int main()
     for (int64_t i = 0; i < outputXSizeBias; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataXBias[i]);
     }
+    // 写出数据
+    void **output_xbias = (void **)(&resultDataXBias);
+    WriteFile("../output/output_xbias.bin", *output_xbias, outputXSizeBias * sizeof(resultDataXBias[0]));
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(x1);

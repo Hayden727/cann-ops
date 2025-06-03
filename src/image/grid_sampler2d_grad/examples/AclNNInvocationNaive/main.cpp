@@ -335,6 +335,10 @@ int main()
     for (int64_t i = 0; i < inputGradSize; i++) {
         LOG_PRINT("inputGradResultData[%ld] is: %f\n", i, inputGradResultData[i]);
     }
+    // 写出数据
+    void **output_out=(void **)(&inputGradResultData);
+    WriteFile("../output/output_out1.bin", *output_out, inputGradSize * sizeof(inputGradResultData[0]));
+    INFO_LOG("Write inputGradResultData success");
 
     auto gridGradSize = GetShapeSize(gridGradShape);
     std::vector<float> gridGradResultData(gridGradSize, 0);
@@ -348,6 +352,10 @@ int main()
     for (int64_t i = 0; i < gridGradSize; i++) {
         LOG_PRINT("gridGradResultData[%ld] is: %f\n", i, gridGradResultData[i]);
     }
+    // 写出数据
+    void **output_out2=(void **)(&gridGradResultData);
+    WriteFile("../output/output_out2.bin", *output_out2, gridGradSize * sizeof(gridGradResultData[0]));
+    INFO_LOG("Write gridGradResultData success");
 
     // 6. 释放aclTensor和aclBoolArray，需要根据具体API的接口定义修改
     aclDestroyTensor(gradOutput);

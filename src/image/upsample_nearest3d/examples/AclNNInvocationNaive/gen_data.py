@@ -12,23 +12,21 @@
 import os
 import torch
 import numpy as np
+from torch.nn.functional import interpolate
 
 
 def gen_golden_data_simple():
-    dtype = np.float16
-    input_shape = [8, 2048]
-    output_shape = [8, 2048]
+    # 输入张量UpsampleNearest3d
+    input_tensor = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+                    25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+                     43, 44, 45, 46, 47, 48]).reshape(2, 2, 2, 2, 3).type(torch.float32)
+    # 插值参数
+    output_size = [1, 1, 1]    # 输出shape
+    mode = 'nearest'    # 插值模式
 
-    x = np.random.uniform(-1, 1, input_shape).astype(dtype)
-    y = np.random.uniform(-1, 1, input_shape).astype(dtype)
-
-    golden = np.add(x, y)
-
-    os.system("mkdir -p input")
-    os.system("mkdir -p output")
-    x.astype(dtype).tofile("./input/input_x.bin")
-    y.astype(dtype).tofile("./input/input_y.bin")
-    golden.tofile("./output/golden.bin")
+    # 调用函数
+    output_tensor = interpolate(input_tensor, size=output_size, mode=mode)
+    output_tensor.numpy().tofile("./output/golden.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()
