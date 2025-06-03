@@ -105,7 +105,7 @@ __aicore__ inline void ComplexMatDotAIV<T>::Process()
     uint64_t currOffset = startOffset;
 
     if (repeatTimes > 0) {
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_V>();
         for (uint32_t i = 0; i < repeatTimes; i++) {
             SingleIteration(currOffset, maxDataCount, offsetLocal);
             currOffset += maxDataCount;
@@ -113,11 +113,11 @@ __aicore__ inline void ComplexMatDotAIV<T>::Process()
     }
 
     if (remainNum > 0) {
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_V>();
         SingleIterationAligned(currOffset, remainNum, offsetLocal);
     }
 
-    pipe_barrier(PIPE_ALL);
+    AscendC::PipeBarrier<PIPE_V>();
     return;
 }
 

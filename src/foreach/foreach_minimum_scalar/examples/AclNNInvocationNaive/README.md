@@ -43,7 +43,7 @@ aclnnStatus aclnnForeachMinimumScalar(void *workspace, int64_t workspaceSize, ac
     
     ```bash
     export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
-    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/aarch64-linux/devlib
+    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/lib64
     ```
   - 样例执行
     

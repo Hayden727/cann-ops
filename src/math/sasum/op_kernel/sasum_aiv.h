@@ -162,7 +162,7 @@ __aicore__ inline void SasumAIV<T>::Compute(uint32_t dataCount)
     LocalTensor<T> outLocal = outQueue.AllocTensor<T>();
 
     Abs(inLocal, inLocal, dataCount);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     ReduceSum(outLocal, inLocal, workLocal, dataCount);
 
     outQueue.EnQue<T>(outLocal);
