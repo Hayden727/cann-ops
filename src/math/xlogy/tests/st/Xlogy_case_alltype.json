@@ -12,7 +12,7 @@
                     "float",
                     "float16"
                 ],
-                "shape": [128, 64],
+                "shape": [128, 32],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -32,7 +32,7 @@
                     "float",
                     "float16"
                 ],
-                "shape": [128, 64],
+                "shape": [128, 32],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -54,7 +54,7 @@
                     "float",
                     "float16"
                 ],
-                "shape": [128, 64],
+                "shape": [128, 32],
                 "name": "y"
             }
         ]

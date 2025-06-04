@@ -16,7 +16,7 @@ import os
 
 def gen_golden_data_simple():
     test_type = np.float32
-    shape = [128, 64]
+    shape = [128, 32]
     input_x1 = np.random.uniform(-10, 10, shape).astype(test_type)
     input_x2 = np.random.uniform(0, 10, shape).astype(test_type)
     res = tf.math.xlogy(input_x1, input_x2)
