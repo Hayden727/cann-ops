@@ -79,7 +79,7 @@ Xlogy算子通过依次调用`Ascend C`的`API`接口：`Duplicate`、`Compare`�
 <tr><td align="center">x1</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 <tr><td align="center">x2</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Xlogy</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">xlogy</td></tr>
 </table>
 
 ## 调用示例
