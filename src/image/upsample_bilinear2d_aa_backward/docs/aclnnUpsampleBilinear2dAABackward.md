@@ -30,11 +30,11 @@
   - executor（aclOpExecutor\**, 出参）：返回op执行器，包含了算子计算流程。
 * **返回值**：
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 ```
 第一段接口完成入参校验，出现以下场景时报错：
-返回161001 (ACLNN_ERR_PARAM_NULLPTR): 1. 传入的gradOutput、inputSize或out是空指针。
-返回161002 (ACLNN_ERR_PARAM_INVALID): 1. gradOutput或out的数据类型不在支持的范围之内。
+返回161001（ACLNN_ERR_PARAM_NULLPTR）: 1. 传入的gradOutput、inputSize或out是空指针。
+返回161002（ACLNN_ERR_PARAM_INVALID）: 1. gradOutput或out的数据类型不在支持的范围之内。
                                       2. gradOutput和out的数据类型不一致。
                                       3. gradOutput的shape不是4维。
                                       4. outputSize的size大小不等于2。
@@ -52,7 +52,7 @@
   - stream（aclrtStream，入参）：指定执行任务的AscendCL Stream流。
 * **返回值**：
 
-aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 

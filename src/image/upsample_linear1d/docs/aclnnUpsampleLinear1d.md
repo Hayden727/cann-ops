@@ -2,9 +2,9 @@
 
 ## 支持的产品型号
 
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas 训练系列产品。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
 每个算子分为两段式接口，必须先调用“aclnnUpsampleLinear1dGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnUpsampleLinear1d”接口执行计算。
@@ -21,20 +21,20 @@
 - **参数说明**
 
   - self（aclTensor\*，计算输入）：Device侧的aclTensor，支持非连续的Tensor，不支持空Tensor。数据格式支持NCL。输入维度必须是3.
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、BFLOAT16。
+    - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - outputSize（aclIntArray\*，计算输入）：Host侧的aclIntArray，size大小为1。表示输出out在L维度上的空间大小。
   - alignCorners（bool，计算输入）：Host侧的bool类型参数。如果设置为True，则输入和输出张量按其角像素的中心点对齐，保留角像素处的值；如果设置为False，则输入和输出张量通过其角像素的角点对齐，并且插值使用边缘值填充用于外界边值，使此操作在保持不变时独立于输入大小scales。
   - scales（double, 计算输入）：Host侧的double常量，表示输出out的L维度乘数。
   - out（aclTensor\*，计算输出）：Device侧的aclTensor，支持非连续的Tensor，不支持空Tensor。数据格式支持NCL。输出维度必须是3。数据类型与入参`self`的数据类型一致。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、BFLOAT16。
+    - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
@@ -59,7 +59,7 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 

@@ -1,8 +1,8 @@
 # aclnnUpsampleBilinear2dAA
 
 ## 支持的产品型号
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
 
@@ -71,11 +71,11 @@
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 * **返回值**：
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 ```
 第一段接口完成入参校验，出现以下场景时报错：
-返回161001 (ACLNN_ERR_PARAM_NULLPTR): 1. 传入的input、outputSize或out是空指针。
-返回161002 (ACLNN_ERR_PARAM_INVALID): 1. input或out的数据类型不在支持的范围之内。
+返回161001（ACLNN_ERR_PARAM_NULLPTR）: 1. 传入的input、outputSize或out是空指针。
+返回161002（ACLNN_ERR_PARAM_INVALID）: 1. input或out的数据类型不在支持的范围之内。
                                       2. input和out的数据类型不一致。
                                       3. input的shape不是4维。
 ```
@@ -90,7 +90,7 @@
   - stream（aclrtStream，入参）：指定执行任务的AscendCL Stream流。
 * **返回值**：
 
-aclnnStatus：返回状态码，具体参见aclnn返回码。
+aclnnStatus：返回状态码。
 
 ## 约束与限制
 

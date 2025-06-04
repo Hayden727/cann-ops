@@ -2,11 +2,11 @@
 
 ## 支持的产品型号
 
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
-每个算子分为[两段式接口](./common/两段式接口.md)，必须先调用“aclnnUpsampleNearestExact3dBackwardGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnUpsampleNearestExact3dBackward”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnUpsampleNearestExact3dBackwardGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnUpsampleNearestExact3dBackward”接口执行计算。
 
 - `aclnnStatus aclnnUpsampleNearestExact3dBackwardGetWorkspaceSize(const aclTensor* gradOut, const aclIntArray* outputSize, const aclIntArray* inputSize, double scalesD, double scalesH, double scalesW, aclTensor* gradInput, uint64_t* workspaceSize, aclOpExecutor** executor)`
 - `aclnnStatus aclnnUpsampleNearestExact3dBackward(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
@@ -24,19 +24,19 @@
 
 - **参数说明**
 
-  - gradOut（aclTensor\*，计算输入）： Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持[非连续的Tensor](./common/非连续的Tensor.md)，[数据格式](./common/数据格式.md)支持NCDHW、NDHWC。
+  - gradOut（aclTensor\*，计算输入）： Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持非连续的Tensor，数据格式支持NCDHW、NDHWC。
   - outputSize（aclIntArray\*，计算输入）：Device侧的aclIntArray，数据类型支持INT64，size大小为3。表示输入`gradOut`在D、H和W维度上的空间大小。
   - inputSize（aclIntArray\*，计算输入）：Device侧的aclIntArray，数据类型支持INT64，size大小为5。表示输出`gradInput`分别在N、C、D、H和W维度上的空间大小。
   - scalesD（double，计算输入）：Host侧的double常量，表示输出`gradInput`的depth维度乘数。
   - scalesH（double，计算输入）：Host侧的double常量，表示输出`gradInput`的height维度乘数。
   - scalesW（double，计算输入）：Host侧的double常量，表示输出`gradInput`的width维度乘数。
-  - gradInput（aclTensor\*，计算输出）：Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持[非连续的Tensor](./common/非连续的Tensor.md)，[数据格式](./common/数据格式.md)支持NCDHW、NDHWC。数据类型和数据格式与入参`gradOut`的数据类型和数据格式保持一致。
+  - gradInput（aclTensor\*，计算输出）：Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持非连续的Tensor，数据格式支持NCDHW、NDHWC。数据类型和数据格式与入参`gradOut`的数据类型和数据格式保持一致。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见[aclnn返回码](./common/aclnn返回码.md)。
+  aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
@@ -65,7 +65,7 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见[aclnn返回码](./common/aclnn返回码.md)。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 

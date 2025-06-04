@@ -49,7 +49,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n upsample_bilinear2d
     ```
 
   - 部署算子包

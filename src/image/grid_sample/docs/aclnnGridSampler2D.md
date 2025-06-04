@@ -2,9 +2,9 @@
 
 ## 支持的产品型号
 
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas 训练系列产品。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
 
@@ -45,10 +45,10 @@
   - input（aclTensor*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、DOUBLE，支持非连续的Tensor，数据格式支持ND。支持shape为$(N,C,H_{in},W_{in})$。H\*W的最大值只支持INT32上界。
   - grid（aclTensor*，计算输入）：Device侧的aclTensor。数据类型支持FLOAT32、FLOAT16、DOUBLE。支持非连续的Tensor，数据格式支持ND。支持shape为$(N,H_{out},W_{out},2)$，且N与入参`input`的shape中的N一致。数据类型与入参`input`的数据类型一致。
   - interpolationMode（int64_t，计算输入）：Host侧整型属性，数据类型为int64_t，表示插值模式，0：bilinear（双线性插值），1：nearest（最邻近插值），2：bicubic（双三次插值）。
-    - 昇腾910 AI处理器：支持的插值模式如下：
+    - Atlas 训练系列产品：支持的插值模式如下：
       - 0：bilinear（双线性插值）
       - 1：nearest（最邻近插值）
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：支持的插值模式如下：
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持的插值模式如下：
       - 0：bilinear（双线性插值）
       - 1：nearest（最邻近插值）
       - 2：bicubic（双三次插值）。仅当input数据类型为FLOAT32或者FLOAT16时支持bicubic插值。
@@ -60,7 +60,7 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
@@ -84,15 +84,15 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 - input的shape，后两维不能为0。
 - grid的输入值*图片（长或宽）大于24位的二进制数（16777216），采样点可能存在误差，精度可能产生偏差。
 - 如果grid含有大量超过[-1,1]范围的数据，使用zeros或者border的填充策略时，计算结果中的值会大量重复。
-- 昇腾910B AI处理器、昇腾910_93 AI处理器：
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：
   - 如果grid存在超出[-1,1]范围的数据，使用bicubic插值时，小值域数据计算可能存在误差，精度可能产生偏差。
   - 使用bilinear或者bicubic插值时，针对FLOAT16数据类型，需要使用workspace内存。
-- 昇腾910 AI处理器：使用bilinear差值时，针对FLOAT16数据类型，需要使用workspace内存。
+- Atlas 训练系列产品：使用bilinear差值时，针对FLOAT16数据类型，需要使用workspace内存。
 
 
