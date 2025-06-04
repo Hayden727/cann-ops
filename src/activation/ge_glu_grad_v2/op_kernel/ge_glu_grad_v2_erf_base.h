@@ -481,10 +481,10 @@ __aicore__ inline void GeGluGradV2ErfBase<T>::CopySplitTensor(LocalTensor<T2>& d
     int64_t x1SrcOffset = activateLeft ? 16 * valueM : 0;
     int64_t x2SrcOffset = activateLeft ? 0 : 16 * valueM;
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     DataCopy(dst1, src[x1SrcOffset], copyParams);
     DataCopy(dst2, src[x2SrcOffset], copyParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -652,10 +652,10 @@ __aicore__ inline void GeGluGradV2ErfBase<T>::CopyConcatTensor(LocalTensor<T2>& 
     int64_t x1DstOffset = activateLeft ? 16 * valueM : 0;
     int64_t x2DstOffset = activateLeft ? 0 : 16 * valueM;
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     DataCopy(dst[x1DstOffset], src1, copyParams);
     DataCopy(dst[x2DstOffset], src2, copyParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template <typename T>

@@ -71,11 +71,11 @@ __aicore__ inline void GeGluGradV2FP16By310p::ComputeLeftHalf(const int64_t& rea
     outQueueDX1.EnQue(outLocalLeft);
     inQueueGelu.FreeTensor(ubGelu);
     LocalTensor<half> ubX1 = inQueueX1.DeQue<half>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(ubX1, ubX1, ubDY, realProcCount);  // x1 = x1 * dy
     inQueueDY.FreeTensor(ubDY);
     LocalTensor<float> xBufLeft = resultTempBuf1.Get<float>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(xBufLeft, ubX1, RoundMode::CAST_NONE, realProcCount);
     inQueueX1.FreeTensor(ubX1);
 }
@@ -83,21 +83,21 @@ __aicore__ inline void GeGluGradV2FP16By310p::ComputeLeftHalf(const int64_t& rea
 __aicore__ inline void GeGluGradV2FP16By310p::ComputeRightHalf(const int64_t& realProcCount) {
     LocalTensor<half> ubX2 = inQueueX2.DeQue<half>();
     LocalTensor<float> xBufRight = resultTempBuf2.Get<float>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(xBufRight, ubX2, RoundMode::CAST_NONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueX2.FreeTensor(ubX2);
 
     LocalTensor<float> xBufLeft = resultTempBuf1.Get<float>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     ComputeGeluGrad(xBufRight, xBufLeft, xBufRight, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<half> outLocalRight = outQueueDX2.AllocTensor<half>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Cast(outLocalRight, xBufRight, RoundMode::CAST_NONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     outQueueDX2.EnQue(outLocalRight);
 }
 

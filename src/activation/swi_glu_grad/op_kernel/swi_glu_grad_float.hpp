@@ -74,28 +74,28 @@ __aicore__ inline void SwiGluGradVector<aType, bType, lType, mType, nType, buffe
     //calc sigLocal
     LocalTensor<aType> aLocal = inQueueA.template DeQue<aType>(); //input a
     Muls(sigLocal, aLocal, beta, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(sigLocal, sigLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(sigLocal, sigLocal, (mType)(1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Duplicate<float>(tempLocal, (float)(1.0), tileLength);
     Div(sigLocal, tempLocal, sigLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     //----------------N
     LocalTensor<nType> nLocal = outQueueN.template AllocTensor<nType>(); // lb
     Mul(nLocal, sigLocal, aLocal, tileLength);
     LocalTensor<lType> lLocal = inQueueL.template DeQue<lType>(); // input l
     Mul(nLocal, nLocal, lLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     outQueueN.template EnQue<nType>(nLocal);
 
     //----------------M
     Muls(tempLocal, sigLocal, (mType)(-1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempLocal, tempLocal, (mType)(1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     LocalTensor<mType> mLocal = outQueueM.template AllocTensor<mType>(); // la
     Mul(mLocal, sigLocal, tempLocal, tileLength);
     Mul(mLocal, mLocal, aLocal, tileLength);
@@ -108,7 +108,7 @@ __aicore__ inline void SwiGluGradVector<aType, bType, lType, mType, nType, buffe
     inQueueB.template FreeTensor(bLocal);
 
     Mul(mLocal, mLocal, lLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // enque the output tensor to VECOUT queue
     outQueueM.template EnQue<mType>(mLocal);
     // free input tensors for reuse
