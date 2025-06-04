@@ -53,26 +53,26 @@ __aicore__ inline void SwigluVector<inType, outType, bufferNum>::Compute(uint64_
 {
     LocalTensor<inType> aLocal = inQueueA.template DeQue<inType>();
     LocalTensor<outType> cLocal = outQueueC.template AllocTensor<outType>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(cLocal, aLocal, beta, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(cLocal, cLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(cLocal, cLocal, (outType)(1.0), curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<float> tempLocal = tmpQueue.Get<float>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Div(cLocal, tempLocal, cLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(cLocal, cLocal, aLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueA.template FreeTensor(aLocal);
 
     LocalTensor<inType> bLocal = inQueueB.template DeQue<inType>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(cLocal, cLocal, bLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueB.template FreeTensor(bLocal);
     // enque the output tensor to VECOUT queue
     outQueueC.template EnQue<outType>(cLocal);

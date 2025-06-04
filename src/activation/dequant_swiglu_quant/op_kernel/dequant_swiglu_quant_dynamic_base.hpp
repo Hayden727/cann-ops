@@ -123,7 +123,7 @@ public:
         LocalTensor<float> swiLocal = swiGluQueue.template DeQue<float>();
         LocalTensor<float> absTempLocal = inputTempBufferBF16D.Get<float>();
         Abs(absTempLocal, swiLocal, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceMax(maxTempLocal[rowId], absTempLocal, absTempLocal, tileLen);
         DataCopyExtParams dataCopyParams{1, static_cast<uint32_t>(tileLen * sizeof(float)), 0, 0, 0};
         DataCopyPad(swigluTmpGm[colLoop * baseColLen], swiLocal, dataCopyParams);
@@ -141,15 +141,15 @@ public:
         SetFlag<HardEvent::MTE2_S>(eventId);
         WaitFlag<HardEvent::MTE2_S>(eventId);
         Muls(swiLocal, swiLocal, scale, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<int16_t> int16Local = outputTempBufferBF16D.Get<int16_t>();
         Cast(int16Local, swiLocal, RoundMode::CAST_RINT, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         swiGluQueue.FreeTensor(swiLocal);
         // int16-> half
         LocalTensor<half> halfLocal = int16Local.ReinterpretCast<half>();
         Cast(halfLocal, int16Local, RoundMode::CAST_NONE, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // half -> int8_t
         LocalTensor<int8_t> outLocal = outQueueF.template AllocTensor<int8_t>();
         Cast(outLocal, halfLocal, RoundMode::CAST_NONE, tileLen);
@@ -169,10 +169,10 @@ public:
         LocalTensor<float> absTempLocal = inputTempBufferBF16D.Get<float>();
         Abs(absTempLocal, swiLocal, tileLen);
         uint32_t offsetCalc = (length == 0 ? 0 : (tileLen / length));
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         for (int64_t i = 0; i < length; i++) {
             ReduceMax(maxTempLocal[rowId * baseRowLen + i], absTempLocal[i * offsetCalc], absTempLocal[i * offsetCalc], colNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
 
             event_t eventIdV2S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventIdV2S);
@@ -181,16 +181,16 @@ public:
             maxTempLocal.SetValue(rowId * baseRowLen + i, value);
             float scale = 1 / value;
             Muls(swiLocal[i * offsetCalc], swiLocal[i * offsetCalc], scale, colNum);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
         LocalTensor<int16_t> int16Local = outputTempBufferBF16D.Get<int16_t>();
         Cast(int16Local, swiLocal, RoundMode::CAST_RINT, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         // int16-> half
         LocalTensor<half> halfLocal = int16Local.ReinterpretCast<half>();
         Cast(halfLocal, int16Local, RoundMode::CAST_NONE, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         swiGluQueue.FreeTensor(swiLocal);
 
         // half -> int8_t
@@ -217,7 +217,7 @@ public:
         LocalTensor<float> swiLocal = swiGluQueue.template AllocTensor<float>();
         Mul(swiLocal, outTmpLocal, bLocal, curTileLen);
         if (quantScaleIsEmpty == 0) {
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
             if constexpr (quantIsOne == 0) {
                 uint32_t calcOffset = (blockCount == 0 ? 0 : curTileLen / blockCount);
                 for (uint64_t idx = 0; idx < blockCount; idx++) {
@@ -242,7 +242,7 @@ public:
             }
         }
         Cast(inputTmpLocal, inALocal, RoundMode::CAST_NONE, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         this->inQueueA.template FreeTensor(inALocal);
         if constexpr (std::is_same_v<InType, int32_t>) {
             addWeightScaleAndActivateScale(inputTmpLocal, this->weightScaleLocalA, curTileLen, value);
@@ -253,13 +253,13 @@ public:
             }
         }
         Muls(outTmpLocal, inputTmpLocal, this->beta, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Exp(outTmpLocal, outTmpLocal, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(outTmpLocal, outTmpLocal, CalcType(1.0), curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(outTmpLocal, inputTmpLocal, outTmpLocal, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<InType> bLocal_ = this->inQueueB.template DeQue<InType>();
         if constexpr (std::is_same_v<InType, int32_t>) {
             if constexpr (std::is_same_v<BiasType, int32_t>) {
@@ -268,7 +268,7 @@ public:
         }
         LocalTensor<CalcType> bLocal = this->inputTempBufferBF16D.template Get<CalcType>();
         Cast(bLocal, bLocal_, RoundMode::CAST_NONE, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if constexpr (std::is_same_v<InType, int32_t>) {
             addWeightScaleAndActivateScale(bLocal, this->weightScaleLocalB, curTileLen, value);
             if constexpr (std::is_same_v<BiasType, float> || std::is_same_v<BiasType, bfloat16_t> || std::is_same_v<BiasType, half>) {
@@ -421,10 +421,10 @@ public:
         LocalTensor<CalcType> &dstLocal, LocalTensor<CalcType> &weightScaleLocal, uint64_t curTileLen, float value)
     {
         Mul(dstLocal, dstLocal, weightScaleLocal, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (activateScaleIsEmpty == 0) {
             Muls(dstLocal, dstLocal, value, curTileLen);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -432,7 +432,7 @@ public:
     {
         if (this->biasIsEmpty == 0) {
             Add(dstLocal, dstLocal, biasLocal, curTileLen);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 
@@ -443,10 +443,10 @@ public:
                 Add(dstLocal, dstLocal, biasLocal, curTileLen);
             } else {
                 Cast(biasFloatLocalB, biasLocal, RoundMode::CAST_NONE, curTileLen);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(dstLocal, dstLocal, biasFloatLocalB, curTileLen);
             }
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
     }
 

@@ -90,7 +90,7 @@ __aicore__ inline void DequantSwigluQuantStaticBF16<TEMPLATE_ARGS_STATIC>::conve
     this->inputTmpELocal = this->inputTempBufferInt32SD.template Get<CalcType>();
 
     Cast(this->inputTmpELocal, aLocal, RoundMode::CAST_NONE, tileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     this->inQueue.template FreeTensor(aLocal);
 }
 }
