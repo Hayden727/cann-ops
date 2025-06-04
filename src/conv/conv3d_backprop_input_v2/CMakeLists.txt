@@ -19,6 +19,8 @@ target_sources(optiling PRIVATE
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn
+        ${CMAKE_SOURCE_DIR}/src/common/op_host
         ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
@@ -27,6 +29,12 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/slog/toolchain
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/mmpa
 )
 
 #opsproto
@@ -36,6 +44,7 @@ target_sources(opsproto PRIVATE
 
 target_include_directories(opsproto PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn
         ${CMAKE_SOURCE_DIR}/src/common/inc
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
@@ -54,6 +63,7 @@ target_sources(op_host_aclnnInner PRIVATE
 
 target_include_directories(op_host_aclnnInner PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn
         ${CMAKE_SOURCE_DIR}/src/common/inc
         ${ASCEND_CANN_PACKAGE_PATH}/include
         ${ASCEND_CANN_PACKAGE_PATH}/include/external

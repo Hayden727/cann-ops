@@ -30,6 +30,11 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/slog/toolchain
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/mmpa
 )
 
 target_compile_options(optiling PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17)

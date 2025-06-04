@@ -26,6 +26,7 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/tools/msopgen/template/custom_operator_sample/TIK/PyTorch/metadef/inc
         ${ASCEND_CANN_PACKAGE_PATH}/tools/msopgen/template/custom_operator_sample/TIK/PyTorch/metadef/inc/graph
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${CMAKE_SOURCE_DIR}/src/conv/conv2d_transpose_v2/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
         ${CMAKE_SOURCE_DIR}/src/conv/common
         ${CMAKE_SOURCE_DIR}/src/common/op_host
@@ -52,7 +53,7 @@ target_sources(opsproto PRIVATE
 target_include_directories(opsproto PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
-        ${CMAKE_SOURCE_DIR}/src/conv/common
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn
         ${CMAKE_SOURCE_DIR}/src/common/op_host
         ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
         ${ASCEND_CANN_PACKAGE_PATH}/include
@@ -76,7 +77,7 @@ target_sources(op_host_aclnnInner PRIVATE
 target_include_directories(op_host_aclnnInner PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
-        ${CMAKE_SOURCE_DIR}/src/conv/common
+        ${CMAKE_SOURCE_DIR}/src/conv/aclnn
         ${CMAKE_SOURCE_DIR}/src/common/op_host
         ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
         ${ASCEND_CANN_PACKAGE_PATH}/include

@@ -18,26 +18,42 @@ target_sources(optiling PRIVATE
 target_include_directories(optiling PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
+        ${CMAKE_SOURCE_DIR}/src/conv/common
+        ${CMAKE_SOURCE_DIR}/src/common/op_host
         ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
         ${ASCEND_CANN_PACKAGE_PATH}/include
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/platform
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/slog/toolchain
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/mmpa
 )
 
 #opsproto
 target_sources(opsproto PRIVATE
-         op_host/conv3_d_transpose_v2_proto.cpp
+        op_host/conv3_d_transpose_v2_proto.cpp
+        ${CMAKE_SOURCE_DIR}/src/conv/conv2d_transpose_v2/op_host/cube_util.cc
 )
 
 target_include_directories(opsproto PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/conv/conv2d_transpose_v2/op_host
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
+        ${CMAKE_SOURCE_DIR}/src/conv/common
+        ${CMAKE_SOURCE_DIR}/src/common/op_host
+        ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
         ${ASCEND_CANN_PACKAGE_PATH}/include
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/graph
         ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/platform
@@ -54,18 +70,45 @@ target_sources(op_host_aclnnInner PRIVATE
 target_include_directories(op_host_aclnnInner PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
         ${CMAKE_SOURCE_DIR}/src/common/inc
+        ${CMAKE_SOURCE_DIR}/src/common/op_host
+        ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
         ${ASCEND_CANN_PACKAGE_PATH}/include
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
+        ${ASCEND_CANN_PACKAGE_PATH}/include/graph
         ${ASCEND_CANN_PACKAGE_PATH}/include/external
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/platform
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
 )
 
 target_sources(opapi PRIVATE
         ${CMAKE_SOURCE_DIR}/src/conv/conv2d_transpose_v2/op_host/convolution.cpp
         ${CMAKE_SOURCE_DIR}/src/conv/conv2d_transpose_v2/op_host/aclnn_convolution.cpp
+)
+
+target_include_directories(opapi PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/op_host
+        ${CMAKE_SOURCE_DIR}/src/common/inc
+        ${CMAKE_SOURCE_DIR}/src/conv/common
+        ${CMAKE_SOURCE_DIR}/src/common/op_host
+        ${CMAKE_SOURCE_DIR}/src/common/op_host/op_tiling
+        ${ASCEND_CANN_PACKAGE_PATH}/include
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
+        ${ASCEND_CANN_PACKAGE_PATH}/include/graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/external
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/platform
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
 )
 
 # install kernel侧源码和aclnn头文件
