@@ -51,7 +51,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n upsample_bilinear2d_aa_backward
     ```
 
   - 部署算子包

@@ -32,8 +32,8 @@ Atlas A2训练系列产品
 
 - **参数说明**：
 
-  - x（aclTensorList*，计算输入）：公式中的`x`，Device侧的aclTensorList，数据类型支持BFLOAT16、FLOAT16、FLOAT。shape维度不高于8维。数据格式支持ND。支持非连续的Tensor。shape与出参`out`的shape一致。
-  - out（aclTensorList*，计算输出）：公式中的`y`，Device侧的aclTensorList，数据类型支持BFLOAT16、FLOAT16、FLOAT。shape维度不高于8维，数据格式支持ND。支持非连续的Tensor。数据类型、数据格式和shape与入参`x`的数据类型、数据格式和shape一致。
+  - x（aclTensorList*，计算输入）：公式中的`x`，表示进行绝对值计算的输入张量列表。Device侧的aclTensorList，数据类型支持BFLOAT16、FLOAT16、FLOAT。shape维度不高于8维。数据格式支持ND。支持非连续的Tensor。shape与出参`out`的shape一致。
+  - out（aclTensorList*，计算输出）：公式中的`y`，表示进行绝对值计算的输出张量列表。Device侧的aclTensorList，数据类型支持BFLOAT16、FLOAT16、FLOAT。shape维度不高于8维，数据格式支持ND。支持非连续的Tensor。数据类型、数据格式和shape与入参`x`的数据类型、数据格式和shape一致。
   - workspaceSize（uint64_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 

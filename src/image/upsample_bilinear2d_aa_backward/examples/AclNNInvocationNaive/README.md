@@ -29,15 +29,15 @@ aclnnStatus aclnnUpsampleBilinear2dAABackward(void *workspace, uint64_t workspac
 其中aclnnUpsampleBilinear2dAABackwardGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnUpsampleBilinear2dAABackward执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
 ## 运行样例算子
-  **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
+**请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
   
-  - 进入样例代码所在路径
+- 进入样例代码所在路径
   
   ```bash
   cd ${git_clone_path}/cann-ops/src/image/upsample_bilinear2d_aa_backward/examples/AclNNInvocationNaive
   ```
   
-  - 样例执行
+- 样例执行
     
   样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
 

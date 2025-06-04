@@ -2,9 +2,9 @@
 
 ## 支持的产品型号
 
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas 训练系列产品。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
 每个算子分为两段式接口，必须先调用“aclnnUpsampleNearest3dBackwardGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnUpsampleNearest3dBackward”接口执行计算。
@@ -32,7 +32,7 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
@@ -61,7 +61,7 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 

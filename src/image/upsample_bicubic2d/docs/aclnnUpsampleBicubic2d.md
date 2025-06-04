@@ -2,14 +2,14 @@
 
 ## 支持的产品型号
 
-- 昇腾310B AI处理器。
-- 昇腾310P AI处理器。
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
+- Atlas 200I/500 A2 推理产品。
+- Atlas 推理系列产品。
+- Atlas 训练系列产品。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
 
 ## 接口原型
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnUpsampleBicubic2dGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnUpsampleBicubic2d”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnUpsampleBicubic2dGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnUpsampleBicubic2d”接口执行计算。
 
 - `aclnnStatus aclnnUpsampleBicubic2dGetWorkspaceSize(const aclTensor* self, const aclIntArray* outputSize, const bool alignCorners, const double scalesH, const double scalesW, aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 - `aclnnStatus aclnnUpsampleBicubic2d(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
@@ -59,22 +59,22 @@
 
 - **参数说明**：
 
-  - self（aclTensor*，计算输入）：Device侧的aclTensor。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。shape支持4维，数据类型需要与出参`out`的数据类型一致。
-    - 昇腾310B AI处理器、昇腾310P AI处理器、昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16。
-    - 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、BFLOAT16。
+  - self（aclTensor*，计算输入）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。shape支持4维，数据类型需要与出参`out`的数据类型一致。
+    - Atlas 200I/500 A2 推理产品、Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - outputSize（aclIntArray*，计算输入）：指定输出空间大小，Host侧的aclIntArray，数据类型支持INT64。size需要等于2，且各元素均大于0。
   - alignCorners（bool，计算输入）：决定是否对齐角像素点，Host侧的bool。alignCorners为True，则输入和输出张量的角像素点会被对齐，否则不对齐。
   - scalesH（double，计算输入）：指定空间大小的height维度乘数，Host侧的double型。
   - scalesW（double，计算输入）：指定空间大小的width维度乘数，Host侧的double型。
-  - out（aclTensor*，计算输出）：Device侧的aclTensor。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持NCHW、ND。shape支持4维：(batch, channel, height, width)，其中batch与channel分别来源于入参`self`的第零维和第一维，height与width分别来源于`outputSize`的第一与第二个值。数据类型和数据格式需要与`self`的数据类型和数据格式一致。
-    - 昇腾310B AI处理器、昇腾310P AI处理器、昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16。
-    - 昇腾910B AI处理器：数据类型支持FLOAT、FLOAT16、BFLOAT16。
+  - out（aclTensor*，计算输出）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCHW、ND。shape支持4维：(batch, channel, height, width)，其中batch与channel分别来源于入参`self`的第零维和第一维，height与width分别来源于`outputSize`的第一与第二个值。数据类型和数据格式需要与`self`的数据类型和数据格式一致。
+    - Atlas 200I/500 A2 推理产品、Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - workspaceSize（uint64_t*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
 
 - **返回值**：
 
-  aclnnStatus：返回状态码，具体参见[aclnn返回码](common/aclnn返回码.md)。
+  aclnnStatus：返回状态码。
 
 ```
 第一段接口完成入参校验，出现以下场景时报错：
@@ -98,14 +98,10 @@
 
 - **返回值**：
 
-  **aclnnStatus**：返回状态码，具体参见[aclnn返回码](common/aclnn返回码.md)。
+  **aclnnStatus**：返回状态码。
 
 ## 约束与限制
 
 参数outputSize与参数scalesH、scalesW，在使用时二选一，即：
 - 当入参scalesH和入参scalesW的值都为0时，使用入参outputSize的参数值。
 - 当入参scalesH和入参scalesW的值不都为0时，使用入参scalesH和入参scalesW的参数值，且$outputSize=[floor(selfH*scalesH)，floor(selfW*scalesW)]$。
-
-## 调用示例
-
-详见[UpsampleBicubic2d自定义算子样例说明算子调用章节](../README.md#算子调用)

@@ -2,13 +2,13 @@
 
 ## 支持的产品型号
 
-- 昇腾310P AI处理器。
-- 昇腾910 AI处理器。
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas 推理系列产品。
+- Atlas 训练系列产品。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
-每个算子分为[两段式接口](./common/两段式接口.md)，必须先调用“aclnnUpsampleNearest3dGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnUpsampleNearest3d”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnUpsampleNearest3dGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnUpsampleNearest3d”接口执行计算。
 
 - `aclnnStatus aclnnUpsampleNearest3dGetWorkspaceSize(const aclTensor* self, const aclIntArray* outputSize, double scalesD, double scalesH, double scalesW, aclTensor* out, uint64_t* workspaceSize, aclOpExecutor** executor)`
 - `aclnnStatus aclnnUpsampleNearest3d(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`
@@ -50,24 +50,24 @@
 
 - **参数说明**
 
-  - self（aclTensor*，计算输入）：Device侧的aclTensor，shape仅支持五维，支持[非连续的Tensor](非连续的Tensor)，[数据格式](./common/数据格式.md)支持NCDHW、NDHWC、ND（当数据格式为ND时，默认按照NCDHW格式处理）。
-    - 昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、BFLOAT16、DOUBLE。
+  - self（aclTensor*，计算输入）：Device侧的aclTensor，shape仅支持五维，支持非连续的Tensor，数据格式支持NCDHW、NDHWC、ND（当数据格式为ND时，默认按照NCDHW格式处理）。
+    - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
+    - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE。
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16、DOUBLE。
   - outputSize（aclIntArray*，计算输入）：指定输出`out`的Tensor大小，Host侧的aclIntArray。size大小为3，各元素均大于零。表示输入self在D、H和W维度上的空间大小。
   - scalesD（double，计算输入）：指定输出`out`的depth维度乘数，Host侧的DOUBLE型。
   - scalesH（double，计算输入）：指定输出`out`的height维度乘数，Host侧的DOUBLE型。
   - scalesW（double，计算输入）：指定输出`out`的width维度乘数，Host侧的DOUBLE型。
-  - out（aclTensor、*，计算输出）：Device侧的aclTensor，shape仅支持五维，支持[非连续的Tensor](非连续的Tensor)，[数据格式](./common/数据格式.md)支持NCDHW、NDHWC、ND。数据类型和数据格式需与入参`self`的数据类型和数据格式保持一致。
-    - 昇腾310P AI处理器：数据类型支持FLOAT、FLOAT16。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、BFLOAT16、DOUBLE。
+  - out（aclTensor、*，计算输出）：Device侧的aclTensor，shape仅支持五维，支持非连续的Tensor，数据格式支持NCDHW、NDHWC、ND。数据类型和数据格式需与入参`self`的数据类型和数据格式保持一致。
+    - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
+    - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE。
+    - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16、DOUBLE。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
   
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见[aclnn返回码](./common/aclnn返回码.md)。
+  aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
@@ -92,7 +92,7 @@
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见[aclnn返回码](./common/aclnn返回码.md)。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 
