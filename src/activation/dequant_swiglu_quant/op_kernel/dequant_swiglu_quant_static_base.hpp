@@ -161,21 +161,21 @@ public:
         if constexpr (std::is_same_v<BiasType, int32_t>) {
             if (this->biasIsEmpty == 0) {
                 Add(aLocal, aLocal, this->biasLocal, tileLen);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
 
         Cast(this->inputTmpELocal, aLocal, RoundMode::CAST_NONE, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         this->inQueue.template FreeTensor(aLocal);
 
         Mul(this->inputTmpELocal, this->inputTmpELocal, this->weightScaleLocal, tileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         if (this->activateScaleIsEmpty == 0) {
             float value = this->activateLocal.GetValue(i);
             Muls(this->inputTmpELocal, this->inputTmpELocal, value, tileLen);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         if constexpr (std::is_same_v<BiasType, float> || std::is_same_v<BiasType, bfloat16_t> || std::is_same_v<BiasType, half>) {
@@ -185,10 +185,10 @@ public:
                 } else {
                     LocalTensor<CalcType> biasFloatLocal = this->inputBiasTempBuffer.template Get<CalcType>();
                     Cast(biasFloatLocal, this->biasLocal, RoundMode::CAST_NONE, tileLen);
-                    pipe_barrier(PIPE_V);
+                    PipeBarrier<PIPE_V>();
                     Add(this->inputTmpELocal, this->inputTmpELocal, biasFloatLocal, tileLen);
                 }
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
     }
@@ -246,36 +246,36 @@ public:
     {
         LocalTensor <CalcType> swigluLocal = swigluTempBuffer.Get<CalcType>();
         Muls(swigluLocal, inputTmpELocal, beta, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Exp(swigluLocal, swigluLocal, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Adds(swigluLocal, swigluLocal, CalcType(1.0), curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Div(inputTmpELocal, inputTmpELocal, swigluLocal, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Mul(inputTmpELocal[curTileLen], inputTmpELocal, inputTmpELocal[curTileLen], curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         if (quantScaleIsEmpty == 0) {
             if constexpr(quantIsOne == 0) {
                 Div(inputTmpELocal[curTileLen], inputTmpELocal[curTileLen], quantLocal, curTileLen);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Add(inputTmpELocal[curTileLen], inputTmpELocal[curTileLen], quantLocal[curTileLen], curTileLen);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             } else {
                 Muls(inputTmpELocal[curTileLen], inputTmpELocal[curTileLen], quant_scale, curTileLen);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
                 Adds(inputTmpELocal[curTileLen], inputTmpELocal[curTileLen], quant_offset, curTileLen);
-                pipe_barrier(PIPE_V);
+                PipeBarrier<PIPE_V>();
             }
         }
         // fp32->int16
         LocalTensor <int16_t> int16Local = swigluTempBuffer.Get<int16_t>();
         Cast(int16Local, inputTmpELocal[curTileLen], RoundMode::CAST_RINT, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         // int16-> half
         LocalTensor <half> halfLocal = int16Local.ReinterpretCast<half>();
         Cast(halfLocal, int16Local, RoundMode::CAST_NONE, curTileLen);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         LocalTensor <OutType> outLocal = outQueue.template AllocTensor<OutType>();
         // half -> int8

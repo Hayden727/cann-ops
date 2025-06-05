@@ -61,31 +61,31 @@ __aicore__ inline void SwigluVectorBF16<inType, calcType, outType, bufferNum>::C
     LocalTensor<calcType> aLocal = inputTempBuffer.Get<calcType>();
     LocalTensor<calcType> cLocal = outputTempBuffer.Get<calcType>();
     Cast(aLocal, aLocal_, RoundMode::CAST_NONE, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueA.template FreeTensor(aLocal_);
 
     Muls(cLocal, aLocal, beta, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(cLocal, cLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(cLocal, cLocal, calcType(1.0), curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Div(cLocal, aLocal, cLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<inType> bLocal_ = inQueueB.template DeQue<inType>();
 
     LocalTensor<calcType> bLocal = inputTempBuffer.Get<calcType>();
     Cast(bLocal, bLocal_, RoundMode::CAST_NONE, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueB.template FreeTensor(bLocal_);
 
     Mul(cLocal, cLocal, bLocal, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Cast(cLocal_, cLocal, RoundMode::CAST_RINT, curTileLen);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     // enque the output tensor to VECOUT queue
     outQueueC.template EnQue<outType>(cLocal_);
     // free input tensors for reuse
