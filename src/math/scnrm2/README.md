@@ -1,23 +1,23 @@
-## `Scnrm2`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`Scnrm2`算子。
+## `Scasum`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`Scasum`算子。
 
 ### 算子描述
-`Scnrm2`算子计算复数向量的欧式范数。
+`Scasum`算子对输入的所有复数元素的实部和虚部分别取绝对值后求和。
 
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Scnrm2</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Scasum</td></tr>
 </tr>
-<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">2043</td><td align="center">complex64</td><td align="center">ND</td></tr>
-<tr><td align="center">n</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
-<tr><td align="center">incx</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">complex64</td><td align="center">ND</td></tr>
+<tr><td align="center">n</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">incx</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
 <tr></tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">1</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">result</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">scnrm2</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">scasum</td></tr>
 </table>
 
 ### 支持的产品型号
@@ -60,7 +60,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Scnrm2算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Scasum算子。</td>
     </tr>
 </table>
 
