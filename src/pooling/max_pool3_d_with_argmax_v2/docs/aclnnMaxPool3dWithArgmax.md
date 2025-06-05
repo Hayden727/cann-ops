@@ -6,7 +6,7 @@
 
 ## 接口原型
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnMaxPool3dWithArgmaxGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMaxPool3dWithArgmax”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnMaxPool3dWithArgmaxGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMaxPool3dWithArgmax”接口执行计算。
 
 * `aclnnStatus aclnnMaxPool3dWithArgmaxGetWorkspaceSize(const aclTensor* self, const aclIntArray* kernelSize, const aclIntArray* stride, const aclIntArray* padding, const aclIntArray* dilation, bool ceilMode, aclTensor* out, aclTensor* indices, uint64_t* workspaceSize, aclOpExecutor** executor);`
 * `aclnnStatus aclnnMaxPool3dWithArgmax(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream);`
@@ -39,19 +39,18 @@
 
 * **参数说明**：
   
-  * self(aclTensor*, 计算输入): 输入Tensor，Device侧aclTensor。数据类型仅支持FLOAT32、FLOAT16、BFLOAT16。shape支持4D、5D。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
+  * self(aclTensor*, 计算输入): 输入Tensor，Device侧aclTensor。数据类型仅支持FLOAT32、FLOAT16、BFLOAT16。shape支持4D、5D。支持非连续的Tensor，数据格式支持ND。
   * kernelSize(aclIntArray*, 计算输入): 表示最大池化的窗口大小，数组长度必须为1或3，且数组元素必须都大于0。
   * stride(aclIntArray*, 计算输入): 窗口移动的步长，数组长度必须为0，1或3，且数组元素必须都大于0。当数组的长度为0时，内部会取kernelSize的值作为strides。
   * padding(aclIntArray*, 计算输入): 每一条边补充的层数，补充的位置填写“负无穷”。数组长度必须为1或3，且数组元素必须都大于等于0且小于等于kernelSize/2。
   * dilation(aclIntArray*, 计算输入): 控制窗口中元素的步幅，数组长度必须为1或3，值仅支持1。
   * ceilMode(bool, 计算输入): 为True时表示计算输出形状时用向上取整的方法，为False时则表示向下取整。
-  * out(aclTensor \*, 计算输出): 输出Tensor，是Device侧aclTensor。池化后的结果。数据类型仅支持FLOAT32、FLOAT16、BFLOAT16和self保持一致。shape由上述公式推导出。[数据格式](common/数据格式.md)支持ND，与self保持一致。
-  * indices(aclTensor \*, 计算输出): 输出Tensor，是Device侧aclTensor。最大值的索引位置组成的Tensor。数据类型仅支持INT32。shape和out保持一致。[数据格式](common/数据格式.md)支持ND，与self保持一致。
-  * workspaceSize(uint64_t \*, 出参): 返回需要在Device侧申请的workspace大小。
+  * out(aclTensor \*, 计算输出): 输出Tensor，是Device侧aclTensor。池化后的结果。数据类型仅支持FLOAT32、FLOAT16、BFLOAT16和self保持一致。shape由上述公式推导出。数据格式支持ND，与self保持一致。
+  * indices(aclTensor \*, 计算输出): 输出Tensor，是Device侧aclTensor。最大值的索引位置组成的Tensor。数据类型仅支持INT32。shape和out保持一致。数据格式aceSize(uint64_t \*, 出参): 返回需要在Device侧申请的workspace大小。
   * executor(aclOpExecutor \*\*, 出参): 返回op执行器，包含了算子计算流程。
 * **返回值**：
   
-  aclnnStatus: 返回状态码，具体参见[aclnn返回码](common/aclnn返回码.md)。
+  aclnnStatus: 返回状态码。
 
 ```
   第一段接口完成入参校验，出现以下场景时报错：
@@ -85,7 +84,7 @@
   * stream(aclrtStream, 入参): 指定执行任务的 AscendCL Stream流。
 - **返回值：**
   
-  aclnnStatus: 返回状态码，具体参见[aclnn返回码](common/aclnn返回码.md)。
+  aclnnStatus: 返回状态码，具体参见aclnn返回码。
 
 ## 约束与限制
 

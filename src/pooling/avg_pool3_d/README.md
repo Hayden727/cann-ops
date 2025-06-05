@@ -9,12 +9,16 @@
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AvgPool3d</td></tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">self</td><td align="center">-</td><td align="center">float32</td><td align="center">NCDHW</td></tr>
-<tr></tr>
+<tr><td rowspan="7" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">self</td><td align="center">1 * 1 * 2 * 2 * 2</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">kernelSize</td><td align="center">2 * 2 * 2</td><td align="center">int64_t</td><td align="center">ND</td></tr>
+<tr><td align="center">stride</td><td align="center">2 * 2 * 2</td><td align="center">int64_t</td><td align="center">ND</td></tr>
+<tr><td align="center">ceilMode</td><td align="center">-</td><td align="center">bool</td><td align="center">-</td></tr>
+<tr><td align="center">countIncludePad</td><td align="center">-</td><td align="center">bool</td><td align="center">-</td></tr>
+<tr><td align="center">divisorOverride</td><td align="center">-</td><td align="center">int64_t</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">-</td><td align="center">float32</td><td align="center">NCDHW</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">avg_pool3_d</td></tr>
 </table>

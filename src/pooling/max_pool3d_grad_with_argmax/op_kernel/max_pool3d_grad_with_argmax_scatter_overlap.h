@@ -8,7 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-
 /* !
  * \file max_pool3d_grad_with_argmax_scatter_overlap.h
  * \brief
@@ -98,9 +97,9 @@ class MaxPoolGradWithArgScatterOverlap : public MaxPoolGradWithArgScatterBase<TX
   __aicore__ inline void CalcBlock() {
     this->CopyInGrad();
     this->CopyInArgmax();
-    pipe_barrier(PIPE_ALL);
+    AscendC::PipeBarrier<PIPE_ALL>();
     CalcOutOffset();
-    pipe_barrier(PIPE_ALL);
+    AscendC::PipeBarrier<PIPE_ALL>();
   }
 
   __aicore__ inline void InitCastUbBuffer() {
@@ -200,7 +199,7 @@ class MaxPoolGradWithArgScatterOverlap : public MaxPoolGradWithArgScatterBase<TX
     }
 
     if constexpr (!is_same<TY, float>::value) {
-      pipe_barrier(PIPE_ALL);
+      AscendC::PipeBarrier<PIPE_ALL>();
       DataCacheCleanAndInvalid<float, CacheLine::ENTIRE_DATA_CACHE>(this->workspaceGm);
       InitCastUbBuffer();
       ProcessCast();

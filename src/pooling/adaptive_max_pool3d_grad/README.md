@@ -2,23 +2,16 @@
 本样例通过`Ascend C`编程语言实现了`AdaptiveMaxPool3DGrad`算子。
 
 ### 算子描述
-`AdaptiveMaxPool3DGrad`算子返回两个数据相加的结果。
+`AdaptiveMaxPool3DGrad`算子正向自适应最大池化的反向传播，将梯度回填到每个自适应窗口最大值的坐标处，相同坐标处累加。
 
 ### 算子规格描述
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AdaptiveMaxPool3DGrad</td></tr>
 </tr>
-<tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">gradOutput</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
 <tr><td align="center">self</td><td align="center">1 * 1 * 2 * 2 * 2</td><td align="center">float32</td><td align="center">ND</td></tr>
 <tr><td align="center">indices</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
-<tr></tr>
-<tr></tr>
-<tr></tr>
-<tr></tr>
-<tr></tr>
-</tr>
-</tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">gradInput</td><td align="center">1 * 1 * 1 * 1 * 1</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">adaptive_max_pool3d_grad</td></tr>
@@ -26,7 +19,7 @@
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas A2训练系列产品
+- Atlas A2 训练系列产品/Atlas 800I A2 推理产品
 
 ### 目录结构介绍
 ```

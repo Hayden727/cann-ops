@@ -1,6 +1,6 @@
 ## 概述
 
-通过aclnn调用的方式调用AddCustom算子。
+通过aclnn调用的方式调用aclnnMaxPool3dGradWithArgmax算子。
 
 ## 目录结构介绍
 
@@ -21,12 +21,12 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnAddCustomGetWorkspaceSize(const aclTensor *x, const aclTensor *y, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnMaxPool3dWithArgmaxBackwardGetWorkspaceSize(const aclTensor *gradOutput, const aclTensor *self, const aclTensor *indices, const aclIntArray *kernelSize, const aclIntArray *stride, const aclIntArray *padding, const aclIntArray *dilation, bool ceilMode, aclTensor *gradInput, uint64_t *workspaceSize, aclOpExecutor **executor);
 // 执行算子
-aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
+aclnnStatus aclnnMaxPool3dWithArgmaxBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream);
 ```
 
-其中aclnnAddCustomGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnAddCustom执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
+其中aclnnMaxPool3dWithArgmaxBackwardGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnMaxPool3dWithArgmaxBackward执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
 ## 运行样例算子
   **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
@@ -48,15 +48,7 @@ aclnnStatus aclnnAddCustom(void *workspace, int64_t workspaceSize, aclOpExecutor
   - 样例执行
     
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
-    
-    ```bash
-    mkdir -p build
-    cd build
-    cmake .. && make
-    ./execute_add_op
-    ```
-    
-    用户亦可参考run.sh脚本进行编译与运行。
+    用户可参考run.sh脚本进行编译与运行。
     
     ```bash
     bash run.sh

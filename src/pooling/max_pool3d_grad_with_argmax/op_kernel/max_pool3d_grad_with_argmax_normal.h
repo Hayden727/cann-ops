@@ -226,7 +226,7 @@ __aicore__ inline void Process() {
     LocalTensor<uint8_t> totalUb = totalBuf.Get<uint8_t>();
     LocalTensor<int32_t> xIndexUb = totalUb[ubOffset_.xIndex].ReinterpretCast<int32_t>();
     GenXInitIndex(xIndexUb);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     for (uint64_t totalIndex = 0; totalIndex < para_.totalCnt; totalIndex++) {
         if (GetBlockIdx() == totalIndex % GetBlockNum()) {
             core_.ncCntIndex = totalIndex / (para_.doCnt * para_.hoCnt * para_.woCnt);
@@ -395,25 +395,25 @@ __aicore__ inline void CalcBlock() {
                                     khId * para_.baseWi * para_.baseNc +
                                     kwId * para_.baseNc;
                 Img2ColPart(tmpIndexUb, xIndexUb[offsetIn]);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Compare(maskUb, tmpIndexUb, argmaxTranUb, CMPMODE::EQ,
                         AlignUp(block_.dohowoShape * para_.baseNc, B32_VECTOR_MASK));
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 if constexpr (is_same<TGrad, float>::value) {
                     SelectGrad(tmpGradUb, maskUb, gradTranUb);
                 } else {
                     SelectGrad(tmpGradUb[block_.dohowoShape * para_.baseNc], maskUb, gradTranUb);
-                    pipe_barrier(PIPE_V);
+                    AscendC::PipeBarrier<PIPE_V>();
                     Cast(tmpGradUbFp32, tmpGradUb[block_.dohowoShape * para_.baseNc], RoundMode::CAST_NONE,
                          block_.dohowoShape * para_.baseNc);
                 }
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 // ((doShape * hoShape * woShape), 64) -> (diShape * hiShape * Align(wiShape), 64)
                 uint64_t offsetOut = kdId * para_.baseHi * para_.baseWiAlign * para_.baseNc +
                                      khId * para_.baseWiAlign * para_.baseNc + 
                                      kwId * para_.baseNc;
                 Col2ImgPart(yTranUbFp32[offsetOut], tmpGradUbFp32);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
             }
         }
     }
@@ -422,7 +422,7 @@ __aicore__ inline void CalcBlock() {
     WaitFlag<HardEvent::V_MTE2>(eventIdVToMTE2);
 
     DePad(yTranUbFp32);  // 可以考虑转移到cast后
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if constexpr (!IsOverlap) {
         if constexpr (is_same<TY, half>::value) {
             Cast(yTranUb, yTranUbFp32, RoundMode::CAST_NONE, para_.baseDiHiWiAlign * para_.baseNc);  // 也可以只cast valid
@@ -455,17 +455,17 @@ __aicore__ inline void CalcBlock() {
 __aicore__ inline void GenXInitIndex(LocalTensor<int32_t>& dstLocal) {
     // 1.Dup first Value
     Duplicate(dstLocal, (int32_t)0, para_.baseNc);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // 2. Gen wiShape * vL
     uint64_t wIdx = 1;
     for (; wIdx * NUM_TWO <= para_.baseWi; wIdx = wIdx * NUM_TWO) {
         Adds(dstLocal[wIdx * para_.baseNc], dstLocal, (int32_t)wIdx, wIdx * para_.baseNc);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
     if (wIdx != para_.baseWi) {
         Adds(dstLocal[wIdx * para_.baseNc], dstLocal, (int32_t)wIdx, (para_.baseWi - wIdx) * para_.baseNc);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     // 3. Gen hiShape * wiShape * vL
@@ -473,25 +473,25 @@ __aicore__ inline void GenXInitIndex(LocalTensor<int32_t>& dstLocal) {
     for (; hIdx * NUM_TWO <= para_.baseHi; hIdx = hIdx * NUM_TWO) {
         Adds(dstLocal[hIdx * para_.baseWi * para_.baseNc], dstLocal, (int32_t)(hIdx * para_.wiDim),
              hIdx * para_.baseWi * para_.baseNc); // offset hIdx * para_.baseWi * para_.baseNc
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
     if (hIdx != para_.baseHi) {
         Adds(dstLocal[hIdx * para_.baseWi * para_.baseNc], dstLocal, (int32_t)(hIdx * para_.wiDim),
              (para_.baseHi - hIdx) * para_.baseWi * para_.baseNc);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
     // 4. Gen diShape * hiShape * wiShape * vL
     uint64_t dIdx = 1;
     for (; dIdx * NUM_TWO <= para_.baseDi; dIdx = dIdx * NUM_TWO) {
         Adds(dstLocal[dIdx * para_.baseHi * para_.baseWi * para_.baseNc], dstLocal,
              (int32_t)(dIdx * para_.hiDim * para_.wiDim), dIdx * para_.baseHi * para_.baseWi * para_.baseNc);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
     if (dIdx != para_.baseDi) {
       Adds(dstLocal[dIdx * para_.baseHi * para_.baseWi * para_.baseNc], dstLocal,
            (int32_t)(dIdx * para_.hiDim * para_.wiDim),
            (para_.baseDi - dIdx) * para_.baseHi * para_.baseWi * para_.baseNc);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
 }
 

@@ -51,16 +51,8 @@ aclnnStatus aclnnAvgPool3dBackward(void* workspace, uint64_t workspaceSize, aclO
     ```
   - 样例执行
     
-    样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
-    
-    ```bash
-    mkdir -p build
-    cd build
-    cmake .. && make
-    ./execute_avgpool3dgrad_op
-    ```
-    
-    用户亦可参考run.sh脚本进行编译与运行。
+    样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。    
+    用户可参考run.sh脚本进行编译与运行。
     
     ```bash
     bash run.sh

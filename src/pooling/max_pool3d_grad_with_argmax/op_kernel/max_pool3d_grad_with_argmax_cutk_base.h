@@ -167,7 +167,7 @@ __aicore__ inline void GenKernelIndicesWithTranspose(const LocalTensor<TArgmax>&
 
     // 1. Dup (VL), full of firstValue
     Duplicate(dstLocal, firstValue, vlValue);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // 2. Adds to (countAligned, VL)
     // Binary split in the w direction
@@ -176,13 +176,13 @@ __aicore__ inline void GenKernelIndicesWithTranspose(const LocalTensor<TArgmax>&
     for (; i * BINARY_MUL <= colCount; i = i * BINARY_MUL) {
         Adds(dstLocal[i * vlValue], dstLocal[0], increaseWValue * ivIndex, i * vlValue);
         ivIndex *= BINARY_MUL;
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
     
     if (i != colCount) {
         Adds(dstLocal[i * vlValue], dstLocal[0], increaseWValue * ivIndex, (colCount-i) * vlValue);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // Binary split in the h direction
     int32_t j = 1;
@@ -190,15 +190,15 @@ __aicore__ inline void GenKernelIndicesWithTranspose(const LocalTensor<TArgmax>&
     for (; j * BINARY_MUL <= rowCount; j = j * BINARY_MUL) {
         Adds(dstLocal[j * colCount * vlValue], dstLocal[0], increaseHValue * jvIndex, j * vlValue * colCount);
         jvIndex *= BINARY_MUL;
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if (j != rowCount) {
         Adds(dstLocal[j * colCount * vlValue], dstLocal[0], increaseHValue * jvIndex,
              (rowCount-j) * vlValue * colCount);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // Binary split in the d direction
     int32_t k = 1;
@@ -207,14 +207,14 @@ __aicore__ inline void GenKernelIndicesWithTranspose(const LocalTensor<TArgmax>&
         Adds(dstLocal[k * rowCount * colCount * vlValue], dstLocal[0], increaseDValue * kvIndex,
              k * vlValue * colCount * rowCount);
         kvIndex *= BINARY_MUL;
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if (k != dCount) {
         Adds(dstLocal[k * rowCount * colCount * vlValue], dstLocal[0], increaseDValue * kvIndex,
              (dCount-k) * vlValue * colCount * rowCount);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void CopyInArgmax()
@@ -351,23 +351,23 @@ __aicore__ inline void  SelectGradOut(const LocalTensor<TGrad>& gradTranUb,
 {
     LocalTensor<uint8_t> maskUb = maskBuf.Get<uint8_t>();
     Compare(maskUb, indexColUb, argmaxTranUb, CMPMODE::EQ, baseDataNum);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if constexpr (std::is_same<TGrad, bfloat16_t>::value) {
         Select(tmpGradUb.template ReinterpretCast<half>()[baseDataNum], maskUb,
                gradTranUb.template ReinterpretCast<half>(), static_cast<half>(ZERO),
                SELMODE::VSEL_TENSOR_SCALAR_MODE, baseDataNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Cast(tmpGradUb, tmpGradUb.template ReinterpretCast<bfloat16_t>()[baseDataNum], RoundMode::CAST_NONE,
              baseDataNum);
     } else if constexpr (std::is_same<TGrad, half>::value) {
         Select(tmpGradUb.template ReinterpretCast<half>()[baseDataNum], maskUb, gradTranUb, static_cast<half>(ZERO),
                SELMODE::VSEL_TENSOR_SCALAR_MODE, baseDataNum);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Cast(tmpGradUb, tmpGradUb.ReinterpretCast<half>()[baseDataNum], RoundMode::CAST_NONE, baseDataNum);
     } else if constexpr (std::is_same<TGrad, float>::value) {
         Select(tmpGradUb, maskUb, gradTranUb, ZERO, SELMODE::VSEL_TENSOR_SCALAR_MODE, baseDataNum);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void CalcDepadParamsD(uint64_t kdIdx) {

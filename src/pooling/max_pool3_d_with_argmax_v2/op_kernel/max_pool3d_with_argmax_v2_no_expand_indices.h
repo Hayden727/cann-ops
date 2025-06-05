@@ -558,7 +558,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Ext
   SetFlag<HardEvent::MTE2_V>(eventIDMTE2ToV);
   WaitFlag<HardEvent::MTE2_V>(eventIDMTE2ToV);
 #if ORIG_DTYPE_X == DT_BF16
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 #endif
   if constexpr (IS_PAD == ENABLE) {
     uint64_t padLoopNum = nextExtPlPadFactor / VEC_INST_CAL_DATA_NUM;
@@ -815,7 +815,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Cop
     CopyInputHxRepeat(xLocal, xGmOffset, extParams, padExtParams);
   }
 #if ORIG_DTYPE_X == DT_BF16
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 #endif
 }
 
@@ -988,7 +988,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Poo
         // init indicesLocal
         Duplicate(indicesLocal[indicesDhVecOffset], curDhVecValue, mask, vecRepeatTimes * INT32_DIV_T2_SIZE,
                   1, indicesRepeatStride);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Add(indicesLocal[indicesDhVecOffset], indicesLocal[indicesDhVecOffset], indicesTemplateLocal, mask,
             vecRepeatTimes * INT32_DIV_T2_SIZE,
             {1, 1, 1, indicesRepeatStride, indicesRepeatStride, indicesRepeatStride});
@@ -998,7 +998,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Poo
         InitMaxCopyParams.blockLen = curNcFactorAlign / BLOCK_ALIGN_T2;
         InitMaxCopyParams.srcStride = curNcFactorAlign * (sw - 1) / BLOCK_ALIGN_T2;
         DataCopy(maxLocal[maxDhVecOffset], inputLocal[inputDhVecOffset], InitMaxCopyParams);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         for (uint64_t k = 1; k < kd_ * kh_ * kw; k++) {
           kdOffset = k / (kh_ * kw);
           khOffset = k % (kh_ * kw) / kw;
@@ -1014,7 +1014,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Poo
                                         (kwOffset);
           Duplicate(indicesUpdateLocal, indicesKernelOffset, mask, vecRepeatTimes * INT32_DIV_T2_SIZE,
                     1, indicesRepeatStride);
-          pipe_barrier(PIPE_V);
+          AscendC::PipeBarrier<PIPE_V>();
           Add(indicesUpdateLocal, indicesUpdateLocal, indicesTemplateLocal,
               mask, vecRepeatTimes * INT32_DIV_T2_SIZE,
               {1, 1, 1, indicesRepeatStride, indicesRepeatStride, indicesRepeatStride});
@@ -1039,7 +1039,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Poo
               setValueNum is the kernel num need to set gt mask.
             */
             if (curPlPadFactor && setValueNum && (kwOffset + (setValueNum - 1) * sw - curPlPadFactor == 0)) {
-              pipe_barrier(PIPE_V);
+              AscendC::PipeBarrier<PIPE_V>();
               uint64_t setValueNumLoop = (setValueNum - 1) / VEC_INST_CAL_MASK_NUM;
               uint64_t setValueNumTail = (setValueNum - 1) % VEC_INST_CAL_MASK_NUM;
               uint64_t orMask[2];
@@ -1057,13 +1057,13 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Poo
           // cmp_ge
           Compare(geMaskUb.template ReinterpretCast<uint8_t>(), inputLocal[inputKenelOffset], inputLocal[inputKenelOffset],
                   CMPMODE::EQ, mask, vecRepeatTimes, {1, 1, 1, 1, kernelRepeatStride, kernelRepeatStride});
-          pipe_barrier(PIPE_V);
+          AscendC::PipeBarrier<PIPE_V>();
           // not
           Not(geMaskUb, geMaskUb, curWyFactorAlign * VEC_INST_CAL_MASK_NUM);
-          pipe_barrier(PIPE_V);
+          AscendC::PipeBarrier<PIPE_V>();
           // or
           Or(gtMaskUb, gtMaskUb, geMaskUb, curWyFactorAlign * VEC_INST_CAL_MASK_NUM);
-          pipe_barrier(PIPE_V);
+          AscendC::PipeBarrier<PIPE_V>();
           // update indices
           Select(indicesLocal[indicesDhVecOffset].ReinterpretCast<float>(), gtMaskUb,
                 indicesUpdateLocal.ReinterpretCast<float>(),
@@ -1269,7 +1269,7 @@ __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::Cop
 template <typename T1, typename T2, const uint32_t IS_PAD>
 __aicore__ inline void MaxPool3DWithArgmaxV2NoExpandIndices<T1, T2, IS_PAD>::CopyMaxOut(LocalTensor<T2> maxOutLocal) {
 #if ORIG_DTYPE_X == DT_BF16
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 #endif
   uint64_t ncDimStride = dy * hy * wy;
   uint64_t ncOffset = curNcIdx * ncFactor * ncDimStride;

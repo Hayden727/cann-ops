@@ -107,7 +107,7 @@ __aicore__ inline void DepadCopyKDH(const LocalTensor<T>& yTranUb, const LocalTe
                  {1, 1, VL_FP32 * sizeof(T) / BLOCK_SIZE, VL_FP32 * sizeof(T) / BLOCK_SIZE});
         }
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 template<typename T>
@@ -139,7 +139,7 @@ __aicore__ inline void CalcBlockKDH(const GlobalTensor<T>& dstGm)
     LocalTensor<TArgmax> argmaxTranUb = this->argmaxTransposeBuf.template Get<TArgmax>();
     LocalTensor<TGrad> gradTranUb = this->gradTransposeBuf.template Get<TGrad>();
     this->CopyInData(argmaxTranUb, gradTranUb);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     for (uint64_t kdIdx = 0; kdIdx < this->params_.kd; kdIdx++) {
         for (uint64_t khIdx = 0; khIdx < this->params_.kh; khIdx++) {
             CalcGradKDH<T>(dstGm, argmaxTranUb, gradTranUb, kdIdx, khIdx);
@@ -180,7 +180,7 @@ __aicore__ inline void Img2ColPartKDH(const LocalTensor<TArgmax>& indexColUb,
             }
         }
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void Col2ImgPartKDH(const LocalTensor<float>& yTranUb,
@@ -218,7 +218,7 @@ __aicore__ inline void Col2ImgPartKDH(const LocalTensor<float>& yTranUb,
             }
         }
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void CalcGradSubProcessKDH(const LocalTensor<TArgmax>& indexImgUb,
@@ -275,11 +275,11 @@ __aicore__ inline void  CalcGradKDH(const GlobalTensor<T>& dstGm,
         // Depad: remove invalid data
         if constexpr (!isOverlap && (std::is_same<TY, bfloat16_t>::value)) {
             Cast(yTranUb.ReinterpretCast<TY>(), yTranUb, RoundMode::CAST_RINT, this->baseNDHWpAlign);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             DepadCopyKDH<half>(yTranUb.ReinterpretCast<half>(), yTranDepadUb.ReinterpretCast<half>());
         } else if constexpr (!isOverlap && std::is_same<TY, half>::value) {
             Cast(yTranUb.ReinterpretCast<TY>(), yTranUb, RoundMode::CAST_NONE, this->baseNDHWpAlign);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             DepadCopyKDH<TY>(yTranUb.ReinterpretCast<TY>(), yTranDepadUb.ReinterpretCast<TY>());
         } else {
             DepadCopyKDH<float>(yTranUb, yTranDepadUb);
