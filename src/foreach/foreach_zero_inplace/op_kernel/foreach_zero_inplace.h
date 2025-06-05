@@ -130,18 +130,18 @@ __aicore__ inline void ForeachZeroInplaceND<T>::ComputeAndCopyOut(uint16_t index
     Duplicate(dataLocal, (T)0, dataCount);
 
     // Transport can be performed only after the Muls is complete.
-    event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID1);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+    event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+    SetFlag<HardEvent::V_MTE3>(eventID1);
+    WaitFlag<HardEvent::V_MTE3>(eventID1);
     if (isRemainder) {
         DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(T)), 0, 0, 0}; 
         DataCopyPad(inTensorsGM[index * maxDataCount], dataLocal, copyParams);
     } else {
         DataCopy(inTensorsGM[index * maxDataCount], dataLocal, dataCount);
     }
-    event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
     dataQueue.FreeTensor(dataLocal);
 }
 
