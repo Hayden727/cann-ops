@@ -184,8 +184,9 @@ private:
     //生成等差数列：-2， 0， 2， 4， 6， 8， 10，12，...
     LocalTensor<int32_t> temp = tempUB.template Get<int32_t>(maskCount);
 
-    set_flag(PIPE_V, PIPE_S, 0);
-    wait_flag(PIPE_V, PIPE_S, 0);
+    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
+    SetFlag<HardEvent::V_S>(eventIdVToS);
+    WaitFlag<HardEvent::V_S>(eventIdVToS);
     ArithProgression<int32_t>(temp, (int32_t)-2, (int32_t)2, maskCount);
 
     // 加上地址偏移offset = imagbase-realbase：offset-2, offset, offset+2, offset+4, ..., offset+12, ...
@@ -217,18 +218,21 @@ private:
     int32_t realCountPerLoop = gatherCountPerLoop / 2;
     int32_t imagCountPerLoop = gatherCountPerLoop / 2;
 
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    event_t eventIdMTE3ToMTE2ID0 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    event_t eventIdMTE3ToMTE2ID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
+
     int ping = 1;
     int repeats = (complexCount + gatherCountPerLoop - 1) / gatherCountPerLoop;
 
     for (int i = 0; i < repeats; i++) {
-      event_t event_id = ping ? EVENT_ID0 : EVENT_ID1;
+      event_t event_id = ping ? eventIdMTE3ToMTE2ID0 : eventIdMTE3ToMTE2ID1;
       auto complexUB = ping ? complexPing : complexPong;
-     auto aRealUB = ping ? aRealPing : aRealPong;
-     auto aImagUB = ping ? aImagPing : aImagPong;
-     auto bRealUB = ping ? bRealPing : bRealPong;
-     auto bImagUB = ping ? bImagPing : bImagPong;
+      auto aRealUB = ping ? aRealPing : aRealPong;
+      auto aImagUB = ping ? aImagPing : aImagPong;
+      auto bRealUB = ping ? bRealPing : bRealPong;
+      auto bImagUB = ping ? bImagPing : bImagPong;
 
       int32_t copyLen = realCountPerLoop * sizeof(T);
 
@@ -237,44 +241,40 @@ private:
       }
 
       int32_t nBlocks = (copyLen + BLOCK_SIZE - 1) / BLOCK_SIZE;
-      wait_flag(PIPE_MTE3, PIPE_MTE2, event_id);
+      WaitFlag<HardEvent::MTE3_MTE2>(event_id);
       
-      copy_gm_to_ubuf((__ubuf__ T*)aRealUB.GetPhyAddr(), (__gm__ T*)aRealGm[realOffset + i * realCountPerLoop].GetPhyAddr(),
-                      0, 1, nBlocks, 0, 0);
-      copy_gm_to_ubuf((__ubuf__ T*)aImagUB.GetPhyAddr(), (__gm__ T*)aImagGm[imagOffset + i * imagCountPerLoop].GetPhyAddr(),
-                      0, 1, nBlocks, 0, 0);
-      copy_gm_to_ubuf((__ubuf__ T*)bRealUB.GetPhyAddr(), (__gm__ T*)bRealGm[realOffset + i * realCountPerLoop].GetPhyAddr(),
-                      0, 1, nBlocks, 0, 0);
-      copy_gm_to_ubuf((__ubuf__ T*)bImagUB.GetPhyAddr(), (__gm__ T*)bImagGm[imagOffset + i * imagCountPerLoop].GetPhyAddr(),
-                      0, 1, nBlocks, 0, 0);
+      DataCopy(aRealUB, aRealGm[realOffset + i * realCountPerLoop], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+      DataCopy(aImagUB, aImagGm[imagOffset + i * imagCountPerLoop], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+      DataCopy(bRealUB, bRealGm[realOffset + i * realCountPerLoop], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+      DataCopy(bImagUB, bImagGm[imagOffset + i * imagCountPerLoop], {1, static_cast<uint16_t>(nBlocks), 0, 0});
 
-      set_flag(PIPE_MTE2, PIPE_V, event_id);
-      wait_flag(PIPE_MTE2, PIPE_V, event_id);
+      SetFlag<HardEvent::MTE2_V>(event_id);
+      WaitFlag<HardEvent::MTE2_V>(event_id);
 
       aRealUB = aRealUB - bImagUB;
       aImagUB = aImagUB + bRealUB;
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
 
       Gather(complexUB, aRealUB, mask, 0, 2 * copyLen / sizeof(T));
       if (tiling->normalized) {
         Muls(complexUB, complexUB, tiling->rootNfft, 2 * copyLen / sizeof(T));
       }
 
-      set_flag(PIPE_V, PIPE_MTE3, event_id);
-      wait_flag(PIPE_V, PIPE_MTE3, event_id);
+      SetFlag<HardEvent::V_MTE3>(event_id);
+      WaitFlag<HardEvent::V_MTE3>(event_id);
 
       int32_t loops = copyLen / sizeof(T) / nFactor;
 
-      copy_ubuf_to_gm_align_b32((__gm__ T*)outputGm[outputOffset].GetPhyAddr(),
-                                (__ubuf__ T*)complexUB.GetPhyAddr(), 0, loops, nFactor * 2 * sizeof(T), 0, 0, 0,
-                                2 * (tiling->matmulN - nFactor) * sizeof(T));
+      DataCopyPad(outputGm[outputOffset],
+                  complexUB,
+                  {static_cast<uint16_t>(loops), static_cast<uint16_t>(nFactor * 2 * sizeof(T)), 0, static_cast<uint16_t>((tiling->matmulN - nFactor) * 2 * sizeof(T))});
 
-      set_flag(PIPE_MTE3, PIPE_MTE2, event_id);
+      SetFlag<HardEvent::MTE3_MTE2>(event_id);
       outputOffset += 2 * loops * tiling->matmulN;
       ping = 1 - ping;
     }
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
   }
 
   __aicore__ inline void GatherForSmallNFactorNonAlign(int64_t realOffset, int64_t imagOffset, int64_t outputOffset,
@@ -286,13 +286,16 @@ private:
     int32_t realCountPerLoop = gatherCountPerLoop / 2;
     int32_t imagCountPerLoop = gatherCountPerLoop / 2;
 
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    event_t eventIdMTE3ToMTE2ID0 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    event_t eventIdMTE3ToMTE2ID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
+
     int ping = 1;
     int repeats = (complexCount + gatherCountPerLoop - 1) / gatherCountPerLoop;
 
     for (int i = 0; i < repeats; i++) {
-      event_t event_id = ping ? EVENT_ID0 : EVENT_ID1;
+      event_t event_id = ping ? eventIdMTE3ToMTE2ID0 : eventIdMTE3ToMTE2ID1;
       auto complexUB = ping ? complexPing : complexPong;
       auto aRealUB = ping ? aRealPing : aRealPong;
       auto aImagUB = ping ? aImagPing : aImagPong;
@@ -304,31 +307,20 @@ private:
         copyLen = (mFactor * nFactorAlign - realCountPerLoop * i) * sizeof(T);
       }
 
-      wait_flag(PIPE_MTE3, PIPE_MTE2, event_id);
+      WaitFlag<HardEvent::MTE3_MTE2>(event_id);
       int32_t loops = copyLen / sizeof(T) / nFactorAlign;
-      copy_gm_to_ubuf_align_b32((__ubuf__ T*)aRealUB.GetPhyAddr(),
-                                (__gm__ T*)aRealGm[realOffset].GetPhyAddr(),
-                                0, loops, nFactor * sizeof(T), 0, 0, 0, 0);
-
-      copy_gm_to_ubuf_align_b32((__ubuf__ T*)aImagUB.GetPhyAddr(),
-                                (__gm__ T*)aImagGm[imagOffset].GetPhyAddr(),
-                                0, loops, nFactor * sizeof(T), 0, 0, 0, 0);
-                                
-      copy_gm_to_ubuf_align_b32((__ubuf__ T*)bRealUB.GetPhyAddr(),
-                                (__gm__ T*)bRealGm[realOffset].GetPhyAddr(),
-                                0, loops, nFactor * sizeof(T), 0, 0, 0, 0);
-
-      copy_gm_to_ubuf_align_b32((__ubuf__ T*)bImagUB.GetPhyAddr(),
-                                (__gm__ T*)bImagGm[imagOffset].GetPhyAddr(),
-                                0, loops, nFactor * sizeof(T), 0, 0, 0, 0);
+      DataCopyPad(aRealUB, aRealGm[realOffset], {static_cast<uint16_t>(loops), static_cast<uint16_t>(nFactor * sizeof(T)), 0, 0}, {false, 0, 0, 0});
+      DataCopyPad(aImagUB, aImagGm[imagOffset], {static_cast<uint16_t>(loops), static_cast<uint16_t>(nFactor * sizeof(T)), 0, 0}, {false, 0, 0, 0});
+      DataCopyPad(bRealUB, bRealGm[realOffset], {static_cast<uint16_t>(loops), static_cast<uint16_t>(nFactor * sizeof(T)), 0, 0}, {false, 0, 0, 0});
+      DataCopyPad(bImagUB, bImagGm[imagOffset], {static_cast<uint16_t>(loops), static_cast<uint16_t>(nFactor * sizeof(T)), 0, 0}, {false, 0, 0, 0});
       realOffset += loops * nFactor;
       imagOffset += loops * nFactor;
-      set_flag(PIPE_MTE2, PIPE_V, event_id);
-      wait_flag(PIPE_MTE2, PIPE_V, event_id);
+      SetFlag<HardEvent::MTE2_V>(event_id);
+      WaitFlag<HardEvent::MTE2_V>(event_id);
 
       aRealUB = aRealUB - bImagUB;
       aImagUB = aImagUB + bRealUB;
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
       
       int32_t count = 2 * nFactorAlign * loops;
 
@@ -338,20 +330,20 @@ private:
         Muls(complexUB, complexUB, tiling->rootNfft, count);
       }
 
-      set_flag(PIPE_V, PIPE_MTE3, event_id);
-      wait_flag(PIPE_V, PIPE_MTE3, event_id);
+      SetFlag<HardEvent::V_MTE3>(event_id);
+      WaitFlag<HardEvent::V_MTE3>(event_id);
 
       int32_t srcGap = (nFactorAlign - nFactor) * 2 * sizeof(T) > BLOCK_SIZE ? 1 : 0;
-      copy_ubuf_to_gm_align_b32((__gm__ T*)outputGm[outputOffset].GetPhyAddr(),
-                                (__ubuf__ T*)complexUB.GetPhyAddr(), 0, loops, nFactor * 2 * sizeof(T), 0, 0, srcGap,
-                                2 * (tiling->matmulN - nFactor) * sizeof(T));
+      DataCopyPad(outputGm[outputOffset],
+                  complexUB,
+                  {static_cast<uint16_t>(loops), static_cast<uint16_t>(nFactor * 2 * sizeof(T)), static_cast<uint16_t>(srcGap), static_cast<uint16_t>((tiling->matmulN - nFactor) * 2 * sizeof(T))});
 
-      set_flag(PIPE_MTE3, PIPE_MTE2, event_id);
+      SetFlag<HardEvent::MTE3_MTE2>(event_id);
       outputOffset += 2 * loops * tiling->matmulN;
       ping = 1 - ping;
     }
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
   }
 
   __aicore__ inline void GatherForLargeNFactorAlign(int64_t realOffset, int64_t imagOffset, int64_t outputOffset,
@@ -360,13 +352,16 @@ private:
     int32_t realCountPerLoop = gatherCountPerLoop / 2;
     int32_t imagCountPerLoop = gatherCountPerLoop / 2;
 
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    event_t eventIdMTE3ToMTE2ID0 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    event_t eventIdMTE3ToMTE2ID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
+
     int ping = 1;
     for (int m = 0; m < mFactor; m++) {
       int repeats = (nFactor + realCountPerLoop - 1) / realCountPerLoop;
       for (int i = 0; i < repeats; i++) {
-        event_t event_id = ping ? EVENT_ID0 : EVENT_ID1;
+        event_t event_id = ping ? eventIdMTE3ToMTE2ID0 : eventIdMTE3ToMTE2ID1;
         auto complexUB = ping ? complexPing : complexPong;
         auto aRealUB = ping ? aRealPing : aRealPong;
         auto aImagUB = ping ? aImagPing : aImagPong;
@@ -379,29 +374,18 @@ private:
         }
 
         int32_t nBlocks = (copyLen + BLOCK_SIZE - 1) / BLOCK_SIZE;
-        wait_flag(PIPE_MTE3, PIPE_MTE2, event_id);
-        copy_gm_to_ubuf((__ubuf__ T*)aRealUB.GetPhyAddr(),
-                        (__gm__ T*)aRealGm[realOffset + i * realCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
+        WaitFlag<HardEvent::MTE3_MTE2>(event_id);
+        DataCopy(aRealUB, aRealGm[realOffset + i * realCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+        DataCopy(aImagUB, aImagGm[imagOffset + i * imagCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+        DataCopy(bRealUB, bRealGm[realOffset + i * realCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+        DataCopy(bImagUB, bImagGm[imagOffset + i * imagCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
 
-        copy_gm_to_ubuf((__ubuf__ T*)aImagUB.GetPhyAddr(),
-                        (__gm__ T*)aImagGm[imagOffset + i * imagCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
-
-        copy_gm_to_ubuf((__ubuf__ T*)bRealUB.GetPhyAddr(),
-                        (__gm__ T*)bRealGm[realOffset + i * realCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
-
-        copy_gm_to_ubuf((__ubuf__ T*)bImagUB.GetPhyAddr(),
-                        (__gm__ T*)bImagGm[imagOffset + i * imagCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
-
-        set_flag(PIPE_MTE2, PIPE_V, event_id);
-        wait_flag(PIPE_MTE2, PIPE_V, event_id);
+        SetFlag<HardEvent::MTE2_V>(event_id);
+        WaitFlag<HardEvent::MTE2_V>(event_id);
 
         aRealUB = aRealUB - bImagUB;
         aImagUB = aImagUB + bRealUB;
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Gather(complexUB, aRealUB, mask, 0, 2 * copyLen / sizeof(T));
 
@@ -409,20 +393,20 @@ private:
           Muls(complexUB, complexUB, tiling->rootNfft, 2 * copyLen / sizeof(T));
         }
 
-        set_flag(PIPE_V, PIPE_MTE3, event_id);
-        wait_flag(PIPE_V, PIPE_MTE3, event_id);
+        SetFlag<HardEvent::V_MTE3>(event_id);
+        WaitFlag<HardEvent::V_MTE3>(event_id);
 
         int32_t loops = copyLen / sizeof(T) / nFactor;
 
-        copy_ubuf_to_gm_align_b32((__gm__ T*)outputGm[outputOffset + 2 * (i * copyLen) / sizeof(T) + 2 * m * nFactor].GetPhyAddr(),
-                                  (__ubuf__ T*)complexUB.GetPhyAddr(), 0, 1, copyLen * 2, 0, 0, 0, 0);
-
-        set_flag(PIPE_MTE3, PIPE_MTE2, event_id);
+        DataCopyPad(outputGm[outputOffset + 2 * (i * copyLen) / sizeof(T) + 2 * m * nFactor],
+                    complexUB,
+                    {1, static_cast<uint16_t>(copyLen * 2), 0, 0});
+        SetFlag<HardEvent::MTE3_MTE2>(event_id);
         ping = 1 - ping;
       }
     }
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
   }
 
   __aicore__ inline void GatherForLargeNFactorNonAlign(int64_t realOffset, int64_t imagOffset, int64_t outputOffset,
@@ -431,13 +415,16 @@ private:
     int32_t realCountPerLoop = gatherCountPerLoop / 2;
     int32_t imagCountPerLoop = gatherCountPerLoop / 2;
 
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    event_t eventIdMTE3ToMTE2ID0 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    event_t eventIdMTE3ToMTE2ID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    SetFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
+
     int ping = 1;
     for (int m = 0; m < mFactor; m++) {
       int repeats = (nFactor + realCountPerLoop - 1) / realCountPerLoop;
       for (int i = 0; i < repeats; i++) {
-        event_t event_id = ping ? EVENT_ID0 : EVENT_ID1;
+        event_t event_id = ping ? eventIdMTE3ToMTE2ID0 : eventIdMTE3ToMTE2ID0;
         auto complexUB = ping ? complexPing : complexPong;
         auto aRealUB = ping ? aRealPing : aRealPong;
         auto aImagUB = ping ? aImagPing : aImagPong;
@@ -450,29 +437,18 @@ private:
         }
 
         int32_t nBlocks = (copyLen + BLOCK_SIZE - 1) / BLOCK_SIZE;
-        wait_flag(PIPE_MTE3, PIPE_MTE2, event_id);
-        copy_gm_to_ubuf((__ubuf__ T*)aRealUB.GetPhyAddr(),
-                        (__gm__ T*)aRealGm[realOffset + i * realCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
+        WaitFlag<HardEvent::MTE3_MTE2>(event_id);
+        DataCopy(aRealUB, aRealGm[realOffset + i * realCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+        DataCopy(aImagUB, aImagGm[imagOffset + i * imagCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+        DataCopy(bRealUB, bRealGm[realOffset + i * realCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
+        DataCopy(bImagUB, bImagGm[imagOffset + i * imagCountPerLoop + m * nFactor], {1, static_cast<uint16_t>(nBlocks), 0, 0});
 
-        copy_gm_to_ubuf((__ubuf__ T*)aImagUB.GetPhyAddr(),
-                        (__gm__ T*)aImagGm[imagOffset + i * imagCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
-
-        copy_gm_to_ubuf((__ubuf__ T*)bRealUB.GetPhyAddr(),
-                        (__gm__ T*)bRealGm[realOffset + i * realCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
-
-        copy_gm_to_ubuf((__ubuf__ T*)bImagUB.GetPhyAddr(),
-                        (__gm__ T*)bImagGm[imagOffset + i * imagCountPerLoop + m * nFactor].GetPhyAddr(),
-                        0, 1, nBlocks, 0, 0);
-
-        set_flag(PIPE_MTE2, PIPE_V, event_id);
-        wait_flag(PIPE_MTE2, PIPE_V, event_id);
+        SetFlag<HardEvent::MTE2_V>(event_id);
+        WaitFlag<HardEvent::MTE2_V>(event_id);
 
         aRealUB = aRealUB - bImagUB;
         aImagUB = aImagUB + bRealUB;
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
 
         Gather(complexUB, aRealUB, mask, 0, 2 * copyLen / sizeof(T));
 
@@ -480,20 +456,20 @@ private:
           Muls(complexUB, complexUB, tiling->rootNfft, 2 * copyLen / sizeof(T));
         }
 
-        set_flag(PIPE_V, PIPE_MTE3, event_id);
-        wait_flag(PIPE_V, PIPE_MTE3, event_id);
+        SetFlag<HardEvent::V_MTE3>(event_id);
+        WaitFlag<HardEvent::V_MTE3>(event_id);
 
         int32_t loops = copyLen / sizeof(T) / nFactor;
 
-        copy_ubuf_to_gm_align_b32((__gm__ T*)outputGm[outputOffset + 2 * (i * copyLen) / sizeof(T) + 2 * m * nFactor].GetPhyAddr(),
-                                  (__ubuf__ T*)complexUB.GetPhyAddr(), 0, 1, copyLen * 2, 0, 0, 0, 0);
-
-        set_flag(PIPE_MTE3, PIPE_MTE2, event_id);
+        DataCopyPad(outputGm[outputOffset + 2 * (i * copyLen) / sizeof(T) + 2 * m * nFactor],
+                    complexUB,
+                    {1, static_cast<uint16_t>(copyLen * 2), 0, 0});        
+        SetFlag<HardEvent::MTE3_MTE2>(event_id);
         ping = 1 - ping;
       }
     }
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID1);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID0);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventIdMTE3ToMTE2ID1);
   }
 
   __aicore__ inline void GatherRealAndImag(int64_t realOffset, int64_t imagOffset, int64_t outputOffset,
