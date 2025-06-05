@@ -313,46 +313,46 @@ __aicore__ inline void GeGluGradV2Base310p<T>::ComputeGeluGrad(LocalTensor<float
 
     // compute tempBuf4 = np.sqrt(2 / np.pi) * (x2 + 0.044715 * np.power(x2, 3))
     Mul(tempBuf4, x2, x2, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(tempBuf4, tempBuf4, x2, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tempBuf4, tempBuf4, COEFFICIENT_1, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(tempBuf4, tempBuf4, x2, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tempBuf4, tempBuf4, COEFFICIENT_2, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // compute tempBuf3 = x2 * (1 - np.tanh(tempBuf4) * np.tanh(tempBuf4))
     ComputeTanh(tempBuf4, realProcCount);  // tempBuf4 equals np.tanh(tempBuf4)
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(tempBuf3, tempBuf4, tempBuf4, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tempBuf3, tempBuf3, NEG_ONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempBuf3, tempBuf3, POS_ONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(tempBuf3, tempBuf3, x2, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // compute x2 = 0.5 * np.sqrt(2 / np.pi) * (1 + 3 * 0.044715 * np.power(x2, 2))
     Mul(x2, x2, x2, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(x2, x2, COEFFICIENT_3, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(x2, x2, COEFFICIENT_4, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(x2, tempBuf3, x2, realProcCount);  // compute x2 = tempBuf3 * x2
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // compute tempBuf4 = 0.5 * (1 + np.tanh(tempBuf4))
     Adds(tempBuf3, tempBuf4, POS_ONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tempBuf3, tempBuf3, SCALER_HALF, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(x2, x2, tempBuf3, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(y, x1, x2, realProcCount);
 }
 
@@ -361,17 +361,17 @@ __aicore__ inline void GeGluGradV2Base310p<T>::ComputeTanh(LocalTensor<float>& x
     LocalTensor<float> tempBuf3 = resultTempBuf3.Get<float>();
     // compute tanh = (e^2x - 1) / (e^2x + 1)
     Mins(x, x, MAX_TANH, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Maxs(x, x, MIN_TANH, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(x, x, SCALER_TWO, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(x, x, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempBuf3, x, POS_ONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(x, x, NEG_ONE, realProcCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Div(x, x, tempBuf3, realProcCount);
 }
 
@@ -473,7 +473,7 @@ __aicore__ inline void GeGluGradV2Base310p<T>::CopyOutLeft(const int64_t& gmOffs
 
     // 对最后一个block块填充
     uint64_t padStartAddr = (CeilDiv(dataCount, perBlockCount) - 1) * perBlockCount;
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CustomDuplicate(outLocalLeft, padStartAddr, mask, (uint64_t)blockCount, dstRepeatStride);
     event_t eventIDVToMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
     set_flag(PIPE_V, PIPE_MTE3, eventIDVToMTE3);
@@ -521,7 +521,7 @@ __aicore__ inline void GeGluGradV2Base310p<T>::CopyOutRight(const int64_t& gmOff
 
     // 对最后一个block块填充
     uint64_t padStartAddr = (CeilDiv(dataCount, perBlockCount) - 1) * perBlockCount;
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CustomDuplicate(outLocalRight, padStartAddr, mask, (uint64_t)blockCount, dstRepeatStride);
     event_t eventIDVToMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
     set_flag(PIPE_V, PIPE_MTE3, eventIDVToMTE3);

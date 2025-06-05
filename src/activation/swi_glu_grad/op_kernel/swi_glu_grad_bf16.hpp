@@ -96,27 +96,27 @@ __aicore__ inline void SwiGluGradBF16<inType, calcType, outType, bufferNum>::Com
 
     //----------------M
     Muls(tempLocal, sigLocal, (calcType)(-1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempLocal, tempLocal, (calcType)(1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     auto& mLocal = nLocal;                      
     Mul(mLocal, sigLocal, tempLocal, tileLength); 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(mLocal, mLocal, aLocal, tileLength);  
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Muls(mLocal, mLocal, -beta, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(mLocal, mLocal, sigLocal, tileLength);
 
     LocalTensor<inType> bLocal_ = inQueueB.template DeQue<inType>();
     auto& bLocal = aLocal; 
     Cast(bLocal, bLocal_, RoundMode::CAST_NONE, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(mLocal, mLocal, lLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<outType> mLocal_ = outQueueM.template AllocTensor<outType>();
 
@@ -124,7 +124,7 @@ __aicore__ inline void SwiGluGradBF16<inType, calcType, outType, bufferNum>::Com
     inQueueB.template FreeTensor(bLocal_);
 
     Cast(mLocal_, mLocal, RoundMode::CAST_RINT, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     outQueueM.template EnQue<outType>(mLocal_);
 }
 
@@ -137,19 +137,19 @@ __aicore__ inline void SwiGluGradBF16<inType, calcType, outType, bufferNum>::Com
     LocalTensor<inType> aLocal_ = inQueueA.template DeQue<inType>(); //input a
 
     Cast(aLocal, aLocal_, RoundMode::CAST_NONE, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueA.template FreeTensor(aLocal_);
 
     Muls(sigLocal, aLocal, beta, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(sigLocal, sigLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(sigLocal, sigLocal, (calcType)(1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Duplicate<calcType>(tempLocal, (calcType)(1.0), tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Div(sigLocal, tempLocal, sigLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 template<typename inType, typename calcType, typename outType, uint16_t bufferNum>
@@ -157,16 +157,16 @@ __aicore__ inline void SwiGluGradBF16<inType, calcType, outType, bufferNum>::Com
 {
     LocalTensor<inType> lLocal_ = inQueueL.template DeQue<inType>(); // input l
     Cast(lLocal, lLocal_, RoundMode::CAST_NONE, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueueL.template FreeTensor(lLocal_);
 
     LocalTensor<outType> nLocal_ = outQueueN.template AllocTensor<outType>(); // lb
 
     Mul(nLocal, nLocal, lLocal, tileLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Cast(nLocal_, nLocal, RoundMode::CAST_RINT, tileLength); // todo nLocal最后使用位置
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     outQueueN.template EnQue<outType>(nLocal_);
 }
 #endif // OPP_SWI_GLU_GRAD_BF16_HPP
