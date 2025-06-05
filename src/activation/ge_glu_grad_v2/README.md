@@ -1,13 +1,13 @@
-## `GeGluV2`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`GeGluV2`算子。
+## `GeGluGradV2`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`GeGluGradV2`算子。
 
 ### 算子描述
-GeGluV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，它使用GELU（Gaussian Error Linear Unit）作为激活函数，实现x的GeGluV2计算。  
+GeGluGradV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，它使用GELU（Gaussian Error Linear Unit）作为激活函数，实现x的GeGluGradV2计算。  
 
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">GeGluV2</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">GeGluGradV2</td></tr>
 </tr>
 <tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">self</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
@@ -25,7 +25,7 @@ GeGluV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas 800训练系列产品。
+- Atlas A2 训练系列产品。
 
 ### 目录结构介绍
 ```
@@ -50,7 +50,7 @@ GeGluV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n ge_glu_grad_v2
     ```
 
   - 部署算子包

@@ -51,7 +51,7 @@ GeGluV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n ge_glu_v2
     ```
 
   - 部署算子包

@@ -28,7 +28,7 @@ out<sub>i</sub> = SwiGlu(x<sub>i</sub>)=Swish(A<sub>i</sub>)*B<sub>i</sub>
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas A2训练系列产品。
+- Atlas A2 训练系列产品。
 - Atlas 推理系列产品。
 
 ### 目录结构介绍
@@ -54,7 +54,7 @@ out<sub>i</sub> = SwiGlu(x<sub>i</sub>)=Swish(A<sub>i</sub>)*B<sub>i</sub>
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n swi_glu
     ```
 
   - 部署算子包
