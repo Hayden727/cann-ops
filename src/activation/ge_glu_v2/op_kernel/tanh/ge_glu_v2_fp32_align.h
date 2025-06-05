@@ -140,7 +140,7 @@ __aicore__ inline void GeGluV2Fp32Align<T>::ComputeMul(const int64_t& ub_num) {
   LocalTensor<T> ubX1 = inQueueX1.DeQue<T>();
   LocalTensor<T> gelu_out = outQueueGelu.DeQue<T>();
   LocalTensor<T> mul_out = outQueueMul.AllocTensor<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(mul_out, gelu_out, ubX1, ub_num);
   outQueueMul.EnQue(mul_out);
 

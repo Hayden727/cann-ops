@@ -143,7 +143,7 @@ __aicore__ inline void GeGluV2Base310P<T>::CopyOutBase(const int64_t& index, con
     uint64_t mask[MASK_SIZE] = {m_duplicateMask, 0};
     uint8_t repeatTimes = static_cast<uint8_t>(group);
     uint8_t dstRepeatStride = static_cast<uint8_t>(m_blockCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (group <= MAX_UINT8 && m_blockCount < MAX_UINT8) {
       Duplicate(outLocal[m_duplicateOffset], value, mask, repeatTimes, 1, dstRepeatStride);
     } else if (group > MAX_UINT8) {
