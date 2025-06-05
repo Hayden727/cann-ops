@@ -182,8 +182,8 @@ private:
         PipeBarrier<PIPE_V>();
         float ave_local_temp = ReduceSumFP32(tmpTensor, numLastDim);  // E(X)
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Adds(xTensor, xTensor, -1 * ave_local_temp, numLastDim);  // x - E(X)
         PipeBarrier<PIPE_V>();
         Mul(tmpTensor, xTensor, xTensor, numLastDim);  // (x - E(X)) ** 2
@@ -194,8 +194,8 @@ private:
         PipeBarrier<PIPE_V>();
         float rstd_local_temp = 1 / sqrt(var_local_temp + eps);  // rstd = 1 / Sqrt(Var(x) + eps)
         event_t event_s_v_1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v_1);
-        wait_flag(PIPE_S, PIPE_V, event_s_v_1);
+        SetFlag<HardEvent::S_V>(event_s_v_1);
+        WaitFlag<HardEvent::S_V>(event_s_v_1);
         Muls(xTensor, xTensor, rstd_local_temp, numLastDim);  // (x - E(X)) * rstd
 
         rowInQue.EnQue(scales01In);
@@ -270,8 +270,8 @@ private:
         if (isZeroPoint2Exist == 1) {
             offsets2Tensor = rowOutQue.template AllocTensor<T>();
             event_t eventMTE3MTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
-            set_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
-            wait_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
+            SetFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
+            WaitFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
             DataCopyEx(offsets2Tensor, zeroPoints2Gm, numLastDim);
         }
         rowInQue.EnQue(scales2In);
@@ -291,8 +291,8 @@ private:
             Div(constsTensor, xTensor, constsTensor, numLastDim);  // ((x - E(X)) * rstd * gamma + beta) / scales
         }
         event_t event_v_mte2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, event_v_mte2);
-        wait_flag(PIPE_V, PIPE_MTE2, event_v_mte2);
+        SetFlag<HardEvent::V_MTE2>(event_v_mte2);
+        WaitFlag<HardEvent::V_MTE2>(event_v_mte2);
 
         PipeBarrier<PIPE_V>();
         if (isZeroPoint2Exist == 1) {

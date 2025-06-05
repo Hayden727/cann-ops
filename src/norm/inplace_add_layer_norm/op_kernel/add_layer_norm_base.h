@@ -75,14 +75,14 @@ __aicore__ inline void DataCopyEx(const R<T> &dst, const S<T> &src, const uint32
             int32_t num = elementCount / numPerBlock * numPerBlock;
             DataCopy(dst, src, num);
             if (elementCount != num) {
-                set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-                wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+                SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+                WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
                 for (int32_t i = 0; i < numPerBlock; i++) {
                     auto tensorValue = src.GetValue(elementCount - numPerBlock + i);
                     src.SetValue(i, tensorValue);
                 }
-                set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
-                wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+                SetFlag<HardEvent::S_MTE3>(EVENT_ID0);
+                WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);
                 DataCopy(dst[elementCount - numPerBlock], src, numPerBlock);
             }
         }
@@ -108,8 +108,8 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         if (likely(repeatTimes > 0)) {
             AscendCUtils::SetMask<float>(elementNumPerRep);
             ReduceSum(src_local, src_local, src_local, repeatTimes);
-            set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-            wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+            SetFlag<HardEvent::V_S>(EVENT_ID0);
+            WaitFlag<HardEvent::V_S>(EVENT_ID0);
 #ifdef __CCE_KT_TEST__
             uint64_t acc_val = get_acc_val();
 #else
@@ -120,8 +120,8 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
             ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
-            set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-            wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+            SetFlag<HardEvent::V_S>(EVENT_ID0);
+            WaitFlag<HardEvent::V_S>(EVENT_ID0);
 #ifdef __CCE_KT_TEST__
             uint64_t acc_val = get_acc_val();
 #else

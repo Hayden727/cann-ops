@@ -358,8 +358,8 @@ public:
                 Mul(y_local_fp32, x_local_fp32[col_offset], z_local_fp32, process_count);
                 PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
-                set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-                wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+                SetFlag<HardEvent::V_S>(EVENT_ID0);
+                WaitFlag<HardEvent::V_S>(EVENT_ID0);
                 ave_tmp += y_local_fp32.GetValue(0);
             }
             // 2. Reduce Var
@@ -374,8 +374,8 @@ public:
                 Muls(y_local_fp32, y_local_fp32, aveNum, process_count);
                 PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
-                set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-                wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+                SetFlag<HardEvent::V_S>(EVENT_ID0);
+                WaitFlag<HardEvent::V_S>(EVENT_ID0);
                 var_tmp += y_local_fp32.GetValue(0);
             }
             float rstd_tmp = 1 / sqrt(var_tmp + eps);
@@ -544,8 +544,8 @@ public:
                 Muls(y_local_fp32, x_local_fp32, aveNum, process_count);
                 PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
-                set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-                wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+                SetFlag<HardEvent::V_S>(EVENT_ID0);
+                WaitFlag<HardEvent::V_S>(EVENT_ID0);
                 ave_tmp += y_local_fp32.GetValue(0);
             }
             // 2. Reduce Var
@@ -561,8 +561,8 @@ public:
                 Muls(y_local_fp32, y_local_fp32, aveNum, process_count);
                 PipeBarrier<PIPE_V>();
                 ReduceSum(y_local_fp32, y_local_fp32, y_local_fp32, process_count);
-                set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-                wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+                SetFlag<HardEvent::V_S>(EVENT_ID0);
+                WaitFlag<HardEvent::V_S>(EVENT_ID0);
                 var_tmp += y_local_fp32.GetValue(0);
             }
             float rstd_tmp = 1 / sqrt(var_tmp + eps);
@@ -647,8 +647,8 @@ private:
         LocalTensor<T> x2_local = x2_que.template AllocTensor<T>();
         uint32_t gm_offset = row_idx * row_step * num_last_dim + offset;
         if constexpr (IS_X1_NEEDCAST) {
-            set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-            wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+            SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+            WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
             LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
             auto y_local_buffer = y_local_fp32.template ReinterpretCast<T_X1>();
             DataCopyEx(y_local_buffer, x1_gm[gm_offset], size);
@@ -656,8 +656,8 @@ private:
             DataCopyEx(x1_local, x1_gm[gm_offset], size);
         }
         if constexpr (IS_X2_NEEDCAST) {
-            set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-            wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+            SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+            WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
             LocalTensor<float> y_local_fp32 = y_buf_fp32.Get<float>();
             auto y_local_buffer = y_local_fp32.template ReinterpretCast<T_X2>();
             DataCopyEx(y_local_buffer, x2_gm[gm_offset], size);
@@ -730,8 +730,8 @@ private:
                 padParamsFp16.paddingValue = 0;
                 padParamsFp16.rightPadding = numLastDimAlignedMixDtype - num_last_dim;
             }
-            set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-            wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+            SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+            WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
             auto y_buf = y_buf_local.template ReinterpretCast<T_X1>();
             DataCopyEx(y_buf, x1_gm[gm_offset], num_last_dim, row_count, padParamsFp16);
         } else {
@@ -765,8 +765,8 @@ private:
                 padParamsFp16.paddingValue = 0;
                 padParamsFp16.rightPadding = numLastDimAlignedMixDtype - num_last_dim;
             }
-            set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-            wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+            SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+            WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
             auto y_buf = x_local_fp32.template ReinterpretCast<T_X2>();
             DataCopyEx(y_buf, x2_gm[gm_offset], num_last_dim, row_count, padParamsFp16);
         } else {
@@ -883,8 +883,8 @@ private:
         uint32_t gm_offset = row_idx * row_step * num_last_dim;
         LocalTensor<T> x1_local_in = x1_que.template AllocTensor<T>();
         if constexpr (IS_X1_NEEDCAST) {
-            set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-            wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+            SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+            WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
             auto y_local_buffer = y_buf_local.template ReinterpretCast<T_X1>();
             DataCopyEx(y_local_buffer, x1_gm[gm_offset], size);
         } else {
@@ -908,8 +908,8 @@ private:
         if constexpr (IS_SINGLE_ROW_EXT_CASE) {
             LocalTensor<T> x2_local_in = x1_que.template AllocTensor<T>();
             if constexpr (IS_X2_NEEDCAST) {
-                set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-                wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+                SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+                WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
                 auto y_local_buffer = y_buf_local.template ReinterpretCast<T_X2>();
                 DataCopyEx(y_local_buffer, x2_gm[gm_offset], size);
             } else {
@@ -935,8 +935,8 @@ private:
         } else {
             LocalTensor<T> x2_local_in = x2_que.template AllocTensor<T>();
             if constexpr (IS_X2_NEEDCAST) {
-                set_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
-                wait_flag(PIPE_MTE3, PIPE_S, event_mte3_s);
+                SetFlag<HardEvent::MTE3_S>(event_mte3_s);
+                WaitFlag<HardEvent::MTE3_S>(event_mte3_s);
                 auto y_local_buffer = y_buf_local.template ReinterpretCast<T_X2>();
                 DataCopyEx(y_local_buffer, x2_gm[gm_offset], size);
             } else {
@@ -1033,8 +1033,8 @@ private:
             Muls(y_local_fp32, z_local_fp32[roundOffset], aveNum, num_last_dim);
             PipeBarrier<PIPE_V>();
             auto ave_local_temp = ReduceSumFP32(y_local_fp32, num_last_dim);
-            set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::S_V>(EVENT_ID0);
+            WaitFlag<HardEvent::S_V>(EVENT_ID0);
             Adds(z_local_fp32[roundOffset], z_local_fp32[roundOffset], ave_local_temp * -1, num_last_dim);
             PipeBarrier<PIPE_V>();
             Mul(x_local_fp32, z_local_fp32[roundOffset], z_local_fp32[roundOffset], num_last_dim);
@@ -1047,8 +1047,8 @@ private:
             mean_local.SetValue(rid, ave_local_temp);
             rstd_local.SetValue(rid, rstd_local_temp);
 #endif
-            set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::S_V>(EVENT_ID0);
+            WaitFlag<HardEvent::S_V>(EVENT_ID0);
             Muls(x_local_fp32, z_local_fp32[roundOffset], rstd_local_temp, num_last_dim);
             PipeBarrier<PIPE_V>();
             if constexpr (IS_BETAGAMMA_NEEDCAST) {
@@ -1120,8 +1120,8 @@ private:
         Muls(y_local_fp32, z_local_fp32, aveNum, elementNum);
         PipeBarrier<PIPE_V>();
         ReduceSumShort(mean_local, y_local_fp32, x_local_fp32, num_last_dim_aligned, num_last_dim, nums);
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         for (int32_t idx = nums - 1; idx >= 0; idx--) {
             uint32_t offset = idx * num_last_dim_aligned;
             float meanTmp = mean_local.GetValue(idx);
@@ -1140,8 +1140,8 @@ private:
         Duplicate(y_local_fp32, (float)1, nums);
         PipeBarrier<PIPE_V>();
         Div(rstd_local, y_local_fp32, rstd_local, nums);
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         for (int32_t idx = nums - 1; idx >= 0; idx--) {
             uint32_t offset = idx * num_last_dim_aligned;
             float rstdTmp = rstd_local.GetValue(idx);
@@ -1247,8 +1247,8 @@ private:
         Muls(y_local_fp32, x_local_fp32, aveNum, num_last_dim);
         PipeBarrier<PIPE_V>();
         float ave_local_temp = ReduceSumFP32(y_local_fp32, num_last_dim);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+        SetFlag<HardEvent::S_V>(EVENT_ID0);
+        WaitFlag<HardEvent::S_V>(EVENT_ID0);
         Adds(x_local_fp32, x_local_fp32, ave_local_temp * -1, num_last_dim);
         PipeBarrier<PIPE_V>();
         Mul(y_local_fp32, x_local_fp32, x_local_fp32, num_last_dim);
@@ -1261,8 +1261,8 @@ private:
         mean_local.SetValue(0, ave_local_temp);
         rstd_local.SetValue(0, rstd_local_temp);
 #endif
-        set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+        SetFlag<HardEvent::S_V>(EVENT_ID0);
+        WaitFlag<HardEvent::S_V>(EVENT_ID0);
         Muls(x_local_fp32, x_local_fp32, rstd_local_temp, num_last_dim);
         PipeBarrier<PIPE_V>();
         LocalTensor<T> y_local = y_que.template AllocTensor<T>();

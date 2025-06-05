@@ -1102,11 +1102,11 @@ private:
         } else {
             LocalTensor<T> temp = tbuf.Get<T>(count);
             Cast(temp, _out, RoundMode::CAST_ROUND, count);
-            set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
-            wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_V>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_V>(EVENT_ID0);
             DataCopyPad(dx_gm[gm_offset], temp, copyParams);
-            set_flag(PIPE_MTE3, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_MTE3, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_V>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_V>(EVENT_ID0);
         }
     }
 
@@ -1119,11 +1119,11 @@ private:
         } else {
             LocalTensor<T> temp = tbuf.Get<T>(count);
             Cast(temp, _out[ub_offset], RoundMode::CAST_ROUND, count);
-            set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
-            wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
+            SetFlag<HardEvent::V_MTE3>(EVENT_ID0);
+            WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);
             DataCopyPad(dx_gm[gm_offset], temp, copyParams);
-            set_flag(PIPE_MTE3, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_MTE3, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_V>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_V>(EVENT_ID0);
         }
     }
 
@@ -1136,11 +1136,11 @@ private:
         } else {
             LocalTensor<T> temp = tbuf.Get<T>(count);
             Cast(temp, _out, RoundMode::CAST_ROUND, count);
-            set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
-            wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
+            SetFlag<HardEvent::V_MTE3>(EVENT_ID0);
+            WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);
             DataCopyPad(gm_out[gm_offset], temp, copyParams);
-            set_flag(PIPE_MTE3, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_MTE3, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_V>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_V>(EVENT_ID0);
         }
     }
 
