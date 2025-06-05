@@ -7,7 +7,7 @@
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">SwiGlu</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">DequantSwigluQuant</td></tr>
 </tr>
 <tr><td rowspan="10" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16, float16, int32</td><td align="center">ND</td></tr>
@@ -38,7 +38,7 @@
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas A2训练系列产品。
+- Atlas A2 训练系列产品。
 
 ### 目录结构介绍
 ```
@@ -63,7 +63,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n dequant_swiglu_quant
     ```
 
   - 部署算子包
