@@ -19,9 +19,6 @@
 #define OP_LOGD(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__)
 
 namespace optiling {
-const uint32_t BLOCK_DIM = 8;
-const uint32_t TILE_NUM = 8;
-
 constexpr uint64_t INT64_ID  = 0;
 constexpr uint64_t INT32_ID  = 1;
 constexpr uint64_t FP32_ID  = 0;
@@ -229,8 +226,8 @@ static graphStatus CoalesceSparseInferShape(gert::InferShapeContext *context)
 
     uint64_t len = uniqueLenShape->GetDim(0);
     OPS_CHECK_NULL_WITH_CONTEXT(context, newIndicesShape);
+    newIndicesShape->AppendDim(indicesShape->GetDim(0));
     newIndicesShape->AppendDim(len);
-    newIndicesShape->AppendDim(indicesShape->GetDim(1));
 
     uint64_t valueShapeSize = valueShape->GetDimNum();
     OPS_CHECK_NULL_WITH_CONTEXT(context, newValueShape);
@@ -244,8 +241,8 @@ static graphStatus CoalesceSparseInferDataType(gert::InferDataTypeContext *conte
 {
     OP_LOGD(context->GetNodeName(), "Begin to do InferDataType4CoalesceSparse");
 
-    auto indicesDataType = context->GetInputDataType(2);
-    auto valueDataType = context->GetInputDataType(3);
+    auto indicesDataType = context->GetInputDataType(INPUT_INDICES_IDX);
+    auto valueDataType = context->GetInputDataType(INPUT_VALUES_IDX);
     context->SetOutputDataType(0, indicesDataType);
     context->SetOutputDataType(1, valueDataType); 
 

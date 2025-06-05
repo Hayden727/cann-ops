@@ -1,17 +1,11 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2023-2025. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
@@ -104,7 +98,7 @@ BEGIN_TILING_DATA_DEF(TConv3DDwBasicBlockTilingAdvance)
     TILING_DATA_FIELD_DEF(uint32_t, singleCoreN);
     TILING_DATA_FIELD_DEF(uint32_t, singleCoreK);
 END_TILING_DATA_DEF;
-// TilingData需重命名，否则无法区分910_95的tiling地址
+
 BEGIN_TILING_DATA_DEF(Conv3DBackpropFilterV2TilingDataAdvance)
     TILING_DATA_FIELD_DEF_STRUCT(Conv3DBackpropFilterV2ParamsAdvance, params);
     TILING_DATA_FIELD_DEF_STRUCT(TConv3DDwTilingAdvance, dwTiling);
@@ -173,7 +167,6 @@ protected:
     ge::graphStatus PostTiling() override;
 
     void Reset();
-    bool IsSocVersion91095();
     ge::graphStatus CheckContext();
     bool AnalyzeDtype();
     bool AnalyzeAttrs();
@@ -206,7 +199,7 @@ protected:
     Conv3DBackpropFilterV2TilingDataAdvance tilingData_;
     Conv3dBpFilterRunInfo runInfo_;
     cachetiling::Conv3DBpFilterTiling tbeTiling_;
-    std::string socVersion_ = "Ascend910_9591";
+    std::string socVersion_ = "Ascend910_93";
     bool isDeterSupportDType_ = false;
     bool isDeterSupportFormat_ = false;
 };
@@ -366,7 +359,6 @@ protected:
     // 7、保存Tiling数据
     ge::graphStatus PostTiling() override;
 
-    bool IsSocVersion91095();
     void Reset();
     ge::graphStatus CheckContext();
     bool AnalyzeDtype();

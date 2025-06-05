@@ -44,25 +44,25 @@ extern "C" {
  * ```
  *
  * @param [in] gradOut(aclTensor*): 表示梯度更新系数，数据类型支持FLOAT,
- * DOUBLE数据类型(数据类型必须和logProbs一致)，该Tensor必须为1维，支持[非连续的Tensor](https://)，数据格式支持ND。
+ * DOUBLE数据类型(数据类型必须和logProbs一致)，该Tensor必须为1维，支持非连续的Tensor，数据格式支持ND。
  * @param [in] logProbs(aclTensor*): 数据类型支持FLOAT,DOUBLE数据类型，shape为($T,N,C$)，
  * $T$为输入长度，$N$为批处理大小，$C$为类别数，必须大于0，包括空白标识，该Tensor表示输出的对数概率，
- * 支持[非连续的Tensor](https://)，数据格式支持ND。
+ * 支持非连续的Tensor，数据格式支持ND。
  * @param [in] targets(aclTensor*): 数据类型支持INT64,INT32,BOOL,FLOAT,FLOAT16数据类型，当shape为($N,S$)，
  * $S$为不小于$targetLengths$中的最大值的值；或者shape为(SUM($targetLengths$))，假设$targets$是未填充的而且在1维内级联的；
- * 支持[非连续的Tensor](https://)，数据格式支持ND。
- * @param [in] inputLengths(aclIntArray*)：数据类型支持UINT8,INT8,INT16,INT32,INT64，数组长度为$N$，
+ * 支持非连续的Tensor，数据格式支持ND。
+ * @param [in] inputLengths(aclIntArray*)：数组长度为$N$，
  * 数组中的每个值必须小于等于$T$。
- * @param [in] targetLengths(aclIntArray*)：数据类型支持UINT8,INT8,INT16,INT32,INT64，数组长度为$N$，
+ * @param [in] targetLengths(aclIntArray*)：数组长度为$N$，
  * 当targets的shape为($N,S$)时，数组中的每个值必须小于等于$S$。
  * @param [in] negLogLikelihood(aclTensor*)：数据类型支持FLOAT,DOUBLE数据类型(数据类型必须和logProbs一致)，
- * 表示相对于每个输入节点可微分的损失值，该Tensor必须为1维，支持[非连续的Tensor](https://)，数据格式支持ND。
+ * 表示相对于每个输入节点可微分的损失值，该Tensor必须为1维，支持非连续的Tensor，数据格式支持ND。
  * @param [in] logAlpha(aclTensor*)：数据类型支持FLOAT,DOUBLE数据类型(数据类型必须和logProbs一致)，
- * 表示输入到目标的可能跟踪的概率，该Tensor必须为3维，支持[非连续的Tensor](https://)，数据格式支持ND。
+ * 表示输入到目标的可能跟踪的概率，该Tensor必须为3维，支持非连续的Tensor，数据格式支持ND。
  * @param [in] blank(int)：int整型，空白标识，默认为0，数值必须小于$C$大于等于0。
  * @param [in] zeroInfinity(bool)：bool类型，表示是否将无限损耗和相关梯度归零，默认值为$False$。
  * @param [out] out(aclTensor*): 表示CTC的损失梯度，数据类型支持FLOAT,DOUBLE，shape为($T,N,C$)，
- * 支持[非连续的Tensor](https://)，数据格式支持ND。
+ * 支持非连续的Tensor，数据格式支持ND。
  * @param [out] workspaceSize: 返回用户需要在npu device侧申请的workspace大小。
  * @param [out] executor: 返回op执行器，包含算子计算流程。
  * @return aclnnStatus: 返回状态码。

@@ -29,11 +29,12 @@
 
 <td align="center">grad</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
 
-<tr><td rowspan="2" align="center">算子属性</td>
-<td align="center">blank</td><td align="center">scalar</td><td align="center">int</td><td align="center">-</td></tr>
-<td align="center">zero_infinity</td><td align="center">scalar</td><td align="center">bool</td><td align="center">-</td></tr>
+<tr><td rowspan="3" align="center">算子属性</td>
+<td align="center">blank</td><td align="center">attr</td><td align="center">int</td><td align="center">-</td></tr>
+<td align="center">reduction</td><td align="center">attr</td><td align="center">string</td><td align="center">-</td></tr>
+<td align="center">zero_infinity</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">CTCLossV3Grad</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">ctc_loss_v3_grad</td></tr>
 </table>
 
 ## 支持的产品型号

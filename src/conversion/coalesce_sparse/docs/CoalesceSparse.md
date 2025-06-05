@@ -8,7 +8,7 @@ Atlas A2训练系列产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
-## 功能描述
+## 功能说明
 
 - 算子功能：将相同坐标点（indices）的value进行累加求和。
 - 计算公式：
@@ -26,42 +26,41 @@ Atlas A2训练系列产品
 
 CoalesceSparse由DataCopyPad、SetAtomicAdd与SetAtomicNone操作组成。
 
-## 算子执行接口
+## 函数原型
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnCoalesceSparseGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnCoalesceSparse”接口执行计算。
+每个算子分为[两段式接口](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E4%B8%A4%E6%AE%B5%E5%BC%8F%E6%8E%A5%E5%8F%A3.md)，必须先调用“aclnnCoalesceSparseGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnCoalesceSparse”接口执行计算。
 
-* `aclnnCoalesceSparseGetWorkspaceSize(const aclTensor *uniqueLen, const aclTensor *uniqueIndices, const aclTensor *indices, const aclTensor *values, const aclTensor *newIndices, const aclTensor *newValues, uint64_t workspaceSize, aclOpExecutor **executor)`
-* `aclnnStatus aclnnCoalesceSparse(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
+* `aclnnCoalesceSparseGetWorkspaceSize(const aclTensor* uniqueLen, const aclTensor* uniqueIndices, const aclTensor* indices, const aclTensor* values, aclTensor* newIndices, aclTensor* newValues, uint64_t* workspaceSize, aclOpExecutor** executor)`
+* `aclnnStatus aclnnCoalesceSparse(void* workspace, int64_t workspaceSize, aclOpExecutor** executor, aclrtStream stream)`
 
 **说明**：
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnCoalesceSparseGetWorkspaceSize
+## aclnnCoalesceSparseGetWorkspaceSize
 
 - **参数说明：**
-  
-  - uniqueLen（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的uniqueLen，数据类型支持INT64、INT32，维度支持1维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - uniqueIndices（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的uniqueIndices，数据类型支持INT64、INT32，维度支持1维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - indices（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的indices，数据类型支持INT64、INT32，维度支持2维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - values（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的values，数据类型支持FLOAT、FLOAT16、INT32，维度支持1-8维，values.shape[0]需要与indices.shape[1]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - newIndices（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的newIndices，数据类型支持INT64、INT32，数据类型需要与indices一致，newIndices.shape[0]需要与indices.shape[0]一致，newIndices.shape[1]需要与unique_len.shape[0]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - newValues（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的newValues，数据类型支持FLOAT、FLOAT16、INT32，数据类型需要与values一致，newValues.shape[0]需要与unique_len.shape[0]一致，其余维度需要与values的对应维度一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - uniqueLen（aclTensor\*，计算输入）：表示indices与values组成的sparseTensor经过flatten后的结果在unique后的唯一元素，公式中的uniqueLen，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持1维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - uniqueIndices（aclTensor\*，计算输入）：表示indices与values组成的sparseTensor经过flatten后的结果在uniqueLen中的索引，公式中的uniqueIndices，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持1维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - indices（aclTensor\*，计算输入）：表示原始输入indices，公式中的indices，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持2维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - values（aclTensor\*，计算输入）：表示原始输入values，公式中的values，Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、INT32，维度支持1-8维，values.shape[0]需要与indices.shape[1]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - newIndices（aclTensor\*，计算输出）：表示经过公式中的newIndices，Device侧的aclTensor，数据类型支持INT64、INT32，数据类型需要与indices一致，newIndices.shape[0]需要与indices.shape[0]一致，newIndices.shape[1]需要与uniqueLen.shape[0]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - newValues（aclTensor\*，计算输出）：公式中的newValues，Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、INT32，数据类型需要与values一致，newValues.shape[0]需要与uniqueLen.shape[0]一致，其余维度需要与values的对应维度一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 
 - **返回值：**
   
-  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
+  aclnnStatus：返回状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
   
-  ```
-  第一段接口完成入参校验，若出现以下错误码，则对应原因为：
-  - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：uniqueLen、uniqueIndices、indices、values、new_indices、new_values的数据类型和数据格式不在支持的范围内。
-  ```
+    ```
+    第一段接口完成入参校验，出现如下场景时报错：
+    返回161001（ACLNN_ERR_PARAM_NULLPTR）：uniqueLen、uniqueIndices、indices、values、new_indices或new_values是空指针。
+    返回161002（ACLNN_ERR_PARAM_INVALID）：uniqueLen、uniqueIndices、indices、values、new_indices、new_values的数据类型和数据格式不在支持的范围内。
+    ```
 
-### aclnnCoalesceSparse
+## aclnnCoalesceSparse
 
 - **参数说明：**
   
@@ -75,12 +74,7 @@ CoalesceSparse由DataCopyPad、SetAtomicAdd与SetAtomicNone操作组成。
 
 ## 约束与限制
 
-- uniqueLen的数据类型只支持INT64、INT32，数据格式只支持ND，维度支持1维。
-- uniqueIndices的数据类型只支持INT64、INT32，数据格式只支持ND，维度支持1维。
-- indices的数据类型只支持INT64、INT32，数据格式只支持ND，维度支持2维。
-- values的数据类型只支持FLOAT、FLOAT16、INT32，数据格式只支持ND，维度支持1-8维，values.shape[0]需要与indices.shape[1]一致。
-- newIndices的数据类型只支持INT64、INT32，数据格式只支持ND，数据类型需要与indices一致，newIndices.shape[0]需要与indices.shape[0]一致，newIndices.shape[1]需要与unique_len.shape[0]一致。
-- newValues的数据类型只支持FLOAT、FLOAT16、INT32，数据格式只支持ND，数据类型需要与values一致，newValues.shape[0]需要与unique_len.shape[0]一致，其余维度需要与values的对应维度一致。
+无。
 
 ## 算子原型
 

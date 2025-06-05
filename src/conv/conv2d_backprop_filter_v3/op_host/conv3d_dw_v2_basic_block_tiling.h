@@ -8,7 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-
 /*!
  * \file conv3d_dw_v2_basic_block_tiling.h
  * \brief

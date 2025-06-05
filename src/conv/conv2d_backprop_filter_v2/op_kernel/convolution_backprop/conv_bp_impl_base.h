@@ -79,9 +79,6 @@ public:
         DEFINE_STUCT_FIELD(uint64_t, dstL0cOffset_);
         DEFINE_STUCT_FIELD(MmadParams, mmad_);
         DEFINE_STUCT_FIELD(LoadData2DParams, load2d_);
-#if defined(__DAV_C310__)
-        DEFINE_STUCT_FIELD(LoadData2DParamsV2, load2dv2_);
-#endif
         using LoadData3DParamsV2SrcT = LoadData3DParamsV2<typename Intf::SrcT>;
         DEFINE_STUCT_FIELD(LoadData3DParamsV2SrcT, load3d_);
         DEFINE_STUCT_FIELD(uint8_t, usingCacheA1Ping_);

@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
 #include <algorithm>
 #include <cstdint>
 #include <iostream>
@@ -185,8 +195,6 @@ int aclnnConvolutionBackwardTest(int32_t deviceId, aclrtStream &stream)
     size_t dtypeSize = sizeof(aclFloat16);
     size_t fileSize;
     
-    // ReadFile("../input/weight.bin", fileSize, weightData.data(), GetShapeSize(shapeWeight) * dtypeSize);
-
     // 创建gradOutput aclTensor
     std::vector<aclFloat16> gradOutputData(GetShapeSize(gradOutputShape), 1);
     ReadFile("../input/gradOutput.bin", fileSize, gradOutputData.data(), GetShapeSize(gradOutputShape) * dtypeSize);
@@ -313,9 +321,6 @@ int aclnnConvolutionBackwardTest(int32_t deviceId, aclrtStream &stream)
                       size * sizeof(gradWeightResult[0]), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_FREE_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret);
                    return ret);
-    for (int64_t i = 0; i < size; i++) {
-        LOG_PRINT("gradWeightResult[%ld] is: %f\n", i, gradWeightResult[i]);
-    }
     WriteFile("../output/output_y.bin", gradWeightResult.data(), size * sizeof(float));
     size = GetShapeSize(gradBiasShape);
 

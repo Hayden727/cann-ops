@@ -21,8 +21,6 @@
 
 #if __CCE_AICORE__ == 220
 #include "impl/dav_v220/conv_bp_sub_func.h"
-#elif defined(__DAV_C310__)
-#include "impl/dav_v310/conv_bp_sub_func.h"
 #endif
 
 DECLARE_CHECK_IMPL(Init);
