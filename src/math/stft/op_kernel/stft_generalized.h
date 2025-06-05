@@ -200,7 +200,7 @@ class STFTGeneralized {
 
     // 生成等差数列 0, 2, 4, 6, 8, 10, 12, 14,...
     ArithProgression<int32_t>(maskTemp, (int32_t)0, (int32_t)2, maskTotalNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 奇数index清零：0, 0, 4, 0, 8, 0, 12, 0,...
     uint64_t maskBit1[2] = {0xAAAAAAAAAAAAAAAA, 0xAAAAAAAAAAAAAAAA};
@@ -225,13 +225,13 @@ class STFTGeneralized {
     int32_t START = -2;
     int32_t STEP = 2;
     ArithProgression<int32_t>(temp, START, STEP, maskTotalNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 加上地址偏移offset = imagbase-realbase：offset-2, offset, offset+2, offset+4, ..., offset+12, ...
     int32_t offset = nAlignInUB * sizeof(T);
 
     Adds(temp, temp, offset, maskTotalNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 偶数index清零： 0， offset, 0, offset+4, 0, offset+8, 0, offset+12,...
     uint64_t maskBit2[2] = {0x5555555555555555, 0x5555555555555555};
@@ -240,11 +240,11 @@ class STFTGeneralized {
       maskBit2[1] = 0;
     }
     Muls(temp, temp, 0, maskBit2, maskTotalNum * sizeof(int32_t) / REPEAT_SIZE, repeatParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // 相加: 0, offset, 4, offset+4, 8, offset+8, 12, offset+12,...
     Add(maskTemp, maskTemp, temp, maskTotalNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     mask = maskTemp.ReinterpretCast<uint32_t>();
   }
 
@@ -269,14 +269,14 @@ class STFTGeneralized {
       uint32_t maskAddrOffset = i * alignNum;
       int32_t maskValOffset = i * (alignNum / IMAG_AND_REAL) * sizeof(T);
       Adds(maskTemp[maskAddrOffset], maskTemp, maskValOffset, maskAddrOffset);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     if (i > (blocksForRealAndImg / BINARY_ADD_COEF) && i < blocksForRealAndImg) {
       int32_t lastMaskAddrOffset = i * alignNum;
       uint32_t lastMaskCalcNum = (nAlign * IMAG_AND_REAL) - lastMaskAddrOffset;
       int32_t lastMaskValOffset = i * (alignNum / IMAG_AND_REAL) * sizeof(T);
       Adds(maskTemp[lastMaskAddrOffset], maskTemp, lastMaskValOffset, lastMaskCalcNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     // for multi row mask
     i = 1;
@@ -284,14 +284,14 @@ class STFTGeneralized {
       uint32_t maskAddrOffset = i * nAlign * IMAG_AND_REAL;
       int32_t maskValOffset = maskAddrOffset * sizeof(T);
       Adds(maskTemp[maskAddrOffset], maskTemp, maskValOffset, maskAddrOffset);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     if (i > (onceMInUB / BINARY_ADD_COEF) && i < onceMInUB) {
       uint32_t lastMaskAddrOffset = i * nAlign * IMAG_AND_REAL;
       int32_t lastMaskValOffset = lastMaskAddrOffset * sizeof(T);
       uint32_t lastMaskCalcNum = (onceMInUB - i) * nAlign * IMAG_AND_REAL;
       Adds(maskTemp[lastMaskAddrOffset], maskTemp, lastMaskValOffset, lastMaskCalcNum);
-      pipe_barrier(PIPE_V);
+      PipeBarrier<PIPE_V>();
     }
     mask = maskTemp.ReinterpretCast<uint32_t>();
   }
@@ -361,7 +361,7 @@ class STFTGeneralized {
       LocalTensor<T> outputLocal = gatherOut.template AllocTensor<T>();
       Gather(outputLocal, inputLocal, mask, 0, onceM * nAlign * IMAG_AND_REAL);
       if (tiling->normalized) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(outputLocal, outputLocal, rootNfft, onceM * nAlign * IMAG_AND_REAL);
       }
       gatherOut.EnQue(outputLocal);
@@ -389,7 +389,7 @@ class STFTGeneralized {
       LocalTensor<T> outputLocal = gatherOut.template AllocTensor<T>();
       Gather(outputLocal, inputLocal, mask, 0, mRemainder * nAlign * IMAG_AND_REAL);
       if (tiling->normalized) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Muls(outputLocal, outputLocal, rootNfft, mRemainder * nAlign * IMAG_AND_REAL);
       }
       gatherOut.EnQue(outputLocal);
@@ -444,7 +444,7 @@ class STFTGeneralized {
         LocalTensor<T> outputLocal = gatherOut.template AllocTensor<T>();
         Gather(outputLocal, inputLocal, mask, 0, nAlignInUB * IMAG_AND_REAL);
         if (tiling->normalized) {
-          pipe_barrier(PIPE_V);
+          PipeBarrier<PIPE_V>();
           Muls(outputLocal, outputLocal, rootNfft, nAlignInUB * IMAG_AND_REAL);
         }
         gatherOut.EnQue(outputLocal);
@@ -462,7 +462,7 @@ class STFTGeneralized {
         LocalTensor<T> outputLocal = gatherOut.template AllocTensor<T>();
         Gather(outputLocal, inputLocal, mask, 0, nAlignInUB * IMAG_AND_REAL);
         if (tiling->normalized) {
-          pipe_barrier(PIPE_V);
+          PipeBarrier<PIPE_V>();
           Muls(outputLocal, outputLocal, rootNfft, nRemainder * IMAG_AND_REAL);
         }
         gatherOut.EnQue(outputLocal);

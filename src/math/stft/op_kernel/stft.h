@@ -302,13 +302,13 @@ class StftND {
       return;
     }
     AddsComputeAlignment(dst, dst, REAL_IMAG, col, realNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     AddsComputeAlignment(dst, dst, REAL_IMAG, col * TWO_BLOCKS, TWO_BLOCKS * realNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     AddsComputeAlignment(dst, dst, REAL_IMAG, col * FOUR_BLOCKS, FOUR_BLOCKS * realNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     AddsComputeAlignment(dst, dst, repeatNum, col * EIGHT_BLOCKS, EIGHT_BLOCKS * realNum);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     if (tailNum != 0) {
       int32_t lastPrevOffset = repeatNum * EIGHT_BLOCKS * (BLOCK_BYTES / sizeof(T)) - BLOCK_BYTES / sizeof(T);
       auto lastPrevDst = dst[lastPrevOffset];
@@ -507,7 +507,7 @@ class StftND {
          {static_cast<uint16_t>(sizeInM), static_cast<uint16_t>(sizeInN), static_cast<uint16_t>(sizeInK), 0, false,
           true});
 
-    pipe_barrier((pipe_t)PIPE_M);
+    PipeBarrier<PIPE_M>();
     inQueueA0.FreeTensor(a0Local);
     inQueueB0.FreeTensor(b0Local);
 
@@ -519,7 +519,7 @@ class StftND {
          {static_cast<uint16_t>(sizeInM), static_cast<uint16_t>(sizeInN), static_cast<uint16_t>(sizeInK), 0, false,
           false});
 
-    pipe_barrier((pipe_t)PIPE_M);
+    PipeBarrier<PIPE_M>();
     inQueueA0.FreeTensor(a0Local);
     inQueueB0.FreeTensor(b0Local);
 
@@ -531,7 +531,7 @@ class StftND {
     Mmad(c0Local, a0Local, b0Local,
          {static_cast<uint16_t>(sizeInM), static_cast<uint16_t>(sizeInN), static_cast<uint16_t>(sizeInK), 0, false,
           false});
-    pipe_barrier((pipe_t)PIPE_M);
+    PipeBarrier<PIPE_M>();
     inQueueA0.FreeTensor(a0Local);
     inQueueB0.FreeTensor(b0Local);
 
@@ -543,7 +543,7 @@ class StftND {
          {static_cast<uint16_t>(sizeInM), static_cast<uint16_t>(sizeInN), static_cast<uint16_t>(sizeInK), 0, false,
           false});
 
-    pipe_barrier((pipe_t)PIPE_M);
+    PipeBarrier<PIPE_M>();
     inQueueA0.FreeTensor(a0Local);
     inQueueB0.FreeTensor(b0Local);
 
@@ -555,7 +555,7 @@ class StftND {
          {static_cast<uint16_t>(sizeInM), static_cast<uint16_t>(sizeInN), static_cast<uint16_t>(tailSizeInK), 0, false,
           false});
 
-    pipe_barrier((pipe_t)PIPE_M);
+    PipeBarrier<PIPE_M>();
     inQueueA0.FreeTensor(a0Local);
     inQueueB0.FreeTensor(b0Local);
 

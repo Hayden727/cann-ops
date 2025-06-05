@@ -10,11 +10,11 @@ op_host/foreach_non_finite_check_and_unscale.cpp
 )
 
 target_sources(optiling PRIVATE
-        op_host/foreach_non_finite_check_and_unscale.cpp
+        op_host/foreach_non_finite_check_and_unscale_tiling.cpp
 )
 
 target_include_directories(optiling PRIVATE
-        ${OP_COMMON_DIR}/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/op_host
 )
 
 target_sources(opsproto PRIVATE
