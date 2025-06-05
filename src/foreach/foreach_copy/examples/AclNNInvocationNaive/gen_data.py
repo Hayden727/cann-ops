@@ -19,7 +19,8 @@ def gen_golden_data_simple():
     x1 = np.random.uniform(-1, 1, input_shape).astype(np_dtype)
     x2 = np.random.uniform(-1, 1, input_shape).astype(np_dtype)
 
-    x2 = x1
+    out1 = x1
+    out2 = x2
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

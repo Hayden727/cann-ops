@@ -21,7 +21,7 @@ def gen_golden_data_simple():
     alpha = 1.2
 
     out1 = np.minimum(x1, alpha)
-    out2 = np.minimum(x1, alpha)
+    out2 = np.minimum(x2, alpha)
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

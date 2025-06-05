@@ -326,8 +326,8 @@ namespace ForeachLerpScalar {
         if (weightVal < FLOAT_NUM_POS && weightVal > FLOAT_NUM_NEG) {
             x2Queue.FreeTensor(x2Local);
             event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-            set_flag(PIPE_V, PIPE_MTE3, eventID1);
-            wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+            SetFlag<HardEvent::V_MTE3>(eventID1);
+            WaitFlag<HardEvent::V_MTE3>(eventID1);
             if (isRemainder) {
                 DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(T)), 0, 0, 0}; 
                 DataCopyPad(yTensorGM[index * maxDataCount], x1Local, copyParams);
@@ -335,14 +335,14 @@ namespace ForeachLerpScalar {
                 DataCopy(yTensorGM[index * maxDataCount], x1Local, dataCount);
             }
             event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-            set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-            wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+            SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+            WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
             x1Queue.FreeTensor(x1Local);
         } else {
             x1Queue.FreeTensor(x1Local);
             event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-            set_flag(PIPE_V, PIPE_MTE3, eventID1);
-            wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+            SetFlag<HardEvent::V_MTE3>(eventID1);
+            WaitFlag<HardEvent::V_MTE3>(eventID1);
             if (isRemainder) {
                 DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(T)), 0, 0, 0}; 
                 DataCopyPad(yTensorGM[index * maxDataCount], x2Local, copyParams);
@@ -350,8 +350,8 @@ namespace ForeachLerpScalar {
                 DataCopy(yTensorGM[index * maxDataCount], x2Local, dataCount);
             }
             event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-            set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-            wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+            SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+            WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
             x2Queue.FreeTensor(x2Local);
         }
 
