@@ -162,9 +162,9 @@ __aicore__ inline void ForeachNonFiniteCheckAndUnscaleND<T>::CopyIn(uint16_t ind
     } else {
         DataCopy(copyInLT, scaledGradsGM[index * maxDataCount], dataCount);
     }
-    event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventID1);
-    wait_flag(PIPE_MTE2, PIPE_S, eventID1);
+    event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
+    SetFlag<HardEvent::MTE2_S>(eventID1);
+    WaitFlag<HardEvent::MTE2_S>(eventID1);
     copyInQueue.EnQue(copyInLT);
 }
 
@@ -180,9 +180,9 @@ __aicore__ inline void ForeachNonFiniteCheckAndUnscaleND<T>::Compute(uint16_t in
     if (!haveFoundInf) {  // Inside the same Core, just find it once.
         LocalTensor<float> workLocal = tempValQueue.AllocTensor<float>();
         ReduceMax<float>(workLocal, computeInLT, workLocal, dataCount, false);
-        event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventID1);
-        wait_flag(PIPE_V, PIPE_S, eventID1);
+        event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
+        SetFlag<HardEvent::V_S>(eventID1);
+        WaitFlag<HardEvent::V_S>(eventID1);
         float maxValue = workLocal.GetValue(0);
         if (IsNonFinite(maxValue)) {
             foundInfGM.SetValue(0, 1.0);
@@ -190,9 +190,9 @@ __aicore__ inline void ForeachNonFiniteCheckAndUnscaleND<T>::Compute(uint16_t in
         }
         if (!haveFoundInf) {
             ReduceMin<float>(workLocal, computeInLT, workLocal, dataCount, false);
-            event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventID2);
-            wait_flag(PIPE_V, PIPE_S, eventID2);
+            event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
+            SetFlag<HardEvent::V_S>(eventID2);
+            WaitFlag<HardEvent::V_S>(eventID2);
             float minValue = workLocal.GetValue(0);
             if (IsNonFinite(minValue)) {
                 foundInfGM.SetValue(0, 1.0);
