@@ -23,11 +23,18 @@ aclOpExecutor **executor)`
 ## 功能描述
 
 GeluQuant由Gelu算子和Quant量化操作组成，计算过程：
-
-1. gelu = Gelu(x, approximate)
-2. quant_mode 是static, y = Round(gelu*scale+offset).clip(-128, 127)
-3. quant_mode 是dynamic, y=  (gelu*scale) * (127.0 / max(abs(gelu*scale)));
-out_scale = max(abs(gelu*scale))/127.0
+$$
+gelu = Gelu(x, approximate)
+$$
+$$
+quantMode 是static, yOut = Round(gelu*scale+offset).clip(-128, 127)
+$$
+$$
+quantMode 是dynamic, yOut = (gelu * scale) * (127.0 / max(abs(gelu*scale)));
+$$
+$$
+outScale = max(abs(gelu*scale))/127.0
+$$
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
@@ -40,9 +47,9 @@ out_scale = max(abs(gelu*scale))/127.0
   - inputScaleOptional（aclTensor\*，计算输入）：可选参数，Device侧的aclTensor，公式中的输入scale，数据类型支持FLOAT16，FLOAT32，BF16，数据格式支持ND。当quantMode是static, 则是必选参数。shape只可以是一维，大小可以是x的shape的最后一个维度，或者1。
   - inputOffsetOptional（aclTensor\*，计算输入）：可选参数，Device侧的aclTensor，公式中的输入offset，数据类型支持FLOAT16，FLOAT32，BF16，数据格式支持ND。shape和数据类型应该和inputScaleOptional一致。
   - approximateOptional（char\*，计算输入）：可选参数，公式中的输入approximate，数据类型支持STRING，数据格式。值必须是tanh或者none。
-  - quantModeOptional（char\*，计算输入）：可选参数，公式中的输入quant_mode，数据类型支持STRING，数据格式。值必须是dynamic或者static。
-  - yOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持INT8，数据格式支持ND。Shape和输入x一致。
-  - outScaleOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出out_scale，数据类型支持FLOAT32，数据格式支持ND。Shape和输入x的shape除了最后一个维度，其他维度都一致。
+  - quantModeOptional（char\*，计算输入）：可选参数，公式中的输入quantMode，数据类型支持STRING，数据格式。值必须是dynamic或者static。
+  - yOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出yOut，数据类型支持INT8，数据格式支持ND。Shape和输入x一致。
+  - outScaleOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出outScale，数据类型支持FLOAT32，数据格式支持ND。Shape和输入x的shape除了最后一个维度，其他维度都一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*，出参）：返回op执行器，包含了算子计算流程。
 

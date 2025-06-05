@@ -1,17 +1,11 @@
-/* *
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /* !
@@ -107,77 +101,77 @@ __aicore__ inline void GeluQuantBase::ComputeGeluErf(const LocalTensor<float> &c
 {
     // res = x/(1+exp(((((((a1*x^2+a2)*x^2+a3)*x^2+a4)*x^2+a5)*x^2+a6)*x^2+a7)*x))
     Maxs(castFp32, castFp32, ERF_MAX, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mins(tempRes, castFp32, ERF_MIN, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(xSquared, tempRes, tempRes, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Muls(tempRes, xSquared, ERF_PARAM1, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, ERF_PARAM2, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(tempRes, tempRes, xSquared, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, ERF_PARAM3, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(tempRes, tempRes, xSquared, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, ERF_PARAM4, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(tempRes, tempRes, xSquared, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, ERF_PARAM5, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(tempRes, tempRes, xSquared, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, ERF_PARAM6, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mul(tempRes, tempRes, xSquared, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, ERF_PARAM7, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Mins(xSquared, castFp32, ERF_MIN, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(tempRes, tempRes, xSquared, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Exp(tempRes, tempRes, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     Adds(tempRes, tempRes, 1.0f, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     
     Div(tempRes, castFp32, tempRes, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void GeluQuantBase::ComputeGeluTanh(const LocalTensor<float> &castFp32,
     const LocalTensor<float> &tempRes, const int32_t &calCount)
 {
     Mul(tempRes, castFp32, castFp32, calCount); // x^2
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(tempRes, castFp32, tempRes, calCount); // x^3
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tempRes, tempRes, BETA, calCount); // 0.044715 * x^3
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(tempRes, castFp32, tempRes, calCount); // x + 0.044715 * x^3
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(tempRes, tempRes, ALPHA, calCount); // -sqrt(8/pi)(x + 0.044715 * x^3)
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(tempRes, tempRes, calCount); // exp(-sqrt(8/pi)(x + 0.044715 * x^3))
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(tempRes, tempRes, SCALAR_ONE, calCount); // 1 + exp(-sqrt(8/pi)(x + 0.044715 * x^3))
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Div(tempRes, castFp32, tempRes, calCount); // x / (1 + exp(-sqrt(8/pi)(x + 0.044715 * x^3)))
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void GeluQuantBase::ComputeReduceMax(const LocalTensor<float> &tempRes, int32_t calCount,
@@ -196,13 +190,13 @@ __aicore__ inline void GeluQuantBase::ComputeReduceMax(const LocalTensor<float> 
 
     if (vectorCycles > 0 && remainElements > 0) {
         Max(tempRes, tempRes, tempRes[vectorCycles * FP32_VECTOR_CAPACITY_ONE_CYCLE], remainElements, 1, repeatParams);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     if (vectorCycles > 1) {
         Max(tempRes, tempRes[FP32_VECTOR_CAPACITY_ONE_CYCLE], tempRes, FP32_VECTOR_CAPACITY_ONE_CYCLE, vectorCycles - 1,
             repeatParams);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     WholeReduceMax(tempRes, tempRes, (vectorCycles == 0) ? remainElements : FP32_VECTOR_CAPACITY_ONE_CYCLE, 1, 1, 1,
