@@ -191,18 +191,18 @@ int main() {
   // 3. 调用CANN算子库API，需要修改为具体的Api名称
   uint64_t workspaceSize = 0;
   aclOpExecutor* executor;
-  // 调用aclnnForeachAddcdivScalar第一段接口
-  ret = aclnnForeachAddcdivScalarGetWorkspaceSize(tensorListInput1, tensorListInput2, tensorListanother, scalar, tensorListOutput, &workspaceSize, &executor);
-  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAddcdivScalarGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
+  // 调用aclnnForeachAddcmulScalar第一段接口
+  ret = aclnnForeachAddcmulScalarGetWorkspaceSize(tensorListInput1, tensorListInput2, tensorListanother, scalar, tensorListOutput, &workspaceSize, &executor);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAddcmulScalarGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
   // 根据第一段接口计算出的workspaceSize申请device内存
   void* workspaceAddr = nullptr;
   if (workspaceSize > 0) {
     ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret);
   }
-  // 调用aclnnForeachAddcdivScalar第二段接口
-  ret = aclnnForeachAddcdivScalar(workspaceAddr, workspaceSize, executor, stream);
-  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAddcdivScalar failed. ERROR: %d\n", ret); return ret);
+  // 调用aclnnForeachAddcmulScalar第二段接口
+  ret = aclnnForeachAddcmulScalar(workspaceAddr, workspaceSize, executor, stream);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachAddcmulScalar failed. ERROR: %d\n", ret); return ret);
 
   // 4. （固定写法）同步等待任务执行结束
   ret = aclrtSynchronizeStream(stream);

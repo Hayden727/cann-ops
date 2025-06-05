@@ -157,8 +157,8 @@ namespace ForeachCopy {
         LocalTensor<T> dataLocal = dataQueue.DeQue<T>();
 
         event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventID1);
-        wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+        SetFlag<HardEvent::V_MTE3>(eventID1);
+        WaitFlag<HardEvent::V_MTE3>(eventID1);
 
         if (isRemainder) {
             DataCopyExtParams copyParams{1, static_cast<uint32_t>(dataCount * sizeof(T)), 0, 0, 0}; 
@@ -168,8 +168,8 @@ namespace ForeachCopy {
         }
 
         event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         dataQueue.FreeTensor(dataLocal);
     }

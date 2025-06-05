@@ -164,12 +164,14 @@ int main(int argc, char **argv)
     std::vector<int64_t> outShape2 = {8, 2048};
     void *inputXDeviceAddr = nullptr;
     void *inputYDeviceAddr = nullptr;
+    void* otherXDeviceAddr = nullptr;
+    void* otherYDeviceAddr = nullptr;
     void *outputXDeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     aclTensor *inputY = nullptr;
-    aclTensor* other1 = nullptr;
-    aclTensor* other2 = nullptr;
+    aclTensor* otherX = nullptr;
+    aclTensor* otherY = nullptr;
     aclTensor *outputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
@@ -177,17 +179,21 @@ int main(int argc, char **argv)
     size_t outputYShapeSize = inputXShape[0] * inputXShape[1];
     std::vector<float> inputXHostData(inputXShape[0] * inputXShape[1]);
     std::vector<float> inputYHostData(inputYShape[0] * inputYShape[1]);
-    std::vector<float> other1HostData(otherShape1[0] * otherShape1[1]);
-    std::vector<float> other2HostData(otherShape2[0] * otherShape2[1]);
+    std::vector<float> otherXHostData(otherShape1[0] * otherShape1[1]);
+    std::vector<float> otherYHostData(otherShape2[0] * otherShape2[1]);
     std::vector<float> outputXHostData(outShape1[0] * outShape1[1]);
     std::vector<float> outputYHostData(outShape2[0] * outShape2[1]);
     size_t dataType = sizeof(float);
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
     void ** input2=(void **)(&inputYHostData);
+    void ** other1=(void **)(&otherXHostData);
+    void ** other2=(void **)(&otherYHostData);
     //读取数据
     ReadFile("../input/input_x1.bin", fileSize, *input1, inputXShapeSize * dataType);
     ReadFile("../input/input_x2.bin", fileSize, *input2, inputXShapeSize * dataType);
+    ReadFile("../input/input_y1.bin", fileSize, *other1, inputXShapeSize * dataType);
+    ReadFile("../input/input_y2.bin", fileSize, *other2, inputXShapeSize * dataType);
 
     INFO_LOG("Set input success");
     // 创建inputX aclTensor
@@ -196,11 +202,11 @@ int main(int argc, char **argv)
     ret = CreateAclTensor(inputYHostData, inputYShape, &inputYDeviceAddr, aclDataType::ACL_FLOAT, &inputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
 
-    // 创建other1 aclTensor
-    ret = CreateAclTensor(other1HostData, otherShape1, &other1DeviceAddr, aclDataType::ACL_FLOAT, &other1);
+    // 创建otherX aclTensor
+    ret = CreateAclTensor(otherXHostData, otherShape1, &otherXDeviceAddr, aclDataType::ACL_FLOAT, &otherX);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
-    // 创建other2 aclTensor
-    ret = CreateAclTensor(other2HostData, otherShape2, &other2DeviceAddr, aclDataType::ACL_FLOAT, &other2);
+    // 创建otherY aclTensor
+    ret = CreateAclTensor(otherYHostData, otherShape2, &otherYDeviceAddr, aclDataType::ACL_FLOAT, &otherY);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
 
     // 创建outputZ aclTensor
@@ -212,7 +218,7 @@ int main(int argc, char **argv)
     std::vector<aclTensor*> tempInput1{inputX, inputY};
     aclTensorList* tensorListInput1 = aclCreateTensorList(tempInput1.data(), tempInput1.size());
 
-    std::vector<aclTensor*> tempInput2{other1, other2};
+    std::vector<aclTensor*> tempInput2{otherX, otherY};
     aclTensorList* tensorListInput2 = aclCreateTensorList(tempInput2.data(), tempInput2.size());
 
     std::vector<aclTensor*> tempOutput{outputX, outputY};
@@ -261,14 +267,14 @@ int main(int argc, char **argv)
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改
     aclDestroyTensorList(tensorListInput1);
-  aclDestroyTensorList(tensorListInput2);
-  aclDestroyTensorList(tensorListOutput);
+    aclDestroyTensorList(tensorListInput2);
+    aclDestroyTensorList(tensorListOutput);
 
     // 7. 释放device资源，需要根据具体API的接口定义修改
     aclrtFree(inputXDeviceAddr);
     aclrtFree(inputYDeviceAddr);
-    aclrtFree(other1DeviceAddr);
-    aclrtFree(other2DeviceAddr);
+    aclrtFree(otherXDeviceAddr);
+    aclrtFree(otherYDeviceAddr);
     aclrtFree(outputXDeviceAddr);
     aclrtFree(outputYDeviceAddr);
     if (workspaceSize > 0) {
