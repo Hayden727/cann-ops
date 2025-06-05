@@ -99,11 +99,11 @@ private:
         PipeBarrier<PIPE_V>();
         ReduceSum<float>(float32Tensor, float32Tensor, float32Tensor, dataCount);
 
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         SetValueAdapter<float>(float32Tensor, float32Tensor.GetValue(0), maxCastDataCount + index);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
     }
 public:
     __aicore__ inline void SquareAndReduceRound1Compute(NormAdapter<float, modelCode> &normAdapter,
@@ -131,11 +131,11 @@ public:
         PipeBarrier<PIPE_V>();
         ReduceSum<float>(float32Tensor, float32Tensor[maxCastDataCount], float32Tensor[maxCastDataCount], castTimes);
 
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         SetValueAdapter<P>(tempLocal, float32Tensor.GetValue(0), tempIndex);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
     }
 
     __aicore__ inline void ReduceRound2AndSqrtCompute(NormAdapter<float, modelCode> &normAdapter,
@@ -163,11 +163,11 @@ public:
         PipeBarrier<PIPE_V>();
         ReduceSum<float>(dataLocal, dataLocal, dataLocal, dataCount);
         PipeBarrier<PIPE_V>();
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         SetValueAdapter<P>(tempLocal, dataLocal.GetValue(0), tempIndex);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
     }
     __aicore__ inline void ReduceRound2AndSqrtCompute(NormAdapter<float, modelCode> &normAdapter,
         LocalTensor<float> &dataLocal, LocalTensor<float> &outLocal, int64_t dataCount) {
@@ -301,16 +301,16 @@ private:
         ReduceSum<P>(tempLocal, tempLocal, tempLocal, copyTimes);
         PipeBarrier<PIPE_V>();
 
-        event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventID1);
-        wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+        event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+        SetFlag<HardEvent::V_MTE3>(eventID1);
+        WaitFlag<HardEvent::V_MTE3>(eventID1);
 
         DataCopyExtParams copyParams{1, static_cast<uint32_t>(sizeof(P)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位       
         DataCopyPad(workTensorGM[offset], tempLocal, copyParams);
 
-        event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
     }
 
     // CopyIn, Compute and CopyOut
@@ -355,16 +355,16 @@ private:
 
         computer.ReduceRound2AndSqrtCompute(normAdapter, dataLocal, outLocal, dataCount);
 
-        event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventID1);
-        wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+        event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+        SetFlag<HardEvent::V_MTE3>(eventID1);
+        WaitFlag<HardEvent::V_MTE3>(eventID1);
 
         DataCopyExtParams copyParams2{1, static_cast<uint32_t>(sizeof(T)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位        
         DataCopyPad(outTensorGM, outLocal, copyParams2);
 
-        event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         dataQueue.FreeTensor(dataLocal);
         outQueue.FreeTensor(outLocal);
@@ -373,24 +373,24 @@ private:
     __aicore__ inline void OutputZero() {
         LocalTensor<T> outLocal = outQueue.AllocTensor<T>();
 
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
 
         SetValueAdapter(outLocal, float(0.0), 0);
         
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
 
-        event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventID1);
-        wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+        event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+        SetFlag<HardEvent::V_MTE3>(eventID1);
+        WaitFlag<HardEvent::V_MTE3>(eventID1);
 
         DataCopyExtParams copyParams2{1, static_cast<uint32_t>(sizeof(T)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位       
         DataCopyPad(outTensorGM, outLocal, copyParams2);
 
-        event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         outQueue.FreeTensor(outLocal);
     }
