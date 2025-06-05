@@ -21,7 +21,7 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnRmsNormGradGetWorkspaceSize( const aclTensor *dy, const aclTensor *x, const aclTensor *rstd, const aclTensor *gamma, const aclTensor *dxOut, const aclTensor *dgammaOut, uint64_t *workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnRmsNormGradGetWorkspaceSize(const aclTensor *dy, const aclTensor *x, const aclTensor *rstd, const aclTensor *gamma, const aclTensor *dxOut, const aclTensor *dgammaOut, uint64_t *workspaceSize, aclOpExecutor **executor);
 // 执行算子
 aclnnStatus aclnnRmsNormGrad(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream);
 ```
@@ -29,15 +29,15 @@ aclnnStatus aclnnRmsNormGrad(void *workspace, uint64_t workspaceSize, aclOpExecu
 其中aclnnRmsNormGradGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnRmsNormGrad执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
 ## 运行样例算子
-  **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
+**请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
   
-  - 进入样例代码所在路径
+- 进入样例代码所在路径
   
   ```bash
   cd ${git_clone_path}/cann-ops/src/norm/rms_norm_grad/examples/AclNNInvocationNaive
   ```
   
-  - 样例执行
+- 样例执行
     
   样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     

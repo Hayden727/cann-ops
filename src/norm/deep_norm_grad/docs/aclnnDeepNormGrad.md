@@ -2,9 +2,9 @@
 
 ## 支持的产品型号
 
-- 昇腾310P AI处理器。
-- 昇腾910B AI处理器。
-- 昇腾910_93 AI处理器。
+- Atlas 推理系列产品。
+- Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件。
+- Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
 每个算子分为两段式接口，必须先调用“aclnnDeepNormGradGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnDeepNormGrad”接口执行计算。
@@ -12,9 +12,9 @@
 *  `aclnnStatus aclnnDeepNormGrad(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 ## 功能描述
--   **算子功能**：DeepNorm算子的反向计算
+- **算子功能**：DeepNorm算子的反向计算
 
--   **计算公式**：
+- **计算公式**：
 
     $$
     d_{gx_i} = tmpone_i * rstd + \frac{2}{D} * d_{var} * tmptwo_i + {\frac{1}{D}} * d_{mean}
@@ -52,59 +52,59 @@
 ## aclnnDeepNormGradGetWorkspaceSize
 
 - **参数说明：**
-  * dy（aclTensor \*，计算输入）：主要的grad输入。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
-    * 昇腾310P AI处理器：数据类型支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * x（aclTensor \*，计算输入）：为正向融合算子的输入x。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
-    * 昇腾310P AI处理器：数据类型支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * gx（aclTensor \*，计算输入）：为正向融合算子的输入gx。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
-    * 昇腾310P AI处理器：数据类型支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * gamma（aclTensor \*，计算输入）：shape支持1维-7维，数据格式支持ND，不支持非连续输入。
-    * 昇腾310P AI处理器：数据类型支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * mean（aclTensor \*，计算输入）：表示正向输入x、gx之和的均值。数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
-  * rstd（aclTensor \*，计算输入）：表示正向输入x、gx之和的rstd。输入数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+  * dy（aclTensor\*，计算输入）：主要的grad输入。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+    * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
+  * x（aclTensor\*，计算输入）：为正向融合算子的输入x。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+    * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
+  * gx（aclTensor\*，计算输入）：为正向融合算子的输入gx。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+    * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
+  * gamma（aclTensor\*，计算输入）：shape支持1维-7维，数据格式支持ND，不支持非连续输入。
+    * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
+  * mean（aclTensor\*，计算输入）：表示正向输入x、gx之和的均值。数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+  * rstd（aclTensor\*，计算输入）：表示正向输入x、gx之和的rstd。输入数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
   * alpha(double，计算输入)：含义与deepnorm正向输入alpha相同，deepnorm输入x维度的乘数。
-  * dxOut（aclTensor \*，计算输出）：shape支持2维-8维，数据格式支持ND。
-    * 昇腾310P AI处理器：数据类型支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dgxOut（aclTensor \*，计算输出）：shape支持2维-8维，数据格式支持ND。
-    * 昇腾310P AI处理器：数据类型支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dbetaOut（aclTensor \*，计算输出）：数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。
-  * dgammaOut（aclTensor \*，计算输出）：数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。
-  * workspaceSize（uint64_t \*，出参）：返回需要在Device侧申请的workspace大小。
-  * executor（aclOpExecutor \*\*，出参）：返回op执行器，包含了算子计算流程。
+  * dxOut（aclTensor\*，计算输出）：shape支持2维-8维，数据格式支持ND。
+    * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
+  * dgxOut（aclTensor\*，计算输出）：shape支持2维-8维，数据格式支持ND。
+    * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
+  * dbetaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。
+  * dgammaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。
+  * workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
+  * executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
-  返回161001 (ACLNN_ERR_PARAM_NULLPTR)：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  返回161002 (ACLNN_ERR_PARAM_INVALID)：1. 输入和输出的数据类型不在支持的范围之内.
-                                       2. 输入和输出的shape不匹配或者不在支持的维度范围内。
+  返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
+  返回161002（ACLNN_ERR_PARAM_INVALID）：1. 输入和输出的数据类型不在支持的范围之内.
+                                        2. 输入和输出的shape不匹配或者不在支持的维度范围内。
   ```
 
 ## aclnnDeepNormGrad
 - **参数说明：**
-  * workspace（void \*，入参）：在Device侧申请的workspace内存地址。
+  * workspace（void\*，入参）：在Device侧申请的workspace内存地址。
   * workspaceSize（uint64_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnDeepNormGradGetWorkspaceSize获取。
-  * executor（aclOpExecutor \*，入参）：op执行器，包含了算子计算流程。
+  * executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   * stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 
 - **返回值：**
 
-  aclnnStatus：返回状态码，具体参见aclnn返回码。
+  aclnnStatus：返回状态码。
 
 ## 约束与限制
 - **功能维度**
   * 数据类型支持
-    * 昇腾310P AI处理器：dy、x、gx、gamma支持FLOAT32、FLOAT16。
-    * 昇腾910B AI处理器、昇腾910_93 AI处理器：dy、x、gx、gamma支持FLOAT32、FLOAT16、BFLOAT16。
+    * Atlas 推理系列产品：dy、x、gx、gamma支持FLOAT32、FLOAT16。
+    * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：dy、x、gx、gamma支持FLOAT32、FLOAT16、BFLOAT16。
     * rstd、mean支持：FLOAT32。
   * 数据格式支持：ND。
 - **未支持类型说明**

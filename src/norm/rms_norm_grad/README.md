@@ -26,9 +26,9 @@ RmsNorm的反向计算。
 本样例支持如下产品型号：
 - Atlas 训练系列产品
 - Atlas 推理系列产品
-- Atlas A2训练系列产品
-- Atlas 800I A2推理产品
-- Atlas 200I/500 A2推理产品
+- Atlas A2 训练系列产品
+- Atlas 800I A2 推理产品
+- Atlas 200I/500 A2 推理产品
 
 ### 目录结构介绍
 ```
@@ -53,7 +53,7 @@ RmsNorm的反向计算。
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n rms_norm_grad
     ```
 
   - 部署算子包

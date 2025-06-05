@@ -82,7 +82,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n bidirection_lstm
     ```
 
   - 部署算子包
