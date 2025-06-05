@@ -62,20 +62,20 @@
   - scales1（aclTensor*，计算输入）：表示量化过程中得到y1进行的scales张量，公式中的`scales1`，Device侧的aclTensor。shape需要与gamma保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 推理系列产品：数据类型支持FLOAT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、BFLOAT16。
-  - scales2Optional（aclTensor*，计算输入）：表示量化过程中得到y2进行的scales张量，公式中的`scales2`，Device侧的aclTensor。可选参数，支持传入空指针。shape需要与gamma保持一致，数据类型需要与scales1保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - scales2Optional（aclTensor*，计算输入）：表示量化过程中得到y2进行的scales张量，公式中的`scales2`，Device侧的aclTensor。可选参数，支持传入空指针。shape需要与gamma保持一致，数据类型需要与scales1保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。预留参数，实际未使用。
     - Atlas 推理系列产品：数据类型支持FLOAT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、BFLOAT16。
   - zeroPoints1Optional（aclTensor*，计算输入）：表示量化过程中得到y1进行的offset张量，公式中的`zero_points1`，Device侧的aclTensor。可选参数，支持传入空指针。shape需要与gamma保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 推理系列产品：数据类型支持INT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持INT32、BFLOAT16。
-  - zeroPoints2Optional（aclTensor*，计算输入）：表示量化过程中得到y2进行的offset张量，公式中的`zero_points2`，Device侧的aclTensor。可选参数，支持传入空指针。shape需要与gamma保持一致，数据类型需要与zeroPoints1Optional保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - zeroPoints2Optional（aclTensor*，计算输入）：表示量化过程中得到y2进行的offset张量，公式中的`zero_points2`，Device侧的aclTensor。可选参数，支持传入空指针。shape需要与gamma保持一致，数据类型需要与zeroPoints1Optional保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。预留参数，实际未使用。
     - Atlas 推理系列产品：数据类型支持INT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持INT32、BFLOAT16。
   - axis（int64_t，计算输入）：Host侧的整型，表示需要进行量化的elewise轴，其他的轴做broadcast，指定的轴不能超过输入x的维度数。当前仅支持-1，传其他值均不生效。
   - epsilon（double，计算输入）： 公式中的输入eps，用于防止除0错误，数据类型为double。建议传较小的正数。
   - divMode（bool，计算输入）： 公式中决定量化公式是否使用除法的参数，数据类型为bool，当前仅支持True，传其他值均不生效。
   - y1Out（aclTensor*，计算输出）：表示量化输出Tensor，公式中的`y1`，Device侧的aclTensor。shape支持1-8维度，shape需要与输入x1/x2一致，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor。
-  - y2Out（aclTensor*，计算输出）：表示量化输出Tensor，公式中的`y2`，Device侧的aclTensor。shape支持1-8维度，shape需要与输入x1/x2一致，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor。
+  - y2Out（aclTensor*，计算输出）：表示量化输出Tensor，公式中的`y2`，Device侧的aclTensor。shape支持1-8维度，shape需要与输入x1/x2一致，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor。预留参数，实际未使用，输出为随机值。
   - xOut（aclTensor*，计算输出）：表示x1和x2的和，公式中的`x`，Device侧的aclTensor。shape支持1-8维度，shape和数据类型需要与输入x1/x2一致，数据格式支持ND，支持非连续的Tensor。
     - Atlas 推理系列产品：数据类型支持FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、BFLOAT16。

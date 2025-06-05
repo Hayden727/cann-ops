@@ -2,7 +2,7 @@
 
 ## 支持的产品型号
 
-Atlas A2训练系列产品
+- Atlas A2 训练系列产品。
 
 ## 接口原型
 
@@ -30,9 +30,9 @@ Atlas A2训练系列产品
 
 - **参数说明**：
 
-  - x1（aclTensorList*，计算输入）：公式中的`x1`，Device侧的aclTensorList，数据类型支持FLOAT、FLOAT16、BFLOAT16。数据格式支持ND，shape维度不高于8维。支持非连续的Tensor。
-  - x2（aclTensorList*，计算输入）：公式中的`x2`，Device侧的aclTensorList，数据类型支持FLOAT、FLOAT16、BFLOAT16，数据格式支持ND，shape维度不高于8维。数据类型、数据格式和shape跟入参`x1`的数据类型、数据格式和shape一致。支持非连续的Tensor。
-  - out（aclTensorList*，计算输出）：公式中的`y`，Device侧的aclTensorList，数据类型支持FLOAT、FLOAT16、BFLOAT16 ，数据格式支持ND，shape维度不高于8维。数据类型、数据格式和shape跟入参`x1`的数据类型、数据格式和shape一致。支持非连续的Tensor。
+  - x1（aclTensorList*，计算输入）：公式中的`x1`，Device侧的aclTensorList，表示除法运算的第一个输入张量列表。数据类型支持FLOAT、FLOAT16、BFLOAT16。数据格式支持ND，shape维度不高于8维。支持非连续的Tensor，不支持空Tensor。
+  - x2（aclTensorList*，计算输入）：公式中的`x2`，Device侧的aclTensorList，表示除法运算的第二个输入张量列表。数据类型支持FLOAT、FLOAT16、BFLOAT16，数据格式支持ND，shape维度不高于8维。数据类型、数据格式和shape跟入参`x1`的数据类型、数据格式和shape一致。支持非连续的Tensor，不支持空Tensor。
+  - out（aclTensorList*，计算输出）：公式中的`y`，Device侧的aclTensorList，表示除法运算的输出张量列表。数据类型支持FLOAT、FLOAT16、BFLOAT16 ，数据格式支持ND，shape维度不高于8维。数据类型、数据格式和shape跟入参`x1`的数据类型、数据格式和shape一致。支持非连续的Tensor，不支持空Tensor。
   - workspaceSize（uint64_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 
@@ -42,10 +42,10 @@ Atlas A2训练系列产品
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
-  返回161001（ACLNN_ERR_PARAM_NULLPTR）: 1. 传入的x1、x2和out是空指针。
-  返回161002（ACLNN_ERR_PARAM_INVALID）: 1. x1、x2和out的数据类型不在支持的范围之内。
-                                       2. x1、x2和out无法做数据类型推导。
-                                       3. 推导出的数据类型无法转换为指定输出out的类型。
+  返回161001（ACLNN_ERR_PARAM_NULLPTR）：1. 传入的x1、x2和out是空指针。
+  返回161002（ACLNN_ERR_PARAM_INVALID）：1. x1、x2和out的数据类型不在支持的范围之内。
+                                        2. x1、x2和out无法做数据类型推导。
+                                        3. 推导出的数据类型无法转换为指定输出out的类型。
   ```
 
 ## aclnnForeachDivList
