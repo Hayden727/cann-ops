@@ -9,11 +9,11 @@
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Sscal</td></tr>
 </tr>
-<tr><td rowspan="5" align="center">算子输入/输出</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">2048</td><td align="center">float32</td><td align="center">ND</td></tr>
-<tr><td align="center">alpha</td><td align="center">-</td><td align="center">double</td><td align="center">-</td></tr>
-<tr><td align="center">n</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
-<tr><td align="center">incx</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td rowspan="5" align="center">算子输入/输出</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">alpha</td><td align="center">attr</td><td align="center">double</td><td align="center">-</td></tr>
+<tr><td align="center">n</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">incx</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
 <tr></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">sscal</td></tr>

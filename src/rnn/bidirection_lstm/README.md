@@ -34,13 +34,13 @@
 
 <tr><td align="center">b_hh_reverse</td><td align="center">tensor</td><td align="center">float16</td><td align="center">ND</td></tr> 
 
-<tr><td align="center">num_layers</td><td align="center">int</td><td align="center">int</td><td align="center">/</td></tr> 
+<tr><td align="center">num_layers</td><td align="center">attr</td><td align="center">int</td><td align="center">/</td></tr> 
 
-<tr><td align="center">isbias</td><td align="center">Bool</td><td align="center">Bool</td><td align="center">/</td></tr> 
+<tr><td align="center">isbias</td><td align="center">attr</td><td align="center">Bool</td><td align="center">/</td></tr> 
 
-<tr><td align="center">batch_first</td><td align="center">Bool</td><td align="center">Bool</td><td align="center">/</td></tr> 
+<tr><td align="center">batch_first</td><td align="center">attr</td><td align="center">Bool</td><td align="center">/</td></tr> 
 
-<tr><td align="center">bidirection</td><td align="center">Bool</td><td align="center">Bool</td><td align="center">/</td></tr> 
+<tr><td align="center">bidirection</td><td align="center">attr</td><td align="center">Bool</td><td align="center">/</td></tr> 
 
 </tr> 
 
