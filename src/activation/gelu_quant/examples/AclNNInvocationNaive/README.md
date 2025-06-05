@@ -21,7 +21,8 @@
 
 ```cpp
 // 获取算子使用的workspace空间大小
-aclnnStatus aclnnGeluQuantGetWorkspaceSize(const aclTensor *x, const aclTensor *input_scale, const aclTensor *input_offset, const aclTensor *y, const aclTensor *out_scale, uint64_t workspaceSize, aclOpExecutor **executor);
+aclnnStatus aclnnGeluQuantGetWorkspaceSize(const aclTensor *x, const aclTensor *inputScaleOptional, const aclTensor *inputOffsetOptional, char *approximateOptional, char *quantModeOptional, const aclTensor *yOut, const aclTensor *outScaleOut, uint64_t *workspaceSize,
+aclOpExecutor **executor)
 // 执行算子
 aclnnStatus aclnnGeluQuant(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream);
 ```

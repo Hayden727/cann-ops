@@ -1,17 +1,11 @@
-/* *
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /* !
@@ -197,7 +191,7 @@ __aicore__ inline void StaticQuantBlock<T1, T2>::ProcessOptionalInput(LocalTenso
     } else {
         Cast(optionalLocalFp32, tempLocal, RoundMode::CAST_NONE, calCount);
     }
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueue_.FreeTensor(optionalInput);
 }
 
@@ -235,7 +229,7 @@ __aicore__ inline void StaticQuantBlock<T1, T2>::ComputeGelu(LocalTensor<float> 
         } else {
             Cast(castFp32[i * colActualAlignTo32_], xLocal[i * colActualAlignTo16_], RoundMode::CAST_NONE, colActual_);
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     inQueue_.FreeTensor(xLocal);
@@ -259,19 +253,19 @@ __aicore__ inline void StaticQuantBlock<T1, T2>::ComputeQuant(LocalTensor<float>
     for (int32_t i = 0; i < rowActual_; i++) {
         if (inputScaleType_ == NORMAL_TENSOR) {
             Mul(geluRes[i * colActualAlignTo32_], geluRes[i * colActualAlignTo32_], scaleLocalFp32, colActual_);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
         if (inputOffsetType_ == NORMAL_TENSOR) {
             Add(geluRes[i * colActualAlignTo32_], geluRes[i * colActualAlignTo32_], offsetLocalFp32, colActual_);
-            pipe_barrier(PIPE_V);
+            PipeBarrier<PIPE_V>();
         }
 
 
         Cast(castFp16[i * colActualAlignTo16_], geluRes[i * colActualAlignTo32_], RoundMode::CAST_ODD, colActual_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(outLocal[i * colActualAlignTo8_], castFp16[i * colActualAlignTo16_], RoundMode::CAST_RINT, colActual_);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 
     outQueue_.EnQue<int8_t>(outLocal);

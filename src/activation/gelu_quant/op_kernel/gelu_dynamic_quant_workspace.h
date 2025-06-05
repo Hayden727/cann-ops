@@ -1,17 +1,11 @@
-/* *
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /* !
@@ -122,7 +116,7 @@ template <typename T1, typename T2> __aicore__ inline void GeluDynamicQuantWorks
     if (inputScaleType_ == SCALAR_TENSOR) {
         LocalTensor<float> scaleLocalFp32 = scaleQueue_.AllocTensor<float>();
         ProcessOptionalScale(scaleLocalFp32, 0, 1);
-        pipe_barrier(PIPE_ALL);
+        PipeBarrier<PIPE_ALL>();
         inputScaleScalar_ = scaleLocalFp32.GetValue(0);
         scaleQueue_.FreeTensor(scaleLocalFp32);
     }
@@ -201,8 +195,7 @@ __aicore__ inline void GeluDynamicQuantWorkspace<T1, T2>::ProcessOptionalScale(L
     } else {
         Cast(scaleLocalFp32, scaleInput, RoundMode::CAST_NONE, calCount);
     }
-
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueue_.FreeTensor(optionalScale);
 }
 
@@ -239,10 +232,10 @@ __aicore__ inline void GeluDynamicQuantWorkspace<T1, T2>::ScaleResToWorkspace(Lo
         Mul(geluRes, geluRes, scaleLocalFp32, calCount);
     }
 
-    pipe_barrier(PIPE_V); // geluRes more consumption
+    PipeBarrier<PIPE_V>();// geluRes more consumption
     LocalTensor<float> workspaceLocal = workspaceQueue_.AllocTensor<float>();
     Muls(workspaceLocal, geluRes, 1.0f, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     workspaceQueue_.EnQue<float>(workspaceLocal);
 
     LocalTensor<float> workspaceLocalOut = workspaceQueue_.DeQue<float>();
@@ -301,7 +294,7 @@ __aicore__ inline void GeluDynamicQuantWorkspace<T1, T2>::ComputeGelu(LocalTenso
         Cast(castFp32, xLocal, RoundMode::CAST_NONE, calCount);
     }
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     if (approximate_ == APPROXIMATE_NONE) {
         LocalTensor<float> xSquared = tempQueue_.Get<float>();
@@ -317,16 +310,16 @@ __aicore__ inline void GeluDynamicQuantWorkspace<T1, T2>::ComputeDynamicQuant(fl
 {
     LocalTensor<float> geluRes = inQueue_.DeQue<float>();
     Muls(geluRes, geluRes, scale, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     LocalTensor<half> castFp16 = castQueue_.Get<half>();
     Cast(castFp16, geluRes, RoundMode::CAST_ODD, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     inQueue_.FreeTensor(geluRes);
 
     LocalTensor<int8_t> outLocal = outQueue_.AllocTensor<int8_t>();
     Cast(outLocal, castFp16, RoundMode::CAST_RINT, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     outQueue_.EnQue<int8_t>(outLocal);
 }
@@ -337,7 +330,7 @@ __aicore__ inline void GeluDynamicQuantWorkspace<T1, T2>::ComputeMaxValue(LocalT
 {
     LocalTensor<float> tempRes = tempQueue_.Get<float>();
     Abs(tempRes, scaleRes, calCount);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     float maxValue = 0;
     ComputeReduceMax(tempRes, calCount, maxValue);
