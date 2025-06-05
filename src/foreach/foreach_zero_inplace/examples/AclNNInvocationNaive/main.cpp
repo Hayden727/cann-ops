@@ -207,7 +207,7 @@ int main(int argc, char **argv)
     uint64_t workspaceSize = 0;
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
-    ret = aclnnForeachZeroInplaceGetWorkspaceSize(tensorListInput, tensorListOutput, &workspaceSize, &executor);
+    ret = aclnnForeachZeroInplaceGetWorkspaceSize(tensorListInput, &workspaceSize, &executor);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnForeachZeroInplaceGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {

@@ -192,16 +192,16 @@ __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCou
 
     ReduceCompute(tempLocal, tempLocal, tempLocal, copyTimes);
 
-    event_t eventID1 = static_cast<event_t>(Base::pipe.FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID1);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+    event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+    SetFlag<HardEvent::V_MTE3>(eventID1);
+    WaitFlag<HardEvent::V_MTE3>(eventID1);
 
     DataCopyExtParams copyParams{1, static_cast<uint32_t>(sizeof(P)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位       
     DataCopyPad(workTensorGM[offset], tempLocal, copyParams);
 
-    event_t eventID2 = static_cast<event_t>(Base::pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 }
 
 template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_t paramsCount, typename Tiling>
@@ -255,24 +255,24 @@ template <typename T, typename P, typename Predicate , int32_t bufferNum, uint8_
 __aicore__ inline void KernelForeadhReduce<T, P, Predicate, bufferNum, paramsCount, Tiling>::OutputZero() {
     LocalTensor<T> outLocal = outQueue.AllocTensor<T>();
 
-    set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-    wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+    SetFlag<HardEvent::V_S>(EVENT_ID0);
+    WaitFlag<HardEvent::V_S>(EVENT_ID0);
 
     SetValueAdapter(outLocal, float(0.0), 0);
         
-    set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-    wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+    SetFlag<HardEvent::S_V>(EVENT_ID1);
+    WaitFlag<HardEvent::S_V>(EVENT_ID1);
 
-    event_t eventID1 = static_cast<event_t>(Base::pipe.FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID1);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+    event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+    SetFlag<HardEvent::V_MTE3>(eventID1);
+    WaitFlag<HardEvent::V_MTE3>(eventID1);
 
     DataCopyExtParams copyParams2{1, static_cast<uint32_t>(sizeof(T)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位       
     DataCopyPad(outTensorGM, outLocal, copyParams2);
 
-    event_t eventID2 = static_cast<event_t>(Base::pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
     outQueue.FreeTensor(outLocal);
 }
