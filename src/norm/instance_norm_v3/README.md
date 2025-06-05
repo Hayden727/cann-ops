@@ -51,7 +51,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n instance_norm_v3
     ```
 
   - 部署算子包
