@@ -1,23 +1,24 @@
-## `AddCustom`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`AddCustom`算子。
+## `DiagFlat`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`DiagFlat`算子。
 
 ### 算子描述
-`AddCustom`算子返回两个数据相加的结果。
+`DiagFlat`算子：如果input是向量（一维向量），则返回二维矩阵张量，其中input元素为对角线；如果input是二维及以上的张量，则先进行扁平化，化简为一维向量，在转化为第一种场景进行出处理。
 
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddCustom</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">DiagFlat</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td align="center">self</td><td align="center">1-8 维度</td><td align="center">详情见docs</td><td align="center">ND</td></tr>
+<tr><td align="center">diagonal</td><td align="center">1-8 维度</td><td align="center">详情见docs</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center"></td><td align="center">详情见docs</td><td align="center">ND</td></tr>
 </tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">diag_flat</td></tr>
 </table>
+
 
 ### 支持的产品型号
 本样例支持如下产品型号：
@@ -63,30 +64,10 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用AddCustom算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用DiagFlat算子。</td>
     </tr>
-    <tr>
-        <td><a href="./examples/AclOfflineModel"> AclOfflineModel</td><td>通过aclopExecuteV2调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/AclOnlineModel"> AclOnlineModel</td><td>通过aclopCompile调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/CppExtensions"> CppExtensions</td><td>Pybind方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/PytorchInvocation"> PytorchInvocation</td><td>通过pytorch调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/TensorflowInvocation"> TensorflowInvocation</td><td>通过tensorflow调用的方式调用AddCustom算子。</td>
-    </tr>
-    <tr>
-        <td><a href="./examples/ATBInvocation">ATBInvocation</td><td>通过ATB调用的方式调用AddCustom算子。</td>
-    </tr>
-
-</table>
 
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/06 | 新增本readme |
+| 2025/06/04 | 新增本readme |
