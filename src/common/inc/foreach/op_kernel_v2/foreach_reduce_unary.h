@@ -57,11 +57,11 @@ private:
         pipe_barrier(PIPE_V);
         reduceAdapter.ReduceOp(float32Tensor, float32Tensor, float32Tensor, dataCount);
 
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         SetValueAdapter<float>(float32Tensor, float32Tensor.GetValue(0), maxCastDataCount + index);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
     }
 public:
     __aicore__ inline void ComputeRound1(ReduceAdapter<P, OpPredicate> &reduceAdapter,
@@ -89,11 +89,11 @@ public:
         pipe_barrier(PIPE_V);
         reduceAdapter.ReduceOp(float32Tensor, float32Tensor[maxCastDataCount], float32Tensor[maxCastDataCount], castTimes);
 
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         SetValueAdapter<P>(tempLocal, float32Tensor.GetValue(0), tempIndex);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
     }
 
     __aicore__ inline void ComputeRound2(ReduceAdapter<P, OpPredicate> &reduceAdapter,
@@ -128,11 +128,11 @@ public:
         pipe_barrier(PIPE_V);
         reduceAdapter.ReduceOp(dataLocal, dataLocal, dataLocal, dataCount);
         pipe_barrier(PIPE_V);
-        set_flag(PIPE_V, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_V, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::V_S>(EVENT_ID0);
+        WaitFlag<HardEvent::V_S>(EVENT_ID0);
         SetValueAdapter<P>(tempLocal, dataLocal.GetValue(0), tempIndex);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID1);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID1);
+        SetFlag<HardEvent::S_V>(EVENT_ID1);
+        WaitFlag<HardEvent::S_V>(EVENT_ID1);
     }
 
     __aicore__ inline void ComputeRound2(ReduceAdapter<P, OpPredicate> &reduceAdapter,
@@ -188,16 +188,16 @@ private:
 
         computer.ComputeRound2(reduceAdapter, dataLocal, outLocal, dataCount);
 
-        event_t eventID1 = static_cast<event_t>(Base::Base::pipe.FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventID1);
-        wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+        event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+        SetFlag<HardEvent::V_MTE3>(eventID1);
+        WaitFlag<HardEvent::V_MTE3>(eventID1);
 
         DataCopyExtParams copyParams2{1, static_cast<uint32_t>(sizeof(T)), 0, 0, 0}; // 结构体DataCopyExtParams最后一个参数是rsv保留位        
         DataCopyPad(Base::outTensorGM, outLocal, copyParams2);
 
-        event_t eventID2 = static_cast<event_t>(Base::Base::pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        event_t eventID2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         Base::dataQueue.FreeTensor(dataLocal);
         Base::outQueue.FreeTensor(outLocal);
