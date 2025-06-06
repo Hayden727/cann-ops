@@ -285,8 +285,9 @@ private:
 
     LocalTensor<T> sLocal = inQueueScale_.AllocTensor<T>();
     DataCopyPad(sLocal, scaleGm_, copyParams, padParams);
-    set_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
-    wait_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
+    SetFlag<HardEvent::MTE2_S>(EVENT_ID0);
+    WaitFlag<HardEvent::MTE2_S>(EVENT_ID0);
+
     scale_ = ToFloat(sLocal.GetValue(0));
     PipeBarrier<PIPE_V>();
     inQueueScale_.FreeTensor(sLocal);
@@ -294,8 +295,9 @@ private:
     if (tilingData_.hasOffset != 0) {
       LocalTensor<T> oLocal = inQueueOffset_.AllocTensor<T>();
       DataCopyPad(oLocal, offsetGm_, copyParams, padParams);
-      set_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
-      wait_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
+      SetFlag<HardEvent::MTE2_S>(EVENT_ID0);
+      WaitFlag<HardEvent::MTE2_S>(EVENT_ID0);
+
       offset_ = ToFloat(oLocal.GetValue(0));
       PipeBarrier<PIPE_V>();
       inQueueOffset_.FreeTensor(oLocal);

@@ -393,8 +393,8 @@ __aicore__ inline void KernelUpsampleTrilinear<T>::CalcMatMulInD(int32_t input_c
   matmul_d.End();
 
   event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-  set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-  wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+  SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+  WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
 }
 
 template <typename T>
@@ -422,8 +422,8 @@ __aicore__ inline void KernelUpsampleTrilinear<T>::CalcMatMulInH(int32_t input_c
   matmul_h.End();
 
   event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-  set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-  wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+  SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+  WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
 }
 
 template <typename T>
@@ -453,8 +453,8 @@ __aicore__ inline void KernelUpsampleTrilinear<T>::CalcMatMulInW(int32_t input_c
   matmul_w.End();
 
   event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-  set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-  wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+  SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+  WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
 }
 
 template <typename T>
@@ -464,15 +464,15 @@ __aicore__ inline void KernelUpsampleTrilinear<T>::CopyRatioMetrix2Gm() {
     LocalTensor<T> omega_metrix_cast_lc = omega_metrix_cast_que.DeQue<T>();
     DataCopy(intermediate_gm[workspace_offset], omega_metrix_cast_lc, omega_metrix_cast_lc.GetSize());
     event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
     omega_metrix_cast_que.FreeTensor(omega_metrix_cast_lc);
   } else {
     LocalTensor<T> omega_metrix_lc = omega_metrix_que.DeQue<T>();
     DataCopy(intermediate_gm[workspace_offset], omega_metrix_lc, omega_metrix_lc.GetSize());
     event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
     omega_metrix_que.FreeTensor(omega_metrix_lc);
   }
 }

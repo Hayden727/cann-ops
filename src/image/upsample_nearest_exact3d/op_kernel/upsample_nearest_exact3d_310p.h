@@ -297,12 +297,12 @@ __aicore__ inline void UpsampleNearestExact3dND310p<T>::CopyIn(int64_t inputOffs
 {
     LocalTensor<T> srcLocal = inQueue.AllocTensor<T>();
     event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID1);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+    SetFlag<HardEvent::V_MTE3>(eventID1);
+    WaitFlag<HardEvent::V_MTE3>(eventID1);
     DataCopy(srcLocal, inTensorsGM[inputOffset], repeatParams);
     event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
     inQueue.EnQue(srcLocal);
 }
 
@@ -367,14 +367,14 @@ __aicore__ inline void UpsampleNearestExact3dND310p<T>::CopyOut(
     int64_t offsetTemp, LocalTensor<T> dstLocal, int64_t copyOutCnt)
 {
     event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID1);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+    SetFlag<HardEvent::V_MTE3>(eventID1);
+    WaitFlag<HardEvent::V_MTE3>(eventID1);
     SetAtomicAdd<T>();
     DataCopy(outTensorsGM[offsetTemp], dstLocal, copyOutCnt);
     SetAtomicNone();
     event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 }
 
 template <typename T>

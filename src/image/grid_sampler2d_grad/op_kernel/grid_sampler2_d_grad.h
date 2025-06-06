@@ -524,8 +524,8 @@ __aicore__ inline void GridSampler2DGrad<T, GridSamplerGradTilingData>::ComputeA
     DataCopyPad(inputXLocalTensor, inputGm[1][xGmOffset], copyParams, padParams);
 
     event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-    set_flag(PIPE_MTE2, PIPE_V, eventID1);
-    wait_flag(PIPE_MTE2, PIPE_V, eventID1);
+    SetFlag<HardEvent::MTE2_V>(eventID1);
+    WaitFlag<HardEvent::MTE2_V>(eventID1);
     Muls(giyLocalTensor, inputXLocalTensor, yVal, channel);
     Mul(giyLocalTensor, gOutLocalTensor, giyLocalTensor, channel);
     Muls(giyLocalTensor, giyLocalTensor, flag, channel);
@@ -546,12 +546,13 @@ __aicore__ inline void GridSampler2DGrad<T, GridSamplerGradTilingData>::ComputeA
     int64_t offset = ncOffset + srcIndex.GetValue(coorIndex);
     LocalTensor<T> localTensor = dataOutQueue[0].AllocTensor<T>();
     event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventID1);
-    wait_flag(PIPE_S, PIPE_V, eventID1);
+    SetFlag<HardEvent::S_V>(eventID1);
+    WaitFlag<HardEvent::S_V>(eventID1);
     Muls(localTensor, gOutLocalTensor, weigthVal, channel);
     event_t eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID);
+    SetFlag<HardEvent::V_MTE3>(eventID);
+    WaitFlag<HardEvent::V_MTE3>(eventID);
+    
 
     DataCopyParams copyParams{1, 0, 0, 0};
     copyParams.blockLen = channel * sizeof(T);
@@ -572,8 +573,8 @@ __aicore__ inline void GridSampler2DGrad<T, GridSamplerGradTilingData>::ComputeN
 
     Muls(localTensor, gOutLocalTensor[cycle * alignChannel], weigthVal, channel);
     event_t eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID);
+    SetFlag<HardEvent::V_MTE3>(eventID);
+    WaitFlag<HardEvent::V_MTE3>(eventID);
 
     DataCopyParams copyParams{1, 0, 0, 0};
     copyParams.blockLen = channel * sizeof(T);
@@ -824,8 +825,8 @@ __aicore__ inline void GridSampler2DGrad<T, GridSamplerGradTilingData>::Compute(
                     gradGmOffset = n * gradStrideN + (h * gradStrideH + w * gradStrideW) * channel;
                     DataCopyPad(gOutLocalTensor[j * alignChannel], inputGm[0][gradGmOffset], copyParams, padParams);
                 }
-                set_flag(PIPE_MTE2, PIPE_S, eventID);
-                wait_flag(PIPE_MTE2, PIPE_S, eventID);
+                SetFlag<HardEvent::MTE2_S>(eventID);
+                WaitFlag<HardEvent::MTE2_S>(eventID);
                 for (int32_t k = 0; k < group; k++) {
                     gridPointIndex = curGridPointIndex + i * group + k;
                     n = gridPointIndex / (outH * outW);
@@ -844,8 +845,8 @@ __aicore__ inline void GridSampler2DGrad<T, GridSamplerGradTilingData>::Compute(
                 gradGmOffset = n * gradStrideN + (h * gradStrideH + w * gradStrideW) * channel;
                 LocalTensor<T> gOutLocalTensor = dataInQueue[0].AllocTensor<T>();
                 DataCopyPad(gOutLocalTensor, inputGm[0][gradGmOffset], copyParams, padParams);
-                set_flag(PIPE_MTE2, PIPE_S, eventID);
-                wait_flag(PIPE_MTE2, PIPE_S, eventID);
+                SetFlag<HardEvent::MTE2_S>(eventID);
+                WaitFlag<HardEvent::MTE2_S>(eventID);
                 ComputeNearestXGrad(xIndex, dupOneTensor, times * group + i, 0, ncBaseOffset, gOutLocalTensor);
                 dataInQueue[0].FreeTensor(gOutLocalTensor);
             }
@@ -859,8 +860,8 @@ __aicore__ inline void GridSampler2DGrad<T, GridSamplerGradTilingData>::Compute(
                 gradGmOffset = n * gradStrideN + (h * gradStrideH + w * gradStrideW) * channel;
                 LocalTensor<T> gOutLocalTensor = dataInQueue[0].AllocTensor<T>();
                 DataCopyPad(gOutLocalTensor, inputGm[0][gradGmOffset], copyParams, padParams);
-                set_flag(PIPE_MTE2, PIPE_S, eventID);
-                wait_flag(PIPE_MTE2, PIPE_S, eventID);
+                SetFlag<HardEvent::MTE2_S>(eventID);
+                WaitFlag<HardEvent::MTE2_S>(eventID);
                 ComputeNearestXGrad(xIndex, dupOneTensor, i, 0, ncBaseOffset, gOutLocalTensor);
                 dataInQueue[0].FreeTensor(gOutLocalTensor);
             }
