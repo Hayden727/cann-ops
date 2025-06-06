@@ -9,10 +9,10 @@
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">UpsampleTrilinear3dBackward</td></tr>
 </tr>
-<tr><td rowspan="7" align="center">算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="8" align="center">算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">grad_output</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
-<tr><td align="center">output_size</td><td align="center">attr</td><td align="center">int32</td><td align="center">-</td></tr>
-<tr><td align="center">input_size</td><td align="center">attr</td><td align="center">int32</td><td align="center">-</td></tr>
+<tr><td align="center">output_size</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">input_size</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
 <tr><td align="center">align_corners</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
 <tr><td align="center">scales_d</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 <tr><td align="center">scales_h</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>

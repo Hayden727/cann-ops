@@ -265,6 +265,9 @@ int main()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("out result[%ld] is: %f\n", i, resultData[i]);
     }
+    // 写出数据
+    void **output1 = (void **)(&resultData);
+    WriteFile("../output/output1.bin", *output1, size * sizeof(resultData[0]));
 
     auto size1 = GetShapeSize(meanShape);
     std::vector<float> resultData1(size1, 0);
@@ -278,6 +281,9 @@ int main()
     for (int64_t i = 0; i < size1; i++) {
         LOG_PRINT("mean result[%ld] is: %f\n", i, resultData1[i]);
     }
+    // 写出数据
+    void **output2 = (void **)(&resultData1);
+    WriteFile("../output/output2.bin", *output2, size1 * sizeof(resultData1[0]));
 
     auto size2 = GetShapeSize(meanShape);
     std::vector<float> resultData2(size2, 0);
@@ -291,6 +297,9 @@ int main()
     for (int64_t i = 0; i < size2; i++) {
         LOG_PRINT("rstd result[%ld] is: %f\n", i, resultData2[i]);
     }
+    // 写出数据
+    void **output3 = (void **)(&resultData2);
+    WriteFile("../output/output3.bin", *output3, size2 * sizeof(resultData2[0]));
 
     // 6. 释放aclTensor和aclIntArray，需要根据具体API的接口定义修改
     aclDestroyTensor(x);

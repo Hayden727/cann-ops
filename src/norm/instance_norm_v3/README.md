@@ -10,16 +10,16 @@
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">InstanceNormV3</td></tr>
 </tr>
 <tr><td rowspan="6" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">beta</td><td align="center">tensor</td><td align="center">float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">beta</td><td align="center">tensor</td><td align="center">float16,float32</td><td align="center">ND</td></tr>
 <tr><td align="center">data_format</td><td align="center">attr</td><td align="center">string</td><td align="center">-</td></tr>
-<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="3" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">mean</td><td align="center">tensor</td><td align="center">float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">variance</td><td align="center">tensor</td><td align="center">float16,float</td><td align="center">ND</td></tr>
+<tr><td rowspan="3" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">mean</td><td align="center">tensor</td><td align="center">float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">variance</td><td align="center">tensor</td><td align="center">float16,float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">instance_norm_v3</td></tr>
 </table>

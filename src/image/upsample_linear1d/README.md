@@ -13,7 +13,7 @@
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">size</td><td align="center">tensor</td><td align="center">int32</td><td align="center">ND</td></tr>
 <tr><td align="center">align_corners</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
-<tr><td align="center">scales</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">scales</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>

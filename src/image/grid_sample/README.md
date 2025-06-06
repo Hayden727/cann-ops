@@ -10,16 +10,16 @@
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">GridSample</td></tr>
 </tr>
 <tr><td rowspan="8" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">grid</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">grid</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
 <tr><td align="center">interpolation_mode</td><td align="center">attr</td><td align="center">string</td><td align="center"></td></tr>
 <tr><td align="center">padding_mode</td><td align="center">attr</td><td align="center">string</td><td align="center"></td></tr>
 <tr><td align="center">align_corners</td><td align="center">attr</td><td align="center">bool</td><td align="center"></td></tr>
 <tr><td align="center">channel_last</td><td align="center">attr</td><td align="center">bool</td><td align="center"></td></tr>
-<tr><td align="center">scheduler_mode</td><td align="center">attr</td><td align="center">int</td><td align="center"></td></tr>
+<tr><td align="center">scheduler_mode</td><td align="center">attr</td><td align="center">int64</td><td align="center"></td></tr>
 </tr>
 </tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">grid_sample</td></tr>
 </table>

@@ -112,10 +112,15 @@ __aicore__ inline void ReduceSumFP32(const LocalTensor<float> &dst_local, const 
     AscendCUtils::SetMask<float>(NUM_PER_REP_FP32);
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
     if (g_coreType == AIV) {
-        RepeatReduceSum<float, false>(dst_local, work_local, 1, 1, 0, 0, 1, 1);
+        vcadd((__ubuf__ float *)dst_local.GetPhyAddr(), (__ubuf__ float *)work_local.GetPhyAddr(), 1, 0, 1, 0, false);
     }
 #else
-    WholeReduceSum<float, false>(dst_local, work_local, MASK_PLACEHOLDER, 1, 1, 1, DEFAULT_REPEAT_STRIDE);
+    vcadd((__ubuf__ float *)dst_local.GetPhyAddr(),
+        (__ubuf__ float *)work_local.GetPhyAddr(),
+        1,
+        1,
+        1,
+        DEFAULT_REPEAT_STRIDE);
 #endif
     AscendC::PipeBarrier<PIPE_V>();
 }

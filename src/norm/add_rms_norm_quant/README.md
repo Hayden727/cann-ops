@@ -13,12 +13,12 @@
 <tr><td align="center">x1</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
 <tr><td align="center">x2</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
 <tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
-<tr><td align="center">scales1</td><td align="center">tensor</td><td align="center">bfloat16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">scales2</td><td align="center">tensor</td><td align="center">bfloat16,float</td><td align="center">ND</td></tr>
+<tr><td align="center">scales1</td><td align="center">tensor</td><td align="center">bfloat16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">scales2</td><td align="center">tensor</td><td align="center">bfloat16,float32</td><td align="center">ND</td></tr>
 <tr><td align="center">zero_points1</td><td align="center">tensor</td><td align="center">int32,bfloat16</td><td align="center">ND</td></tr>
 <tr><td align="center">zero_points2</td><td align="center">tensor</td><td align="center">int32,bfloat16</td><td align="center">ND</td></tr>
-<tr><td align="center">axis</td><td align="center">attr</td><td align="center">int</td><td align="center">-</td></tr>
-<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">axis</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 <tr><td align="center">div_mode</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
 </tr>
 </tr>

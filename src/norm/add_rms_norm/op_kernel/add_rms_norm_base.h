@@ -72,7 +72,7 @@ __aicore__ inline void ReduceSumFP32(const LocalTensor<float> &dst_local, const 
             PipeBarrier<PIPE_V>();
         }
         AscendCUtils::SetMask<float>(NUM_PER_REP_FP32);
-        ReduceSum(dst_local, src_local, dst_local, 1);
+        vcadd((__ubuf__ float*)dst_local.GetPhyAddr(), (__ubuf__ float*)work_local.GetPhyAddr(), 1, 0, 1, 0, false);
         PipeBarrier<PIPE_V>();
     }
 }

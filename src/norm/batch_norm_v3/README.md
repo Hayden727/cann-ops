@@ -1,4 +1,4 @@
-## `AddRmsBatchNormV3NormQuant`自定义算子样例说明 
+## `BatchNormV3`自定义算子样例说明 
 本样例通过`Ascend C`编程语言实现了`BatchNormV3`算子。
 
 ### 算子描述
@@ -10,21 +10,21 @@
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">BatchNormV3</td></tr>
 </tr>
 <tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">NCHW,NCDHW</td></tr>
-<tr><td align="center">weight</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">bias</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">running_mean</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">running_var</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">momentum</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
-<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">NCHW,NCDHW</td></tr>
+<tr><td align="center">weight</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">bias</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">running_mean</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">running_var</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">momentum</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
+<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 <tr><td align="center">is_training</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="5" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">NCHW,NCDHW</td></tr>
-<tr><td align="center">running_mean</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">running_var</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">save_mean</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">save_rstd</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td rowspan="5" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">NCHW,NCDHW</td></tr>
+<tr><td align="center">running_mean</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">running_var</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">save_mean</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">save_rstd</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">batch_norm_v3</td></tr>
 </table>
