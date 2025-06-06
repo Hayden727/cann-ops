@@ -50,7 +50,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n ccopy
     ```
 
   - 部署算子包
