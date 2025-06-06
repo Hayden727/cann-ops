@@ -1,29 +1,20 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
- * \file conv3d_backprop_filter_v2_tiling.cc
+ * \file conv3d_backprop_filter_v2.cpp
  * \brief
  */
 
-#include "conv3d_backprop_filter_v2_tiling.h"
-
 #include <map>
 #include <numeric>
-
 #include "cube_tiling_runtime.h"
 #include "graph/utils/type_utils.h"
 #include "op_log.h"
@@ -32,6 +23,7 @@
 #include "tiling/tiling_type.h"
 #include "cube/util/math_util.h"
 #include "cube/util/cube_util.h"
+#include "conv3d_backprop_filter_v2_tiling.h"
 
 using namespace optiling::cachetiling;
 
@@ -152,9 +144,6 @@ ge::graphStatus Conv3DBackpropFilterV2Tiling::DoOpTiling()
         OP_LOGE(context_->GetNodeName(), "GetTbeTiling failed");
         return ge::GRAPH_FAILED;
     }
-    // OP_TILING_CHECK(context_->GetInputDesc(X_INDEX)->GetStorageFormat() == ge::FORMAT_NCDHW,
-    //     CUBE_INNER_ERR_REPORT(opName_, "Group, FP32, deterministic computing scenarios and 5D format scenarios are mutually exclusive"),
-    //     return ge::GRAPH_FAILED);
     return ge::GRAPH_SUCCESS;
 }
 

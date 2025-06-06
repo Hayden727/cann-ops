@@ -126,7 +126,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./st"> st</td><td>通过st调用的方式调用dynamic_rnnv2算子。</td>
+        <td><a href="./tests/st"> st</td><td>通过st调用的方式调用dynamic_rnnv2算子。</td>
     </tr>
 </table>
 

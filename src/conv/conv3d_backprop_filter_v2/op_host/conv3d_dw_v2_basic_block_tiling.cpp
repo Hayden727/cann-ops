@@ -1,29 +1,21 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
- * \file conv3d_dw_v2_basic_block_tiling.cc
+ * \file conv3d_dw_v2_basic_block_tiling.cpp
  * \brief
  */
 
 #include "conv3d_dw_v2_basic_block_tiling.h"
-
 #include <map>
 #include <numeric>
-
 #include "cube_tiling_runtime.h"
 #include "graph/utils/type_utils.h"
 #include "op_log.h"
@@ -582,8 +574,6 @@ void Conv3DDWV2BasicBlockTiling::PrintBasickBlockTilingData()
     ss << " singleCoreM: " << tiling.get_singleCoreM() << " singleCoreN: " << tiling.get_singleCoreN()
         << " singleCoreK: " << tiling.get_singleCoreK() << " coreBindOrder: " << tiling.get_coreBindOrder()
         << " usedCoreNum: " << tiling.get_usedCoreNum();
-
-    // OP_LOG_FULL(DLOG_DEBUG, opName_, "api basic block tiling: %s", ss.str().c_str());
 }
 
 REGISTER_TILING_TEMPLATE("Conv3DBackpropFilterV2", Conv3DDWV2BasicBlockTiling, 0);

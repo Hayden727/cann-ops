@@ -61,7 +61,7 @@ __aicore__ inline void MmadLocal(Intf *self, const LocalTensor<typename Intf::Sr
     // MMAD计算量baseM*baseN小于一定阈值时需要添加PIPE_M同步,当前平台阈值为10*256
     constexpr int32_t mmadThreshold = 10 * 256;
     if (self->ctx.mmad_.m * self->ctx.mmad_.n <= mmadThreshold) {
-        pipe_barrier(PIPE_M);
+        PipeBarrier<PIPE_M>();
     }
     MmadImpl(l0c, l0a, l0b, self->ctx.mmad_);
 }
@@ -472,7 +472,7 @@ __aicore__ inline void LoadToA1(Intf *self, uint32_t kIdx, uint32_t curDoutIdx, 
             if (unlikely(self->ctx.tiling_->strideW * self->ctx.tiling_->strideH > 1)) {
                 // block num 以32B为单位, 5用以替换除法运算
                 InitConstValue(useA1Buf, {1, static_cast<uint16_t>(useA1Buf.GetLength() >> 5), 0, 0U});
-                pipe_barrier(PIPE_MTE2);
+                PipeBarrier<PIPE_MTE2>();
             }
         }
 

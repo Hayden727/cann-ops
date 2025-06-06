@@ -1,41 +1,46 @@
-## `Conv2dTransposeV2`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`Conv2dTransposeV2`算子。
+## `Conv3dTransposeV2`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`Conv3dTransposeV2`算子。
 
 ### 算子描述
-`Conv2dTransposeV2`算子在指定窗口下完成输入张量的3D卷积。
+`Conv3dTransposeV2`算子在指定窗口下完成输入张量的3D卷积。
 
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Conv2dTransposeV2</th></tr> 
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Conv3dTransposeV2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
-<tr><td rowspan="11" align="center">算子输入</td>
+<tr><td rowspan="13" align="center">算子输入</td>
 
-<tr><td align="center">input</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">NCDHW</td></tr>  
+<tr><td align="center">input_size</td><td align="center">tensor</td><td align="center">int32, int64</td><td align="center">ND</td></tr>  
 
-<tr><td align="center">weight</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">NCDHW</td></tr> 
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">NCDHW</td></tr> 
 
-<tr><td align="center">bias</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND,NCDHW</td></tr> 
+<tr><td align="center">filter</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">NCDHW</td></tr> 
 
-<tr><td align="center">stride</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">bias</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>
 
-<tr><td align="center">padding</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
+<tr><td align="center">offset_w</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
+
+<tr><td align="center">strides</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
+
+<tr><td align="center">pads</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
 
 <tr><td align="center">dilation</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
 
-<tr><td align="center">transposed</td><td align="center">list</td><td align="center">bool</td><td align="center">-</td></tr>
-
-<tr><td align="center">outputPadding</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
-
 <tr><td align="center">groups</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
 
-<tr><td align="center">cubeMathType</td><td align="center">-</td><td align="center">int8</td><td align="center">-</td></tr>
+<tr><td align="center">data_format</td><td align="center">string</td><td align="center">string</td><td align="center">-</td></tr>
+
+
+<tr><td align="center">output_padding</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td></tr>
+
+<tr><td align="center">offset_x</td><td align="center">-</td><td align="center">int64</td><td align="center">-</td></tr>
 
 <tr><td rowspan="1" align="center">算子输出</td>
 
 <td align="center">output</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">NCDHW</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Conv2dTransposeV2</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">conv3d_transpose_v2</td></tr>
 </table>
 
 ### 支持的产品型号
@@ -77,7 +82,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Conv2dTransposeV2算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Conv3dTransposeV2算子。</td>
     </tr>
 </table>
 

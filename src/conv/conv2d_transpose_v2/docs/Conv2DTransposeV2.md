@@ -39,7 +39,7 @@
   * stride(aclIntArray *, 计算输入)：卷积扫描步长，数组长度需等于input的维度减2。其值应该大于0。
   * padding(aclIntArray *, 计算输入)：对input的填充，conv3d数组长度为3。其值应该大于等于0。
   * dilation(aclIntArray *, 计算输入)：卷积核中元素的间隔，数组长度需等于input的维度减2。其值应该大于0。
-  * transposed(bool, 计算输入)：是否为转置卷积, 暂未支持，给FALSE即可。
+  * transposed(bool, 计算输入)：是否为转置卷积, 支持，给True即可。
   * outputPadding(aclIntArray *, 计算输入)：其值应大于等于0，且小于stride或dilation对应维度的值。非转置卷积情况下，忽略该属性配置。
   * groups(int64_t, 计算输入)：表示从输入通道到输出通道的块链接个数，数值必须大于0，且满足groups*weight的C维度=input的C维度。
   * cubeMathType(int8_t, 计算输入)：用于判断Cube单元应该使用哪种计算逻辑进行运算，数据类型为INT8，注意：如果输入的数据类型存在互推导关系，该参数默认对互推导后的数据类型进行处理。支持的枚举值如下：
@@ -86,6 +86,4 @@
 * stream(aclrtStream, 入参)：指定执行任务的AscendCL Stream流。
 
 ## 约束与限制
-
-- 3D卷积仅支持transposed为false且输入数据类型为FLOAT16，BFLOAT16，FLOAT32场景。
 - 由于硬件资源限制，算子在部分参数取值组合场景下会执行失败，请根据日志信息提示分析并排查问题。若无法解决，请单击[Link](https://www.hiascend.com/support)获取技术支持。

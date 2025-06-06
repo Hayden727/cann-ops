@@ -887,19 +887,13 @@ static bool GetShapeParams(gert::TilingContext *context, Conv3DDxParas &conv3ddx
   auto out_backprop_format = static_cast<ge::Format>(ge::GetPrimaryFormat(out_backprop_desc->GetStorageFormat()));
   auto filter_format = static_cast<ge::Format>(ge::GetPrimaryFormat(filter_desc->GetStorageFormat()));
   auto y_format = static_cast<ge::Format>(ge::GetPrimaryFormat(y_desc->GetStorageFormat()));
-  if (PlatformInfo::GetInstance().GetSocVersion()!= "Ascend910_9591" &&
-    PlatformInfo::GetInstance().GetSocVersion() != "Ascend910_5591") {
-    OP_LOGE_IF(out_backprop_format != ge::FORMAT_NDC1HWC0 || filter_format != ge::FORMAT_FRACTAL_Z_3D,
-             false, op_name,
-             "out_backprop format should be NDC1HWC0, filter format should be FRACTAL_Z_3D.");
-  }
+  OP_LOGE_IF(out_backprop_format != ge::FORMAT_NDC1HWC0 || filter_format != ge::FORMAT_FRACTAL_Z_3D,
+            false, op_name,
+            "out_backprop format should be NDC1HWC0, filter format should be FRACTAL_Z_3D.");
   if (!isV2Impl || op_type == cachetiling::kConv3DTranspose) {
-    if (PlatformInfo::GetInstance().GetSocVersion()!= "Ascend910_9591" &&
-      PlatformInfo::GetInstance().GetSocVersion() != "Ascend910_5591") {
-      OP_LOGE_IF(y_format != ge::FORMAT_NDC1HWC0,
-                false, op_name,
-                "y format should be NDC1HWC0.");
-    }
+    OP_LOGE_IF(y_format != ge::FORMAT_NDC1HWC0,
+              false, op_name,
+              "y format should be NDC1HWC0.");
   } else {
     OP_LOGE_IF(y_format != ge::FORMAT_NDC1HWC0 && y_format != ge::FORMAT_NCDHW,
               false, op_name,
@@ -1111,44 +1105,6 @@ static bool CalRealG(gert::TilingContext *context, Conv3DDxParas &conv3ddx_paras
   int32_t co1g = (conv3ddx_paras.multiple_extend * dy_c_ori + kBlockSize - 1) / kBlockSize;
   if (context->GetOutputDesc(0)->GetDataType() == ge::DT_FLOAT && conv3ddx_paras.tiling_param.groups > 1) {
       co1g *= 2; // 2: BLOCK_NUM / FP32_C0
-  }
-
-  if (PlatformInfo::GetInstance().GetSocVersion()== "Ascend910_9591" ||
-    PlatformInfo::GetInstance().GetSocVersion() == "Ascend910_5591") {
-    conv3ddx_paras.tiling_param.co1g = cachetiling::MathUtil::CeilDivision(
-        conv3ddx_paras.multiple_extend * conv3ddx_paras.tiling_param.b_shape.batch / conv3ddx_paras.tiling_param.groups,
-        conv3ddx_paras.tiling_param.c_shape.c0);
-
-    constexpr uint32_t ENLARGE_BUFFER_NUM = 2;
-    constexpr uint32_t REG_SIZE = 256;
-    bool disableGroupEnlarge = static_cast<uint64_t>(ENLARGE_BUFFER_NUM) * (conv3ddx_paras.tiling_param.co1g *
-      conv3ddx_paras.tiling_param.b_shape.h * conv3ddx_paras.tiling_param.b_shape.w * conv3ddx_paras.tiling_param.ci1g *
-      kBlockSize * conv3ddx_paras.tiling_param.b_shape.c0) * conv3ddx_paras.tiling_param.b_dtype_bytes +
-      REG_SIZE > static_cast<uint64_t>(PlatformInfo::GetInstance().ub_size);
-    if (disableGroupEnlarge) {
-      conv3ddx_paras.multiple_extend = 1;
-      conv3ddx_paras.tiling_param.real_g = conv3ddx_paras.tiling_param.groups;
-      conv3ddx_paras.tiling_param.ci1g = cachetiling::MathUtil::CeilDivision(
-        conv3ddx_paras.tiling_param.b_shape.c, conv3ddx_paras.tiling_param.c_shape.c0);
-      conv3ddx_paras.tiling_param.co1g = cachetiling::MathUtil::CeilDivision(
-        conv3ddx_paras.tiling_param.b_shape.batch / conv3ddx_paras.tiling_param.groups, conv3ddx_paras.tiling_param.c_shape.c0);
-    }
-  }
-
-  if (PlatformInfo::GetInstance().GetSocVersion()!= "Ascend910_9591" &&
-    PlatformInfo::GetInstance().GetSocVersion() != "Ascend910_5591") {
-    int64_t filterGDkCi1gHW = static_cast<int64_t>(conv3ddx_paras.tiling_param.real_g) *
-                               conv3ddx_paras.tiling_param.b_shape.d * conv3ddx_paras.tiling_param.ci1g *
-                               conv3ddx_paras.tiling_param.b_shape.h * conv3ddx_paras.tiling_param.b_shape.w;
-
-    OP_TILING_CHECK(filterGDkCi1gHW != conv3ddx_paras.filter_gdkci1ghw,
-                    CUBE_INNER_ERR_REPORT(context, "the 1st dim of filter shape should be %ld, which is %ld",
-                                          filterGDkCi1gHW, conv3ddx_paras.filter_gdkci1ghw),
-                    return false);
-    OP_TILING_CHECK(co1g != conv3ddx_paras.tiling_param.co1g,
-                    CUBE_INNER_ERR_REPORT(context, "the 2nd dim of filter shape should be %d, which is %d", co1g,
-                                          conv3ddx_paras.tiling_param.co1g),
-                    return false);
   }
   return true;
 }

@@ -12,14 +12,9 @@
  * \file conv3d_transpose_v2.cpp
  * \brief
  */
-#if __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-#include "conv3d_transpose_v2_310.h"
-#endif
-#else
+
 #include "conv3d_backprop_input_v2.h"
 #include "conv3d_backprop_input_v2_init_output.h"
-#endif
 
 using namespace AscendC;
 
@@ -27,12 +22,6 @@ extern "C" __global__ __aicore__ void conv3d_transpose_v2(GM_ADDR input_size, GM
                                                           GM_ADDR offset_w, GM_ADDR y, GM_ADDR workSpace,
                                                           GM_ADDR tiling)
 {
-#if __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-    conv3d_transpose_v2_310(input_size, x, filter, bias, offset_w, y, workSpace, tiling);
-    return;
-#endif
-#else
     if (workSpace == nullptr) {
         return;
     }
@@ -84,5 +73,4 @@ extern "C" __global__ __aicore__ void conv3d_transpose_v2(GM_ADDR input_size, GM
         op.Init(filter, x, y, usrWsp, &tilingData);
         op.Process();
     }
-#endif
 }

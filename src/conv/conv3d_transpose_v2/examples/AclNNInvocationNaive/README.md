@@ -1,6 +1,6 @@
 ## 概述
 
-通过aclnn调用的方式调用Conv2DTransposeV2算子。
+通过aclnn调用的方式调用Conv3DTransposeV2算子。
 
 ## 目录结构介绍
 
@@ -34,7 +34,7 @@ aclnnStatus aclnnConvolution(void* workspace, const uint64_t workspaceSize, aclO
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/conv/conv2d_transpose_v2/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/conv/conv3d_transpose_v2/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
@@ -53,7 +53,7 @@ aclnnStatus aclnnConvolution(void* workspace, const uint64_t workspaceSize, aclO
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_conv2d_transpose_v2_op
+    ./execute_conv3d_transpose_v2_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。

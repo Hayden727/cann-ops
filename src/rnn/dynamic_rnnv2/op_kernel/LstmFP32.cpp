@@ -1,17 +1,11 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
@@ -336,7 +330,7 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::CopyWithSigmoidAddBias(LocalTenso
   CopyGate(ubLocalIn, mixGm, mIdx, nIdx, gateOffset);
   ubLocalIn = qidVecIn.DeQue<float>();
   Adds(ubLocalIn, ubLocalIn, (float)tiling->forgetBias, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Sigmoid(dstUb, ubLocalIn, calcSizeAlign);
   qidVecIn.FreeTensor(ubLocalIn);
 }
@@ -400,9 +394,9 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::CopyInHC(LocalTensor<T>& dstUb, G
               padParams);
   qidVecIn.EnQue(ubLocalIn);
   ubLocalIn = qidVecIn.DeQue<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Adds(dstUb, ubLocalIn, (float)0.0, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   qidVecIn.FreeTensor(ubLocalIn);
 }
 
@@ -434,9 +428,9 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::CopyInSeq(LocalTensor<T>& dstUb, 
               padParams);
   qidVecIn.EnQue(ubLocalIn);
   ubLocalIn = qidVecIn.DeQue<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Adds(dstUb, ubLocalIn, (float)0.0, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   qidVecIn.FreeTensor(ubLocalIn);
 }
 
@@ -444,7 +438,7 @@ template <typename T>
 __aicore__ inline void LstmMmSplitNDNDFP32<T>::CopyOutput(GlobalTensor<T>& gm, LocalTensor<T>& ub, int64_t tIdx,
                                                           int64_t mIdx, int64_t nIdx) {
   LocalTensor<T> outLocal = qidVecOut.AllocTensor<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Muls(outLocal, ub, (float)1.0, calcSizeAlign);
   qidVecOut.EnQue(outLocal);
   outLocal = qidVecOut.DeQue<T>();
@@ -504,7 +498,7 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorOnce(int64_t tIdx, i
   calcSize = calcM * calcN;
   calcSizeAlign = calcM * Ceil(calcN, calBlockSize) * calBlockSize;
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // f 1 2 3 4 -> [1] 2 3 4
   auto fSigmoid = ubLocal1;
@@ -512,36 +506,36 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorOnce(int64_t tIdx, i
   CopyGate(ubLocalIn, mixGm, mIdx, nIdx, fOffset);
   ubLocalIn = qidVecIn.DeQue<float>();
   Adds(ubLocalIn, ubLocalIn, (float)tiling->forgetBias, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Sigmoid(fSigmoid, ubLocalIn, calcSizeAlign);
   qidVecIn.FreeTensor(ubLocalIn);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outFGm, fSigmoid, tIdx, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // [1] 2 3 4 -> 1 [2] 3 4
   auto cTmp1 = ubLocal2;
   CopyWithMul(cTmp1, fSigmoid, inputGm.initCGm, mIdx, nIdx);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   // i 1 [2] 3 4 -> [1] [2] 3 4
   auto iSigmoid = ubLocal1;
   CopyWithSigmoid(iSigmoid, mixGm, mIdx, nIdx, iOffset);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outIGm, iSigmoid, tIdx, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   // j [1] [2] 3 4 -> [1] [2] [3] 4
   auto jTanh = ubLocal3;
   CopyWithTanh(jTanh, mixGm, mIdx, nIdx, jOffset);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outJGm, jTanh, tIdx, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   // i * j [1] [2] [3] 4 -> 1 [2] 3 [4]
   auto cTmp2 = ubLocal4;
   Mul(cTmp2, jTanh, iSigmoid, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // i * j + f * c 1 [2] 3 [4] -> [1] 2 3 4
   auto updateC = ubLocal1;
@@ -552,21 +546,21 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorOnce(int64_t tIdx, i
     auto seqLength = ubLocal4;
     CopyInHC(initC, inputGm.initCGm, 0, mIdx, nIdx);
     Sub(updateC, updateC, initC, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CopyInSeq(seqLength, inputGm.seqLengthGm, tIdx, mIdx, nIdx);
     Mul(updateC, updateC, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(updateC, updateC, initC, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
   }
 
   if (tiling->cellClip > 0) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mins(updateC, updateC, (float)tiling->cellClip, calcSizeAlign);
   }
 
   CopyOutput(outputGm.outCGm, updateC, tIdx, mIdx, nIdx);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   
   // tanh(c) 1 [2] 3 4 -> 1 [2] 3 4
   auto cTanh = ubLocal2;
@@ -574,31 +568,31 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorOnce(int64_t tIdx, i
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outTanhCGm, cTanh, tIdx, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   // o 1 [2] 3 4 -> [1] [2] 3 4
   auto oSigmoid = ubLocal1;
   CopyWithSigmoid(oSigmoid, mixGm, mIdx, nIdx, oOffset);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outOGm, oSigmoid, tIdx, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // o * Tanh(c) [1] [2] 3 4 -> 1 2 [3] 4
   auto updateH = ubLocal3;
   Mul(updateH, oSigmoid, cTanh, calcSizeAlign);
 
   if (tiling->isSeqLength == 1) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     auto updateY = ubLocal1;
     auto initH = ubLocal2;
     auto seqLength = ubLocal4;
     Mul(updateY, updateH, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CopyInHC(initH, inputGm.initHGm, 0, mIdx, nIdx);
     Sub(updateH, updateH, initH, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(updateH, updateH, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(updateH, updateH, initH, calcSizeAlign);
     CopyOutput(outputGm.outYGm, updateY, tIdx, mIdx, nIdx);
   } else {
@@ -636,7 +630,7 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
   calcSize = calcM * calcN;
   calcSizeAlign = calcM * Ceil(calcN, calBlockSize) * calBlockSize;
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // f 1 2 3 4 -> [1] 2 3 4
   auto fSigmoid = ubLocal1;
@@ -645,7 +639,7 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
     CopyOutput(outputGm.outFGm, fSigmoid, 0, mIdx, nIdx);
   }
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   
   // i 1 [2] 3 4 -> [1] [2] 3 4
   auto iSigmoid = ubLocal1;
@@ -654,7 +648,7 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outIGm, iSigmoid, 0, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // j [1] [2] 3 4 -> [1] [2] [3] 4
   auto jTanh = ubLocal3;
@@ -662,12 +656,12 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outJGm, jTanh, 0, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // i * j [1] [2] [3] 4 -> 1 [2] 3 [4]
   auto cTmp2 = ubLocal4;
   Mul(cTmp2, jTanh, iSigmoid, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // i * j + f * c 1 [2] 3 [4] -> [1] 2 3 4
   auto updateC = cTmp2;
@@ -676,16 +670,16 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
     auto seqLength = ubLocal3;
     CopyInSeq(seqLength, inputGm.seqLengthGm, 0, mIdx, nIdx);
     Mul(updateC, updateC, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
   }
 
   if (tiling->cellClip > 0) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mins(updateC, updateC, (float)tiling->cellClip, calcSizeAlign);
   }
 
   CopyOutput(outputGm.outCGm, updateC, 0, mIdx, nIdx);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   
   // tanh(c) 1 [2] 3 4 -> 1 [2] 3 4
   auto cTanh = ubLocal2;
@@ -693,14 +687,14 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outTanhCGm, cTanh, 0, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   // o 1 [2] 3 4 -> [1] [2] 3 4
   auto oSigmoid = ubLocal1;
   CopyWithSigmoid(oSigmoid, mixGm, mIdx, nIdx, oOffset);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outOGm, oSigmoid, 0, mIdx, nIdx);
   }
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   // o * Tanh(c) [1] [2] 3 4 -> 1 2 [3] 4
   auto updateH = ubLocal4;
@@ -708,7 +702,7 @@ __aicore__ inline void LstmMmSplitNDNDFP32<T>::ProcessVectorInitHC(int64_t mIdx,
 
   if (tiling->isSeqLength == 1) {
     auto seqLength = ubLocal3;
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(updateH, updateH, seqLength, calcSizeAlign);
   }
 

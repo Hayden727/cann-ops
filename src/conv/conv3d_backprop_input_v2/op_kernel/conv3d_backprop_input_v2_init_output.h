@@ -19,11 +19,6 @@ namespace AscendC {
 #if __CCE_AICORE__ == 220
 using FixpipeParamsNZ = AscendC::FixpipeParamsV220;
 using FixpipeParamsRowMajor = AscendC::FixpipeParamsV220;
-#elif __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-using FixpipeParamsNZ = AscendC::FixpipeParamsC310<CO2Layout::NZ>;
-using FixpipeParamsRowMajor = AscendC::FixpipeParamsC310<CO2Layout::ROW_MAJOR>;
-#endif
 #endif
 constexpr int32_t L0C_M = TOTAL_L0C_SIZE / 64;  // TOTAL_LOC_SIZE / (BLOCK_CUBE * sizeof(float))
 constexpr int32_t L0C_ELEMENTS = L0C_M * BLOCK_CUBE;
@@ -186,11 +181,6 @@ public:
                 rowMajorParams.srcStride = 1;
                 rowMajorParams.dstStride = 1;
                 rowMajorParams.quantPre = quantMode;
-#if __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-                rowMajorParams.params.ndNum = 1;
-#endif
-#endif
                 AscendC::Fixpipe<yType, float, CFG_ROW_MAJOR>(yGm_[offset], l0c, rowMajorParams);
             }
         }
@@ -220,10 +210,6 @@ public:
             CrossCoreSetFlag<0, PIPE_FIX>(SYNC_AIC_FLAG);
         }
         CrossCoreWaitFlag(SYNC_AIC_FLAG);
-#elif __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-        AscendC::SyncAll();
-#endif
 #endif
     }
 

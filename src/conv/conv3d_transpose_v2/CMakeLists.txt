@@ -12,6 +12,8 @@ file(GLOB_RECURSE EXTRA_SRC_FILES
 #optiling
 target_sources(optiling PRIVATE
         op_host/conv3_d_transpose_v2_tiling.cpp
+        ../conv3d_backprop_input_v2/op_host/conv3_d_backprop_input_v2.cpp
+        ../conv3d_backprop_input_v2/op_host/conv3d_backprop_input.cpp
         ${EXTRA_SRC_FILES}
 )
 
