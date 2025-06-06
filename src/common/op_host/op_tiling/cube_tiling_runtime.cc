@@ -152,8 +152,6 @@ static void GetVarFlagsFromCompileInfo(const nlohmann::json &compile_info, uint3
 }
 
 bool CubeCompileInfo::AnalyzeCommonCompileInfo(const json &compile_info) {
-  // json structure: {"repo_seeds": {"10114": [..]}, "repo_range": {"10114": [...]}, "cost_range": {"10115": [...]},
-  //                  "block_dim": {"10114": 32, "10115": 32}}
   correct_range_flag = compile_info.contains("correct_range_flag") && compile_info["correct_range_flag"].is_boolean() &&
                        compile_info["correct_range_flag"];
   tiling_type = ParseTilingType(compile_info);

@@ -1,16 +1,11 @@
-/* Copyright (c) Huawei Technologies Co., Ltd. 2020-2022. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
@@ -62,13 +57,6 @@ namespace {
 
     return true;
   }
-
-
-  // void update_run_info_cube(const std::vector<int64_t>& var_value, optiling::utils::OpRunInfo& run_info) {
-  //   for (size_t i = 0; i < var_value.size(); ++i) {
-  //     run_info.AddTilingData(static_cast<int32_t>(var_value[i]));
-  //   }
-  // }
 
   string cube_tiling_batch(const std::string& op_type, const std::vector<int64_t>& cur_shape,
                            const nlohmann::json& compile_info, string tiling_id) {
@@ -174,10 +162,6 @@ namespace optiling {
       }
 
       OP_LOGD(op_type.c_str(), "get tiling_id: %s", tiling_id.c_str());
-      // run_info.SetBlockDim(static_cast<uint32_t>(compile_info["block_dim"][tiling_id]));
-      // run_info.SetTilingKey(std::stoi(tiling_id));
-
-      // update_run_info_cube(var_value, run_info);
       return true;
     } catch (...) {
         CUBE_INNER_ERR_REPORT(op_type.c_str(), "get unknown exception, please check compile info json.");
