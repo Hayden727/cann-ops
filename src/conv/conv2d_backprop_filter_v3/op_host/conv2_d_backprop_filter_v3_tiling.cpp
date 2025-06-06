@@ -9,7 +9,7 @@
  */
 
 /*!
- * \file conv2d_backprop_filter_v3_tiling.cpp
+ * \file conv2_d_backprop_filter_v3_tiling.cpp
  * \brief
  */
 #include "conv2d_backprop_filter_v3_tiling.h"
@@ -35,28 +35,11 @@ ge::graphStatus Conv2DBackpropFilterV3Tiling::DoLibApiTiling()
     return ge::GRAPH_SUCCESS;
 }
 
-// bool Conv2DDWV3BasicBlockTiling::IsCapable() {
-//     uint64_t kernelHW = static_cast<uint64_t>(runInfo_.kh) * runInfo_.kw;
-//     bool isKernelSupport = (kernelHW == 1)
-//         || ((kernelHW == KERNEL_HW_4 || kernelHW == KERNEL_HW_9 || kernelHW == KERNEL_HW_16)
-//             && mmInfo_.mValue >= BASIC_BLOCK_SIZE_128 && mmInfo_.nValue >= BASIC_BLOCK_SIZE_128);
-
-//     bool isBasicBlockSupport = isKernelSupport && dtypeByte_ == ge::GetSizeByDataType(ge::DT_BF16)
-//         && runInfo_.real_g == 1 && runInfo_.dilation_d == 1;
-//     return isBasicBlockSupport;
-// }
-
-// REGISTER_TILING_TEMPLATE("Conv2DBackpropFilterV3", Conv2DDWV3BasicBlockTiling, 0);
 REGISTER_TILING_TEMPLATE("Conv2DBackpropFilterV3", Conv2DBackpropFilterV3Tiling, 1);
 
 static ge::graphStatus Conv2DBackpropFilterV3TilingFunc(gert::TilingContext *context)
 {
-    // if (context->GetCompileInfo<Conv3DBackpropFilterV2CompileInfo>()->soc_version == "Ascend910_9591") {
-    //     // 调用910_95的AdaptTilingToConv3DBp函数，一般情况会先调用TilingParse，再调用TilingFunc函数，因此，可以拿到芯片型号
-    //     return conv_bp_v2::AdaptTilingToConv3DBp(context, "Conv2DBackpropFilterV3");
-    // } else {
     return AdaptTilingToConv3DBp(context, "Conv2DBackpropFilterV3");
-    // }
 }
 
 static ge::graphStatus TilingParseForConv2DBackpropFilterV3(gert::TilingParseContext *context)
@@ -70,10 +53,6 @@ static ge::graphStatus TilingParseForConv2DBackpropFilterV3(gert::TilingParseCon
     compileInfoPtr->core_num = ascendcPlatform.GetCoreNumAic();
     optiling::PlatformInfo &plaformInstance = optiling::PlatformInfo::GetInstance();
     plaformInstance.SetInstance(*compileInfoPtr);
-    // 910_95需要求取WORKSPACE_NUM
-    if (compileInfoPtr->soc_version == "Ascend910_9591") {
-        WORKSPACE_NUM = ascendcPlatform.GetLibApiWorkSpaceSize();
-    }
     return ge::GRAPH_SUCCESS;
 }
 

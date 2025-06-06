@@ -34,7 +34,7 @@ aclnnStatus aclnnConvolutionBackward(void *workspace, uint64_t workspaceSize, ac
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/conv2d_backprop_filter_v2/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/conv/conv2d_backprop_filter_v2/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
@@ -50,6 +50,7 @@ aclnnStatus aclnnConvolutionBackward(void *workspace, uint64_t workspaceSize, ac
     样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
     
     ```bash
+    python3 gen_data.py
     mkdir -p build
     cd build
     cmake .. && make

@@ -12,12 +12,7 @@
  * \file conv2d_backprop_filter_v3.cpp
  * \brief
  */
-#if __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-#include "conv2d_backprop_filter_v3_310.h"
-#endif
-#else
-// 除david其他分支
+
 #include "conv3d_backprop_filter_v2.h"
 #include "conv3d_backprop_filter_v2_init_output.h"
 #include "conv3d_dw_v2_basic_block.h"
@@ -28,17 +23,9 @@
 #define X_FORMAT_3D FORMAT_NCDHW
 #endif
 #endif
-// 除david其他分支
-#endif
 
 extern "C" __global__ __aicore__ void conv2d_backprop_filter_v3(GM_ADDR x, GM_ADDR filter_size, GM_ADDR out_backprop,
                                                                 GM_ADDR y, GM_ADDR workSpace, GM_ADDR tiling) {
-#if __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-    conv2d_backprop_filter_v3_310(x, filter_size, out_backprop, y, workSpace, tiling);
-    return;
-#endif
-#else
     if (workSpace == nullptr) {
         return;
     }
@@ -82,5 +69,4 @@ extern "C" __global__ __aicore__ void conv2d_backprop_filter_v3(GM_ADDR x, GM_AD
         op.Init(x, out_backprop, y, user1, &tilingData);
         op.Process();
     }
-#endif
 }

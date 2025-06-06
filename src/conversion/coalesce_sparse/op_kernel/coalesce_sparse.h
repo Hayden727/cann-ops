@@ -115,7 +115,8 @@ __aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::Init(
 }
 
 template <typename uIdxType, typename idxType, typename dataType>
-__aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::InitTilingValue(const CoalesceSparseTilingData* __restrict tilingData) {
+__aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::InitTilingValue(
+    const CoalesceSparseTilingData* __restrict tilingData) {
     //Get tilingData
     this->tilingDevice = tilingData;
     usedCoreNum = tilingDevice->usedCoreNum;

@@ -554,9 +554,9 @@ __aicore__ inline void updateLcabOneTime(int64_t curGradOffset, float alphaBetaC
         }
         SToVSync();
         Exp(scalarLcabTensor, scalarLcabTensor, DOUBLE);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         ReduceSum<float>(scalarLcabTensor, scalarLcabTensor, scalarLcabTensor, DOUBLE);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Log(logScalarLcabTensor, scalarLcabTensor, 1);
         VToSSync();
         float lcabNew = logScalarLcabTensor.GetValue(0) + maxTmp;
@@ -579,39 +579,39 @@ __aicore__ inline void CalcLogBeta(int64_t batchId)
     logBeta3Tensor.SetValue(DOUBLE * targetLength, -INFINITY);
     SToVSync();
     Compare(gtBeta1MaskTensor, logBeta2Tensor, logBeta1Tensor, CMPMODE::GT, doubleSiAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Select(maxBetaTensor, gtBeta1MaskTensor, logBeta2Tensor, logBeta1Tensor,
            SELMODE::VSEL_TENSOR_TENSOR_MODE, doubleSiAlign); // Take the maximum value of logbeta1 and logbeta2
     BinaryRepeatParams repeatNeginfSelect = {1, 0, 1, 8, 0, 8};
     Select(logBeta3Tensor, ifHaveThreeMaskTensor, allNeginfTensor, logBeta3Tensor,
            SELMODE::VSEL_TENSOR_TENSOR_MODE, NUM_PER_REPEAT, doubleSiAlign / NUM_PER_REPEAT, repeatNeginfSelect);
      // Correct the position of -inf in logbeta3
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Compare(gtBeta2MaskTensor, logBeta3Tensor, maxBetaTensor, CMPMODE::GT, doubleSiAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Select(maxBetaTensor, gtBeta2MaskTensor, logBeta3Tensor, maxBetaTensor, // Correct maxBetaTensor
            SELMODE::VSEL_TENSOR_TENSOR_MODE, doubleSiAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CompareScalar(ifNeginfMaskTensor, maxBetaTensor, -INFINITY, CMPMODE::EQ, doubleSiAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Select(maxBetaTensor, ifNeginfMaskTensor, allZeroTensor, maxBetaTensor,
            SELMODE::VSEL_TENSOR_TENSOR_MODE, NUM_PER_REPEAT, doubleSiAlign / NUM_PER_REPEAT, repeatNeginfSelect);
 
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(logBeta1Tensor, logBeta1Tensor, maxBetaTensor, doubleSi);
     Sub(logBeta2Tensor, logBeta2Tensor, maxBetaTensor, doubleSi);
     Sub(logBeta3Tensor, logBeta3Tensor, maxBetaTensor, doubleSi);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(logBeta1Tensor, logBeta1Tensor, doubleSi);
     Exp(logBeta2Tensor, logBeta2Tensor, doubleSi);
     Exp(logBeta3Tensor, logBeta3Tensor, doubleSi);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(logBeta2Tensor, logBeta1Tensor, logBeta2Tensor, doubleSi);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(logBeta3Tensor, logBeta2Tensor, logBeta3Tensor, doubleSi);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Log(logBetaTensor, logBeta3Tensor, doubleSi);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(logBetaTensor, logBetaTensor, maxBetaTensor, doubleSi);
 }
 
@@ -700,7 +700,7 @@ __aicore__ inline void Compute(int64_t batchOffsetProb, int64_t batchId, int64_t
         SToVSync();
         // logbeta + log_prob
         Add(logBetaTensor, logBetaTensor, intResProbTensor.ReinterpretCast<float>(), doubleSi);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         VToMTE3Sync();
     } else if ((t < inputLength - 1) && (targetLength == 0)) {
         DataCopyParams copyParamsOneBeta = {1, static_cast<uint16_t>(FLOAT_SIZE), 0, 0};
@@ -746,7 +746,7 @@ __aicore__ inline void CopyInCast(int64_t gmOffset, int64_t ubOffset, int64_t ca
                     copyParamsProb, padParamsProb);
         MTE2ToVSync();
         Cast(dstTensor, dstTensor.ReinterpretCast<TGrad>()[ubOffset], RoundMode::CAST_NONE, castLength);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
     }
 }
 
@@ -754,7 +754,7 @@ __aicore__ inline void GatherLogBeta(int64_t t, int64_t batchOffsetProb, const L
 {   
     int64_t sliceLengthCur = sliceLength;
     Cast(castFloatTargetsTensor, targetsTensor, RoundMode::CAST_ROUND, targetLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(castFloatTargetsTensor, castFloatTargetsTensor, GATHER_FLOAT_SIZE, targetLength);
     for (int64_t sliceId = 0; sliceId < probSliceNum; sliceId++) {
         float upLimit = sliceId >= (probSliceNum - 1) ? symbolSet * FLOAT_SIZE : sliceLength * (1 + sliceId) *
@@ -764,31 +764,31 @@ __aicore__ inline void GatherLogBeta(int64_t t, int64_t batchOffsetProb, const L
         if (sliceId >= probSliceNum - 1) {
             sliceLengthCur = sliceLengthTail;
         }
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         CompareScalar(downMaskTensor, castFloatTargetsTensor, downLimit, CMPMODE::GE, siAlign);
         CompareScalar(upMaskTensor, castFloatTargetsTensor, upLimit, CMPMODE::LT, siAlign);
         // Determine the positions of valid data through comparison.
         Adds(changedTargetsTensor, castFloatTargetsTensor, negDownLimit, targetLength);
         // Subtract the threshold from uintTargetsTensor
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Select(changedTargetsTensor, downMaskTensor, changedTargetsTensor, 0.0f,
                SELMODE::VSEL_TENSOR_SCALAR_MODE, siAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Select(changedTargetsTensor, upMaskTensor, changedTargetsTensor, 0.0f,
                SELMODE::VSEL_TENSOR_SCALAR_MODE, siAlign);
         // Correct invalid data
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(intTargetsTensor, changedTargetsTensor, RoundMode::CAST_ROUND, targetLength);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         LocalTensor<uint32_t> uintTargetsTensor = intTargetsTensor.ReinterpretCast<uint32_t>();
         CopyInCast(batchOffsetProb + t * symbolSet * batchSize + sliceLength * sliceId,
                    sliceLengthAlign, sliceLengthCur, logProbSliceTensor, logProbsGm);
         Gather(resPartProbTensor, logProbSliceTensor, uintTargetsTensor, 0, targetLength);
         VToMTE2Sync();
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Select(resPartProbTensor, downMaskTensor, resPartProbTensor, resProbTensor,
                SELMODE::VSEL_TENSOR_TENSOR_MODE, siAlign);
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Select(resProbTensor, upMaskTensor, resPartProbTensor, resProbTensor,
                SELMODE::VSEL_TENSOR_TENSOR_MODE, siAlign);
         // The output results will retain the original values from resProbTensor,
@@ -797,7 +797,7 @@ __aicore__ inline void GatherLogBeta(int64_t t, int64_t batchOffsetProb, const L
     }
 
     Cast(intResProbTensor, resProbTensor.ReinterpretCast<int32_t>(), RoundMode::CAST_NONE, targetLength);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Select(intResProbTensor.ReinterpretCast<float>(), evenMaskTensor, intResProbTensor.ReinterpretCast<float>(),
            logProbBlank, SELMODE::VSEL_TENSOR_SCALAR_MODE, doubleSiAlign);
 }
@@ -809,22 +809,22 @@ __aicore__ inline void CalcGrad(int64_t t, int64_t sliceId, int64_t sliceLengthC
     CopyInCast(batchOffsetProb + t * symbolSet * batchSize + sliceLength * sliceId,  sliceLengthAlign, 
                sliceLengthCur,  logProbSliceTensor, logProbsGm);
     MTE2ToVSync();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Adds(gradSliceTensor, gradSliceTensor, nll, sliceLengthCur);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(gradSliceTensor, gradSliceTensor, logProbSliceTensor, sliceLengthCur);
     Exp(logProbSliceTensor, logProbSliceTensor, sliceLengthCur);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Exp(gradSliceTensor, gradSliceTensor, sliceLengthCur);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(gradSliceTensor, logProbSliceTensor, gradSliceTensor, sliceLengthCur);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Muls(gradSliceTensor, gradSliceTensor, gradOutCurBatch, sliceLengthCur);
     if constexpr (std::is_same<TGrad, half>::value) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(gradSliceTensor.ReinterpretCast<TGrad>(), gradSliceTensor, RoundMode::CAST_NONE, sliceLength);
     } else if constexpr (std::is_same<TGrad, bfloat16_t>::value) {
-        pipe_barrier(PIPE_V);
+        PipeBarrier<PIPE_V>();
         Cast(gradSliceTensor.ReinterpretCast<TGrad>(), gradSliceTensor, RoundMode::CAST_RINT, sliceLength);
     }
     VToMTE3Sync();
@@ -864,10 +864,10 @@ __aicore__ inline void CreateDuplicateTensor()
     Duplicate<float>(allZeroTensor, 0.0f, FLOAT_NUM_PER_BLOCK);
     Duplicate<int32_t>(allOneTensor.ReinterpretCast<int32_t>()[CeilAlign(maxTargetLength + 1, HALF_NUM_PER_REPEAT)],
                        1, maxTargetLength + 1);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(allOneTensor, allOneTensor.ReinterpretCast<int32_t>()[CeilAlign(maxTargetLength + 1, HALF_NUM_PER_REPEAT)],
          RoundMode::CAST_NONE, maxTargetLength + 1);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CompareScalar(evenMaskTensor, allOneTensor.ReinterpretCast<int32_t>(), 1, CMPMODE::EQ,
                   CeilAlign(maxTargetLength + 1, HALF_NUM_PER_REPEAT) * DOUBLE);
 }
@@ -925,7 +925,7 @@ __aicore__ inline void CopyInTargetsTensor(int64_t batchOffsetTargets, int64_t b
     SToVSync();
     Compare(ifHaveThreeMaskTensor, targetsDoubleTensor,
             targetsShiftTensor.template ReinterpretCast<int32_t>(), CMPMODE::EQ, doubleSiAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 }
 };
 }

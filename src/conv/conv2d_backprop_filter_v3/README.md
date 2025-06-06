@@ -7,11 +7,11 @@
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Conv2DBackpropFilterV3</th></tr>
 <tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
 
-<tr><td align="center">x</td><td align="center">-</td><td align="center">float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">NC1HWC0</td><td align="center">\</td></tr>
 
 <tr><td align="center">filter_size</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td><td align="center">\</td></tr>
 
-<tr><td align="center">out_backprop</td><td align="center">-</td><td align="center">float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td align="center">out_backprop</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">NC1HWC0</td><td align="center">\</td></tr>
 
 <tr><td align="center">stride</td><td align="center">list</td><td align="center">int64</td><td align="center">-</td><td align="center">\</td></tr>
 
@@ -24,9 +24,9 @@
 <tr><td align="center">data_format</td><td align="center">-</td><td align="center">string</td><td align="center">-</td><td align="center">NCHW</td></tr>
 
 
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32</td><td align="center">ND</td><td align="center">\</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32</td><td align="center">FRACTAL_Z</td><td align="center">\</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">conv3d_backprop_filter_v2</td></td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">conv2d_backprop_filter_v3</td></td></tr>
 </table>
 
 
@@ -36,7 +36,6 @@
 
 ### 目录结构介绍
 ```
-├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
 ├── op_host                     // host目录
 ├── op_kernel                   // kernel目录
