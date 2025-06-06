@@ -10,15 +10,15 @@ GeGluV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">GeGluV2</td></tr>
 </tr>
 <tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">self</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
 
 <tr><td align="center">dim</td><td align="center">attr</td><td align="center">int64</td><td align="center">ND</td></tr>
 <tr><td align="center">approximate</td><td align="center">attr</td><td align="center">int64</td><td align="center">ND</td></tr>
 <tr><td align="center">activate_left</td><td align="center">attr</td><td align="center">bool</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="2" align="center">算子输出</td><td align="center">out</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
-<tr><td align="center">outGelu</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
+<tr><td rowspan="2" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
+<tr><td align="center">gelu</td><td align="center">tensor</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">ge_glu_v2</td></tr>
 </table>

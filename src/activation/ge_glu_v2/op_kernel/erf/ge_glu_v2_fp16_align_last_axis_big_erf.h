@@ -147,9 +147,9 @@ __aicore__ inline void GeGluV2Fp16AlignLastAxisBigErf<T>::ComputeMul(const int64
   LocalTensor<T> ubX1 = inQueueX1.DeQue<T>();
   LocalTensor<T> gelu_out = outQueueGelu.DeQue<T>();
   LocalTensor<T> mul_out = outQueueMul.AllocTensor<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(mul_out, gelu_out, ubX1, ub_num);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   outQueueMul.EnQue(mul_out);
 
   outQueueGelu.FreeTensor(gelu_out);

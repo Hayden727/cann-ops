@@ -139,7 +139,7 @@ __aicore__ inline void GeGluV2Fp32Stride310P<T>::ComputeMul(const int64_t& lengt
   LocalTensor<T> x2Local = xLocal[BUFFER_SIZE];
   LocalTensor<T> outLocal = m_outQueue.DeQue<T>();
   LocalTensor<T> yLocal = outLocal[BUFFER_SIZE];
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(yLocal, outLocal, x2Local, length);
 
   m_outQueue.EnQue(outLocal);
