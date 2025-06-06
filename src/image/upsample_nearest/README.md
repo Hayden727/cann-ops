@@ -11,10 +11,10 @@
 </tr>
 <tr><td rowspan="6" align="center">算子输入</td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>
-<tr><td align="center">output_size</td><td align="center">attr</td><td align="center">int32</td><td align="center">-</td></tr>
+<tr><td align="center">output_size</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
 <tr><td align="center">exact_mode</td><td align="center">attr</td><td align="center">bool</td><td align="center">-</td></tr>
-<tr><td align="center">scales_h</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
-<tr><td align="center">scales_w</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">scales_h</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
+<tr><td align="center">scales_w</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>

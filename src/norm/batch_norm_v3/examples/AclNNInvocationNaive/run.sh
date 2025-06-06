@@ -45,7 +45,7 @@ cmake --build build -j
     ./execute_test_op
 )
 
-ret=`python3 verify_result.py output/output_y1.bin output/goldeny1.bin`
+ret=`python3 verify_result.py output/output_y1.bin output/golden.bin`
 echo $ret
 if [[ "x$ret" == "xtest pass" ]]; then
     echo ""

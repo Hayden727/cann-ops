@@ -354,6 +354,9 @@ int main()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("gradInputResultData[%ld] is: %f\n", i, gradInputResultData[i]);
     }
+    // 写出数据
+    void **output1 = (void **)(&gradInputResultData);
+    WriteFile("../output/output1.bin", *output1, size * sizeof(gradInputResultData[0]));
 
     size = GetShapeSize(gradGammaOutShape);
     std::vector<float> gradGammaOutResultData(size, 0);
@@ -366,6 +369,9 @@ int main()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("gradGammaOutResultData[%ld] is: %f\n", i, gradGammaOutResultData[i]);
     }
+    // 写出数据
+    void **output2 = (void **)(&gradGammaOutResultData);
+    WriteFile("../output/output2.bin", *output2, size * sizeof(gradGammaOutResultData[0]));
 
     size = GetShapeSize(gradBetaOutShape);
     std::vector<float> gradBetaOutResultData(size, 0);
@@ -378,6 +384,9 @@ int main()
     for (int64_t i = 0; i < size; i++) {
         LOG_PRINT("gradBetaOutResultData[%ld] is: %f\n", i, gradBetaOutResultData[i]);
     }
+    // 写出数据
+    void **output3 = (void **)(&gradBetaOutResultData);
+    WriteFile("../output/output3.bin", *output3, size * sizeof(gradBetaOutResultData[0]));
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(gradOut);

@@ -172,7 +172,7 @@ int main()
     void *outDeviceAddr = nullptr;
     aclTensor *self = nullptr;
     aclTensor *out = nullptr;
-    std::vector<float> selfHostData{9};
+    std::vector<float> selfHostData = {1, 1, 1, 1, 1, 1, 1, 1, 1};
     std::vector<float> outHostData{25};
     std::vector<int64_t> outputSizeData = {5, 5};
     bool alignCoreners = false;

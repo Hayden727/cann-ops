@@ -15,14 +15,14 @@
 <tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
 <tr><td align="center">smooth_scale1</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
 <tr><td align="center">smooth_scale2</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
-<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">epsilon</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="5" align="center">算子输出</td><td align="center">y1</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
 <tr><td align="center">y2</td><td align="center">tensor</td><td align="center">int8</td><td align="center">ND</td></tr>
 <tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16</td><td align="center">ND</td></tr>
-<tr><td align="center">scale1</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">scale2</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td align="center">scale1</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">scale2</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_rms_norm_dynamic_quant</td></tr>
 </table>

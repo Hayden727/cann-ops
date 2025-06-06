@@ -11,26 +11,34 @@
 
 import os
 import numpy as np
-
 import torch
 
+
 def gen_golden_data_simple():
-    # 输入张量
-    input_shape = (1, 1, 3, 3)
-    input_tensor = torch.randn(input_shape, dtype=torch.float32) * 255
+    x = np.array([0, 1, 2, 3, 4, 5, 6, 7], dtype=np.float32).reshape(4, 2)
+    scale = np.array([1, 2], dtype=np.float32).reshape(2)
+    offset = np.array([1, 2], dtype=np.float32).reshape(2)
+    sqrt_mode = False
+    round_mode = "round"
 
-    # 插值参数
-    output_size = [5, 5]    # 输出shape
-    mode = 'bicubic'    # 插值模式
-    align_corners = False    # 角对齐
+    scale_rst = x * (scale ** 2) if sqrt_mode else x * scale
+    if offset is not None:
+        scale_rst = scale_rst + offset
 
-    # 调用函数
-    output_tensor = interpolate(input_tensor, size=output_size, mode=mode, align_corners=align_corners)
+    if round_mode == "round":
+        round_data = np.round(scale_rst, 8)
+    elif round_mode == "floor":
+        round_data = np.floor(scale_rst)
+    elif round_mode == "ceil":
+        round_data = np.ceil(scale_rst)
+    else:
+        round_data = np.trunc(scale_rst)
 
-    os.system("mkdir -p input")
-    os.system("mkdir -p output")
-    input_tensor.numpy().tofile("./input/input_tensor.bin")
-    output_tensor.numpy().tofile("./output/golden_out.bin")
+    round_data = np.clip(round_data, -128, 127)
+    round_data = round_data.astype("int8", copy=False)
+
+    round_data.tofile("./output/golden.bin")
+
 
 if __name__ == "__main__":
     gen_golden_data_simple()

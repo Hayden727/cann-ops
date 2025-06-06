@@ -10,19 +10,19 @@ DeepNorm算子的反向计算
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">DeepNormGrad</td></tr>
 </tr>
 <tr><td rowspan="8" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">dy</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">gx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">mean</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">rstd</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">alpha</td><td align="center">attr</td><td align="center">float</td><td align="center">-</td></tr>
+<tr><td align="center">dy</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">gx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">gamma</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">mean</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">rstd</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">alpha</td><td align="center">attr</td><td align="center">float32</td><td align="center">-</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="4" align="center">算子输出</td><td align="center">dx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">dgx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float</td><td align="center">ND</td></tr>
-<tr><td align="center">dbeta</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
-<tr><td align="center">dgamma</td><td align="center">tensor</td><td align="center">float</td><td align="center">ND</td></tr>
+<tr><td rowspan="4" align="center">算子输出</td><td align="center">dx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">dgx</td><td align="center">tensor</td><td align="center">bfloat16,float16,float32</td><td align="center">ND</td></tr>
+<tr><td align="center">dbeta</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
+<tr><td align="center">dgamma</td><td align="center">tensor</td><td align="center">float32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">deep_norm_grad</td></tr>
 </table>

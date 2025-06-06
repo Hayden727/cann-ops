@@ -2,6 +2,7 @@
     {
         "case_name": "Test_InplaceAddRmsNorm_001",
         "op": "InplaceAddRmsNorm",
+        "calc_expect_func_file":"test_st.py:add_rms_norm", 
         "input_desc": [
             {
                 "format": [
@@ -10,7 +11,7 @@
                 "type": [
                     "float"
                 ],
-                "shape": [4096, 8192],
+                "shape": [4, 5],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -29,7 +30,7 @@
                 "type": [
                     "float"
                 ],
-                "shape": [4096, 8192],
+                "shape": [4, 5],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -48,7 +49,7 @@
                 "type": [
                     "float"
                 ],
-                "shape": [8192],
+                "shape": [5],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -69,8 +70,8 @@
                 "type": [
                     "float"
                 ],
-                "shape": [4096, 8192],
-                "name": "x1"
+                "shape": [4, 5],
+                "name": "x1_out"
             },
             {
                 "format": [
@@ -79,7 +80,7 @@
                 "type": [
                     "float"
                 ],
-                "shape": [8192],
+                "shape": [4],
                 "name": "rstd"
             },
             {
@@ -89,8 +90,8 @@
                 "type": [
                     "float"
                 ],
-                "shape": [4096, 8192],
-                "name": "x2"
+                "shape": [4, 5],
+                "name": "x2_out"
             }
         ],
         "attr": [

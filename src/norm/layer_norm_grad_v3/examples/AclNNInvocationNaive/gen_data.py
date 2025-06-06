@@ -15,20 +15,37 @@ import numpy as np
 
 
 def gen_golden_data_simple():
-    dtype = np.float16
-    input_shape = [8, 2048]
-    output_shape = [8, 2048]
+    tensor_dy = torch.tensor([2, 3, 4, 5], dtype=torch.float32).reshape(2, 2)
+    tensor_x = torch.tensor([2, 3, 4, 5], dtype=torch.float32).reshape(2, 2)
+    tensor_rstd = torch.tensor([4, 5], dtype=torch.float32).reshape(2, 1)
+    tensor_mean = torch.tensor([2, 3], dtype=torch.float32).reshape(2, 1)
+    tensor_gamma = torch.tensor([1, 1], dtype=torch.float32).reshape(2)
+    normalized_shape = tensor_gamma.shape
+    
+    # call torch.ops.aten.native_layer_norm
+    tensor_dx, tensor_dw, tensor_db = torch.ops.aten.native_layer_norm_backward(tensor_dy,
+                                                                                tensor_x,
+                                                                                normalized_shape,
+                                                                                tensor_mean,
+                                                                                tensor_rstd,
+                                                                                tensor_gamma,
+                                                                                tensor_gamma,
+                                                                                [True, True, True])
 
-    x = np.random.uniform(-1, 1, input_shape).astype(dtype)
-    y = np.random.uniform(-1, 1, input_shape).astype(dtype)
+    # convert back to numpy
+    if "bfloat16" in str(tensor_dx.dtype):
+        numpy_dx = tensor_dx.float().numpy()
+        numpy_dw = tensor_dw.float().numpy()
+        numpy_db = tensor_db.float().numpy()
+    else:
+        numpy_dx = tensor_dx.numpy()
+        numpy_dw = tensor_dw.numpy()
+        numpy_db = tensor_db.numpy()
+    
+    numpy_dx.tofile("./output/golden1.bin")
+    numpy_dw.tofile("./output/golden2.bin")
+    numpy_db.tofile("./output/golden3.bin")
 
-    golden = np.add(x, y)
-
-    os.system("mkdir -p input")
-    os.system("mkdir -p output")
-    x.astype(dtype).tofile("./input/input_x.bin")
-    y.astype(dtype).tofile("./input/input_y.bin")
-    golden.tofile("./output/golden.bin")
 
 if __name__ == "__main__":
     gen_golden_data_simple()

@@ -1,6 +1,6 @@
 add_ops_compile_options(
         OP_NAME AddRmsNormQuant
-        OPTIONS --cce-auto-sync=on
+        OPTIONS --cce-auto-sync=off
                 -Wno-deprecated-declarations
                 -Werror
                 -Wno-c++20-extensions

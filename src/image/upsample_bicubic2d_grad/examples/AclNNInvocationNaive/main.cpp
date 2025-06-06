@@ -172,7 +172,7 @@ int main()
     void *outDeviceAddr = nullptr;
     aclTensor *self = nullptr;
     aclTensor *out = nullptr;
-    std::vector<float> selfHostData{8};
+    std::vector<float> selfHostData = {1, 1, 1, 1, 1, 1, 1, 1};
     std::vector<float> outHostData{32};
     std::vector<int64_t> outputSizeData = {4, 2};
     std::vector<int64_t> inputSizeData = {1, 1, 8, 4};
