@@ -22,10 +22,10 @@
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas A2训练系列产品
-- Atlas 800I A2推理产品
-- Atlas A3训练系列产品
-- Atlas A3推理系列产品
+- Atlas A2 训练系列产品
+- Atlas 800I A2 推理产品
+- Atlas A3 训练系列产品
+- Atlas A3 推理系列产品
 
 ### 目录结构介绍
 ```
@@ -50,7 +50,7 @@
   - 执行编译
 
     ```bash
-    bash build.sh
+    bash build.sh -n foreach_norm
     ```
 
   - 部署算子包
