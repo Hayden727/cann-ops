@@ -29,39 +29,21 @@ aclnnStatus aclnnCcopy(void *workspace, uint64_t workspaceSize, aclOpExecutor *e
 其中aclnnCcopyGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnCcopy执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
 ## 运行样例算子
-  **请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
+**请确保已根据算子包编译部署步骤完成本算子的编译部署动作。**
   
-  - 进入样例代码所在路径
+- 进入样例代码所在路径
   
   ```bash
   cd ${git_clone_path}/cann-ops/src/math/ccopy/examples/AclNNInvocationNaive
   ```
   
-  - 环境变量配置
+- 样例执行
     
-    需要设置环境变量，以arm为例，用户请根据实际情况修改ascend-toolkit路径。
-    
-    ```bash
-    export DDK_PATH=/usr/local/Ascend/ascend-toolkit/latest
-    export NPU_HOST_LIB=/usr/local/Ascend/ascend-toolkit/latest/lib64
-    ```
-  - 样例执行
-    
-    样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
-    
-    ```bash
-    python3 gen_data.py
-    mkdir -p build
-    cd build
-    cmake .. && make
-    ./execute_ccopy_op
-    ```
-    
-    用户亦可参考run.sh脚本进行编译与运行。
-    
-    ```bash
-    bash run.sh
-    ```
+  样例执行过程中会自动生成测试数据，然后编译与运行aclnn样例，最后打印运行结果。
+
+  ```bash
+  bash run.sh
+  ```
 
 ## 更新说明
 

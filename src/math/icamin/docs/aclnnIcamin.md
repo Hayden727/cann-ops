@@ -1,7 +1,7 @@
 # aclnnIcamin
 
 ## 支持的产品型号
-- Atlas A2训练系列产品/Atlas 800I A2推理产品。
+- Atlas A2 训练系列产品/Atlas 800I A2 推理产品。
 
 ## 接口原型
 每个算子分为两段式接口，必须先调用“aclnnIcaminGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnIcamin”接口执行计算。
@@ -47,7 +47,3 @@
 
 ## 约束与限制
 无
-
-## 调用示例
-
-详见[Icamin自定义算子样例说明算子调用章节](../README.md#算子调用)
