@@ -20,11 +20,11 @@
 ## aclnnComplexMatDotGetWorkspaceSize
 - **参数说明**：
   
-  - matx（aclTensor*，计算输入）：公式中的matx，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持COMPLEX64，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
+  - matx（aclTensor*，计算输入）：公式中的matx，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持COMPLEX64，shape维度不高于3维，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
   - maty（aclTensor*，计算输入）：公式中的maty，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持COMPLEX64，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
   - m（int64_t，入参）：表示矩阵行数，数据类型支持INT64。
   - n（int64_t，入参）：表示矩阵列数，数据类型支持INT64。
-  - out（aclTensor*，计算输出）：表示计算结果，公式中的out，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持COMPLEX64，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
+  - out（aclTensor*，计算输出）：表示计算结果，公式中的out，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持COMPLEX64，shape维度不高于3维，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。  
 - **返回值**：
@@ -38,10 +38,10 @@
 
 ## aclnnComplexMatDot
 - **参数说明**：
-  - workspace(void \*, 入参)：在Device侧申请的workspace内存地址。
-  - workspaceSize(uint64_t, 入参)：在Device侧申请的workspace大小，由第一段接口aclnnComplexMatDotGetWorkspaceSize获取。
-  - executor(aclOpExecutor \*, 入参)：op执行器，包含了算子计算流程。
-  - stream(aclrtStream, 入参)：指定执行任务的AscendCL Stream流。
+  - workspace（void \*, 入参）：在Device侧申请的workspace内存地址。
+  - workspaceSize（uint64_t, 入参）：在Device侧申请的workspace大小，由第一段接口aclnnComplexMatDotGetWorkspaceSize获取。
+  - executor（aclOpExecutor \*, 入参）：op执行器，包含了算子计算流程。
+  - stream（aclrtStream, 入参）：指定执行任务的AscendCL Stream流。
 
 - **返回值**：
   aclnnStatus：返回状态码。
