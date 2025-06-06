@@ -450,9 +450,6 @@ do {                                                                         \
  
  bool Conv3DBackpropInputV2Tiling::IsCapable()
  {
-     if (PlatformInfo::GetInstance().GetSocVersion() == "Ascend910_95" || PlatformInfo::GetInstance().GetSocVersion() == "Ascend910_5591") {
-         return false;
-     }
      return true;
  }
  

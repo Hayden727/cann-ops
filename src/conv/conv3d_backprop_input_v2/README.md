@@ -1,10 +1,10 @@
-## Conv3DBackpropFilterV2自定义算子样例说明 
-本样例通过Ascend C编程语言实现了Conv3DBackpropFilterV2算子，并按照不同的算子调用方式分别给出了对应的端到端实现。
+## Conv3DBackpropInputV2自定义算子样例说明 
+本样例通过Ascend C编程语言实现了Conv3DBackpropInputV2算子，并按照不同的算子调用方式分别给出了对应的端到端实现。
 
 
 ## 算子规格描述
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Conv3DBackpropFilterV2</th></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Conv3DBackpropInputV2</th></tr>
 <tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
 
 <tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">NCDHW</td><td align="center">\</td></tr>
@@ -26,7 +26,7 @@
 
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32</td><td align="center">NCDHW</td><td align="center">\</td></tr>
 
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">conv3d_backprop_filter_v2</td></td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">conv3d_backprop_input_v2</td></td></tr>
 </table>
 
 
@@ -70,7 +70,7 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Conv3DBackpropFilterV2算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Conv3DBackpropInputV2算子。</td>
     </tr>
 </table>
 

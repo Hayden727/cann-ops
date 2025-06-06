@@ -1,6 +1,6 @@
 ## 概述
 
-通过aclnn调用的方式调用AngleV2算子。
+通过aclnn调用的方式调用Conv3DBackpropInputV2算子。
 
 ## 目录结构介绍
 
@@ -34,7 +34,7 @@ aclnnStatus aclnnConvolutionBackward(void *workspace, uint64_t workspaceSize, ac
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/conv3d_backprop_filter_v2/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/conv/conv3d_backprop_input_v2/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
@@ -53,7 +53,7 @@ aclnnStatus aclnnConvolutionBackward(void *workspace, uint64_t workspaceSize, ac
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_conv3d_backprop_filter_v2_op
+    ./execute_conv3d_backprop_input_v2_op
     cd ..
     python3 verify_result.py output/output_y.bin output/output.bin
     ```

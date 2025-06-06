@@ -1,19 +1,12 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
-
 /*!
  * \file LstmFP16.cpp
  * \brief
@@ -320,7 +313,7 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::CopyInHCSeq(LocalTensor<float>& d
 template <typename T>
 __aicore__ inline void LstmMmSplitNDNDFP16<T>::CopyOutput(GlobalTensor<T>& gm, LocalTensor<float>& ub, int64_t offset) {
   auto outLocal = qidVecOut.AllocTensor<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Cast(outLocal, ub, RoundMode::CAST_ROUND, calcSizeAlign);
   qidVecOut.EnQue(outLocal);
 
@@ -428,7 +421,7 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::AddfSigmoid(LocalTensor<float>& f
                                                            LocalTensor<float>& ubLocalIn, int64_t offset) {
   ubLocalIn = qidVecIn.DeQue<float>();
   Adds(ubLocalIn, ubLocalIn, (float)tiling->forgetBias, calcSizeAlign);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Sigmoid(fSigmoid, ubLocalIn, calcSizeAlign);
   qidVecIn.FreeTensor(ubLocalIn);
   
@@ -444,7 +437,7 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::InitCMulfSigmoid(LocalTensor<floa
   Cast(ubLocal3, ubLocalIn, RoundMode::CAST_NONE, calcSizeAlign);
   qidCIn.FreeTensor(ubLocalIn);
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(cTmp1, ubLocal3, fSigmoid, calcSizeAlign);
 }
 
@@ -452,7 +445,7 @@ template <typename T>
 __aicore__ inline void LstmMmSplitNDNDFP16<T>::CaliSigmoid(LocalTensor<float>& iSigmoid, LocalTensor<float>& ubLocalIn,
                                                            int64_t offset) {
   ubLocalIn = qidVecIn2.DeQue<float>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Sigmoid(iSigmoid, ubLocalIn, calcSizeAlign);
   qidVecIn2.FreeTensor(ubLocalIn);
 
@@ -465,7 +458,7 @@ template <typename T>
 __aicore__ inline void LstmMmSplitNDNDFP16<T>::CaljTanh(LocalTensor<float>& jTanh, LocalTensor<float>& ubLocalIn,
                                                         int64_t offset) {
   ubLocalIn = qidVecIn.DeQue<float>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Tanh(jTanh, ubLocalIn, calcSizeAlign);
   qidVecIn.FreeTensor(ubLocalIn);
 
@@ -478,7 +471,7 @@ template <typename T>
 __aicore__ inline void LstmMmSplitNDNDFP16<T>::CaloSigmoid(LocalTensor<float>& oSigmoid, LocalTensor<float>& ubLocalIn,
                                                            int64_t offset) {
   ubLocalIn = qidVecIn2.DeQue<float>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Sigmoid(oSigmoid, ubLocalIn, calcSizeAlign);
   qidVecIn2.FreeTensor(ubLocalIn);
 
@@ -499,24 +492,24 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::CopyOutYH(LocalTensor<float>& upd
   DataCopyPadExtParams<T> padParams1{false, 0, (uint8_t)(Ceil(calcN, blockSize) * blockSize - calcN), 0};
 
   if (tiling->isSeqLength == 1) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     auto updateY = ubLocal1;
     auto initH = ubLocal2;
     auto seqLength = ubLocal4;
     Mul(updateY, updateH, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CopyInHCSeq(initH, inputGm.initHGm, initcOffset);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(updateH, updateH, initH, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(updateH, updateH, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(updateH, updateH, initH, calcSizeAlign);
     CopyOutput(outputGm.outYGm, updateY, offset);
     CopyOutput(outputGm.outHGm, updateH, offset);
   } else {
     LocalTensor<T> outLocal = qidVecOut.AllocTensor<T>();
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Cast(outLocal, updateH, RoundMode::CAST_ROUND, calcSizeAlign);
     qidVecOut.EnQue(outLocal);
     outLocal = qidVecOut.DeQue<T>();
@@ -540,12 +533,12 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::CopyOutYHt0(LocalTensor<float>& u
 
   if (tiling->isSeqLength == 1) {
     auto seqLength = ubLocal3;
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(updateH, updateH, seqLength, calcSizeAlign);
   }
 
   LocalTensor<T> outLocal = qidVecOut.AllocTensor<T>();
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Cast(outLocal, updateH, RoundMode::CAST_ROUND, calcSizeAlign);
   qidVecOut.EnQue(outLocal);
   outLocal = qidVecOut.DeQue<T>();
@@ -560,33 +553,33 @@ template <typename T>
 __aicore__ inline void LstmMmSplitNDNDFP16<T>::CalAddTanh(LocalTensor<float>& cTanh, LocalTensor<float>& ubLocal2,
                                                           LocalTensor<float>& cTmp2, int64_t offset,
                                                           int64_t initcOffset) {
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
 
   auto updateC = ubLocal1;
   Add(updateC, ubLocal2, cTmp2, calcSizeAlign);
 
   if (tiling->isSeqLength == 1) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     auto initC = ubLocal2;
     auto seqLength = ubLocal4;
     CopyInHCSeq(initC, inputGm.initCGm, initcOffset);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Sub(updateC, updateC, initC, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     CopyInHCSeq(seqLength, inputGm.seqLengthGm, offset);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(updateC, updateC, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Add(updateC, updateC, initC, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
   }
 
   if (tiling->cellClip > 0) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mins(updateC, updateC, (float)tiling->cellClip, calcSizeAlign);
   }
   CopyOutput(outputGm.outCGm, updateC, offset);
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Tanh(cTanh, updateC, calcSizeAlign);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outTanhCGm, cTanh, offset);
@@ -602,19 +595,19 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::CalAddTanht0(LocalTensor<float>& 
   if (tiling->isSeqLength == 1) {
     auto seqLength = ubLocal3;
     CopyInHCSeq(seqLength, inputGm.seqLengthGm, offset);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mul(updateC, updateC, seqLength, calcSizeAlign);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
   }
 
   if (tiling->cellClip > 0) {
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     Mins(updateC, updateC, (float)tiling->cellClip, calcSizeAlign);
   }
 
   CopyOutput(outputGm.outCGm, updateC, offset);
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Tanh(cTanh, updateC, calcSizeAlign);
   if (tiling->isTraining == 1) {
     CopyOutput(outputGm.outTanhCGm, cTanh, offset);
@@ -666,14 +659,14 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::ProcessVectorOnce(int64_t tIdx, i
 
   CaljTanh(jTanh, jInput, offset);
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(ubLocal4, jTanh, iSigmoid, calcSizeAlign);
 
   CalAddTanh(cTanh, ubLocal2, ubLocal4, offset, initcOffset);
 
   CaloSigmoid(oSigmoid, oInput, offset);
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(updateH, oSigmoid, cTanh, calcSizeAlign);
 
   CopyOutYH(updateH, offset, initcOffset);
@@ -720,14 +713,14 @@ __aicore__ inline void LstmMmSplitNDNDFP16<T>::ProcessVectorInitHC(int64_t mIdx,
 
   CaljTanh(jTanh, jInput, offset);
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(ubLocal4, jTanh, iSigmoid, calcSizeAlign);
 
   CalAddTanht0(cTanh, ubLocal2, ubLocal4, offset, initcOffset);
 
   CaloSigmoid(oSigmoid, oInput, offset);
 
-  pipe_barrier(PIPE_V);
+  PipeBarrier<PIPE_V>();
   Mul(updateH, oSigmoid, cTanh, calcSizeAlign);
 
   CopyOutYHt0(updateH, offset);

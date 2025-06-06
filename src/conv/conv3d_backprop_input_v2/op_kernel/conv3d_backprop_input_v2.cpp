@@ -13,27 +13,15 @@
  * \brief
  */
 
-// #if __CCE_AICORE__ == 310
-// #if defined(__DAV_C310__)
-// #include "../../../../../convolution/conv3d_backprop_input_v2/op_kernel/conv3d_backprop_input_v2/conv3d_backprop_input_v2.cpp"
-// #endif
-// #else
 #include "conv3d_backprop_input_v2.h"
 #include "conv3d_dx_v2_basic_block.h"
 #include "conv3d_backprop_input_v2_init_output.h"
-// #endif
 
 using namespace AscendC;
 
 extern "C" __global__ __aicore__ void conv3d_backprop_input_v2(GM_ADDR input_size, GM_ADDR filter, GM_ADDR out_backprop,
                                                                GM_ADDR y, GM_ADDR workSpace, GM_ADDR tiling)
 {
-#if __CCE_AICORE__ == 310
-#if defined(__DAV_C310__)
-    conv3d_backprop_input_v2_advance(input_size, filter, out_backprop, y, workSpace, tiling);
-    return;
-#endif
-#endif
     if (workSpace == nullptr) {
         return;
     }

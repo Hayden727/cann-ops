@@ -1,17 +1,11 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
@@ -22,7 +16,6 @@
 #
 #include <vector>
 #include <string>
-// #include "conv3d_backprop_filter_v2_tiling.h"
 #include "conv3d_backprop_input_v2_tiling.h"
 
 using namespace optiling;
@@ -96,7 +89,6 @@ static ge::graphStatus GetDataFormat(const gert::TilingContext *context, TilingC
             param.input1Format3D = ge::FORMAT_NDC1HWC0;
             param.input2Format3D = ge::FORMAT_FRACTAL_Z_3D;
         } else {
-            // // // OP_LOG_FULL(DLOG_ERROR, opType, "opType = %s is not support now", opType.c_str());
             return ge::GRAPH_FAILED;
         }
         auto outFormat2D =
@@ -108,12 +100,7 @@ static ge::graphStatus GetDataFormat(const gert::TilingContext *context, TilingC
         } else if (outFormat2D == ge::FORMAT_FRACTAL_Z) {
             param.output0Format3D = ge::FORMAT_FRACTAL_Z_3D;
         }
-        // // OP_LOG_FULL(DLOG_DEBUG, opType,
-            // "Format3D:in0 = %d, in1 = %d, in2 = %d, outFormat = %d, FORMAT_ND = %d, FORMAT_NCDHW = %d, NCHW = %d",
-            // param.input0Format3D, param.input1Format3D, param.input2Format3D, param.output0Format3D,
-            // ge::FORMAT_ND, ge::FORMAT_NCDHW, ge::FORMAT_NCHW);
     } else {
-        // // OP_LOG_FULL(DLOG_ERROR, opType, "Format = %s is not support now", formatIn2D.c_str());
         return ge::GRAPH_FAILED;
     }
     return ge::GRAPH_SUCCESS;
@@ -130,8 +117,6 @@ static ge::graphStatus GetTilingContextAttr(gert::TilingContext *context, Tiling
     param.group = static_cast<int32_t>(*attrPtrGroup);
     const char *dataFormat = attrs->GetStr(DATA_FORMAT_INDEX);
     auto ret = GetDataFormat(context, param, dataFormat, param.dataFormatIn3D, opType);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-                    // // OP_LOG_FULL(DLOG_ERROR, opType, "GetFormat failed"), return ge::GRAPH_FAILED);
     // 2 设置属性
     vector<int64_t> conv3dPads({0, 0, pads->GetData()[0], pads->GetData()[1], pads->GetData()[2],
                                 pads->GetData()[3]});
@@ -178,7 +163,6 @@ static ge::graphStatus GetTilingContextInStorageShape(gert::TilingContext *conte
             {in2OriginShape.GetDim(0), in2OriginShape.GetDim(1), 1, in2OriginShape.GetDim(2), in2OriginShape.GetDim(3)}, // NCDHW
             {in2StorageShape.GetDim(0), in2StorageShape.GetDim(1), in2StorageShape.GetDim(2), in2StorageShape.GetDim(3)}}; // FRACTAL_Z_3D
     } else {
-        // OP_LOG_FULL(DLOG_ERROR, opType, "opType = %s is not support now", opType.c_str());
         return ge::GRAPH_FAILED;
     }
     param.input0Shape3D.MutableStorageShape() = input0Shape3D.MutableStorageShape();
@@ -215,7 +199,6 @@ static ge::graphStatus GetTilingContextOutStorageShape(gert::TilingContext *cont
             {outOriginShape.GetDim(0), outOriginShape.GetDim(1), 1, outOriginShape.GetDim(2), outOriginShape.GetDim(3)}, // NCDHW
             {outStorageShape.GetDim(0), outStorageShape.GetDim(1), outStorageShape.GetDim(2), outStorageShape.GetDim(3)}}; // FRACTAL_Z_3D
     } else {
-        // OP_LOG_FULL(DLOG_ERROR, opType, "outputFormat = %d is not support now", outFormat2D);
         return ge::GRAPH_FAILED;
     }
     param.outputShapes[0] = outputStorage3D;
@@ -248,27 +231,15 @@ static void GetTilingContextDataType(const gert::TilingContext *context, TilingC
         return;
     );
     param.out0DataType3D = context->GetOutputDesc(OUTPUT0_INDEX)->GetDataType();
-    // // OP_LOG_FULL(DLOG_DEBUG, opType,
-    //             "DataType:in0 = %d, in1 = %d, in2 = %d, out0 = %d, DT_INT32 = %d, DT_FLOAT16 = %d",
-    //             param.in0DataType3D, param.in1DataType3D, param.in2DataType3D, param.out0DataType3D,
-                // ge::DT_INT32, ge::DT_FLOAT16);
 }
 
 static ge::graphStatus GetTilingContextInfo(gert::TilingContext *context, TilingContextMakerParam &param, string opType)
 {
     // 1 获取3D属性和format
     ge::graphStatus ret = GetTilingContextAttr(context, param, opType);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-                    // OP_LOG_FULL(DLOG_ERROR, opType, "GetTilingContextAttr failed"), return ge::GRAPH_FAILED);
     // 2 获取输入/输出 shape
     ret = GetTilingContextInStorageShape(context, param, opType);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-                    // OP_LOG_FULL(DLOG_ERROR, opType, "GetTilingContextInStorageShape failed"),
-                    // return ge::GRAPH_FAILED);
     ret = GetTilingContextOutStorageShape(context, param, opType);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-    //                 // OP_LOG_FULL(DLOG_ERROR, opType, "GetTilingContextOutStorageShape failed"),
-    //                 return ge::GRAPH_FAILED);
     // 3 获取输入/输出 dataType
     GetTilingContextDataType(context, param, opType);
     return ge::GRAPH_SUCCESS;
@@ -279,14 +250,11 @@ static ge::graphStatus AdaptConv3DBpTiliingAndCopy(gert::TilingContext *tilingCo
 {
     // 调用3D的tiling模板
     auto ret = TilingRegistry::GetInstance().DoTilingImpl(tilingContext3D);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-                    // OP_LOG_FULL(DLOG_ERROR, opType, "3d DoTilingImpl failed"), return ge::GRAPH_FAILED);
     // 将3DContext的TilingData信息拷贝至context
     context->GetRawTilingData()->SetDataSize(tilingContext3D->GetRawTilingData()->GetDataSize());
     auto cpRet = memcpy_s(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetDataSize(),
                          tilingContext3D->GetRawTilingData()->GetData(),
                          tilingContext3D->GetRawTilingData()->GetDataSize());
-    // OP_TILING_CHECK(cpRet != EOK, // OP_LOG_FULL(DLOG_ERROR, opType, "memcpy_s failed"), return ge::GRAPH_FAILED);
     context->SetBlockDim(tilingContext3D->GetBlockDim());
     context->SetTilingKey(tilingContext3D->GetTilingKey());
     size_t *workspaces = context->GetWorkspaceSizes(1);
@@ -301,10 +269,6 @@ ge::graphStatus AdaptTilingToConv3DBp(gert::TilingContext *context, string opTyp
     // 构造3D TilingContext的输入/输出shape、datatype、attr、compileInfo等信息
     TilingContextMakerParam param;
     ge::graphStatus ret = GetTilingContextInfo(context, param, opType);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-                    // OP_LOG_FULL(DLOG_ERROR, opType, "GetTilingContextInfo failed"), return ge::GRAPH_FAILED);
-    // int capSize = opType == string("Conv2DBackpropFilterV3") ? sizeof(optiling::Conv3DBackpropFilterV2TilingData) :
-    //               sizeof(optiling::Conv3DBackpropInputV2TilingData);
     int capSize = sizeof(optiling::Conv3DBackpropInputV2TilingData);
     auto rawTilingData = gert::TilingData::CreateCap(capSize);
     auto workspaceHolder = gert::ContinuousVector::Create<size_t>(4096); // 4k default;
@@ -325,7 +289,6 @@ ge::graphStatus AdaptTilingToConv3DBp(gert::TilingContext *context, string opTyp
         opTypeForSet = string("Conv3DTransposeV2");
     }
     
-    // //todo
     auto tilingContextHolder =
     optiling::TilingContextMaker()
             .NodeIoNum(3, 1) // 3 input, 1 output
@@ -346,8 +309,6 @@ ge::graphStatus AdaptTilingToConv3DBp(gert::TilingContext *context, string opTyp
     auto *tilingContext3D = tilingContextHolder.GetContext<gert::TilingContext>();
 
     ret = AdaptConv3DBpTiliingAndCopy(tilingContext3D, context, opType);
-    // OP_TILING_CHECK(ret != ge::GRAPH_SUCCESS,
-                    // OP_LOG_FULL(DLOG_ERROR, opType, "AdaptTilingToConv3DBp failed"), return ge::GRAPH_FAILED);
     return ge::GRAPH_SUCCESS;
 }
 } // namespace optiling

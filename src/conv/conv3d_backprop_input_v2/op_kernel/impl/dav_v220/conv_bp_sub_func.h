@@ -1,19 +1,12 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024-2025. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
-
 /*!
  * \file conv_bp_sub_func.h
  * \brief
@@ -67,7 +60,7 @@ __aicore__ inline void MmadLocal(Intf *self, const LocalTensor<typename Intf::Sr
     // MMAD计算量baseM*baseN小于一定阈值时需要添加PIPE_M同步,当前平台阈值为10*256
     constexpr int32_t mmadThreshold = 10 * 256;
     if (self->ctx.mmad_.m * self->ctx.mmad_.n <= mmadThreshold) {
-        pipe_barrier(PIPE_M);
+        PipeBarrier<PIPE_M>();
     }
     MmadImpl(l0c, l0a, l0b, self->ctx.mmad_);
 }
@@ -478,7 +471,7 @@ __aicore__ inline void LoadToA1(Intf *self, uint32_t kIdx, uint32_t curDoutIdx, 
             if (unlikely(self->ctx.tiling_->strideW * self->ctx.tiling_->strideH > 1)) {
                 // block num 以32B为单位, 5用以替换除法运算
                 InitConstValue(useA1Buf, {1, static_cast<uint16_t>(useA1Buf.GetLength() >> 5), 0, 0U});
-                pipe_barrier(PIPE_MTE2);
+                PipeBarrier<PIPE_MTE2>();
             }
         }
 
