@@ -13,7 +13,6 @@
  */
 
 #include "aclnn_convolution_backward.h"
-
 #include "matmul_util.h"
 #include "conv2d_backprop_input_util.h"
 #include "aclnn/aclnn_base.h"
