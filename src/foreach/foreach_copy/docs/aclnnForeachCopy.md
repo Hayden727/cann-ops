@@ -60,4 +60,4 @@
 
 ## 约束与限制
 
-dtype仅支持FLOAT32、FLOAT16、BFLOAT16和INT32。
+  无。

@@ -32,7 +32,7 @@
 
   - scaledGrads（aclTensorList*，计算输入/输出）：公式中的`scaledGrads`，Device侧的aclTensorList，表示进行反缩放计算的输入和输出张量列表。数据类型支持FLOAT、FLOAT16、BFLOAT16。shape维度不高于8维，数据格式支持ND。支持非连续的Tensor，支持的最大长度为256个。
   - foundInf（aclTensor*，计算输入/输出）：公式中的`foundInf`，Device侧的aclTensor，仅包含一个元素。表示用来标记输入scaledGrads中是否存在inf或-inf的标量。数据类型支持FLOAT，数据格式支持ND。不支持非连续的Tensor。
-  - inScale（aclTensor*，计算输入/输出）：公式中的`inScale`，Device侧的aclTensor，仅包含一个元素。表示进行反缩放计算的标量。数据类型支持FLOAT，数据格式支持ND。不支持非连续的Tensor。
+  - inScale（aclTensor*，计算输入）：公式中的`inScale`，Device侧的aclTensor，仅包含一个元素。表示进行反缩放计算的标量。数据类型支持FLOAT，数据格式支持ND。不支持非连续的Tensor。
   - workspaceSize（uint64_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 
