@@ -22,6 +22,6 @@
 #include "register/op_impl_registry.h"
 #include "base/context_maker/kernel_run_context_maker.h"
 namespace optiling {
-ge::graphStatus AdaptTilingToConv3DBp(gert::TilingContext *context, std::string opType);
+ge::graphStatus AdaptTilingToConv3DBackprop(gert::TilingContext *context, std::string opType);
 } // namespace optiling
 #endif // CONV2DBP_ADAPT_TO_CONV3DBP

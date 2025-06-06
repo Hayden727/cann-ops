@@ -39,7 +39,7 @@ REGISTER_TILING_TEMPLATE("Conv2DBackpropFilterV3", Conv2DBackpropFilterV3Tiling,
 
 static ge::graphStatus Conv2DBackpropFilterV3TilingFunc(gert::TilingContext *context)
 {
-    return AdaptTilingToConv3DBp(context, "Conv2DBackpropFilterV3");
+    return AdaptTilingToConv3DBackprop(context, "Conv2DBackpropFilterV3");
 }
 
 static ge::graphStatus TilingParseForConv2DBackpropFilterV3(gert::TilingParseContext *context)

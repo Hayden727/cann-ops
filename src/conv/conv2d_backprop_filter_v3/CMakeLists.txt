@@ -13,8 +13,8 @@ file(GLOB_RECURSE EXTRA_SRC_FILES
 # optiling
 target_sources(optiling PRIVATE
         op_host/conv2_d_backprop_filter_v3_tiling.cpp
+        op_host/conv2dbp_adapt_to_conv3dbp.cpp
         ../conv2d_transpose_v2/op_host/base/context_maker/kernel_run_context_maker.cc
-        ../conv2d_transpose_v2/op_host/conv2dbp_adapt_to_conv3dbp.cc
         ../conv3d_backprop_filter_v2/op_host/conv3_d_backprop_filter_v2.cpp
         ../conv3d_backprop_filter_v2/op_host/conv3d_dw_v2_basic_block_tiling.cpp
         ${EXTRA_SRC_FILES}

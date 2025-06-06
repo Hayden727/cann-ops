@@ -281,7 +281,7 @@ static ge::graphStatus AdaptConv3DBpTiliingAndCopy(gert::TilingContext *tilingCo
     return ge::GRAPH_SUCCESS;
 }
 
-ge::graphStatus AdaptTilingToConv3DBp(gert::TilingContext *context, string opType)
+ge::graphStatus AdaptTilingToConv3DBackprop(gert::TilingContext *context, string opType)
 {
     OP_LOGD("Converting %s to Conv3DBackprop/Conv3DTranspose in tiling.", opType.c_str());
     // 构造3D TilingContext的输入/输出shape、datatype、attr、compileInfo等信息
