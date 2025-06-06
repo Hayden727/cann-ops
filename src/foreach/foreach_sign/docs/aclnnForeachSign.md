@@ -66,5 +66,4 @@
   aclnnStatus：返回状态码。
 
 ## 约束与限制
-
-- dtype仅支持FLOAT32、FLOAT16、BFLOAT16和INT32。
+  无。
