@@ -20,13 +20,13 @@
 
 - **参数说明**：
 
-  - gradOutput（aclTensor*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16，且数据类型与`out`一致，shape仅支持四维。支持非连续的Tensor，数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。
+  - gradOutput（aclTensor*，计算输入）：Device侧的aclTensor，表示反向计算的的梯度Tensor。数据类型支持FLOAT、FLOAT16、BFLOAT16，且数据类型与`out`一致，shape仅支持四维。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。
   - outputSize（aclIntArray*，计算输入）：Host侧的aclIntArray，数据类型支持INT64，size大小为2。表示输入`gradOutput`在H和W维度上的空间大小。
   - inputSize（aclIntArray*，计算输入）：Host侧的aclIntArray，数据类型支持INT64，size大小为4。表示输出`out`分别在N、C、H和W维度上的空间大小。
   - alignCorners（bool，计算输入）：Host侧的布尔型，表示是否对齐角像素点。如果为True，则输入和输出张量的角像素点会被对齐，否则不对齐。
   - scalesH（double，计算输入）：Host侧的浮点型，表示输出`out`的height维度乘数。
   - scalesW（double，计算输入）：Host侧的浮点型，表示输出`out`的width维度乘数。
-  - out（aclTensor*，计算输出）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16，且数据类型与`gradOutput`一致，shape仅支持四维。支持非连续的Tensor，数据格式支持NCHW、ND。
+  - out（aclTensor*，计算输出）：Device侧的aclTensor，表示反向计算的输出张量。数据类型支持FLOAT、FLOAT16、BFLOAT16，且数据类型与`gradOutput`一致，shape仅支持四维。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 

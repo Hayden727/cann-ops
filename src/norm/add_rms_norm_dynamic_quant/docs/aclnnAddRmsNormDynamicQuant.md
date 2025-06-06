@@ -75,17 +75,17 @@
 
 - **参数说明：**
 
-  - x1（aclTensor*，计算输入）：表示标准化过程中的源数据张量，Device侧的aclTensor。shape支持2-8维，数据类型支持FLOAT16、BFLOAT16。数据格式支持ND，支持非连续的Tensor。
-  - x2（aclTensor*，计算输入）：表示标准化过程中的源数据张量，Device侧的aclTensor。shape和数据类型需要与x1保持一致。数据格式支持ND，支持非连续的Tensor。
-  - gamma（aclTensor*，计算输入）：表示标准化过程中的权重张量，Device侧的aclTensor。shape支持1维，shape需要与x1最后一维一致，数据类型需要与x1保持一致。数据格式支持ND，支持非连续的Tensor。
-  - smoothScale1Optional（aclTensor*，计算输入）：表示量化过程中得到y1使用的smoothScale张量，Device侧的aclTensor。可选参数，支持传入空指针。shape和数据类型需要与gamma保持一致。数据格式支持ND，支持非连续的Tensor。
-  - smoothScale2Optional（aclTensor*，计算输入）：表示量化过程中得到y2使用的smoothScale张量，Device侧的aclTensor。可选参数，支持传入空指针。必须与smoothScale1Optional配套使用。shape和数据类型需要与gamma保持一致。数据格式支持ND，支持非连续的Tensor。
-  - epsilon（double，计算输入）：用于防止除0错误，数据类型为double，建议传入较小正数，如1e-6。
-  - y1Out（aclTensor*，计算输出）：表示量化输出Tensor，Device侧的aclTensor。shape需要与输入x1/x2一致，或者是二维并且第一维等于x1除最后一维的维度乘积，第二维等于x1的最后一维，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor。
-  - y2Out（aclTensor*，计算输出）：表示量化输出Tensor，Device侧的aclTensor。当smoothScale2Optional不存在时，此输出无意义。shape需要与y1Out一致，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor。
-  - xOut（aclTensor*，计算输出）：表示x1和x2的和，Device侧的aclTensor。shape和数据类型需要与输入x1/x2一致，数据格式支持ND，支持非连续的Tensor。
-  - scale1Out（aclTensor*，计算输出）：第一路量化的输出，Device侧的aclTensor。shape需要与输入x1除最后一维后的shape一致，或者与x1除最后一维的乘积一致，数据类型支持FLOAT32。数据格式支持ND，支持非连续的Tensor。
-  - scale2Out（aclTensor*，计算输出）：第二路量化的输出，Device侧的aclTensor。当smoothScale2Optional不存在时，此输出无意义。shape需要与scale1Out一致，数据类型支持FLOAT32。数据格式支持ND，支持非连续的Tensor。
+  - x1（aclTensor*，计算输入）：公式中的输入`x1`，表示标准化过程中的源数据张量，Device侧的aclTensor。shape支持2-8维，数据类型支持FLOAT16、BFLOAT16。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - x2（aclTensor*，计算输入）：公式中的输入`x2`，表示标准化过程中的源数据张量，Device侧的aclTensor。shape和数据类型需要与x1保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - gamma（aclTensor*，计算输入）：公式中的输入`gamma`，表示标准化过程中的权重张量，Device侧的aclTensor。shape支持1维，shape需要与x1最后一维一致，数据类型需要与x1保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - smoothScale1Optional（aclTensor*，计算输入）：公式中的输入`smoothScale1Optional`，表示量化过程中得到y1使用的smoothScale张量，Device侧的aclTensor。可选参数，支持传入空指针。shape和数据类型需要与gamma保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - smoothScale2Optional（aclTensor*，计算输入）：公式中的输入`smoothScale2Optional`，表示量化过程中得到y2使用的smoothScale张量，Device侧的aclTensor。可选参数，支持传入空指针。必须与smoothScale1Optional配套使用。shape和数据类型需要与gamma保持一致。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - epsilon（double，计算输入）：公式中的输入`epsilon`，用于防止除0错误，数据类型为double，建议传入较小正数，如1e-6。
+  - y1Out（aclTensor*，计算输出）：公式中的输出`y1Out`，表示量化输出Tensor，Device侧的aclTensor。shape需要与输入x1/x2一致，或者是二维并且第一维等于x1除最后一维的维度乘积，第二维等于x1的最后一维，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - y2Out（aclTensor*，计算输出）：公式中的输出`y2Out`，表示量化输出Tensor，Device侧的aclTensor。当smoothScale2Optional不存在时，此输出无意义。shape需要与y1Out一致，数据类型支持INT8，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - xOut（aclTensor*，计算输出）：表示x1和x2的和，公式中的输出`x`，Device侧的aclTensor。shape和数据类型需要与输入x1/x2一致，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - scale1Out（aclTensor*，计算输出）：公式中的输出`scale1Out`，第一路量化的输出，Device侧的aclTensor。shape需要与输入x1除最后一维后的shape一致，或者与x1除最后一维的乘积一致，数据类型支持FLOAT32。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
+  - scale2Out（aclTensor*，计算输出）：公式中的输出`scale2Out`，第二路量化的输出，Device侧的aclTensor。当smoothScale2Optional不存在时，此输出无意义。shape需要与scale1Out一致，数据类型支持FLOAT32。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
 

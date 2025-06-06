@@ -29,23 +29,23 @@
 ## aclnnDeepNormGetWorkspaceSize
 
 -   **参数说明**：
-    * x（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`x`，shape支持2-8维度，数据格式支持ND。
+    * x（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`x`，shape支持2-8维度，数据格式支持ND。不支持空tensor。
       * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
       * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-    * gx（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`gx`，shape支持2-8维度，shape维度和输入x的维度相同，数据格式支持ND。
+    * gx（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`gx`，shape支持2-8维度，shape维度和输入x的维度相同，数据格式支持ND。不支持空tensor。
       * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
       * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-    * beta（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`beta`，shape支持1-7维度，shape维度和输入x后几维的维度相同，后几维表示需要norm的维度，数据格式支持ND。
+    * beta（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`beta`，shape支持1-7维度，shape维度和输入x后几维的维度相同，后几维表示需要norm的维度，数据格式支持ND。不支持空tensor。
       * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
       * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-    * gamma（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`gamma`，shape支持1-7维度，shape维度和输入x后几维的维度相同，后几维表示需要norm的维度，数据格式支持ND。
+    * gamma（aclTensor\*，计算输入）：Device侧的aclTensor，公式中的输入`gamma`，shape支持1-7维度，shape维度和输入x后几维的维度相同，后几维表示需要norm的维度，数据格式支持ND。不支持空tensor。
       * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
       * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
     * alphaOptional（double，计算输入）：Host侧的double，公式中的输入`alpha`，是输入x的权重。
     * epsilonOptional（double，计算输入）：Host侧的double，公式中的输入`eps`，用于防止除0错误。
-    * meanOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出`mean`，数据类型支持FLOAT32，shape支持2-8维度，shape与输入x满足broadcast关系（前几维的维度和输入x前几维的维度相同，前几维表示不需要norm的维度，其余维度大小为1），数据格式支持ND。
-    * rstdOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出`rstd`，数据类型支持FLOAT32，shape支持2-8维度，shape与输入x满足broadcast关系（前几维的维度和输入x前几维的维度相同，前几维表示不需要norm的维度，其余维度大小为1），数据格式支持ND。
-    * yOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出`y`，shape支持2-8维度，shape维度和输入x的维度相同，数据格式支持ND。
+    * meanOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出`mean`，数据类型支持FLOAT32，shape支持2-8维度，shape与输入x满足broadcast关系（前几维的维度和输入x前几维的维度相同，前几维表示不需要norm的维度，其余维度大小为1），数据格式支持ND。不支持空tensor。
+    * rstdOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出`rstd`，数据类型支持FLOAT32，shape支持2-8维度，shape与输入x满足broadcast关系（前几维的维度和输入x前几维的维度相同，前几维表示不需要norm的维度，其余维度大小为1），数据格式支持ND。不支持空tensor。
+    * yOut（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出`y`，shape支持2-8维度，shape维度和输入x的维度相同，数据格式支持ND。不支持空tensor。
       * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
       * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
     * workspaceSize（uint64\_t\*，出参）：返回需要在Device侧申请的workspace大小。

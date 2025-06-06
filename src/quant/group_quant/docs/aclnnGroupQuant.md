@@ -24,12 +24,12 @@
 
 - **参数说明：**
 
-  - x（aclTensor*，计算输入）：公式中的`x`，Device侧的aclTensor，需要做量化的输入。shape为2维，支持非连续的Tensor，数据格式支持ND。数据类型支持FLOAT32，FLOAT16，BFLOAT16。如果`dstType`为3(INT32)，Shape的最后一维需要能被8整除；如果`dstType`为29(INT4)，Shape的最后一维需要能被2整除。
-  - scale（aclTensor*，计算输入）：公式中的`scale`，Device侧的aclTensor，量化中的scale值。数据类型支持FLOAT32，FLOAT16，BFLOAT16。`scale`为2维张量(`scale`的第1维与x的第1维相等)。支持非连续的Tensor，数据格式支持ND。
-  - groupIndex（aclTensor*，计算输入）：Device侧的aclTensor，Group量化中的groupIndex值。数据类型支持INT32，INT64。`groupIndex`为1维张量(维度与scale的第0维相等)。支持非连续的Tensor，数据格式支持ND。
+  - x（aclTensor*，计算输入）：公式中的`x`，Device侧的aclTensor，需要做量化的输入。shape为2维，支持非连续的Tensor，不支持空tensor。数据格式支持ND。数据类型支持FLOAT32，FLOAT16，BFLOAT16。如果`dstType`为3(INT32)，Shape的最后一维需要能被8整除；如果`dstType`为29(INT4)，Shape的最后一维需要能被2整除。
+  - scale（aclTensor*，计算输入）：公式中的`scale`，Device侧的aclTensor，量化中的scale值。数据类型支持FLOAT32，FLOAT16，BFLOAT16。`scale`为2维张量(`scale`的第1维与x的第1维相等)。支持非连续的Tensor，不支持空tensor。数据格式支持ND。
+  - groupIndex（aclTensor*，计算输入）：Device侧的aclTensor，Group量化中的groupIndex值。数据类型支持INT32，INT64。`groupIndex`为1维张量(维度与scale的第0维相等)。支持非连续的Tensor，不支持空tensor。数据格式支持ND。
   - offsetOptional（aclTensor*，计算输入）：公式中的`offsetOptional`，可选参数，Device侧的aclTensor，量化中的offset值。数据类型支持FLOAT32，FLOAT16，BFLOAT16，并且数据类型与`scale`一致。`offsetOptional`为1个数。
   - dstType（int32_t，计算输入）：Host侧整型属性，指定输出的数据类型，该属性数据类型支持：INT32。支持取值2，3，29，分别表示INT8，INT32，INT4。
-  - y（aclTensor*，计算输出）: 公式中的`y`，Device侧的aclTensor。shape为2维，数据类型支持INT8，INT32，INT4。类型为INT32时，Shape的最后一维是`x`最后一维的1/8，其余维度和x一致; 其他类型时，Shape与`x`一致。支持空Tensor，支持非连续的Tensor。数据格式支持ND。
+  - y（aclTensor*，计算输出）: 公式中的`y`，Device侧的aclTensor。shape为2维，数据类型支持INT8，INT32，INT4。类型为INT32时，Shape的最后一维是`x`最后一维的1/8，其余维度和x一致; 其他类型时，Shape与`x`一致。支持非连续的Tensor，不支持空tensor。数据格式支持ND。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
 

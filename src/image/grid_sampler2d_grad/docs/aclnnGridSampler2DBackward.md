@@ -22,13 +22,13 @@
 
 - **参数说明：**
 
-  - gradOutput（aclTensor*，计算输入）：表示反向传播过程中上一层的输出梯度，Device侧的aclTensor。数据类型需要与input保持一致，支持非连续的Tensor，shape仅支持四维。数据格式支持ND。
+  - gradOutput（aclTensor*，计算输入）：表示反向传播过程中上一层的输出梯度，Device侧的aclTensor。数据类型需要与input保持一致，支持非连续的Tensor，不支持空Tensor。shape仅支持四维。数据格式支持ND。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE。
-  - input（aclTensor*，计算输入）：表示输入张量，Device侧的aclTensor。支持非连续的Tensor，shape仅支持四维，且需满足input的第一个维度和grid、gradOutput的第一个维度值相同，input的第二个维度和gradOutput的第二个维度值相同，input最后两维的维度值不可为0。数据格式支持ND。
+  - input（aclTensor*，计算输入）：表示输入张量，Device侧的aclTensor。支持非连续的Tensor，不支持空Tensor。shape仅支持四维，且需满足input的第一个维度和grid、gradOutput的第一个维度值相同，input的第二个维度和gradOutput的第二个维度值相同，input最后两维的维度值不可为0。数据格式支持ND。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE。
-  - grid（aclTensor*，计算输入）：表示采用像素位置的张量，Device侧的aclTensor。数据类型需要与input保持一致，支持非连续的Tensor，shape仅支持四维，且需满足grid的第二个维度和gradOutput的第三个维度值相同，grid的第三个维度和gradOutput的第四个维度值相同，grid最后一维的值等于2。数据格式支持ND。
+  - grid（aclTensor*，计算输入）：表示采用像素位置的张量，Device侧的aclTensor。数据类型需要与input保持一致，支持非连续的Tensor，不支持空Tensor。shape仅支持四维，且需满足grid的第二个维度和gradOutput的第三个维度值相同，grid的第三个维度和gradOutput的第四个维度值相同，grid最后一维的值等于2。数据格式支持ND。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT32。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持BFLOAT16、FLOAT16、FLOAT32、DOUBLE。
   - interpolationMode（int64_t，计算输入）：用于表示插值模式，Host侧的整型。0：bilinear（双线性插值），1：nearest（最邻近插值）。

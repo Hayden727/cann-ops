@@ -63,7 +63,7 @@
 
 - **参数说明**：
 
-  - self（aclTensor*，计算输入）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCDHW、NDHWC、ND（当数据格式为ND时，默认按照NCDHW格式处理）。shape仅支持五维Tensor。
+  - self（aclTensor*，计算输入）：Device侧的aclTensor。表示进行上采样的输入张量。支持非连续的Tensor，不支持空Tensor。数据格式支持NCDHW、NDHWC、ND（当数据格式为ND时，默认按照NCDHW格式处理）。shape仅支持五维Tensor。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16，不支持inf、-inf输入。
     - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件：数据类型支持FLOAT、FLOAT16、BFLOAT16、DOUBLE。
@@ -72,7 +72,7 @@
   - scalesD（double，计算输入）：Host侧的double常量，表示输出`out`的depth维度乘数。
   - scalesH（double，计算输入）：Host侧的double常量，表示输出`out`的height维度乘数。
   - scalesW（double，计算输入）：Host侧的double常量，表示输出`out`的width维度乘数。
-  - out（aclTensor*，计算输出）：Device侧的aclTensor，输出张量。支持非连续的Tensor，数据格式支持NCDHW、NDHWC、ND。shape仅支持五维Tensor。数据类型和数据格式与入参`self`的数据类型和数据格式保持一致。
+  - out（aclTensor*，计算输出）：Device侧的aclTensor，表示采样后的输出张量。支持非连续的Tensor，不支持空Tensor。数据格式支持NCDHW、NDHWC、ND。shape仅支持五维Tensor。数据类型和数据格式与入参`self`的数据类型和数据格式保持一致。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件：数据类型支持FLOAT、FLOAT16、BFLOAT16、DOUBLE。

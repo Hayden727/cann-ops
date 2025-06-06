@@ -21,13 +21,13 @@
 
 - **参数说明：**
 
-  - gradOut（aclTensor\*，计算输入）：Device侧的aclTensor。支持非连续的Tensor，L轴不支持空Tensor。数据格式支持NCL，ND（当数据格式为ND时，默认按照NCL格式处理）。输入必须是3维。
+  - gradOut（aclTensor\*，计算输入）：Device侧的aclTensor。表示反向计算的的梯度Tensor。支持非连续的Tensor。L轴不支持空Tensor。数据格式支持NCL，ND（当数据格式为ND时，默认按照NCL格式处理）。输入必须是3维。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持DOUBLE、FLOAT、BFLOAT16和FLOAT16。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT16。
   - outputSize（aclIntArray\*，计算输入）：Host侧的aclIntArray，size大小为1。表示输入gradOut在L维度上的空间大小。
   - inputSize（aclIntArray\*，计算输入）：Host侧的aclIntArray，size大小为3。表示输出out分别在N、C、L维度上的空间大小。
   - scales（double，计算输入）：Host侧的double变量，表示输出out的L维度乘数。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor。支持非连续的Tensor，L轴不支持空Tensor。数据格式支持NCL，ND。输出必须是3维。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor。表示反向计算的输出张量。支持非连续的Tensor。L轴不支持空Tensor。数据格式支持NCL，ND。输出必须是3维。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持DOUBLE、FLOAT、BFLOAT16和FLOAT16，且数据类型与gradOut的数据类型一致。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT16，且数据类型与gradOut的数据类型一致。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。

@@ -30,31 +30,31 @@
 
 - **参数说明：**
 
-  * x1（aclTensor\*，计算输入）：公式中的输入`x1`，表示AddLayerNorm中加法计算的输入，将会在算子内做(x1 + x2 + bias)的计算并对计算结果做层归一化；是Device侧的aclTensor，shape支持1-8维度，不支持输入的某一维的值为0，数据格式支持ND。
+  * x1（aclTensor\*，计算输入）：公式中的输入`x1`，表示AddLayerNorm中加法计算的输入，将会在算子内做(x1 + x2 + bias)的计算并对计算结果做层归一化；是Device侧的aclTensor，shape支持1-8维度，不支持输入的某一维的值为0，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * x2（aclTensor\*，计算输入）：公式中的输入`x2`，表示AddLayerNorm中加法计算的输入，将会在算子内做(x1 + x2 + bias)的计算并对计算结果做层归一化；是Device侧的aclTensor，shape需要与x1一致，数据格式支持ND。
+  * x2（aclTensor\*，计算输入）：公式中的输入`x2`，表示AddLayerNorm中加法计算的输入，将会在算子内做(x1 + x2 + bias)的计算并对计算结果做层归一化；是Device侧的aclTensor，shape需要与x1一致，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * beta（aclTensor\*，计算输入）：对应LayerNorm计算公式中的beta，表示层归一化中的beta参数；是Device侧的aclTensor，shape支持1-8维度，与x1需要norm的维度的维度值相同，数据格式支持ND。
+  * beta（aclTensor\*，计算输入）：对应LayerNorm计算公式中的`beta`，表示层归一化中的beta参数；是Device侧的aclTensor，shape支持1-8维度，与x1需要norm的维度的维度值相同，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * gamma（aclTensor\*，计算输入）：对应LayerNorm计算公式中的gamma，表示层归一化中的gamma参数；是Device侧的aclTensor，shape支持1-8维度，与x1需要norm的维度的维度值相同，数据格式支持ND。
+  * gamma（aclTensor\*，计算输入）：对应LayerNorm计算公式中的`gamma`，表示层归一化中的gamma参数；是Device侧的aclTensor，shape支持1-8维度，与x1需要norm的维度的维度值相同，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * bias（aclTensor\*，计算输入）：可选输入参数，表示AddLayerNorm中加法计算的输入，将会在算子内做(x1 + x2 + bias)的计算并对计算结果做层归一化；shape可以和gamma/beta或是和x1/x2一致，是Device侧的aclTensor，shape支持1-8维度，数据格式支持ND。
+  * bias（aclTensor\*，计算输入）：可选输入参数，表示AddLayerNorm中加法计算的输入，将会在算子内做(x1 + x2 + bias)的计算并对计算结果做层归一化；shape可以和gamma/beta或是和x1/x2一致，是Device侧的aclTensor，shape支持1-8维度，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
   * epsilon（double\*，计算输入）：公式中的输入`eps`，添加到分母中的值，以确保数值稳定；host侧的aclScalar，数据类型为double，仅支持取值1e-5。
   * additionalOut（bool\*，计算输入）：表示是否开启x=x1+x2+bias的输出，host侧的aclScalar，数据类型为bool。
-  * meanOut（aclTensor\*，计算输出）：输出LayerNorm计算过程中(x1 + x2 + bias)的结果的均值，Device侧的aclTensor，数据类型为FLOAT32，shape需要与x1满足broadcast关系（前几维的维度和x1前几维的维度相同，前几维指x1的维度减去gamma的维度，表示不需要norm的维度），数据格式支持ND。计算逻辑：mean = np.mean(x1 + x2 + bias)。
+  * meanOut（aclTensor\*，计算输出）：输出LayerNorm计算过程中(x1 + x2 + bias)的结果的均值，Device侧的aclTensor，数据类型为FLOAT32，shape需要与x1满足broadcast关系（前几维的维度和x1前几维的维度相同，前几维指x1的维度减去gamma的维度，表示不需要norm的维度），数据格式支持ND。不支持空Tensor。计算逻辑：mean = np.mean(x1 + x2 + bias)。
     * Atlas 推理系列产品：该输出在本产品无效。
-  * rstdOut（aclTensor\*，计算输出）：输出LayerNorm计算过程中rstd的结果，Device侧的aclTensor，数据类型为FLOAT32，shape需要与x1满足broadcast关系（前几维的维度和x1前几维的维度相同），数据格式支持ND。计算逻辑：rstd = np.power((np.var(x1 + x2 + bias) + epsilon), (-0.5))。
+  * rstdOut（aclTensor\*，计算输出）：输出LayerNorm计算过程中rstd的结果，Device侧的aclTensor，数据类型为FLOAT32，shape需要与x1满足broadcast关系（前几维的维度和x1前几维的维度相同），数据格式支持ND。不支持空Tensor。计算逻辑：rstd = np.power((np.var(x1 + x2 + bias) + epsilon), (-0.5))。
     * Atlas 推理系列产品：该输出在本产品无效。
-  * yOut（aclTensor\*，计算输出）：表示LayerNorm的结果输出y，Device侧的aclTensor，shape需要与输入x1/x2一致，数据格式支持ND。
+  * yOut（aclTensor\*，计算输出）：表示LayerNorm的结果输出y，Device侧的aclTensor，shape需要与输入x1/x2一致，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * xOut（aclTensor\*，计算输出）：表示LayerNorm的结果输出x，Device侧的aclTensor，shape需要与输入x1/x2一致，数据格式支持ND。
+  * xOut（aclTensor\*，计算输出）：表示LayerNorm的结果输出x，Device侧的aclTensor，shape需要与输入x1/x2一致，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
   * workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。

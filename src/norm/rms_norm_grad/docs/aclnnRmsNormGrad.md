@@ -35,20 +35,20 @@
 
 ## aclnnRmsNormGradGetWorkspaceSize
 - **参数说明：**
-  - dy（aclTensor\*，计算输入）：Device侧的aclTensor，表示反向传回的梯度。数据格式支持ND，shape支持1-8维度。
+  - dy（aclTensor\*，计算输入）：公式中的输入`dy`，Device侧的aclTensor，表示反向传回的梯度。数据格式支持ND，shape支持1-8维度。
     - Atlas 推理系列产品：数据类型支持FLOAT32，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32，FLOAT16，BFLOAT16。
-  - x（aclTensor\*，计算输入）：Host侧的aclTensor，正向算子的输入，表示被标准化的数据。数据格式支持ND，shape支持1-8维度，且与入参`dy`的shape一致。
+  - x（aclTensor\*，计算输入）：公式中的输入`x`，Host侧的aclTensor，正向算子的输入，表示被标准化的数据。数据格式支持ND，shape支持1-8维度，且与入参`dy`的shape一致。
     - Atlas 推理系列产品：数据类型支持FLOAT32，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32，FLOAT16，BFLOAT16。
-  - rstd（aclTensor\*，计算输入）：Host侧的aclTensor，正向算子的中间计算结果。数据类型支持FLOAT32。数据格式支持ND，shape支持1-8维度，shape需要满足rstd_shape = x_shape\[0:n\]，n < x_shape.dims()，n与gamma一致。
-  - gamma（aclTensor\*，计算输入）：Host侧的aclTensor，正向算子的输入。数据格式支持ND，shape支持1-8维度，shape需要满足gamma_shape = x_shape\[n:\], n < x_shape.dims()。
+  - rstd（aclTensor\*，计算输入）：公式中的输入`Rms(x)`，Host侧的aclTensor，正向算子的中间计算结果。数据类型支持FLOAT32。数据格式支持ND，shape支持1-8维度，shape需要满足rstd_shape = x_shape\[0:n\]，n < x_shape.dims()，n与gamma一致。
+  - gamma（aclTensor\*，计算输入）：公式中的输入`g`，Host侧的aclTensor，正向算子的输入。数据格式支持ND，shape支持1-8维度，shape需要满足gamma_shape = x_shape\[n:\], n < x_shape.dims()。
     - Atlas 推理系列产品：数据类型支持FLOAT32，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32，FLOAT16，BFLOAT16。
-  - dxOut（aclTensor\*，计算输出）：Host侧的aclTensor，表示输入`x`的梯度。数据格式支持ND，shape支持1-8维度，shape与入参`dy`的shape保持一致。
+  - dxOut（aclTensor\*，计算输出）：公式中的输出`dx`，Host侧的aclTensor，表示输入`x`的梯度。数据格式支持ND，shape支持1-8维度，shape与入参`dy`的shape保持一致。
     - Atlas 推理系列产品：数据类型支持FLOAT32，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32，FLOAT16，BFLOAT16。
-  - dgammaOut（aclTensor\*，计算输出）：Device侧的aclTensor，表示`gamma`的梯度。数据类型支持FLOAT32。数据格式支持ND，shape支持1-8维度，shape与入参`gamma`的shape保持一致。
+  - dgammaOut（aclTensor\*，计算输出）：公式中的输出`dg`，Device侧的aclTensor，表示`gamma`的梯度。数据类型支持FLOAT32。数据格式支持ND，shape支持1-8维度，shape与入参`gamma`的shape保持一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 

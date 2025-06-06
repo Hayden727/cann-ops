@@ -42,8 +42,8 @@
 
 - **参数说明：**
 
-  - input（aclTensor*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、DOUBLE，支持非连续的Tensor，数据格式支持ND。支持shape为$(N,C,H_{in},W_{in})$。H\*W的最大值只支持INT32上界。
-  - grid（aclTensor*，计算输入）：Device侧的aclTensor。数据类型支持FLOAT32、FLOAT16、DOUBLE。支持非连续的Tensor，数据格式支持ND。支持shape为$(N,H_{out},W_{out},2)$，且N与入参`input`的shape中的N一致。数据类型与入参`input`的数据类型一致。
+  - input（aclTensor*，计算输入）：Device侧的aclTensor，表示进行采样的输入张量。数据类型支持FLOAT32、FLOAT16、DOUBLE，支持非连续的Tensor，不支持空Tensor。数据格式支持ND。支持shape为$(N,C,H_{in},W_{in})$。H\*W的最大值只支持INT32上界。
+  - grid（aclTensor*，计算输入）：Device侧的aclTensor。表示采样点坐标张量。数据类型支持FLOAT32、FLOAT16、DOUBLE。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。支持shape为$(N,H_{out},W_{out},2)$，且N与入参`input`的shape中的N一致。数据类型与入参`input`的数据类型一致。
   - interpolationMode（int64_t，计算输入）：Host侧整型属性，数据类型为int64_t，表示插值模式，0：bilinear（双线性插值），1：nearest（最邻近插值），2：bicubic（双三次插值）。
     - Atlas 训练系列产品：支持的插值模式如下：
       - 0：bilinear（双线性插值）
@@ -54,7 +54,7 @@
       - 2：bicubic（双三次插值）。仅当input数据类型为FLOAT32或者FLOAT16时支持bicubic插值。
   - paddingMode（int64_t，计算输入）：Host侧整型属性，数据类型为int64_t，表示填充模式，即当（x,y）取值超过输入特征图采样范围时，返回一个特定值，有0：zeros、1：border、2：reflection三种模式。
   - alignCorners（bool，计算输入）：Host侧BOOL类型属性，数据类型为bool，表示设定特征图坐标与特征值的对应方式，设定为true时，特征值位于像素中心。设定为false时，特征值位于像素的角点。
-  - out（aclTensor*，计算输出）：Device侧的aclTensor，支持shape为$(N,C,H_{out},W_{out})$，且N、C与input的shape中的N、C一致，$H_{out}$、$W_{out}$与grid的shape中的$H_{out}$、$W_{out}$一致。数据类型支持FLOAT32、FLOAT16、DOUBLE，且数据类型与input的数据类型一致。支持非连续的Tensor，数据格式支持ND。
+  - out（aclTensor*，计算输出）：Device侧的aclTensor，表示采样后的输出张量。支持shape为$(N,C,H_{out},W_{out})$，且N、C与input的shape中的N、C一致，$H_{out}$、$W_{out}$与grid的shape中的$H_{out}$、$W_{out}$一致。数据类型支持FLOAT32、FLOAT16、DOUBLE，且数据类型与input的数据类型一致。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。
 

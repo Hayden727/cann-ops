@@ -13,24 +13,24 @@
 
 ## 功能描述
 
-- 算子功能：[aclnnUpsampleNearestExact3d](aclnnUpsampleNearestExact3d.md)的反向计算。
+- 算子功能：aclnnUpsampleNearestExact3d的反向计算。
 - 计算公式：
   
   $$
-  gradInput(N, C, floor ( scales_d * ( D + 0.5 ), floor ( scales_h * ( H + 0.5 ),  floor ( scales_w * ( W+ 0.5 )) += gradOutput( N, C, D, H ,W))
+  gradInput(N, C, floor ( scales_d * ( D + 0.5 )), floor ( scales_h * ( H + 0.5 )),  floor ( scales_w * ( W+ 0.5 ))) += gradOutput( N, C, D, H ,W)
   $$
 
 ## aclnnUpsampleNearestExact3dBackwardGetWorkspaceSize
 
 - **参数说明**
 
-  - gradOut（aclTensor\*，计算输入）： Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持非连续的Tensor，数据格式支持NCDHW、NDHWC。
+  - gradOut（aclTensor\*，计算输入）：公式中的输入`gradOutput`，Device侧的aclTensor，表示反向计算的的梯度Tensor。数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持非连续的Tensor，不支持空Tensor。数据格式支持NCDHW、NDHWC。
   - outputSize（aclIntArray\*，计算输入）：Device侧的aclIntArray，数据类型支持INT64，size大小为3。表示输入`gradOut`在D、H和W维度上的空间大小。
   - inputSize（aclIntArray\*，计算输入）：Device侧的aclIntArray，数据类型支持INT64，size大小为5。表示输出`gradInput`分别在N、C、D、H和W维度上的空间大小。
-  - scalesD（double，计算输入）：Host侧的double常量，表示输出`gradInput`的depth维度乘数。
-  - scalesH（double，计算输入）：Host侧的double常量，表示输出`gradInput`的height维度乘数。
-  - scalesW（double，计算输入）：Host侧的double常量，表示输出`gradInput`的width维度乘数。
-  - gradInput（aclTensor\*，计算输出）：Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持非连续的Tensor，数据格式支持NCDHW、NDHWC。数据类型和数据格式与入参`gradOut`的数据类型和数据格式保持一致。
+  - scalesD（double，计算输入）：公式中的输入`scales_d`，Host侧的double常量，表示输出`gradInput`的depth维度乘数。
+  - scalesH（double，计算输入）：公式中的输入`scales_h`，Host侧的double常量，表示输出`gradInput`的height维度乘数。
+  - scalesW（double，计算输入）：公式中的输入`scales_w`，Host侧的double常量，表示输出`gradInput`的width维度乘数。
+  - gradInput（aclTensor\*，计算输出）：公式中的输出`gradInput`，Device侧的aclTensor，表示反向计算的输出张量。数据类型支持FLOAT32、FLOAT16、BFLOAT16，shape仅支持五维。支持非连续的Tensor，不支持空Tensor。数据格式支持NCDHW、NDHWC。数据类型和数据格式与入参`gradOut`的数据类型和数据格式保持一致。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 

@@ -21,16 +21,16 @@
   out(N, C, l) = self(N, C, min(floor((l + 0.5) * scales),  L- 1))
   $$
 
-## aclnnUpsampleNearestExact1d
+## aclnnUpsampleNearestExact1dGetWorkspaceSize
 
 - **参数说明**：
 
-  - self（aclTensor\*，计算输入）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCL、ND（当数据格式为ND时，默认按照NCL格式处理）。输入维度必须是3。
+  - self（aclTensor\*，计算输入）：公式中的输入`self`，Device侧的aclTensor。表示进行上采样的输入张量。支持非连续的Tensor，不支持空Tensor。数据格式支持NCL、ND（当数据格式为ND时，默认按照NCL格式处理）。输入维度必须是3。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - outputSize（aclIntArray\*，计算输入）：Host侧的aclIntArray，指定输出tensor大小，数据类型支持IINT64。
-  - scales（double，计算输入）：Host侧的DOUBLE型参数，指定空间大小的缩放乘数。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCL、ND。输出的维度必须为3。输出`out`的数据类型和数据格式需要与输入`self`的数据类型和数据格式保持一致。
+  - scales（double，计算输入）：公式中的输入`scales`，Host侧的DOUBLE型参数，指定空间大小的缩放乘数。
+  - out（aclTensor\*，计算输出）：公式中的输出`out`，Device侧的aclTensor。表示采样后的输出张量。支持非连续的Tensor，不支持空Tensor。数据格式支持NCL、ND。输出的维度必须为3。输出`out`的数据类型和数据格式需要与输入`self`的数据类型和数据格式保持一致。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。

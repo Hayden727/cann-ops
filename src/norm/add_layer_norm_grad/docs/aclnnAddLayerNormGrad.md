@@ -57,28 +57,28 @@
 ## aclnnAddLayerNormGradGetWorkspaceSize
 
 - **参数说明：**
-  * dy（aclTensor\*，计算输入）：主要的grad输入，Device侧的aclTensor，shape支持1-8维，数据格式支持ND，不支持非连续输入。
+  * dy（aclTensor\*，计算输入）：主要的grad输入，Device侧的aclTensor，shape支持1-8维，数据格式支持ND，不支持非连续输入。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * x1（aclTensor\*，计算输入）：为正向融合算子的输入x1，Device侧的aclTensor，shape需要与dy相同，数据格式支持ND，不支持非连续输入。
+  * x1（aclTensor\*，计算输入）：为正向融合算子的输入x1，Device侧的aclTensor，shape需要与dy相同，数据格式支持ND，不支持非连续输入。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * x2（aclTensor\*，计算输入）：为正向融合算子的输入x2，Device侧的aclTensor，shape需要与dy相同，数据格式支持ND，不支持非连续输入。
+  * x2（aclTensor\*，计算输入）：为正向融合算子的输入x2，Device侧的aclTensor，shape需要与dy相同，数据格式支持ND，不支持非连续输入。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * rstd（aclTensor\*，计算输入）：表示正向输入x1、x2之和的rstd。输入数据类型支持FLOAT32，shape需要与dy满足broadcast关系（前几维的维度和dy前几维的维度相同，前几维指dy的维度减去gamma的维度，表示不需要norm的维度），数据格式支持ND，不支持非连续输入。
-  * mean（aclTensor\*，计算输入）：表示正向输入x1、x2之和的mean。数据类型支持FLOAT32，shape需要与dy满足broadcast关系（前几维的维度和dy前几维的维度相同，前几维指dy的维度减去gamma的维度，表示不需要norm的维度），数据格式支持ND，不支持非连续输入。
-  * gamma（aclTensor\*，计算输入）：表示正向输入的gamma，shape维度和dy后几维的维度相同，shape支持1-8维，表示需要norm的维度，数据格式支持ND，不支持非连续输入。
+  * rstd（aclTensor\*，计算输入）：表示正向输入x1、x2之和的rstd。输入数据类型支持FLOAT32，shape需要与dy满足broadcast关系（前几维的维度和dy前几维的维度相同，前几维指dy的维度减去gamma的维度，表示不需要norm的维度），数据格式支持ND，不支持非连续输入。不支持空Tensor。
+  * mean（aclTensor\*，计算输入）：表示正向输入x1、x2之和的mean。数据类型支持FLOAT32，shape需要与dy满足broadcast关系（前几维的维度和dy前几维的维度相同，前几维指dy的维度减去gamma的维度，表示不需要norm的维度），数据格式支持ND，不支持非连续输入。不支持空Tensor。
+  * gamma（aclTensor\*，计算输入）：表示正向输入的gamma，shape维度和dy后几维的维度相同，shape支持1-8维，表示需要norm的维度，数据格式支持ND，不支持非连续输入。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dsumOptional（aclTensor\*，计算输入）：shape支持2-8维，数据格式支持ND，不支持非连续输入。
+  * dsumOptional（aclTensor\*，计算输入）：shape支持2-8维，数据格式支持ND，不支持非连续输入。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dxOut（aclTensor\*，计算输出）：shape支持2-8维，数据格式支持ND。
+  * dxOut（aclTensor\*，计算输出）：shape支持2-8维，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dgammaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape与输入gamma一致，数据格式支持ND。
-  * dbetaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape与输入gamma一致，数据格式支持ND。
+  * dgammaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape与输入gamma一致，数据格式支持ND。不支持空Tensor。
+  * dbetaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape与输入gamma一致，数据格式支持ND。不支持空Tensor。
   * workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   * executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 

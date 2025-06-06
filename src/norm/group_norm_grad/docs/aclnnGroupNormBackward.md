@@ -21,23 +21,23 @@
 
 - **参数说明：**
 
-  - gradOut（aclTensor*，计算输入）：反向计算的梯度tensor，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*C\*HxW，数据类型与input相同，数据格式支持ND，支持非连续的Tensor。
+  - gradOut（aclTensor*，计算输入）：反向计算的梯度tensor，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*C\*HxW，数据类型与input相同，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
     
-  - input（aclTensor*，计算输入）：正向计算的首个输入，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*C\*HxW，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor。
+  - input（aclTensor*，计算输入）：正向计算的首个输入，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*C\*HxW，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
-  - mean（aclTensor*，计算输入）：正向计算的第二个输出，表示input分组后每个组的均值，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*group，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor。
+  - mean（aclTensor*，计算输入）：正向计算的第二个输出，表示input分组后每个组的均值，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*group，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
-  - rstd（aclTensor*，计算输入）: 正向计算的第三个输出，表示input分组后每个组的标准差倒数，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*group，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor。
+  - rstd（aclTensor*，计算输入）: 正向计算的第三个输出，表示input分组后每个组的标准差倒数，Device侧的aclTensor。shape支持0-8维，元素个数需要等于N\*group，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
-  - gamma（aclTensor*，计算输入）: 表示每个channel的缩放系数，Device侧的aclTensor。shape支持0-8维，元素个数需要等于C，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor。
+  - gamma（aclTensor*，计算输入）: 表示每个channel的缩放系数，Device侧的aclTensor。shape支持0-8维，元素个数需要等于C，数据类型与gradOut相同，数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
@@ -51,15 +51,15 @@
 
   - outputMask（aclBoolArray*，计算输入）: 数据类型支持BOOL，size大小为3。分别表示是否输出gradInput，gradGammaOut，gradBetaOut，若为true则输出，否则输出对应位置返回空。
 
-  - gradInput（aclTensor*，计算输出）: 输出张量，数据类型与gradOut相同，shape与input相同，Device侧的aclTensor。数据格式支持ND，支持非连续的Tensor。
+  - gradInput（aclTensor*，计算输出）: 输出张量，数据类型与gradOut相同，shape与input相同，Device侧的aclTensor。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
-  - gradGammaOut（aclTensor*，计算输出）: 输出张量，数据类型与gradOut相同，shape与gamma相同，Device侧的aclTensor。数据格式支持ND，支持非连续的Tensor。
+  - gradGammaOut（aclTensor*，计算输出）: 输出张量，数据类型与gradOut相同，shape与gamma相同，Device侧的aclTensor。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
-  - gradBetaOut（aclTensor*，计算输出）: 输出张量，数据类型与gradOut相同，shape与gamma相同，Device侧的aclTensor。数据格式支持ND，支持非连续的Tensor。
+  - gradBetaOut（aclTensor*，计算输出）: 输出张量，数据类型与gradOut相同，shape与gamma相同，Device侧的aclTensor。数据格式支持ND，支持非连续的Tensor，不支持空Tensor。
     - Atlas 训练系列产品：数据类型支持FLOAT16、FLOAT。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT16、FLOAT、BFLOAT16。
 
