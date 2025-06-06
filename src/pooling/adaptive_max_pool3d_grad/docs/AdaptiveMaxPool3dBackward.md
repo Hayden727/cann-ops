@@ -32,7 +32,7 @@ A2训练系列产品/Atlas
 
 ## 算子执行接口
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnAdaptiveMaxPool3dBackwardGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAdaptiveMaxPool3dBackward”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnAdaptiveMaxPool3dBackwardGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAdaptiveMaxPool3dBackward”接口执行计算。
 
 - `aclnnStatus aclnnAdaptiveMaxPool3dBackwardGetWorkspaceSize(const aclTensor *gradOutput, const aclTensor *self, const aclTensor *indices, aclTensor *gradInput， uint64_t *workspaceSize, aclOpExecutor **executor)`
 - `aclnnStatus aclnnAdaptiveMaxPool3dBackward(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
@@ -46,23 +46,23 @@ A2训练系列产品/Atlas
 
 - **参数说明：**
   
- - gradOutput(aclTensor \*, 计算输入): 梯度Tensor，Device侧aclTensor。和正向的输出shape一致。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND, 当输入是5维时，内部按照NCDHW处理，当输入是4维时，在0维度处补1，内部按照NCDHW处理。
+ - gradOutput(aclTensor \*, 计算输入): 梯度Tensor，Device侧aclTensor。和正向的输出shape一致。支持非连续的Tensor，数据格式支持ND, 当输入是5维时，内部按照NCDHW处理，当输入是4维时，在0维度处补1，内部按照NCDHW处理。
     
     - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  - self(aclTensor \*, 计算输入): 正向的输入Tensor，Device侧aclTensor。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND, 当输入是5维时，内部按照NCDHW处理，当输入是4维时，在0维度处补1，内部按照NCDHW处理，与gradOutput一致。
+  - self(aclTensor \*, 计算输入): 正向的输入Tensor，Device侧aclTensor。支持非连续的Tensor，数据格式支持ND, 当输入是5维时，内部按照NCDHW处理，当输入是4维时，在0维度处补1，内部按照NCDHW处理，与gradOutput一致。
     
     - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  - indices(aclTensor \*, 计算输入): 输入Tensor，是Device侧aclTensor。正向输入中最大元素的索引位置。[数据格式](common/数据格式.md)与gradOutput保持一致。shape与gradOutput一致
+  - indices(aclTensor \*, 计算输入): 输入Tensor，是Device侧aclTensor。正向输入中最大元素的索引位置。数据格式与gradOutput保持一致。shape与gradOutput一致
     
     - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型仅支持INT32。
-  - gradInput(aclTensor \*, 计算输出): 反向输出Tensor，是Device侧aclTensor。shape与self保持一致。支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)与self保持一致。
+  - gradInput(aclTensor \*, 计算输出): 反向输出Tensor，是Device侧aclTensor。shape与self保持一致。支持非连续的Tensor，数据格式与self保持一致。
     
     - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
   - workspaceSize(uint64_t \*, 出参): 返回需要在Device侧申请的workspace大小。
   - executor(aclOpExecutor \*\*, 出参): 返回op执行器，包含了算子计算流程。
 - **返回值：**
   
-  aclnnStatus: 返回状态码，具体参见[aclnn返回码](common/aclnn返回码.md)。
+  aclnnStatus: 返回状态码，具体参见aclnn返回码。
   
   ```
   第一段接口完成入参校验，出现以下场景时报错：

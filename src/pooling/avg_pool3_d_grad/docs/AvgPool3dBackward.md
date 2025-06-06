@@ -25,7 +25,7 @@ W_{in} = (W_{out} - 1) * {stride[2]} + kernel\_size[2] - 2 * padding[2]
 $$
 
 ## 算子执行接口
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnAvgPool3dBackwardGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAvgPool3dBackward”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnAvgPool3dBackwardGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAvgPool3dBackward”接口执行计算。
 
 - `aclnnStatus aclnnAvgPool3dBackwardGetWorkspaceSize(const aclTensor* gradOuput, const aclTensor* self, const aclIntArray* kernelSize, const aclIntArray* stride, const aclIntArray* padding, bool ceilMode, bool countIncludePad, int64_t divisorOverride, aclTensor* output, uint64_t* workspaceSize, aclOpExecutor** executor)`
 

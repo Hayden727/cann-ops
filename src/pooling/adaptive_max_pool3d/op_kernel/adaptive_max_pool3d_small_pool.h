@@ -1,17 +1,11 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
@@ -241,7 +235,7 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::InitReset() {
   int32_t inputVal(0);
   LocalTensor<int32_t> resetIdx = resetIndexBuf.Get<int32_t>();
   Duplicate<int32_t>(resetIdx, inputVal, VL_NUM);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -251,11 +245,11 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::CalReset(const uint8_t diF
   for (int i = 1; i < hiFactor; i++) {
     Adds(resetIdx[VL_NUM * i], resetIdx, (int32_t)(Wi * i), VL_NUM);
   }
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   for (int i = 1; i < diFactor; i++) {
     Adds(resetIdx[VL_NUM * hiFactor * i], resetIdx, (int32_t)(Wi * Hi * i), VL_NUM * hiFactor);
   }
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 }
 
 template <typename T>
@@ -330,14 +324,14 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::TransInput(int64_t curNcFa
                                        (uint8_t)(wiFactor16Align / 8 * Ceil(diFactor * hiFactor, 2))};
 
     Cast(xLocalCast, xLocal, RoundMode::CAST_NONE, wiFactor16Align * curNcFactor * diFactor * hiFactor);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Adds(xLocalCast, xLocalCast, float(0.0), uint8_t(wiFactorAlign * Ceil(diFactor * hiFactor, 2)), curNcFactor * 2,
          repeatCastParams);
 
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     OutTranspose(xLocalTransVL, xLocalCast, VL_NUM, diFactor * hiFactor * wiFactorAlign);
   }
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   inputQue.FreeTensor(xLocal);
 }
 
@@ -376,22 +370,22 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::MaxPoolW(const uint8_t diF
 
     Adds(mulWUb[mulWOffset], xLocalTransVL[inputOffset], (float)0.0, VL_NUM, repeat, repeatCopyParams);
     Adds(mulWIdxUb[mulWOffset], resetIdx, (kerWStartIdx - kerWStartIdxTotal), VL_NUM * repeat);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     for (int i = kerWStartIdx + 1; i < kerWEndIdx; i++) {
       Adds(cmpIdx, resetIdx, (i - kerWStartIdxTotal), VL_NUM * repeat);
       auto nexCmpOffset = VL_NUM * (i - kerWStartIdxTotal);
       Compare(cmpMask, xLocalTransVL[nexCmpOffset], mulWUb[mulWOffset], CMPMODE::GT, mask, repeat, repeatParams);
       Compare(cmpMask2, xLocalTransVL[nexCmpOffset], xLocalTransVL[nexCmpOffset], CMPMODE::EQ, mask, repeat,
               repeatParams2);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Not(cmpMask2, cmpMask2, 128);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Or(cmpMask, cmpMask, cmpMask2, 128);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Select(mulWUb[mulWOffset], cmpMask, xLocalTransVL[nexCmpOffset], mulWUb[mulWOffset], selMode, mask, repeat,
              repeatParams);
       Select(mulWIdxCastUb[mulWOffset], cmpMask, cmpIdxTmp, mulWIdxCastUb[mulWOffset], selMode, VL_NUM * repeat);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
   }
 }
@@ -428,21 +422,21 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::MaxPoolH(const uint8_t diF
 
     Adds(mulHUb[mulHOffset], mulWUb[mulWOffset], (float)0.0, VL_NUM, repeat, repeatCopyParams);
     Adds(mulHIdxUb[mulHOffset], mulWIdxUb[mulWOffset], (int32_t)0, VL_NUM, repeat, repeatCopyParams);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     for (int i = kerHStartIdx + 1; i < kerHEndIdx; i++) {
       auto nexCmpOffset = VL_NUM * (i - kerHStartIdxTotal);
       Compare(cmpMask, mulWUb[nexCmpOffset], mulHUb[mulHOffset], CMPMODE::GT, mask, repeat, repeatParams);
       Compare(cmpMask2, mulWUb[nexCmpOffset], mulWUb[nexCmpOffset], CMPMODE::EQ, mask, repeat, repeatParams2);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Not(cmpMask2, cmpMask2, 128);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Or(cmpMask, cmpMask, cmpMask2, 128);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Select(mulHUb[mulHOffset], cmpMask, mulWUb[nexCmpOffset], mulHUb[mulHOffset], selMode, mask, repeat,
              repeatParams);
       Select(mulHIdxCastUb[mulHOffset], cmpMask, mulWIdxCastUb[nexCmpOffset], mulHIdxCastUb[mulHOffset], selMode, mask,
              repeat, repeatParams);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
   }
 }
@@ -480,21 +474,21 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::MaxPoolD(const uint8_t diF
 
     Adds(mulDUb[mulDOffset], mulHUb[mulHOffset], (float)0.0, VL_NUM, repeat, repeatCopyParams);
     Adds(mulDIdxUb[mulDOffset], mulHIdxUb[mulHOffset], (int32_t)0.0, VL_NUM, repeat, repeatCopyParams);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     for (int i = kerDStartIdx + 1; i < kerDEndIdx; i++) {
       auto nexCmpOffset = VL_NUM * (i - kerDStartIdxTotal);
       Compare(cmpMask, mulHUb[nexCmpOffset], mulDUb[mulDOffset], CMPMODE::GT, mask, repeat, repeatParams);
       Compare(cmpMask2, mulDUb[nexCmpOffset], mulDUb[nexCmpOffset], CMPMODE::EQ, mask, repeat, repeatParams2);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Not(cmpMask2, cmpMask2, 128);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Or(cmpMask, cmpMask, cmpMask2, 128);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
       Select(mulDUb[mulDOffset], cmpMask, mulHUb[nexCmpOffset], mulDUb[mulDOffset], selMode, mask, repeat,
              repeatParams);
       Select(mulDIdxCastUb[mulDOffset], cmpMask, mulHIdxCastUb[nexCmpOffset], mulDIdxCastUb[mulDOffset], selMode, mask,
              repeat, repeatParams);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
   }
 }
@@ -514,7 +508,7 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::TransOutAndIdx(int64_t cur
   LocalTensor<int32_t> indexLocal = indexQue.AllocTensor<int32_t>();
   LocalTensor<float> indexLocalTmp = indexLocal.ReinterpretCast<float>();
 
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
   LocalTensor<T> yLocal = maxQue.AllocTensor<T>();
   LocalTensor<float> mulDUb = mulWBuffer.Get<float>();
   LocalTensor<float> mulHUb = inputTransBuffer.Get<float>();
@@ -529,12 +523,12 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::TransOutAndIdx(int64_t cur
                                           (uint8_t)(Ceil(curDoFactor * curHoFactor * curWoFactorAlign16, 16) * 2),
                                           (uint8_t)(Ceil(curDoFactor * curHoFactor * curWoFactorAlign, 16) * 2)};
       OutTranspose(mulHUb[4096], mulDUb, Ceil(curDoFactor * curHoFactor * curWoFactorAlign, 16) * 16, VL_NUM);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
 
       Adds(mulHUb, mulHUb[4096], (float)0.0, (uint8_t)(curWoFactorAlign * curDoFactor * curHoFactor), VL_NUM,
            repeatCastParams2);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     Cast(yLocal, mulHUb, RoundMode::CAST_ROUND, VL_NUM * curWoFactorAlign16 * curDoFactor * curHoFactor);
   }

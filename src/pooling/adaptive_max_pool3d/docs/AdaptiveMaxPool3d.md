@@ -29,7 +29,7 @@ A2训练系列产品/Atlas
 
 ## 算子执行接口
 
-每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnAdaptiveMaxPool3dGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAdaptiveMaxPool3d”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnAdaptiveMaxPool3dGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnAdaptiveMaxPool3d”接口执行计算。
 
 - `aclnnStatus aclnnAdaptiveMaxPool3dGetWorkspaceSize(const aclTensor* self, const aclIntArray* outputSize, aclTensor* out, aclTensor* indices, uint64_t* workspaceSize, aclOpExecutor** executor)`
 - `aclnnStatus aclnnAdaptiveMaxPool3d(void* workspace, uint64_t workspaceSize, aclOpExecutor* executor, aclrtStream stream)`

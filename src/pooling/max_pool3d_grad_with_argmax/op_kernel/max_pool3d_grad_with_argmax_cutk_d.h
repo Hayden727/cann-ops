@@ -96,7 +96,7 @@ __aicore__ inline void CalcBlockKD(const GlobalTensor<T>& dstGm)
     LocalTensor<TArgmax> argmaxTranUb = this->argmaxTransposeBuf.template Get<TArgmax>();
     LocalTensor<TGrad> gradTranUb = this->gradTransposeBuf.template Get<TGrad>();
     this->CopyInData(argmaxTranUb, gradTranUb);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     for (uint64_t kdIdx = 0; kdIdx < this->params_.kd; kdIdx++) {
         CalcGradKD<T>(dstGm, argmaxTranUb, gradTranUb, kdIdx);
     }
@@ -143,11 +143,11 @@ __aicore__ inline void CalcGradKD(const GlobalTensor<T>& dstGm,
         // Depad: remove invalid data
         if constexpr (!isOverlap && (std::is_same<TY, bfloat16_t>::value)) {
             Cast(yTranUb.ReinterpretCast<TY>(), yTranUb, RoundMode::CAST_RINT, this->baseNDHWpAlign);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             DepadCopyKD<half>(yTranUb.ReinterpretCast<half>(), yTranDepadUb.ReinterpretCast<half>());
         } else if constexpr (!isOverlap && std::is_same<TY, half>::value) {
             Cast(yTranUb.ReinterpretCast<TY>(), yTranUb, RoundMode::CAST_NONE, this->baseNDHWpAlign);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             DepadCopyKD<TY>(yTranUb.ReinterpretCast<TY>(), yTranDepadUb.ReinterpretCast<TY>());
         } else {
             DepadCopyKD<float>(yTranUb, yTranDepadUb);
@@ -227,7 +227,7 @@ __aicore__ inline void Img2ColPartKD(const LocalTensor<TArgmax>& indexColUb,
             }
         }
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void Col2ImgPartKD(const LocalTensor<float>& yTranUb,
@@ -266,7 +266,7 @@ __aicore__ inline void Col2ImgPartKD(const LocalTensor<float>& yTranUb,
             }
         }
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void CalcGradSubProcessKD(const LocalTensor<TArgmax>& indexImgUb,
@@ -300,7 +300,7 @@ __aicore__ inline void DepadCopyKD(const LocalTensor<T>& yTranUb, const LocalTen
                  {1, 1, VL_FP32 * sizeof(T) / BLOCK_SIZE, VL_FP32 * sizeof(T) / BLOCK_SIZE});
         }
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 template<typename T>

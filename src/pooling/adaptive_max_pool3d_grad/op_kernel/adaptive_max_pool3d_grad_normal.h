@@ -1,17 +1,11 @@
 /**
- * Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
  */
 
 /*!
@@ -135,7 +129,7 @@ __aicore__ inline void Process()
 {
     LocalTensor<float> kernelIdx = kernelIdxBuf.Get<float>();
     GenkernelIndex(kernelIdx);  
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     core_.coeffD = 1.f * params_.hiDim * params_.wiDim;
     core_.coeffH = 1.f * params_.wiDim;
     core_.hwDims = 1.f * params_.hiDim * params_.wiDim;
@@ -240,11 +234,11 @@ __aicore__ inline void CalcBlock(uint64_t woBlockIdx) {
         uint64_t mask = params_.singleCoreNc;   
         AscendC::BinaryRepeatParams repeatParams = { 1, 1, 1, 8, 8, 0};
         Compare(maskUb, kernelIdx, indicesFloat[params_.singleCoreNc * woCntIndex], CMPMODE::EQ, mask, params_.maxKdhwLen, repeatParams); 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         // 5.2 Select
         LocalTensor<TGrad> gradSelUb = tempGradBuf.Get<TGrad>();
         SelectGrad(gradSelUb, maskUb, gradTranUb, woCntIndex); 
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         // 5.3 Calc y
         LocalTensor<TGrad> yTranspose = yTransposeBuf.Get<TGrad>();
         LocalTensor<float> yTransposeFP32 = yTransposeBuf.Get<float>(); 
@@ -262,20 +256,20 @@ __aicore__ inline void GenkernelIndex(LocalTensor<float>& dstLocal) {
 
   // 1.Dup first Value
   Duplicate(dstLocal, firstValue, params_.singleCoreNc);
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
  
   // 2. Gen kw * vL
   for (uint64_t wIdx = 1; wIdx < kW; wIdx++) {
     Adds(dstLocal[wIdx * params_.singleCoreNc], dstLocal, 1.f * wIdx, params_.singleCoreNc);
   }
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 
   // 3. Gen kh * kw * vL
   for (uint64_t hIdx = 1; hIdx < kH; hIdx++) {
     Adds(dstLocal[hIdx * kW * params_.singleCoreNc], dstLocal, 1.f * (hIdx * kW),
          kW * params_.singleCoreNc);
   }
-  pipe_barrier(PIPE_V);
+  AscendC::PipeBarrier<PIPE_V>();
 
   // 4. Gen kd * kh * kw * vL
   for (uint64_t dIdx = 1; dIdx < kD; dIdx++) {
@@ -317,64 +311,64 @@ __aicore__ inline void CalcIndices(LocalTensor<float>& indicesD, LocalTensor<flo
     // indicesW = indices % wi
     LocalTensor<float> tempLocal = tempBuf.Get<float>();
     Cast(indicesFloat, argmaxTranUb, AscendC::RoundMode::CAST_NONE, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // 3.1 indicesD = indices / (hi * wi)
     Duplicate<float>(tempLocal, core_.coeffD, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Div(tempLocal, indicesFloat, tempLocal, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V); 
+    AscendC::PipeBarrier<PIPE_V>(); 
     Cast(indicesD, tempLocal, AscendC::RoundMode::CAST_FLOOR, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // 3.2 indicesH = indices % (hi * wi) / wi
     // indicesH = (indices - (hi * wi) * indicesD) / wi
     Muls(indicesH, indicesD, core_.hwDims, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Sub(indicesH, indicesFloat, indicesH, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Duplicate<float>(tempLocal, core_.coeffH, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Div(tempLocal, indicesH, tempLocal, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Cast(indicesH, tempLocal, AscendC::RoundMode::CAST_FLOOR, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     // 3.3 indicesW = indices % wi
     // indicesW = indices - indices / wi * wi
     Duplicate<float>(tempLocal, core_.coeffH, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Div(tempLocal, indicesFloat, tempLocal, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Cast(indicesW, tempLocal, AscendC::RoundMode::CAST_FLOOR, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Muls(indicesW, indicesW, 1.f * (params_.wiDim), params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Sub(indicesW, indicesFloat, indicesW, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void CalcIndicesInWindow(LocalTensor<float>& indicesD, LocalTensor<float>& indicesH, LocalTensor<float>& indicesW, 
                                            LocalTensor<float>& indicesFloat, uint64_t woBlockIdx) {
     Adds(indicesD, indicesD, -1.f * block_.startD, params_.singleCoreNc * block_.dohowoAlign8);
     Adds(indicesH, indicesH, -1.f * block_.startH, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 
     for (uint64_t woCntIndex = 0; woCntIndex < block_.woShape; woCntIndex++) {
         uint64_t curWoBlockIdx = woBlockIdx + woCntIndex;
         block_.startW = FloorDiv(curWoBlockIdx * params_.wiDim, params_.woDim);
         Adds(indicesW[params_.singleCoreNc * woCntIndex], indicesW[params_.singleCoreNc * woCntIndex], -1.f * block_.startW, params_.singleCoreNc);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
  
     // indices_kernel = indices_d_kernel * khLen * kwLen + indices_h_kernel * kwLen + indices_w_kernel
     Muls(indicesFloat, indicesD, 1.f * params_.maxKh * params_.maxKw, params_.singleCoreNc * block_.dohowoAlign8);
     Muls(indicesH, indicesH, 1.f * params_.maxKw, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Add(indicesFloat, indicesFloat, indicesH, params_.singleCoreNc * block_.dohowoAlign8);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Add(indicesFloat, indicesFloat, indicesW, params_.singleCoreNc * block_.dohowoAlign8); 
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
 }
 
 __aicore__ inline void CalcY(LocalTensor<TGrad>& gradSelUb, LocalTensor<TGrad>& yTranspose, LocalTensor<float>& yTransposeFP32) {
@@ -387,7 +381,7 @@ __aicore__ inline void CalcY(LocalTensor<TGrad>& gradSelUb, LocalTensor<TGrad>& 
                 if constexpr (is_same<TGrad, bfloat16_t>::value) {
                     LocalTensor<half> yTransposeFp16 = yTranspose.template ReinterpretCast<half>();
                     LocalTensor<half> gradSelUbFp16 = gradSelUb.template ReinterpretCast<half>();
-                    pipe_barrier(PIPE_V);
+                    AscendC::PipeBarrier<PIPE_V>();
                     Muls(yTransposeFp16[(kD * block_.deltaH + kH) * kWAlignDtype * block_.ncShape],
                          gradSelUbFp16[(kD * params_.maxKh + kH) * params_.maxKw * block_.ncShape], 
                          static_cast<half>(1), kWLen);
@@ -402,7 +396,7 @@ __aicore__ inline void CalcY(LocalTensor<TGrad>& gradSelUb, LocalTensor<TGrad>& 
         LocalTensor<float> gradSelFP32 = tempGradBuf.Get<float>();
         Cast(gradSelFP32, gradSelUb[params_.singleCoreNc * params_.maxKdhwLen], RoundMode::CAST_NONE, 
              params_.maxKdhwLen * params_.singleCoreNc);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         for (uint64_t kD = 0; kD < params_.maxKd; kD++) {    
             for (uint64_t kH = 0; kH < params_.maxKh; kH++) {
                 Muls(yTransposeFP32[(kD * block_.deltaH + kH) * kWAlign8 * block_.ncShape],
@@ -449,23 +443,23 @@ __aicore__ inline void SelectGrad(LocalTensor<TGrad>& dstLocal, LocalTensor<uint
             LocalTensor<half> src0LocalFp16 = src0Local.template ReinterpretCast<half>();
             if constexpr (IsOverlap) {
                 Copy(dstLocalFp16[params_.singleCoreNc * repeat], src0LocalFp16[params_.singleCoreNc * woCntIndex], mask, repeat, copyRepeatParams);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Select(dstLocalFp16[params_.singleCoreNc * repeat], maskUb, dstLocalFp16[params_.singleCoreNc * repeat], 
                        static_cast<half>(0), SELMODE::VSEL_TENSOR_SCALAR_MODE, repeat * params_.singleCoreNc);
             } else {
                 Copy(dstLocalFp16, src0LocalFp16[params_.singleCoreNc * woCntIndex], mask, repeat, copyRepeatParams);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Select(dstLocalFp16, maskUb, dstLocalFp16, static_cast<half>(0), SELMODE::VSEL_TENSOR_SCALAR_MODE, repeat * params_.singleCoreNc);
             }
         } else {
             if constexpr (IsOverlap) {
                 Copy(dstLocal[params_.singleCoreNc * repeat], src0Local[params_.singleCoreNc * woCntIndex], mask, repeat, copyRepeatParams);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Select(dstLocal[params_.singleCoreNc * repeat], maskUb, dstLocal[params_.singleCoreNc * repeat], 
                        static_cast<half>(0), SELMODE::VSEL_TENSOR_SCALAR_MODE, repeat * params_.singleCoreNc);
             } else {
                 Copy(dstLocal, src0Local[params_.singleCoreNc * woCntIndex], mask, repeat, copyRepeatParams);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
                 Select(dstLocal, maskUb, dstLocal, static_cast<half>(0), SELMODE::VSEL_TENSOR_SCALAR_MODE, repeat * params_.singleCoreNc);
             }
         }

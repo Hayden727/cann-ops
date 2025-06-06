@@ -7,7 +7,6 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
-
 #include "max_pool3d_grad_with_argmax_l0.h"
 #include "opdev/data_type_utils.h"
 #include "opdev/format_utils.h"
