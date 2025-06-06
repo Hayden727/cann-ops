@@ -1,4 +1,4 @@
-# aclnnGeGluV2
+# aclnnGeGluV3
 
 ## 支持的产品型号
 - Atlas 推理系列产品。
@@ -7,19 +7,31 @@
 - Atlas A3 训练系列产品/Atlas A3 推理系列产品。
 
 ## 接口原型
-每个算子分为两段式接口，必须先调用“aclnnGeGluV2GetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnGeGluV2”接口执行计算。
 
-- `aclnnStatus aclnnGeGluV2GetWorkspaceSize(const aclTensor *self, int64_t dim, int64_t approximate, bool activate_left, aclTensor *out, aclTensor *outGelu, uint64_t *workspaceSize, aclOpExecutor **executor)`
-- `aclnnStatus aclnnGeGluV2(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
+每个算子分为[两段式接口](common/两段式接口.md)，必须先调用“aclnnGeGluV3GetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnGeGluV3”接口执行计算。
+
+- `aclnnStatus aclnnGeGluV3GetWorkspaceSize(const aclTensor *self, int64_t dim, int64_t approximate, bool activateLeft, aclTensor *out, aclTensor *outGelu, uint64_t *workspaceSize, aclOpExecutor **executor)`
+- `aclnnStatus aclnnGeGluV3(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 ## 功能描述
-- 算子功能：GeGluV2实现了一个门控线性单元（Gated Linear Unit, GLU）的变体，它使用GELU（Gaussian Error Linear Unit）作为激活函数，实现x的GeGluV2计算。 
-- 计算公式：  
-  <p style="text-align: center">
-  GeGluV2<sub>x,W,V,b,c</sub> = Gelu<sub>xW+b</sub> * (xV + c)
-  </p>
 
-## aclnnGeGluV2GetWorkspaceSize
+- 算子功能：高斯误差线性单元激活门函数，针对aclnnGeGluV3，扩充了设置激活函数操作数据块方向的功能。
+- 计算公式：
+  若activateLeft为true，表示对$self$的左半部分做activate
+
+    $$
+    out_{i}=GeGlu(self_{i}) = Gelu(A) \cdot B
+    $$
+
+  若activateLeft为false，表示对$self$的右半部分做activate
+
+    $$
+    out_{i}=GeGlu(self_{i}) = A \cdot Gelu(B)
+    $$
+
+  其中，$A$表示$self$的左半部分，$B$表示$self$的右半部分。
+
+## aclnnGeGluV3GetWorkspaceSize
 - **参数说明**：
   
   - self（aclTensor*，计算输入）：表示待计算的数据，公式中的x，Device侧的aclTensor，数据类型支持FLOAT32、FLOAT16、BFLOAT16，支持非连续的Tensor，支持空Tensor。数据格式支持ND。shape维度不高于8维。
@@ -45,10 +57,11 @@
                                         5. out、outGelu在dim维的size不等于self在dim维size的1/2。
   ```
 
-## aclnnGeGluV2
+## aclnnGeGluV3
+
 - **参数说明**：
   - workspace（void*，入参）：在Device侧申请的workspace内存地址。
-  - workspaceSize（uint64_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnGeGluV2GetWorkspaceSize获取。
+  - workspaceSize（uint64_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnGeGluV3GetWorkspaceSize获取。
   - executor（aclOpExecutor*，入参）：op执行器，包含了算子计算流程。
   - stream（aclrtStream，入参）：指定执行任务的AscendCL Stream流。
 
