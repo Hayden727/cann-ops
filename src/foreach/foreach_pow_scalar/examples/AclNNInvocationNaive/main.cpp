@@ -168,6 +168,7 @@ int main(int argc, char **argv)
     void* alphaDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     aclTensor *inputY = nullptr;
+    aclTensor *alpha = nullptr;
     aclTensor *outputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize = inputXShape[0] * inputXShape[1];
