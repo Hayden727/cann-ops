@@ -46,18 +46,18 @@ class AngleV2 : public AngleV2Base<yType> {
     BufferGet();
     // loop count need to be doubled, due to double buffer
     for (int32_t i = 0; i < this->tileNum; i++) {
-      int32_t coreOffset = i * this->tileLength;
+      int64_t coreOffset = i * static_cast<int64_t>(this->tileLength);
       CopyIn(coreOffset);
-      Compute(this->tileLength);
+      Compute();
       CopyOut(coreOffset);
     }
 
     if (this->lastTileLength > 0) {
-      int32_t coreOffset = this->blockLength - this->lastTileLength;
+      int64_t coreOffset = static_cast<int64_t>(this->blockLength - this->lastTileLength);
       repeatTimes = (this->lastTileLength + this->mask - 1) / this->mask;
       blockLen = this->lastTileLength / dataPerBlock;
       CopyIn(coreOffset);
-      Compute(this->lastTileLength);
+      Compute();
       CopyOut(coreOffset);
     }
   }
@@ -71,13 +71,13 @@ class AngleV2 : public AngleV2Base<yType> {
 
     Duplicate(zeroTensor, static_cast<yType>(0.0), this->mask, repeatTimes, this->dupDstBlockStride,
               this->dupDstRepeatStride);
-    Duplicate(piTensor, static_cast<yType>(constData.const_pi), this->mask, repeatTimes, this->dupDstBlockStride,
+    Duplicate(piTensor, static_cast<yType>(constData.CONST_PI), this->mask, repeatTimes, this->dupDstBlockStride,
               this->dupDstRepeatStride);
     Duplicate(nanTensor, static_cast<yType>(NAN), this->mask, repeatTimes, this->dupDstBlockStride,
               this->dupDstRepeatStride);
   }
 
-  __aicore__ inline void CopyIn(int32_t coreOffset) {
+  __aicore__ inline void CopyIn(int64_t coreOffset) {
     // alloc tensor from queue memory
     LocalTensor<yType> xLocal = inQueue.AllocTensor<yType>();
     // copy progress_th tile from global tensor to local tensor
@@ -89,20 +89,20 @@ class AngleV2 : public AngleV2Base<yType> {
     inQueue.EnQue(xLocal);
   }
 
-  __aicore__ inline void Compute(int32_t calCount) {
+  __aicore__ inline void Compute() {
     // deque input tensors from VECIN queue
     LocalTensor<yType> input = inQueue.DeQue<yType>();
     LocalTensor<yType> result = outQueue.AllocTensor<yType>();
 
     // result = if input >= 0 then 0 else pi
     Compare(mask1, input, zeroTensor, CMPMODE::GE, this->mask, repeatTimes, this->repeatParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     this->DoSelect(result, mask1, zeroTensor, piTensor, this->mask, repeatTimes);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
 
     // select nan
     Compare(mask1, input, input, CMPMODE::EQ, this->mask, repeatTimes, this->repeatParams);
-    pipe_barrier(PIPE_V);
+    PipeBarrier<PIPE_V>();
     this->DoSelect(result, mask1, result, nanTensor, this->mask, repeatTimes);
     event_t eventIdVToMte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
     SetFlag<HardEvent::V_MTE3>(eventIdVToMte3);
@@ -114,7 +114,7 @@ class AngleV2 : public AngleV2Base<yType> {
     inQueue.FreeTensor(input);
   }
 
-  __aicore__ inline void CopyOut(int32_t coreOffset) {
+  __aicore__ inline void CopyOut(int64_t coreOffset) {
     // deque output tensor from VECOUT queue
     LocalTensor<yType> result = outQueue.DeQue<yType>();
     // copy progress_th tile from local tensor to global tensor
@@ -126,14 +126,20 @@ class AngleV2 : public AngleV2Base<yType> {
  private:
   TPipe pipe;
   ConstData constData;
-  uint8_t repeatTimes;
-  GlobalTensor<yType> xGm, yGm;
+  uint8_t repeatTimes = 1;
+  GlobalTensor<yType> xGm;
+  GlobalTensor<yType> yGm;
 
   TQue<QuePosition::VECIN, BUFFER_NUM> inQueue;
   TQue<QuePosition::VECOUT, BUFFER_NUM> outQueue;
-  TBuf<TPosition::VECCALC> maskBuf1, piBuf, nanBuf, zeroBuf;
+  TBuf<TPosition::VECCALC> maskBuf1;
+  TBuf<TPosition::VECCALC> piBuf;
+  TBuf<TPosition::VECCALC> nanBuf;
+  TBuf<TPosition::VECCALC> zeroBuf;
 
-  LocalTensor<yType> zeroTensor, piTensor, nanTensor;
+  LocalTensor<yType> zeroTensor;
+  LocalTensor<yType> piTensor;
+  LocalTensor<yType> nanTensor;
   LocalTensor<uint8_t> mask1;
   int32_t dataPerBlock = 32 / sizeof(yType);
   uint16_t blockLen = 1;

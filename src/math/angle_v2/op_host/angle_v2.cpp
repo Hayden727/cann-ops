@@ -28,26 +28,8 @@ namespace ops {
     return ge::GRAPH_FAILED;                                                                     \
   }
 }  // namespace ops
-namespace optiling {
-#define VECTOR_INNER_ERR_REPORT_TILIING(op_name, err_msg, ...) std::printf(err_msg, ##__VA_ARGS__)
-#define OP_TILING_CHECK(cond, log_func, expr) \
-  do {                                        \
-    if (cond) {                               \
-      log_func;                               \
-      expr;                                   \
-    }                                         \
-  } while (0)
-
-template <typename T>
-inline T* GetCompileInfoPtr(gert::TilingParseContext* context) {
-  return context->GetCompiledInfo<T>();
-}
-}  // namespace optiling
 
 namespace optiling {
-const uint32_t BLOCK_DIM = 8;
-const uint32_t TILE_NUM = 8;
-
 constexpr uint64_t COMPLEX64_MODE = 1;
 constexpr uint64_t FP32_MODE = 2;
 constexpr uint64_t FP16_MODE = 3;
@@ -63,6 +45,7 @@ constexpr uint32_t SIZE_OF_B32 = 4;
 constexpr uint32_t BYTE_BLOCK = 32;
 constexpr uint32_t BYTE_REPEAT = 256; // The amount of data that can be processed by a repeat.
 constexpr uint32_t SELECT_MODE_GE_ZERO_TMP_UB = 8000; // select mode 2 need 8000B
+constexpr int64_t SYS_WORKSPACE_SIZE = 16777216; // 16 * 1024 * 1024
 
 class AngleV2Tiling {
     public:
@@ -257,7 +240,7 @@ void AngleV2Tiling::TilingDataPrint() const
 ge::graphStatus AngleV2Tiling::Init()
 {
     OP_LOGD(tilingContext->GetNodeName(), "Tiling initing.");
-    size_t sysWorkspaceSize = 16 * 1024 * 1024;
+    size_t sysWorkspaceSize = SYS_WORKSPACE_SIZE;
     size_t *currentWorkSpace = tilingContext->GetWorkspaceSizes(1);
     currentWorkSpace[0] = sysWorkspaceSize;
     auto xShape = tilingContext->GetInputShape(0)->GetStorageShape();
