@@ -50,26 +50,26 @@ $$
 ## aclnnUpsampleBilinear2dGetWorkspaceSize
 
 - **参数说明**：
-  - self(aclTensor\*，计算输入)：Device侧的aclTensor，支持非连续的Tensor，shape仅支持4维，数据格式支持NCHW和NHWC。当数据类型为DOUBLE时，仅支持NHWC格式。
+  - self（aclTensor\*，计算输入）：Device侧的aclTensor，表示进行上采样的输入张量。支持非连续的Tensor，不支持空Tensor。shape仅支持4维，数据格式支持NCHW和NHWC。当数据类型为DOUBLE时，仅支持NHWC格式。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE。
     - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、BFLOAT16、FLOAT16、DOUBLE。 
-  - outputSize(aclIntArray\*，计算输入)：Host侧的aclIntArray，输出空间大小。
-  - alignCorners(bool，计算输入)：Host侧的bool类型参数。如果设置为True，则输入和输出张量按其角像素的中心点对齐，保留角像素处的值；如果设置为False，则输入和输出张量通过其角像素的角点对齐，并使用边缘值对边界外的值进行填充。
-  - scalesH(double，计算输入)：Host侧的double常量，空间大小的height维度乘数，不能传入负值。
-  - scalesW(double，计算输入)：Host侧的double常量，空间大小的width维度乘数，不能传入负值。
-  - out(aclTensor\*，计算输出)：Device侧的aclTensor，shape仅支持4维，支持非连续的Tensor，数据格式支持NCHW和NHWC。当数据类型为DOUBLE时，仅支持NHWC格式。数据类型和数据格式与入参`self`的数据类型和数据格式保持一致。
+  - outputSize（aclIntArray\*，计算输入）：Host侧的aclIntArray，输出空间大小。
+  - alignCorners（bool，计算输入）：Host侧的bool类型参数。如果设置为True，则输入和输出张量按其角像素的中心点对齐，保留角像素处的值；如果设置为False，则输入和输出张量通过其角像素的角点对齐，并使用边缘值对边界外的值进行填充。
+  - scalesH（double，计算输入）：Host侧的double常量，空间大小的height维度乘数，不能传入负值。
+  - scalesW（double，计算输入）：Host侧的double常量，空间大小的width维度乘数，不能传入负值。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，表示采样后的输出张量。shape仅支持4维，支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW和NHWC。当数据类型为DOUBLE时，仅支持NHWC格式。数据类型和数据格式与入参`self`的数据类型和数据格式保持一致。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16、DOUBLE。
     - Atlas A2 训练系列产品/Atlas 800I A2 推理产品：数据类型支持FLOAT、BFLOAT16、FLOAT16、DOUBLE。 
-  - workspaceSize(uint64_t\*，出参)：返回需要在Device侧申请的workspace大小。
-  - executor(aclOpExecutor\*\*，出参)：返回op执行器，包含了算子计算流程。
+  - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
+  - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值**：
 
   aclnnStatus：返回状态码。
 
   ```
   第一段接口完成入参校验，出现以下场景时报错：
-  返回561103 (ACLNN_ERR_INNER_NULLPTR): 1. API内部校验错误，通常由于输入数据或属性的规格不在支持的范围之内导致。
-  返回161002 (ACLNN_ERR_PARAM_INVALID): 1. self的数据类型不在支持的范围之内。
+  返回561103 （ACLNN_ERR_INNER_NULLPTR）：1. API内部校验错误，通常由于输入数据或属性的规格不在支持的范围之内导致。
+  返回161002 （ACLNN_ERR_PARAM_INVALID）：1. self的数据类型不在支持的范围之内。
                                         2. scalesH/scalesW的值为负值。
                                         3. self和out的N/C轴的维度大小不相等。
                                         4. self和out的数据格式不在支持的范围之内。
@@ -78,10 +78,10 @@ $$
 ## aclnnUpsampleBilinear2d
 
 - **参数说明**：
-  - workspace(void\*，入参): 在Device侧申请的workspace内存地址。
-  - workspaceSize(uint64_t，入参): 在Device侧申请的workspace大小，由第一段接口aclnnUpsampleBilinear2dGetWorkspaceSize获取。
-  - executor(aclOpExecutor\*，入参): op执行器，包含了算子计算流程。
-  - stream(aclrtStream，入参): 指定执行任务的AscendCL Stream流。
+  - workspace（void\*，入参）：在Device侧申请的workspace内存地址。
+  - workspaceSize（uint64_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnUpsampleBilinear2dGetWorkspaceSize获取。
+  - executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
+  - stream（aclrtStream，入参）：指定执行任务的AscendCL Stream流。
 - **返回值**：
 
 aclnnStatus：返回状态码。

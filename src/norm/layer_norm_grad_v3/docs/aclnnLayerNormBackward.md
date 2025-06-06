@@ -21,43 +21,43 @@
 
 - **参数说明：**
 
-  - gradOut（aclTensor*，计算输入）：反向计算的梯度tensor，与输入input的数据类型相同。shape与input的shape相等，为[A1,...,Ai,R1,...,Rj]，shape长度大于等于normalizedShape的长度。支持非连续的Tensor，数据格式支持ND。
+  - gradOut（aclTensor*，计算输入）：反向计算的梯度tensor，与输入input的数据类型相同。shape与input的shape相等，为[A1,...,Ai,R1,...,Rj]，shape长度大于等于normalizedShape的长度。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
-  - input（aclTensor*，计算输入）：正向计算的首个输入，与输入gradOut的数据类型相同。shape与gradOut的shape相等，为[A1,...,Ai,R1,...,Rj]，shape长度大于等于normalizedShape的长度。支持非连续的Tensor，数据格式支持ND。
+  - input（aclTensor*，计算输入）：正向计算的首个输入，与输入gradOut的数据类型相同。shape与gradOut的shape相等，为[A1,...,Ai,R1,...,Rj]，shape长度大于等于normalizedShape的长度。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
   - normalizedShape（aclIntArray*，计算输入）：表示需要进行norm计算的维度，数据类型支持INT64，shape为[R1,...,Rj]，长度小于等于输入input的长度，不支持为空。
 
-  - mean（aclTensor*，计算输入）：正向计算的第二个输出，表示input的均值，与输入rstd的数据类型相同且位宽不低于输入input的数据类型位宽。shape与rstd的shape相等，为[A1,...,Ai,1,...,1]，Ai后共有j个1，与需要norm的轴长度保持相同。支持非连续的Tensor，数据格式支持ND。
+  - mean（aclTensor*，计算输入）：正向计算的第二个输出，表示input的均值，与输入rstd的数据类型相同且位宽不低于输入input的数据类型位宽。shape与rstd的shape相等，为[A1,...,Ai,1,...,1]，Ai后共有j个1，与需要norm的轴长度保持相同。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
-  - rstd（aclTensor*，计算输入）：正向计算的第三个输出，表示input的标准差的倒数，与输入mean的数据类型相同且位宽不低于输入input的数据类型位宽。shape与mean的shape相等，为[A1,...,Ai,1,...,1]，Ai后共有j个1，与需要norm的轴长度保持相同。支持非连续的Tensor，数据格式支持ND。
+  - rstd（aclTensor*，计算输入）：正向计算的第三个输出，表示input的标准差的倒数，与输入mean的数据类型相同且位宽不低于输入input的数据类型位宽。shape与mean的shape相等，为[A1,...,Ai,1,...,1]，Ai后共有j个1，与需要norm的轴长度保持相同。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
-  - weightOptional（aclTensor*，计算输入）：权重tensor，可选参数。weightOptional非空时，数据类型与输入input一致或为FLOAT类型，且当biasOptional存在时与biasOptional的数据类型相同。shape与normalizedShape相等，为[R1,...,Rj]。支持非连续的Tensor，数据格式支持ND。weightOptional为空时，需要构造一个shape为[R1,...,Rj]，数据类型与输入input相同，数据全为1的tensor。
+  - weightOptional（aclTensor*，计算输入）：权重tensor，可选参数。weightOptional非空时，数据类型与输入input一致或为FLOAT类型，且当biasOptional存在时与biasOptional的数据类型相同。shape与normalizedShape相等，为[R1,...,Rj]。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。weightOptional为空时，需要构造一个shape为[R1,...,Rj]，数据类型与输入input相同，数据全为1的tensor。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
-  - biasOptional（aclTensor*，计算输入）：偏置tensor，可选参数。biasOptional非空时，数据类型与输入input一致或为FLOAT类型，且当weightOptional存在时与weightOptional的数据类型相同。shape与normalizedShape相等，为[R1,...,Rj]。支持非连续的Tensor，数据格式支持ND。biasOptional为空时，不做任何处理。
+  - biasOptional（aclTensor*，计算输入）：偏置tensor，可选参数。biasOptional非空时，数据类型与输入input一致或为FLOAT类型，且当weightOptional存在时与weightOptional的数据类型相同。shape与normalizedShape相等，为[R1,...,Rj]。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。biasOptional为空时，不做任何处理。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
   - outputMask（aclBoolArray*，计算输入）：数据类型支持BOOL，长度固定为3，取值为True时表示对应位置的输出非空。
 
-  - gradInputOut（aclTensor*，可选输出）：由outputMask的第0个元素控制是否输出，outputMask第0个元素为True时会进行输出，与输入input的数据类型相同。shape与input的shape相等，为[A1,...,Ai,R1,...,Rj]。支持非连续的Tensor，数据格式支持ND。
+  - gradInputOut（aclTensor*，可选输出）：由outputMask的第0个元素控制是否输出，outputMask第0个元素为True时会进行输出，与输入input的数据类型相同。shape与input的shape相等，为[A1,...,Ai,R1,...,Rj]。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
-  - gradWeightOut（aclTensor*，可选输出）：由outputMask的第1个元素控制是否输出，outputMask第1个元素为True时会进行输出，与输入weightOptional的数据类型相同。shape与gradBiasOut的shape相等，为[R1,...,Rj]。支持非连续的Tensor，数据格式支持ND。
+  - gradWeightOut（aclTensor*，可选输出）：由outputMask的第1个元素控制是否输出，outputMask第1个元素为True时会进行输出，与输入weightOptional的数据类型相同。shape与gradBiasOut的shape相等，为[R1,...,Rj]。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 
-  - gradBiasOut（aclTensor*，可选输出）：由outputMask的第2个元素控制是否输出，outputMask第2个元素为True时会进行输出，与输入weightOptional的数据类型相同。shape与gradWeightOut的shape相等，为[R1,...,Rj]。支持非连续的Tensor，数据格式支持ND。
+  - gradBiasOut（aclTensor*，可选输出）：由outputMask的第2个元素控制是否输出，outputMask第2个元素为True时会进行输出，与输入weightOptional的数据类型相同。shape与gradWeightOut的shape相等，为[R1,...,Rj]。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
      * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：FLOAT、FLOAT16、BFLOAT16
      * Atlas 推理系列产品、Atlas 训练系列产品：FLOAT、FLOAT16
 

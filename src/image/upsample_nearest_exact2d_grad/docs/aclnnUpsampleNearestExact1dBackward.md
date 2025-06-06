@@ -13,22 +13,22 @@
 
 ## 功能描述
 
-- 算子功能：aclnnUpsampleNearestExact1d的反向传播。通过计算输出梯度张量的点映射到输入梯度张量的位置，将输出梯度的值累加到输入梯度张量上
+- 算子功能：aclnnUpsampleNearestExact1d的反向传播。通过计算输出梯度张量的点映射到输入梯度张量的位置，将输出梯度的值累加到输入梯度张量上。
 - 计算公式：
 
   $$
-  gradInput(N, C, floor ( scales * ( L + 0.5 )) +=  gradOutput( N, C, L)
+  gradInput(N, C, floor ( scales * ( L + 0.5 ))) +=  gradOutput( N, C, L)
   $$
 
 ## aclnnUpsampleNearestExact1dBackwardGetWorkspaceSize
 
 - **参数说明**：
 
-  - gradOutput（aclTensor*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16，shape仅支持三维。支持非连续的Tensor，数据格式支持NCL、ND（当数据格式为ND时，默认按照NCL格式处理）。
+  - gradOutput（aclTensor*，计算输入）：公式中的输入`gradOutput`，Device侧的aclTensor，表示反向计算的的梯度Tensor。数据类型支持FLOAT、FLOAT16、BFLOAT16，shape仅支持三维。支持非连续的Tensor，不支持空Tensor。数据格式支持NCL、ND（当数据格式为ND时，默认按照NCL格式处理）。
   - outputSize（aclIntArray*，计算输入）：Host侧的aclIntArray，数据类型支持INT64，size大小为1。表示输入`gradOutput`在L维度上的空间大小。
   - inputSize（aclIntArray*，计算输入）：Host侧的aclIntArray，数据类型支持INT64，size大小为3。表示输出`out`分别在N、C和L维度上的空间大小。
-  - scales（double, 计算输入）：Host侧的浮点型，表示输出`out`的缩放系数。
-  - out（aclTensor*，计算输出）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16，shape仅支持三维。支持非连续的Tensor，数据格式支持NCL、ND。数据类型和数据格式与入参`gradOutput`的数据类型和数据格式保持一致。
+  - scales（double, 计算输入）：公式中的输入`scales`，Host侧的浮点型，表示输出`out`的缩放系数。
+  - out（aclTensor*，计算输出）：公式中的输出`gradInput`，Device侧的aclTensor，表示反向计算的输出张量。数据类型支持FLOAT、FLOAT16、BFLOAT16，shape仅支持三维。支持非连续的Tensor，不支持空Tensor。数据格式支持NCL、ND。数据类型和数据格式与入参`gradOutput`的数据类型和数据格式保持一致。
   - workspaceSize（uint64_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**，出参）：返回op执行器，包含了算子计算流程。
 

@@ -61,12 +61,12 @@
 ## aclnnUpsampleBilinear2dAAGetWorkspaceSize
 
 * **参数说明**：
-  - input（aclTensor\*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。shape维度仅支持4维的Tensor。
+  - input（aclTensor\*，计算输入）：Device侧的aclTensor，表示进行采样的输入张量。数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。shape维度仅支持4维的Tensor。
   - outputSize（aclIntArray\*，计算输入）：Host侧的aclIntArray，输出空间大小，要求是二维数组，数据类型支持INT64，取值与出参`out`的H、W维度一样。
   - alignCorners（bool，计算输入）：Host侧bool类型参数，指定是否是角对齐。如果设置为`true`，则输入和输出张量按其角像素的中心点对齐，保留角像素处的值。如果设置为`false`，则输入和输出张量通过其角像素的角点对齐，并使用边缘值对边界外的值进行填充。
   - scalesH（double，计算输入）: Host侧double类型参数，空间大小的height维度乘数。
   - scalesW（double，计算输入）: Host侧double类型参数，空间大小的width维度乘数。
-  - out（aclTensor\*，计算输出）: Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，数据格式支持NCHW、ND。shape维度仅支持4维的Tensor。数据类型和数据格式与入参`input`的数据类型和数据格式保持一致。
+  - out（aclTensor\*，计算输出）: Device侧的aclTensor，表示采样后的输出张量。数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND。shape维度仅支持4维的Tensor。数据类型和数据格式与入参`input`的数据类型和数据格式保持一致。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 * **返回值**：

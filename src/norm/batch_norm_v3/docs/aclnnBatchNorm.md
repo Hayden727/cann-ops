@@ -15,7 +15,7 @@
 ## 功能描述
 
 - 算子功能：
-对一个批次的数据做正则化处理，正则化之后生成的数据的统计结果为0均值、1标准差。
+  对一个批次的数据做正则化处理，正则化之后生成的数据的统计结果为0均值、1标准差。
 
 - 计算公式：
 
@@ -28,23 +28,23 @@
 
 - **参数说明：**
   
-  - input（aclTensor*, 计算输入）：Device侧的aclTensor，支持非连续的Tensor，支持的shape和格式有：2维（对应的格式为NC），3维（对应的格式为NCL），4维（对应的格式为NCHW），5维（对应的格式为NCDHW），6-8维（对应的格式为ND，其中第2维固定为channel轴）。
+  - input（aclTensor*, 计算输入）：Device侧的aclTensor，支持非连续的Tensor，不支持空Tensor。支持的shape和格式有：2维（对应的格式为NC），3维（对应的格式为NCL），4维（对应的格式为NCHW），5维（对应的格式为NCDHW），6-8维（对应的格式为ND，其中第2维固定为channel轴）。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
 
-  - weight（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，权重Tensor。数据类型需要与input的数据类型一致，支持非连续的Tensor， 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
+  - weight（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，权重Tensor。数据类型需要与input的数据类型一致，支持非连续的Tensor，不支持空Tensor。 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
 
-  - bias（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，数据类型需要与input的数据类型一致，支持非连续的Tensor， 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
+  - bias（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，数据类型需要与input的数据类型一致，支持非连续的Tensor，不支持空Tensor。 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
 
-  - runningMean（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，训练期间计算的平均值。数据类型需要与input的数据类型一致，支持非连续的Tensor， 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
+  - runningMean（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，训练期间计算的平均值。数据类型需要与input的数据类型一致，支持非连续的Tensor，不支持空Tensor。 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
 
-  - runningVar（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，训练期间计算的方差。数据类型需要与input的数据类型一致，数值为非负数，支持非连续的Tensor， 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
+  - runningVar（aclTensor*, 计算输入）：可选参数，Device侧的aclTensor，训练期间计算的方差。数据类型需要与input的数据类型一致，数值为非负数，支持非连续的Tensor，不支持空Tensor。 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
 
@@ -54,15 +54,15 @@
 
   - eps（double, 计算输入）：Host侧的double值，添加到方差中的值，以避免出现除以零的情况。
 
-  - output（aclTensor\*, 计算输出）：Device侧的aclTensor，数据类型需要与input的数据类型一致，支持非连续的Tensor，shape与input入参的shape相同，支持的shape和格式有：2维（对应的格式为NC），3维（对应的格式为NCL），4维（对应的格式为NCHW），5维（对应的格式为NCDHW），6-8维（对应的格式为ND，其中第2维固定为channel轴）。
+  - output（aclTensor\*, 计算输出）：Device侧的aclTensor，数据类型需要与input的数据类型一致，支持非连续的Tensor，不支持空Tensor。shape与input入参的shape相同，支持的shape和格式有：2维（对应的格式为NC），3维（对应的格式为NCL），4维（对应的格式为NCHW），5维（对应的格式为NCDHW），6-8维（对应的格式为ND，其中第2维固定为channel轴）。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT，FLOAT16、BFLOAT16。
 
-  - saveMean（aclTensor\*, 计算输出）：Device侧的aclTensor，保存的均值。数据类型需要与input的数据类型一致，支持非连续的Tensor， 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
+  - saveMean（aclTensor\*, 计算输出）：Device侧的aclTensor，保存的均值。数据类型需要与input的数据类型一致，支持非连续的Tensor，不支持空Tensor。 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT，FLOAT16、BFLOAT16。
 
-  - saveInvstd（aclTensor\*, 计算输出）：Device侧的aclTensor，保存的标准差的倒数。数据类型需要与input的数据类型一致，支持非连续的Tensor， 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
+  - saveInvstd（aclTensor\*, 计算输出）：Device侧的aclTensor，保存的标准差的倒数。数据类型需要与input的数据类型一致，支持非连续的Tensor，不支持空Tensor。 数据格式为ND。shape为1维，长度与input入参中channel轴的长度相等。
     - Atlas 推理系列产品、Atlas 训练系列产品：数据类型支持FLOAT，FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT，FLOAT16、BFLOAT16。
 

@@ -31,21 +31,21 @@
 
 - **参数说明：**
 
-  * x1（aclTensor*，计算输入）：公式中的输入`x1`，shape支持1-8维度，数据格式支持ND。
+  * x1（aclTensor*，计算输入）：公式中的输入`x1`，shape支持1-8维度，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * x2（aclTensor*，计算输入）：公式中的输入`x2`，shape支持1-8维度，数据格式支持ND。shape需要与x1保持一致。
+  * x2（aclTensor*，计算输入）：公式中的输入`x2`，shape支持1-8维度，数据格式支持ND。shape需要与x1保持一致。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * gamma（aclTensor*，计算输入）：公式中的输入`g`，shape支持1-8维度，数据格式支持ND。shape需要与x1后几维保持一致，后几维表示需要norm的维度。
+  * gamma（aclTensor*，计算输入）：公式中的输入`g`，shape支持1-8维度，数据格式支持ND。shape需要与x1后几维保持一致，后几维表示需要norm的维度。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
   * epsilonOptional（double，计算输入）：公式中的输入`eps`，用于防止除0错误，数据类型为double，默认值为1e-6。
-  * yOut（aclTensor*，计算输出）：公式中的`RmsNorm(x)`，支持1-8维度，shape需要与输入x1/x2一致，数据格式支持ND。
+  * yOut（aclTensor*，计算输出）：公式中的`RmsNorm(x)`，支持1-8维度，shape需要与输入x1/x2一致，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * rstdOut（aclTensor*，计算输出）：公式中的`Rms(x)`，数据类型支持FLOAT32、shape支持1-8维度，数据格式支持ND。shape与x前几维保持一致，前几维表示不需要norm的维度。该输出在Atlas 推理系列产品上无效。
-  * xOut（aclTensor*，计算输出）：shape支持1-8维度，shape需要与输入x1/x2一致，数据格式支持ND。
+  * rstdOut（aclTensor*，计算输出）：公式中的`Rms(x)`，数据类型支持FLOAT32、shape支持1-8维度，数据格式支持ND。不支持空Tensor。shape与x前几维保持一致，前几维表示不需要norm的维度。该输出在Atlas 推理系列产品上无效。
+  * xOut（aclTensor*，计算输出）：公式中的`x`，shape支持1-8维度，shape需要与输入x1/x2一致，数据格式支持ND。不支持空Tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
   * workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。

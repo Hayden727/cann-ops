@@ -33,13 +33,13 @@
 
 - **参数说明**：
 
-  - self（aclTensor*，计算输入）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。输入维度必须是4。
+  - self（aclTensor*，计算输入）：公式中的输入`self`，Device侧的aclTensor。表示进行上采样的输入张量。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理）。输入维度必须是4。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - outputSize（aclIntArray*,计算输入）：Host侧的aclIntArray，指定输出tensor大小，数据类型支持INT64。
-  - scalesH（double，计算输入）：Host侧的DOUBLE型参数，指定H方向空间大小的缩放乘数。
-  - scalesW（double，计算输入）：Host侧的DOUBLE型参数，指定W方向空间大小的缩放乘数。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor。支持非连续的Tensor，数据格式支持NCHW、ND。数据类型与入参`self`的数据类型保持一致。
+  - scalesH（double，计算输入）：公式中的输入`scalesH`，Host侧的DOUBLE型参数，指定H方向空间大小的缩放乘数。
+  - scalesW（double，计算输入）：公式中的输入`scalesW`，Host侧的DOUBLE型参数，指定W方向空间大小的缩放乘数。
+  - out（aclTensor\*，计算输出）：公式中的输出`out`，Device侧的aclTensor。表示采样后的输出张量。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND。数据类型与入参`self`的数据类型保持一致。
     - Atlas 推理系列产品：数据类型支持FLOAT、FLOAT16。
     - Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT、FLOAT16、BFLOAT16。
   - workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。

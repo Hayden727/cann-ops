@@ -1,8 +1,8 @@
 # aclnnUpsampleBilinear2dAABackward
 
 ## 支持的产品型号
-- Atlas 推理系列产品
-- Atlas A2 训练系列产品/Atlas 800I A2 推理产品
+- Atlas 推理系列产品。
+- Atlas A2 训练系列产品/Atlas 800I A2 推理产品。
 
 ## 接口原型
 
@@ -19,13 +19,13 @@
 ## aclnnUpsampleBilinear2dAABackwardGetWorkspaceSize
 
 * **参数说明**：
-  - gradOutput（aclTensor*，计算输入）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理），shape仅支持四维Tensor。
+  - gradOutput（aclTensor*，计算输入）：Device侧的aclTensor，表示反向计算的的梯度Tensor。数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND（当数据格式为ND时，默认按照NCHW格式处理），shape仅支持四维Tensor。
   - outputSize（aclIntArray*，计算输入）：Host侧的aclIntArray，数据类型支持INT64，size大小为2。表示输入`gradOutput`在H和W维度上的空间大小。
   - inputSize（aclIntArray*，计算输入）：Host侧的aclIntArray，数据类型支持INT64，size大小为4。表示输出`out`分别在N、C、H和W维度上的空间大小。
   - alignCorners（bool，计算输入）：Host侧的布尔型，表示是否对齐角像素点。如果为 true，则输入和输出张量的角像素点会被对齐，否则不对齐。
   - scalesH（double，计算输入）：Host侧的浮点型，表示输出`out`的height维度乘数，值为正数才生效。
   - scalesW（double，计算输入）：Host侧的浮点型，表示输出`out`的width维度乘数，值为正数才生效。
-  - out（aclTensor*，计算输出）：Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，数据格式支持NCHW、ND，shape仅支持四维Tensor。数据类型和数据格式与入参`gradOutput`的数据类型和数据格式保持一致。
+  - out（aclTensor*，计算输出）：Device侧的aclTensor，表示反向计算的输出张量。数据类型支持FLOAT、FLOAT16、BFLOAT16。支持非连续的Tensor，不支持空Tensor。数据格式支持NCHW、ND，shape仅支持四维Tensor。数据类型和数据格式与入参`gradOutput`的数据类型和数据格式保持一致。
   - workspaceSize（uint64_t\*, 出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\**, 出参）：返回op执行器，包含了算子计算流程。
 * **返回值**：

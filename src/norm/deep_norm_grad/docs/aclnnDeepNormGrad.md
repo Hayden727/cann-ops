@@ -52,29 +52,29 @@
 ## aclnnDeepNormGradGetWorkspaceSize
 
 - **参数说明：**
-  * dy（aclTensor\*，计算输入）：主要的grad输入。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+  * dy（aclTensor\*，计算输入）：公式中的输入$d_y$，主要的grad输入。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入，不支持空tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * x（aclTensor\*，计算输入）：为正向融合算子的输入x。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+  * x（aclTensor\*，计算输入）：公式中的输入`x`，为正向融合算子的输入x。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入，不支持空tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * gx（aclTensor\*，计算输入）：为正向融合算子的输入gx。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
+  * gx（aclTensor\*，计算输入）：公式中的输入`gx`，为正向融合算子的输入gx。Device侧的aclTensor，shape支持2维-8维，数据格式支持ND，不支持非连续输入，不支持空tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * gamma（aclTensor\*，计算输入）：shape支持1维-7维，数据格式支持ND，不支持非连续输入。
+  * gamma（aclTensor\*，计算输入）：公式中的输入`gamma`，shape支持1维-7维，数据格式支持ND，不支持非连续输入，不支持空tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * mean（aclTensor\*，计算输入）：表示正向输入x、gx之和的均值。数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
-  * rstd（aclTensor\*，计算输入）：表示正向输入x、gx之和的rstd。输入数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入。
-  * alpha(double，计算输入)：含义与deepnorm正向输入alpha相同，deepnorm输入x维度的乘数。
-  * dxOut（aclTensor\*，计算输出）：shape支持2维-8维，数据格式支持ND。
+  * mean（aclTensor\*，计算输入）：公式中的输入`mean`，表示正向输入x、gx之和的均值。数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入，不支持空tensor。
+  * rstd（aclTensor\*，计算输入）：公式中的输入`rstd`，表示正向输入x、gx之和的rstd。输入数据类型支持FLOAT32，shape支持2维-8维，数据格式支持ND，不支持非连续输入，不支持空tensor。
+  * alpha(double，计算输入)：公式中的输入`alpha`，含义与deepnorm正向输入alpha相同，deepnorm输入x维度的乘数。
+  * dxOut（aclTensor\*，计算输出）：公式中的输出$d_x$，shape支持2维-8维，数据格式支持ND。不支持空tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dgxOut（aclTensor\*，计算输出）：shape支持2维-8维，数据格式支持ND。
+  * dgxOut（aclTensor\*，计算输出）：公式中的输出$d_{gx}$，shape支持2维-8维，数据格式支持ND。不支持空tensor。
     * Atlas 推理系列产品：数据类型支持FLOAT32、FLOAT16。
     * Atlas A2 训练系列产品/Atlas A2 推理产品/A200I A2 Box 异构组件、Atlas A3 训练系列产品/Atlas A3 推理系列产品：数据类型支持FLOAT32、FLOAT16、BFLOAT16。
-  * dbetaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。
-  * dgammaOut（aclTensor\*，计算输出）：数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。
+  * dbetaOut（aclTensor\*，计算输出）：公式中的输出$d_{beta}$，数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。不支持空tensor。
+  * dgammaOut（aclTensor\*，计算输出）：公式中的输出$d_{gamma}$，数据类型支持FLOAT32，shape支持1维-7维，数据格式支持ND。不支持空tensor。
   * workspaceSize（uint64_t\*，出参）：返回需要在Device侧申请的workspace大小。
   * executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 

@@ -24,9 +24,9 @@
 
 - **参数说明：**
 
-  * x（aclTensor\*，计算输入）：公式中的`x`。Device 侧的aclTensor，tensor维度为4维。数据类型支持FLOAT、FLOAT16。支持非连续的Tensor，数据格式支持ND，实际数据格式由参数dataFormat决定。
-  * gamma（aclTensor\*，计算输入）：公式中的`gamma`。Device 侧的aclTensor，tensor维度为1维，且 shape 和输入 `x` 的C轴一致。数据类型支持FLOAT、FLOAT16，和输入 `x` 保持一致。支持非连续的Tensor，数据格式支持ND。
-  * beta（aclTensor\*，计算输入）：公式中的`beta`。Device 侧的aclTensor，tensor维度为1维，且 shape 和输入 `x` 的C轴一致。数据类型支持FLOAT、FLOAT16，和输入 `x` 保持一致。支持非连续的Tensor，数据格式支持ND。
+  * x（aclTensor\*，计算输入）：公式中的`x`。Device 侧的aclTensor，tensor维度为4维。数据类型支持FLOAT、FLOAT16。支持非连续的Tensor，不支持空Tensor。数据格式支持ND，实际数据格式由参数dataFormat决定。
+  * gamma（aclTensor\*，计算输入）：公式中的`gamma`。Device 侧的aclTensor，tensor维度为1维，且 shape 和输入 `x` 的C轴一致。数据类型支持FLOAT、FLOAT16，和输入 `x` 保持一致。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
+  * beta（aclTensor\*，计算输入）：公式中的`beta`。Device 侧的aclTensor，tensor维度为1维，且 shape 和输入 `x` 的C轴一致。数据类型支持FLOAT、FLOAT16，和输入 `x` 保持一致。支持非连续的Tensor，不支持空Tensor。数据格式支持ND。
   * dataFormat（char\*，计算输入）：算子输入Tensor的实际数据排布，可以是"NHCW"或"NCHW"。
   * eps（double\*，计算输入）：对应InstanceNorm计算公式中的 eps，添加到分母中的值，以确保数值稳定。
   * y（aclTensor\*，计算输出）：表示InstanceNorm的结果输出`y`。Device 侧的aclTensor，数据类型支持FLOAT、FLOAT16，且数据类型与`x`一致。 shape需要与 `x`一致，数据格式支持ND。
