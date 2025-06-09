@@ -20,10 +20,10 @@
 ## aclnnSnrm2GetWorkspaceSize
 - **参数说明**：
   
-  - x（aclTensor*，计算输入）：公式中的x，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持FLOAT32，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
+  - x（aclTensor*，计算输入）：公式中的x，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持FLOAT32，shape维度不高于3维，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
   - n（int64_t，入参）：向量x中得元素个数，数据类型支持INT64。
   - incx（int64_t，入参）：表示向量x相邻元素间的内存地址偏移量，支持数值为1，数据类型支持INT64。
-  - out（aclTensor*，计算输出）：表示计算结果，公式中的out，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持FLOAT32，只包含1个元素，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
+  - out（aclTensor*，计算输出）：表示计算结果，公式中的out，Device侧的aclTensor，Atlas A2 训练系列产品/Atlas 800I A2推理产品数据类型支持FLOAT32，只包含1个元素，shape维度不高于3维，数据格式支持ND。不支持非连续的Tensor，不支持空Tensor。
   - workspaceSize（uint64_t*，出参）：返回需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor**，出参）：返回op执行器，包含了算子计算流程。  
 - **返回值**：
