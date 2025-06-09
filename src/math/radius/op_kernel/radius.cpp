@@ -56,115 +56,110 @@ public:
     __aicore__ inline int AlignUp(int x){
         return (x + 31) / 32 * 32;
     }
+
     __aicore__ inline void Process()
     {
-        int loopCount = ptrYLen - 1, yStart, yEnd, xStart, xEnd;
-        uint64_t mask[2] = { 1, 0};
-        UnaryRepeatParams repeatParams = { 1, 1, 8, 8 };
-        if(ptrYLen == 0){
-            loopCount = 1;
-        }else{
-            yEnd = ptrYGm.GetValue(0);
-            xEnd = ptrXGm.GetValue(0);
-        }
-        for(int q = 0; q < loopCount; q++)
-        {
-            if(ptrYLen == 0){
-                yStart = 0;
-                yEnd = ySize;
-                xStart = 0;
-                xEnd = xSize;
-            }else{
-                yStart = yEnd;
+        // Handle the two main cases: with or without batch pointers
+        if (ptrYLen == 0) {
+            // Case 1: No batch pointers. Process all x vs all y.
+            for (int i = 0; i < ySize; i++) {
+                ProcessNeighbors(i, 0, xSize);
+            }
+        } else {
+            // Case 2: Batch pointers are provided.
+            int32_t yEnd = ptrYGm.GetValue(0);
+            int32_t xEnd = ptrXGm.GetValue(0);
+            for (int q = 0; q < ptrYLen - 1; q++) {
+                int32_t yStart = yEnd;
+                int32_t xStart = xEnd;
                 yEnd = ptrYGm.GetValue(q + 1);
-                xStart = xEnd;
                 xEnd = ptrXGm.GetValue(q + 1);
-            }
-            if(yStart == yEnd || xStart == xEnd){
-                continue;
-            }
-            for(int i = yStart; i < yEnd; i++){
-                LocalTensor<TYPE_X> itemLocal = itemBuf.Get<TYPE_X>();
-                for(int j = 0; j < itemLength; j ++){
-                    itemLocal.SetValue(j, (TYPE_X)yGm.GetValue(i * itemLength + j));
-                }
-                int32_t count = 0, offset = totalCount;
 
-                for(int j = xStart; j < xEnd; j++){
-                    LocalTensor<TYPE_X> xItemLocal = xItemBuf.Get<TYPE_X>();
-                    LocalTensor<int8_t> resLocal = resBuf.Get<int8_t>();
-                    if(j == i && ignoreSameIndex){
-                        continue;
-                    }
-                    for(int k = 0; k < itemLength; k++){
-                        xItemLocal.SetValue(k, (TYPE_X)xGm.GetValue(j * itemLength + k));
-                    }
-                    if constexpr(std::is_same_v<TYPE_X, int32_t>){
-                        LocalTensor<float> xItemLocalFp = xItemFpBuf.Get<float>();
-                        LocalTensor<float> itemLocalFp = itemFpBuf.Get<float>();
-                        Cast(xItemLocalFp, xItemLocal, RoundMode::CAST_RINT, AlignUp(itemLength));
-                        Cast(itemLocalFp, itemLocal, RoundMode::CAST_RINT, AlignUp(itemLength));
-                        Sub(xItemLocalFp, xItemLocalFp, itemLocalFp, AlignUp(itemLength));
-                        Mul(xItemLocalFp, xItemLocalFp, xItemLocalFp, AlignUp(itemLength));
-                        ReduceSum<float>(xItemLocalFp, xItemLocalFp, xItemLocalFp, (itemLength));
-                        CompareScalar(resLocal, xItemLocalFp, (float)r, AscendC::CMPMODE::LE, mask, 1, repeatParams);
-                        int8_t value = resLocal.GetValue(0);
-                        if(value & 0b00000001){
-                            outGm.SetValue(totalCount, (TYPE_X)j);
-                            outGm.SetValue(totalCount + maxSize, (TYPE_X)i);
-                            count++;
-                            totalCount++;
-                            
-                            if(count == maxNumNeighbors){
-                                break;
-                            }
-                        }
-                    } else if constexpr(std::is_same_v<TYPE_X, float>){
-                        Sub(xItemLocal, xItemLocal, itemLocal, AlignUp(itemLength));
-                        Mul(xItemLocal, xItemLocal, xItemLocal, AlignUp(itemLength));
-                        ReduceSum<float>(xItemLocal, xItemLocal, xItemLocal, (itemLength));
-                        CompareScalar(resLocal, xItemLocal, (float)r, AscendC::CMPMODE::LE, mask, 1, repeatParams);
-                        int8_t value = resLocal.GetValue(0);
-                        if(value & 0b00000001){
-                            outGm.SetValue(totalCount, (float)j);
-                            outGm.SetValue(totalCount + maxSize, (float)i);
-                            count++;
-                            totalCount++;
-                            if(count == maxNumNeighbors){
-                                break;
-                            }
-                        }
-                    } else if constexpr(std::is_same_v<TYPE_X, half>){
-                        LocalTensor<float> xItemLocalFp = xItemFpBuf.Get<float>();
-                        LocalTensor<float> itemLocalFp = itemFpBuf.Get<float>();
-                        Cast(xItemLocalFp, xItemLocal, RoundMode::CAST_NONE, AlignUp(itemLength));
-                        Cast(itemLocalFp, itemLocal, RoundMode::CAST_NONE, AlignUp(itemLength));
-                        Sub(xItemLocalFp, xItemLocalFp, itemLocalFp, AlignUp(itemLength));
-                        Mul(xItemLocalFp, xItemLocalFp, xItemLocalFp, AlignUp(itemLength));
-                        ReduceSum<float>(xItemLocalFp, xItemLocalFp, xItemLocalFp, (itemLength));
-                        CompareScalar(resLocal, xItemLocalFp, (float)r, AscendC::CMPMODE::LE, mask, 1, repeatParams);
-                        int8_t value = resLocal.GetValue(0);
-                        if(value & 0b00000001){
-                            outGm.SetValue(totalCount, (TYPE_X)j);
-                            outGm.SetValue(totalCount + maxSize, (TYPE_X)i);
-                            count++;
-                            totalCount++;
-                            if(count == maxNumNeighbors){
-                                break;
-                            }
-                        }
-                    }
+                if (yStart == yEnd || xStart == xEnd) {
+                    continue;
+                }
+                
+                for (int i = yStart; i < yEnd; i++) {
+                    ProcessNeighbors(i, xStart, xEnd);
                 }
             }
         }
-        if(totalCount < maxSize){
-            for(int i = 0; i < totalCount; i++){
+
+        // Final copy of indices.
+        if (totalCount < maxSize) {
+            for (int i = 0; i < totalCount; i++) {
                 outGm.SetValue(totalCount + i, (TYPE_X)outGm.GetValue(maxSize + i));
             }
         }
     }
 
 private:
+    // Helper function to check if two points are within the radius.
+    // This function encapsulates the type-specific calculation logic and removes code duplication.
+    __aicore__ inline bool IsInRadius(LocalTensor<TYPE_X>& xItem, LocalTensor<TYPE_X>& yItem)
+    {
+        LocalTensor<int8_t> resLocal = resBuf.Get<int8_t>();
+        uint64_t mask[2] = { 1, 0 };
+        UnaryRepeatParams repeatParams = { 1, 1, 8, 8 };
+
+        if constexpr (std::is_same_v<TYPE_X, float>) {
+            Sub(xItem, xItem, yItem, AlignUp(itemLength));
+            Mul(xItem, xItem, xItem, AlignUp(itemLength));
+            ReduceSum<float>(xItem, xItem, xItem, itemLength);
+            CompareScalar(resLocal, xItem, (float)r, AscendC::CMPMODE::LE, mask, 1, repeatParams);
+        } else { // Handles int32_t and half types
+            LocalTensor<float> xItemLocalFp = xItemFpBuf.Get<float>();
+            LocalTensor<float> itemLocalFp = itemFpBuf.Get<float>();
+            
+            // Use different rounding modes for int32_t and half
+            constexpr auto mode = std::is_same_v<TYPE_X, int32_t> ? RoundMode::CAST_RINT : RoundMode::CAST_NONE;
+            Cast(xItemLocalFp, xItem, mode, AlignUp(itemLength));
+            Cast(itemLocalFp, yItem, mode, AlignUp(itemLength));
+
+            Sub(xItemLocalFp, xItemLocalFp, itemLocalFp, AlignUp(itemLength));
+            Mul(xItemLocalFp, xItemLocalFp, xItemLocalFp, AlignUp(itemLength));
+            ReduceSum<float>(xItemLocalFp, xItemLocalFp, xItemLocalFp, itemLength);
+            CompareScalar(resLocal, xItemLocalFp, (float)r, AscendC::CMPMODE::LE, mask, 1, repeatParams);
+        }
+
+        int8_t value = resLocal.GetValue(0);
+        return (value & 0b00000001) != 0;
+    }
+
+    // Helper function to process all neighbors for a given point y[i].
+    // This reduces the nesting depth in the main Process function.
+    __aicore__ inline void ProcessNeighbors(int32_t i, int32_t xStart, int32_t xEnd)
+    {
+        LocalTensor<TYPE_X> itemLocal = itemBuf.Get<TYPE_X>();
+        // Load the point y[i] into local memory
+        for (int k = 0; k < itemLength; k++) {
+            itemLocal.SetValue(k, (TYPE_X)yGm.GetValue(i * itemLength + k));
+        }
+
+        int32_t count = 0;
+        for (int j = xStart; j < xEnd; j++) {
+            if (j == i && ignoreSameIndex) {
+                continue;
+            }
+
+            LocalTensor<TYPE_X> xItemLocal = xItemBuf.Get<TYPE_X>();
+            // Load the point x[j] into local memory
+            for (int k = 0; k < itemLength; k++) {
+                xItemLocal.SetValue(k, (TYPE_X)xGm.GetValue(j * itemLength + k));
+            }
+
+            if (IsInRadius(xItemLocal, itemLocal)) {
+                outGm.SetValue(totalCount, (TYPE_X)j);
+                outGm.SetValue(totalCount + maxSize, (TYPE_X)i);
+                count++;
+                totalCount++;
+                if (count == maxNumNeighbors) {
+                    break; // Found max neighbors for point i
+                }
+            }
+        }
+    }
+
     TPipe pipe;
     GlobalTensor<TYPE_X> xGm, yGm, outGm;
     GlobalTensor<int32_t> ptrXGm, ptrYGm;
