@@ -37,12 +37,12 @@ __aicore__ inline void InitGmZero(
 
     Duplicate(temp_zero_tensor, (T)0.0, zeroLen);
     PipeBarrier<PIPE_ALL>();
-    set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
-    wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    SetFlag<HardEvent::V_MTE3>(EVENT_ID0);
+    WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);
 
     DataCopy(outGm[outOffset], temp_zero_tensor, ROUND_UP(zeroLen, alignLen_));
-    set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-    wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+    SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+    WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
 
     PipeBarrier<PIPE_ALL>();
 }

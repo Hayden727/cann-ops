@@ -521,8 +521,8 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
     padParams.paddingValue = GetScalarBitcodeValue((Dtype)0);
     DataCopyPad(inputXLocalTempTensor, inputGm[1][xGmOffset], copyParams, padParams);
     event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-    set_flag(PIPE_MTE2, PIPE_V, eventID1);
-    wait_flag(PIPE_MTE2, PIPE_V, eventID1);
+    SetFlag<HardEvent::MTE2_S>(eventID1);
+    WaitFlag<HardEvent::MTE2_S>(eventID1);
 
     LocalTensor<T> inputXLocalTensor = inputXLocalTensorBuf.Get<T>(alignChannel);
     Cast(inputXLocalTensor, inputXLocalTempTensor, mode, alignChannel);
@@ -546,12 +546,12 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
     int64_t offset = ncOffset + srcIndex.GetValue(coorIndex);
     LocalTensor<T> localTensor = dataOutQueue[0].AllocTensor<T>();
     event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventID1);
-    wait_flag(PIPE_S, PIPE_V, eventID1);
+    SetFlag<HardEvent::S_V>(eventID1);
+    WaitFlag<HardEvent::S_V>(eventID1);
     Muls(localTensor, gOutLocalTensor, weigthVal, channel);
     event_t eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID);
+    SetFlag<HardEvent::V_MTE3>(eventID);
+    WaitFlag<HardEvent::V_MTE3>(eventID);
     DataCopyParams copyParams{1, 0, 0, 0};
     copyParams.blockLen = channel * sizeof(T);
     SetAtomicAdd<T>();
@@ -572,8 +572,8 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
 
     Muls(localTensor, gOutLocalTensor[cycle * alignChannel], weigthVal, channel);
     event_t eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID);
+    SetFlag<HardEvent::V_MTE3>(eventID);
+    WaitFlag<HardEvent::V_MTE3>(eventID);
     DataCopyParams copyParams{1, 0, 0, 0};
     copyParams.blockLen = channel * sizeof(T);
     SetAtomicAdd<T>();
@@ -776,8 +776,8 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
             padParams.paddingValue = GetScalarBitcodeValue((Dtype)0);
             DataCopyPad(gOutLocalTempTensor, inputGm[0][gradGmOffset], copyParams, padParams);
             event_t eventID1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-            set_flag(PIPE_MTE2, PIPE_V, eventID1);
-            wait_flag(PIPE_MTE2, PIPE_V, eventID1);
+            SetFlag<HardEvent::MTE2_V>(eventID1);
+            WaitFlag<HardEvent::MTE2_V>(eventID1);
             Cast(gOutLocalTensor, gOutLocalTempTensor, mode, alignChannel);
 
             ComputeAfterTransposeGridGrad(nwIndex, iySe, yTensor, ixSe, xTensor, gOutLocalTensor, selTensor1, i, n);
@@ -835,8 +835,8 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
                     gradGmOffset = n * gradStrideN + (h * gradStrideH + w * gradStrideW) * channel;
                     DataCopyPad(gOutLocalTempTensor[j * alignChannel], inputGm[0][gradGmOffset], copyParams, padParams);
                 }
-                set_flag(PIPE_MTE2, PIPE_S, eventID);
-                wait_flag(PIPE_MTE2, PIPE_S, eventID);
+                SetFlag<HardEvent::MTE2_S>(eventID);
+                WaitFlag<HardEvent::MTE2_S>(eventID);
                 Cast(gOutLocalTensor, gOutLocalTempTensor, mode, alignChannel * group);
                 for (int32_t k = 0; k < group; k++) {
                     gridPointIndex = curGridPointIndex + i * group + k;
@@ -856,8 +856,8 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
                 LocalTensor<Dtype> gOutLocalTempTensor = dataInQueue[0].AllocTensor<Dtype>();
                 LocalTensor<T> gOutLocalTensor = gOutLocalTensor2Buf.Get<T>(alignChannel * group);
                 DataCopyPad(gOutLocalTempTensor, inputGm[0][gradGmOffset], copyParams, padParams);
-                set_flag(PIPE_MTE2, PIPE_S, eventID);
-                wait_flag(PIPE_MTE2, PIPE_S, eventID);
+                SetFlag<HardEvent::MTE2_S>(eventID);
+                WaitFlag<HardEvent::MTE2_S>(eventID);
                 Cast(gOutLocalTensor, gOutLocalTempTensor, mode, alignChannel * group);
                 ComputeNearestXGrad(xIndex, dupOneTensor, times * group + i, 0, ncBaseOffset, gOutLocalTensor);
                 dataInQueue[0].FreeTensor(gOutLocalTempTensor);
@@ -873,8 +873,8 @@ __aicore__ inline void GridSampler2DGradFP16<T, Dtype, GridSamplerGradTilingData
                 LocalTensor<Dtype> gOutLocalTempTensor = dataInQueue[0].AllocTensor<Dtype>();
                 LocalTensor<T> gOutLocalTensor = gOutLocalTensor2Buf.Get<T>(alignChannel * group);
                 DataCopyPad(gOutLocalTempTensor, inputGm[0][gradGmOffset], copyParams, padParams);
-                set_flag(PIPE_MTE2, PIPE_S, eventID);
-                wait_flag(PIPE_MTE2, PIPE_S, eventID);
+                SetFlag<HardEvent::MTE2_S>(eventID);
+                WaitFlag<HardEvent::MTE2_S>(eventID);
                 Cast(gOutLocalTensor, gOutLocalTempTensor, mode, alignChannel * group);
                 ComputeNearestXGrad(xIndex, dupOneTensor, i, 0, ncBaseOffset, gOutLocalTensor);
                 dataInQueue[0].FreeTensor(gOutLocalTempTensor);

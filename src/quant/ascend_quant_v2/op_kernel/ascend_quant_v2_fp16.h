@@ -329,8 +329,8 @@ private:
 #else
     DataCopyPad(sLocal, scaleGm_, copyParams, {false, 0, 0, 0});
 #endif
-    set_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
-    wait_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
+    SetFlag<HardEvent::MTE2_S>(EVENT_ID0);
+    WaitFlag<HardEvent::MTE2_S>(EVENT_ID0);
     scale_ = static_cast<float>(*((__ubuf__ half *)sLocal.GetPhyAddr()));
     PipeBarrier<PIPE_V>();
     inQueueScale_.FreeTensor(sLocal);
@@ -342,8 +342,8 @@ private:
 #else
       DataCopyPad(oLocal, offsetGm_, copyParams, {false, 0, 0, 0});
 #endif
-      set_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
-      wait_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
+      SetFlag<HardEvent::MTE2_S>(EVENT_ID0);
+      WaitFlag<HardEvent::MTE2_S>(EVENT_ID0);
       offset_ = static_cast<float>(*((__ubuf__ half *)oLocal.GetPhyAddr()));
       PipeBarrier<PIPE_V>();
       inQueueOffset_.FreeTensor(oLocal);

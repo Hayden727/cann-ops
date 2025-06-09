@@ -556,8 +556,8 @@ __aicore__ inline void UpsampleBicubic2dND<T>::copyRatioTensorToGm(int8_t direct
         LocalTensor<T> ratioTensor = initRatioTensor(direction);
         DataCopy(intermediateTensorGm[workSpaceRatioOffset], ratioTensor, ratioTensor.GetSize());
         event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         releaseRatioTensor(direction, ratioTensor);
     } else {
@@ -566,8 +566,8 @@ __aicore__ inline void UpsampleBicubic2dND<T>::copyRatioTensorToGm(int8_t direct
         DataCopy(
             intermediateTensorGm[workSpaceRatioOffset], ratioTensor, (ratioTensor.GetSize() + size - 1) / size * size);
         event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         releaseRatioTensor(direction, ratioTensor);
     }
@@ -622,8 +622,8 @@ __aicore__ inline void UpsampleBicubic2dND<T>::calculateWidthExtension(
     matmulW.End();
 
     event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
 }
 
 template <typename T>
@@ -663,8 +663,8 @@ __aicore__ inline void UpsampleBicubic2dND<T>::calculateHeightExtension(
         matmulH.End();
 
         event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
     }
 }
 

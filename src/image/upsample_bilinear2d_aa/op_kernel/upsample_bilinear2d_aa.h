@@ -484,8 +484,8 @@ __aicore__ inline void UpsampleBilinearAAND<T>::copyRadioTensorToGm(int8_t direc
         LocalTensor<T> radioTensor = initRadioTensor(direction);
         DataCopy(intermediateTensorGm[workSpaceRadioOffset], radioTensor, radioTensor.GetSize());
         event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         releaseRadioTensor(direction, radioTensor);
     } else {
@@ -494,8 +494,8 @@ __aicore__ inline void UpsampleBilinearAAND<T>::copyRadioTensorToGm(int8_t direc
         DataCopy(
             intermediateTensorGm[workSpaceRadioOffset], radioTensor, (radioTensor.GetSize() + size - 1) / size * size);
         event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 
         releaseRadioTensor(direction, radioTensor);
     }
@@ -550,8 +550,8 @@ __aicore__ inline void UpsampleBilinearAAND<T>::calculateWidthExtension(
     matmulW.End();
 
     event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
 }
 
 template <typename T>
@@ -591,8 +591,8 @@ __aicore__ inline void UpsampleBilinearAAND<T>::calculateHeightExtension(
         matmulH.End();
 
         event_t eventID3 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventID3);
+        SetFlag<HardEvent::MTE3_MTE2>(eventID3);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventID3);
     }
 }
 

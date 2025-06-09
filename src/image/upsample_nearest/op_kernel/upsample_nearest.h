@@ -456,8 +456,8 @@ __aicore__ inline void UpsampleNearestND<T, MODE>::CopyOutBase(
     LocalTensor<T> dstDataLocal, int64_t indexOutput, int64_t calCount)
 {
     event_t eventID1 = static_cast<event_t>(pipe.FetchEventID(HardEvent::V_MTE3));
-    set_flag(PIPE_V, PIPE_MTE3, eventID1);
-    wait_flag(PIPE_V, PIPE_MTE3, eventID1);
+    SetFlag<HardEvent::V_MTE3>(eventID1);
+    WaitFlag<HardEvent::V_MTE3>(eventID1);
     if ((calCount % blockSize) == 0) {
         DataCopy(outTensorsGM[indexOutput], dstDataLocal, calCount);
     } else {
@@ -465,8 +465,8 @@ __aicore__ inline void UpsampleNearestND<T, MODE>::CopyOutBase(
         DataCopyPad(outTensorsGM[indexOutput], dstDataLocal, copyParams);
     }
     event_t eventID2 = static_cast<event_t>(pipe.FetchEventID(HardEvent::MTE3_MTE2));
-    set_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
-    wait_flag(PIPE_MTE3, PIPE_MTE2, eventID2);
+    SetFlag<HardEvent::MTE3_MTE2>(eventID2);
+    WaitFlag<HardEvent::MTE3_MTE2>(eventID2);
 }
 
 template <typename T, int32_t MODE>

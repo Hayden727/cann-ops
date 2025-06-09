@@ -21,7 +21,7 @@ extern "C" __global__ __aicore__ void upsample_bicubic2d_grad(
   GM_ADDR workspace,
   GM_ADDR tiling_addr) 
 {
-  set_mask_norm();
+  SetMaskNorm();
   GET_TILING_DATA(tiling_data, tiling_addr);
   const UpsampleBicubic2dGradTilingData* __restrict tilingData = &tiling_data;
   const TCubeTiling* __restrict MMHTiling = &(tilingData->MMParamH);
