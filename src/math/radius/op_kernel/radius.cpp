@@ -74,11 +74,9 @@ public:
                 int32_t xStart = xEnd;
                 yEnd = ptrYGm.GetValue(q + 1);
                 xEnd = ptrXGm.GetValue(q + 1);
-
                 if (yStart == yEnd || xStart == xEnd) {
                     continue;
                 }
-                
                 for (int i = yStart; i < yEnd; i++) {
                     ProcessNeighbors(i, xStart, xEnd);
                 }

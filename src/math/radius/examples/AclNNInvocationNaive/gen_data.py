@@ -11,10 +11,10 @@
 
 import os
 import sys
-import numpy as np
 from dataclasses import dataclass
+import numpy as np
 
-# 步骤1: 使用 dataclass 封装相关参数，解决“参数过多”问题
+
 @dataclass
 class RadiusParams:
     """封装Radius操作的配置参数"""
@@ -26,31 +26,14 @@ class RadiusParams:
 def _find_neighbors_for_point(y_point: np.ndarray, y_index: int,
                               x_batch: np.ndarray, x_offset: int,
                               params: RadiusParams) -> np.ndarray:
-    """
-    为单个y点在给定的x批次中查找邻居。
-    此函数是向量化的，以减少嵌套。
-
-    :param y_point: 单个y点的特征向量。
-    :param y_index: y点的原始索引。
-    :param x_batch: 用于搜索的x点的批次。
-    :param x_offset: x_batch在原始x数组中的起始索引。
-    :param params: Radius配置参数。
-    :return: 邻居的索引数组。
-    """
-    # 步骤3: 向量化计算，避免内层循环
+    """为单个y点在给定的x批次中查找邻居。"""
     distances = np.linalg.norm(x_batch - y_point, axis=1)
-    
-    # 使用 np.where 直接找到所有符合条件的索引
     neighbor_indices = np.where(distances <= params.r)[0]
-    
-    # 将批次内的相对索引转换回全局索引
     neighbor_indices += x_offset
 
-    # 如果需要，忽略相同索引的点
     if params.ignore_same_index:
         neighbor_indices = neighbor_indices[neighbor_indices != y_index]
 
-    # 应用最大邻居数限制
     return neighbor_indices[:params.max_num_neighbors]
 
 
@@ -69,30 +52,22 @@ def radius_numpy(x: np.ndarray, y: np.ndarray, params: RadiusParams,
     ans_dtype = x.dtype
     x = x.astype(np.float32)
     y = y.astype(np.float32)
-    
     out_vec = []
 
-    # 步骤2: 提取辅助函数后，主逻辑变得非常清晰，嵌套深度降低
-    if ptr_x is None and ptr_y is None:
-        # 单示例情况
-        for i in range(y.shape[0]):
-            neighbors = _find_neighbors_for_point(y[i], i, x, 0, params)
+    if ptr_x is None or ptr_y is None:
+        ptr_x = np.array([0, x.shape[0]])
+        ptr_y = np.array([0, y.shape[0]])
+
+    for b in range(len(ptr_x) - 1):
+        x_start, x_end = ptr_x[b], ptr_x[b + 1]
+        y_start, y_end = ptr_y[b], ptr_y[b + 1]
+        if x_start == x_end or y_start == y_end:
+            continue
+        x_batch = x[x_start:x_end]
+        for i in range(y_start, y_end):
+            neighbors = _find_neighbors_for_point(y[i], i, x_batch, x_start, params)
             for neighbor in neighbors:
                 out_vec.extend([neighbor, i])
-    else:
-        # 批次情况
-        for b in range(len(ptr_x) - 1):
-            x_start, x_end = ptr_x[b], ptr_x[b + 1]
-            y_start, y_end = ptr_y[b], ptr_y[b + 1]
-
-            if x_start == x_end or y_start == y_end:
-                continue
-            
-            x_batch = x[x_start:x_end]
-            for i in range(y_start, y_end):
-                neighbors = _find_neighbors_for_point(y[i], i, x_batch, x_start, params)
-                for neighbor in neighbors:
-                    out_vec.extend([neighbor, i])
 
     if not out_vec:
         return np.array([], dtype=ans_dtype).reshape(2, 0)
@@ -101,7 +76,6 @@ def radius_numpy(x: np.ndarray, y: np.ndarray, params: RadiusParams,
     return out
 
 
-# 调用示例
 if __name__ == "__main__":
     cdtype = os.getenv('COMPUTE_TYPE')
     if cdtype == 'float16':

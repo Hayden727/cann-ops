@@ -20,6 +20,7 @@ if gendata_dir not in sys.path:
     sys.path.insert(0, gendata_dir)
 from gen_data import radius_numpy, RadiusParams
 
+
 def generate_case(case_id, compute_dtype=np.float32):
     x = np.random.uniform(-5, 5, [100, 2]).astype(compute_dtype)
     y = np.random.uniform(-5, 5, [50, 2]).astype(compute_dtype)
