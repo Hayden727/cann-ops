@@ -16,21 +16,8 @@
 
 自定义算子编译部署后，会自动生成单算子API，可以直接在应用程序中调用。算子API的形式一般定义为“两段式接口”，形如：
    ```cpp    
-   aclnnStatus aclnnGatherGetWorkspaceSize(
-    const aclTensor *x1,
-    const aclTensor *indices,
-    bool validateIndices,
-    int64_t batchDims,
-    bool isPreprocessed,
-    bool negativeIndexSupport,
-    const aclTensor *out,
-    uint64_t *workspaceSize,
-    aclOpExecutor **executor);
-   aclnnStatus aclnnGather(
-    void *workspace,
-    uint64_t workspaceSize,
-    aclOpExecutor *executor,
-    aclrtStream stream);
+   aclnnStatus aclnnGatherGetWorkspaceSize(const aclTensor *x1, const aclTensor *indices, bool validateIndices, int64_t batchDims, bool isPreprocessed, bool negativeIndexSupport, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **executor);
+   aclnnStatus aclnnGather(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream);
    ```
 其中aclnnGatherGetWorkspaceSize为第一段接口，主要用于计算本次API调用计算过程中需要多少的workspace内存。获取到本次API计算需要的workspace大小之后，按照workspaceSize大小申请Device侧内存，然后调用第二段接口aclnnGather执行计算。具体参考[AscendCL单算子调用](https://hiascend.com/document/redirect/CannCommunityAscendCInVorkSingleOp)>单算子API执行 章节。
 
