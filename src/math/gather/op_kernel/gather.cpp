@@ -10,6 +10,7 @@
 #define K_MAX_SHAPE_DIM 0
 #include <type_traits>
 #include "kernel_operator.h"
+#define TI this->ti
 
 // Alias
 using namespace AscendC;
