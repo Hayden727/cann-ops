@@ -20,7 +20,7 @@ def gen_golden_data_simple():
     batch_dim = 1
     is_preprocessed = False
     negative_index_support = False
-    golden = tf.gather(x,indices,batch_dims=batch_dim).numpy()
+    golden = tf.gather(x, indices, batch_dims=batch_dim).numpy()
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     x.tofile("./input/input_x1.bin")
