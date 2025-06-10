@@ -54,7 +54,7 @@ Atlas A2 训练系列产品/Atlas 200I/500 A2推理产品
 - **参数说明：**
 
   - workspace（void\*，入参）：在Device侧申请的workspace内存起址。
-  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnSqrtGetWorkspaceSize获取。
+  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnReshapeGetWorkspaceSize获取。
   - executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**

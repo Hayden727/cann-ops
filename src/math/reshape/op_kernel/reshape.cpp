@@ -11,6 +11,7 @@
 #include <type_traits>
 #include "kernel_operator.h"
 
+#define TI this->ti
 // Alias
 using namespace AscendC;
 using std::is_same_v;
