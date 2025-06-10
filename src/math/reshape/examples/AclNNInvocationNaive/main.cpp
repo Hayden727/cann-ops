@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
     ret = aclnnReshapeGetWorkspaceSize(x, shape, 0, -1, y, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnSqrtGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnReshapeGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
     }
     // 执行算子
     ret = aclnnReshape(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnSqrt failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnReshape failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);

@@ -61,7 +61,6 @@ public:
 };
 extern "C" __global__ __aicore__ void reshape(GM_ADDR x, GM_ADDR shape, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    // TODO: user kernel impl
     if (TILING_KEY_IS(1)) {
         ReshapeTilingInfo<1> ti{
             .tileLength = tiling_data.tileLength,
