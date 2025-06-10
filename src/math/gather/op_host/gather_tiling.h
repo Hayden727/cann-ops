@@ -1,3 +1,5 @@
+#ifndef GATHER_TILING_H 
+#define GATHER_TILING_H
 /**
  * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This file is a part of the CANN Open Software.
@@ -35,4 +37,4 @@ namespace optiling {
     REGISTER_TILING_DATA_CLASS(Gather_0, GatherTilingDataWithDataCopy)
     REGISTER_TILING_DATA_CLASS(Gather_1, GatherTilingDataScalarCopy)
 }
-  
+#endif

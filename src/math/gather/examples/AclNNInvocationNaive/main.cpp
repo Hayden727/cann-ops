@@ -156,9 +156,9 @@ int main(int argc, char **argv)
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
-    std::vector<int64_t> x1Shape = {96,43,1023};
-    std::vector<int64_t> indicesShape = {96,43};
-    std::vector<int64_t> yShape = {96,43,1023};
+    std::vector<int64_t> x1Shape = {96, 43, 1023};
+    std::vector<int64_t> indicesShape = {96, 43};
+    std::vector<int64_t> yShape = {96, 43, 1023};
     void *x1DeviceAddr = nullptr;
     void *indicesDeviceAddr = nullptr;
     void *yDeviceAddr = nullptr;

@@ -14,8 +14,8 @@ import numpy as np
 import tensorflow as tf
 
 def gen_golden_data_simple():
-    x = np.random.uniform(-5, 5, [96,43,1023]).astype(np.int32)
-    indices = np.random.uniform(1, 43, [96,43]).astype(np.int32)
+    x = np.random.uniform(-5, 5, [96, 43, 1023]).astype(np.int32)
+    indices = np.random.uniform(1, 43, [96, 43]).astype(np.int32)
     validate_indices = True
     batch_dim = 1
     is_preprocessed = False

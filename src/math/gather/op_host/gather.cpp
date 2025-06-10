@@ -7,16 +7,13 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
+#include <algorithm>
+#include <vector>
 #include "gather_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <algorithm>
-#include <vector>
 
 #define SET(param) tiling.set_##param(param)
-#define ALIGN32(mem) ((mem) / 32u * 32u)
-#define CEIL(x, align_num) (((x) + (align_num) - 1) / (align_num) * (align_num))
-#define FLOOR(x, align_num) ((x) / (align_num) * (align_num))
 #define DEBUG_OUTPUT 1
 
 using std::max;
@@ -48,13 +45,16 @@ namespace optiling {
         vector<int32_t> xShape(shapeSize);
         for(int i = 0; i < shapeSize; ++i) xShape[i] = originShape[i];
         int32_t batch_dims = *context->GetAttrs()->GetInt(1);
-        if(batch_dims < 0) batch_dims += shapeSize;
+        if(batch_dims < 0) {
+            batch_dims += shapeSize;
+        }
         uint32_t sizeOfDataType = GetSizeByDataType(context->GetInputTensor(0)->GetDataType());
         uint32_t batchNumber = 1;
         for(int32_t i = 0; i < batch_dims; ++i) batchNumber *= xShape[i];
         uint32_t batchLength = xTotalLength / batchNumber;
         uint32_t indicesLength = indicesTotalLength / batchNumber;
         uint32_t sliceLength = batchLength / xShape[batch_dims];
+        if (sizeOfDataType == 0) return GRAPH_FAILED;
         if (sliceLength * sizeOfDataType <= 32) {
             context->SetTilingKey(1);
             GatherTilingDataScalarCopy tiling;
@@ -65,10 +65,10 @@ namespace optiling {
             tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
             context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
         } else { // sliceLength * sizeOfDataType > 32
-            uint32_t tileLength = FLOOR(ub_size / (2 * sizeOfDataType), 512 / sizeOfDataType);
+            uint32_t tileLength = (ub_size / (2 * sizeOfDataType)) / (512 / sizeOfDataType) * (512 / sizeOfDataType);
             uint32_t tileNumber = sliceLength / tileLength;
             uint32_t maxLength = tileNumber * tileLength;
-            uint32_t reminder = CEIL(sliceLength % tileLength, 32 / sizeOfDataType);
+            uint32_t reminder = ((sliceLength % tileLength) + (32 / sizeOfDataType) - 1) / (32 / sizeOfDataType) * (32 / sizeOfDataType);
             context->SetTilingKey(0);
             GatherTilingDataWithDataCopy tiling;
             SET(batchNumber);
@@ -127,7 +127,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b");
-
     }
 };
 
