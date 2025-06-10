@@ -165,14 +165,14 @@ int main(int argc, char **argv)
     aclTensor *x = nullptr;
     aclTensor *shape = nullptr;
     aclTensor *y = nullptr;
-    std::vector<int32_t> xHostData(8 * 47 * 123 * 1023);
-    std::vector<int32_t> shapeHostData(4);
-    std::vector<int32_t> yHostData(123 * 47 * 8 * 1023);
+    std::vector<float> xHostData(GetShapeSize(xShape));
+    std::vector<int32_t> shapeHostData(GetShapeSize(shapeShape));
+    std::vector<float> yHostData(GetShapeSize(yShape));
 
     size_t fileSize = 0;
     //读取数据
-    ReadFile("../input/input_x.bin", fileSize, x1HostData.data(), 8 * 47 * 123 * 1023 * 4);
-    ReadFile("../input/input_shape.bin", fileSize, indicesHostData.data(), 4 * 4);
+    ReadFile("../input/input_x.bin", fileSize, xHostData.data(), xHostData.size() * sizeof(xHostData[0]));
+    ReadFile("../input/input_shape.bin", fileSize, shapeHostData.data(), shapeHostData.size() * sizeof(shapeHostData[0]));
     INFO_LOG("Set input success");
     // 创建 AclTensor
     ret = CreateAclTensor(xHostData, xShape, &xDeviceAddr, aclDataType::ACL_FLOAT, &x);
@@ -207,9 +207,8 @@ int main(int argc, char **argv)
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), yDeviceAddr,
                       size * sizeof(float), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void** output1=(void**)(&resultData);
     //写出数据
-    WriteFile("../output/output_y.bin", *output1, 123 * 47 * 8 * 1023 * 4);
+    WriteFile("../output/output_y.bin", resultData.data(), resultData.size() * sizeof(resultData[0]));
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改

@@ -11,6 +11,7 @@
 
 import os
 import numpy as np
+import torch
 
 
 def reshape_tensor(x, shape_tensor, axis=0, num_axes=-1):
@@ -35,8 +36,8 @@ def gen_golden_data_simple():
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
-    x.tofile("./input/input_x.bin")
-    shape.tofile("./input/input_shape.bin")
+    x.numpy().tofile("./input/input_x.bin")
+    shape.numpy().tofile("./input/input_shape.bin")
     golden.tofile("./output/golden.bin")
 
 if __name__ == "__main__":
