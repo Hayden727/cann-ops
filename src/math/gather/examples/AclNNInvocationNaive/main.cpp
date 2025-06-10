@@ -165,14 +165,14 @@ int main(int argc, char **argv)
     aclTensor *x1 = nullptr;
     aclTensor *indices = nullptr;
     aclTensor *y = nullptr;
-    std::vector<int32_t> x1HostData(96 * 43 * 1023);
-    std::vector<int32_t> indicesHostData(96 * 43);
-    std::vector<int32_t> yHostData(96 * 43 * 1023);
+    std::vector<int32_t> x1HostData(GetShapeSize(x1Shape));
+    std::vector<int32_t> indicesHostData(GetShapeSize(indicesShape));
+    std::vector<int32_t> yHostData(GetShapeSize(yShape));
 
     size_t fileSize = 0;
     //读取数据
-    ReadFile("../input/input_x1.bin", fileSize, x1HostData.data(), 96 * 43 * 1023 * 4);
-    ReadFile("../input/input_indices.bin", fileSize, indicesHostData.data(), 96 * 43 * 4);
+    ReadFile("../input/input_x1.bin", fileSize, x1HostData.data(), x1HostData.size() * sizeof(x1HostData[0]));
+    ReadFile("../input/input_indices.bin", fileSize, indicesHostData.data(), indicesHostData.size() * sizeof(indicesHostData[0]));
     INFO_LOG("Set input success");
     // 创建 AclTensor
     ret = CreateAclTensor(x1HostData, x1Shape, &x1DeviceAddr, aclDataType::ACL_INT32, &x1);
@@ -203,13 +203,12 @@ int main(int argc, char **argv)
 
     // 5. 获取输出的值，将device侧内存上的结果拷贝至host侧，需要根据具体API的接口定义修改
     auto size = GetShapeSize(yShape);
-    std::vector<aclFloat16> resultData(size, 0);
+    std::vector<int32_t> resultData(size, 0);
     ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]), yDeviceAddr,
-                      size * sizeof(aclFloat16), ACL_MEMCPY_DEVICE_TO_HOST);
+                      size * sizeof(int32_t), ACL_MEMCPY_DEVICE_TO_HOST);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return FAILED);
-    void** output1=(void**)(&resultData);
     //写出数据
-    WriteFile("../output/output_y.bin", *output1, 96 * 43 * 1023 * 4);
+    WriteFile("../output/output_y.bin", resultData.data(), resultData.size() * sizeof(resultData[0]));
     INFO_LOG("Write output success");
 
     // 6. 释放aclTensor，需要根据具体API的接口定义修改

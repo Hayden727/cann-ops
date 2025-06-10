@@ -23,9 +23,9 @@ source $_ASCEND_INSTALL_PATH/bin/setenv.bash
 export DDK_PATH=$_ASCEND_INSTALL_PATH
 export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
 
-rm -rf $HOME/ascend/log/*
-rm ./input/*.bin
-rm ./output/*.bin
+rm -rf $HOME/ascend/log/* 2>/dev/null
+rm ./input/*.bin 2>/dev/null
+rm ./output/*.bin 2>/dev/null
 
 python3 gen_data.py
 

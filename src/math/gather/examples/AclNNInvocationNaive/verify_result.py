@@ -18,7 +18,7 @@ MINIMUM = 10e-10
 
 
 def verify_result(real_result, golden):
-    dtype = np.float16
+    dtype = np.int32
     real_result = np.fromfile(real_result, dtype=dtype) # 从bin文件读取实际运算结果
     golden = np.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
     result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
