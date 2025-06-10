@@ -1,3 +1,5 @@
+#ifndef RESHAPE_TILING_H 
+#define RESHAPE_TILING_H
 /**
  * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
  * This file is a part of the CANN Open Software.
@@ -17,3 +19,5 @@ namespace optiling {
   END_TILING_DATA_DEF;
 REGISTER_TILING_DATA_CLASS(Reshape, ReshapeTilingData)
 }
+
+#endif

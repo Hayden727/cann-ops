@@ -27,9 +27,9 @@ def reshape_tensor(x, shape_tensor, axis=0, num_axes=-1):
 
 
 def gen_golden_data_simple():
-    length_x = [8,47,123,1023]
+    length_x = [8, 47, 123, 1023]
     x = (torch.rand(length_x, device='cpu') * 10 - 5).to(torch.float32)
-    shape = torch.tensor([123,47,8,1023], dtype=torch.int32)
+    shape = torch.tensor([123, 47, 8, 1023], dtype=torch.int32)
     axis = 0
     num_axes = -1
     golden = reshape_tensor(x, shape, axis, num_axes).numpy()

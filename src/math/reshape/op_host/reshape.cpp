@@ -7,16 +7,14 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
+#include <algorithm>
+#include <vector>
 #include "reshape_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <algorithm>
-#include <vector>
+
 
 #define SET(param) tiling.set_##param(param)
-#define ALIGN32(mem) ((mem) / 32u * 32u)
-#define CEIL(x, align_num) (((x) + (align_num) - 1) / (align_num) * (align_num))
-#define FLOOR(x, align_num) ((x) / (align_num) * (align_num))
 #define DEBUG_OUTPUT 1
 
 using std::max;
@@ -58,6 +56,7 @@ namespace optiling {
             default:
                 printf("dt=UNKNOWN: %d\n", context->GetInputTensor(0)->GetDataType());break;
         }
+        if (type_sz == 0) return ge::GRAPH_FAILED;
         uint32_t mini_batch = 32 / type_sz;
         uint32_t ub_size_per_it = 0;
         switch(context->GetInputTensor(0)->GetDataType()) {
@@ -84,9 +83,9 @@ namespace optiling {
         printf("sizeof(data)= %u, ", type_sz);
         if(ub_size_per_it != 0) { // known data types
             context->SetTilingKey(1);
-            uint32_t tileLength = FLOOR(ub_size / ub_size_per_it, mini_batch);
+            uint32_t tileLength = ub_size / ub_size_per_it / mini_batch * mini_batch;
             uint32_t tileNumber = dataLength / tileLength;
-            uint32_t reminder = dataLength % tileLength;
+            uint32_t reminder = (dataLength % tileLength + mini_batch - 1) / mini_batch * mini_batch;
             SET(tileLength);
             SET(tileNumber);
             SET(reminder);
@@ -132,13 +131,10 @@ public:
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
         this->Attr("axis").AttrType(OPTIONAL).Int(0);
         this->Attr("num_axes").AttrType(OPTIONAL).Int(-1);
-
         this->SetInferShape(ge::InferShape);
-
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310b");
-
     }
 };
 
