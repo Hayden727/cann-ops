@@ -90,14 +90,14 @@ __aicore__ inline void DataCopyEx(const R<T> &dst, const S<T> &src, const uint32
             int32_t num = elementCount / numPerBlock * numPerBlock;
             DataCopy(dst, src, num);
             if (elementCount != num) {
-                set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-                wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+                SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+                WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
                 for (int32_t i = 0; i < numPerBlock; i++) {
                     auto tensorValue = src.GetValue(elementCount - numPerBlock + i);
                     src.SetValue(i, tensorValue);
                 }
-                set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
-                wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+                SetFlag<HardEvent::S_MTE3>(EVENT_ID0);
+                WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);
                 DataCopy(dst[elementCount - numPerBlock], src, numPerBlock);
             }
         }
@@ -118,11 +118,11 @@ __aicore__ inline float ReduceMaxFP32(const LocalTensor<float> &src_local, int32
         SetVectorMask<float>(0, count);
         ReduceMax(src_local, src_local, src_local, 1);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         uint64_t reg_val = get_max_min_cnt();
         value = *reinterpret_cast<float *>(&reg_val);
-        set_mask_norm();
+        SetMaskNorm();
         SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else
@@ -169,11 +169,11 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         SetVectorMask<float>(0, count);
         ReduceSum(src_local, src_local, src_local, 1);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         uint64_t acc_val = GetAccVal();
         value = *reinterpret_cast<float *>(&acc_val);
-        set_mask_norm();
+        SetMaskNorm();
         SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else

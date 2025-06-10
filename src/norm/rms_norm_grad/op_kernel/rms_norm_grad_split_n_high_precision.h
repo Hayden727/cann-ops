@@ -347,14 +347,14 @@ public:
         uint32_t colValTail = colVal_ % ALIGN_32;
         DataCopy(workspaceGm_, dgammaOut, colValAlign);
         if (colValTail != 0) {
-            set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-            wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
             for (uint32_t i = 0; i < ALIGN_32; i++) {
                 float tensorValue = dgammaOut.GetValue(colVal_ - ALIGN_32 + i);
                 dgammaOut.SetValue(i, tensorValue);
             }
-            set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+            SetFlag<HardEvent::S_MTE3>(EVENT_ID0);
+            WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);
             DataCopy(workspaceGm_[colVal_ - ALIGN_32], dgammaOut, ALIGN_32);
         }
 #endif
@@ -400,15 +400,15 @@ public:
     {
         LocalTensor<float> rstdLocal = inQueRstd_.DeQue<float>();
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float rstd_value = rstdLocal.GetValue(0);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
         inQueRstd_.FreeTensor(rstdLocal);
         LocalTensor<float> xLocal = inQueX_.DeQue<float>();
         Cast2FloatIf<T_DY>(xLocal, colValAlign_, colValAlign_);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         // x*rstd
         Muls(xLocal, xLocal, rstd_value, colValAlign_);
         PipeBarrier<PIPE_V>();
@@ -432,8 +432,8 @@ public:
         float sumValue = ReduceSumHalfInterval(dxLocal, colVal_);
         float meanValue = sumValue * avgFactor_;
         event_t eventSV2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV2);
-        wait_flag(PIPE_S, PIPE_V, eventSV2);
+        SetFlag<HardEvent::S_V>(eventSV2);
+        WaitFlag<HardEvent::S_V>(eventSV2);
         // meanValue * x * rstd
         Muls(dxLocal, xLocal, meanValue, colValAlign_);
         PipeBarrier<PIPE_V>();
@@ -582,8 +582,8 @@ public:
         uint32_t rowIdx, uint32_t opType, uint32_t calcLen, LocalTensor<float> &dgammaLocal, uint32_t ttL)
     {
         event_t eventVMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         if (opType == 2) {
             DataCopyParams dataCopyParams{
                 static_cast<uint16_t>(1), static_cast<uint16_t>((calcLen * colValAlign_ * sizeof(float)) / 32), 0, 0};
@@ -603,8 +603,8 @@ public:
             }
         }
         event_t eventMTE3V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V);
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V);
     }
 
     // 计算拷入
@@ -612,8 +612,8 @@ public:
         uint32_t blockSize, LocalTensor<float> &dstTensor)
     {
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-        wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+        SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+        WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
         uint32_t offset = cutInRowNum * calcRowIdx * colValAlign_ + calcColIdx * cutInColNum;
 
         DataCopyParams dataCopyParams{static_cast<uint16_t>(blockCounts),
@@ -622,8 +622,8 @@ public:
             0};
         DataCopy(dstTensor, workspaceMiddleDgammaGm_[offset], dataCopyParams);
         event_t eventIDMTE2ToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventIDMTE2ToV);
-        wait_flag(PIPE_MTE2, PIPE_V, eventIDMTE2ToV);
+        SetFlag<HardEvent::MTE2_V>(eventIDMTE2ToV);
+        WaitFlag<HardEvent::MTE2_V>(eventIDMTE2ToV);
     }
 
     __aicore__ inline void DoAParallelReduce(

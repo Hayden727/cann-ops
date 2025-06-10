@@ -191,8 +191,8 @@ private:
             PipeBarrier<PIPE_V>();
             auto ave_local_temp = ReduceSumFP32(yLocalFp32, numLastDim);
             event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Adds(zLocalFp32[roundOffset], zLocalFp32[roundOffset], ave_local_temp * -1, numLastDim);
             PipeBarrier<PIPE_V>();
             Mul(xLocalFp32, zLocalFp32[roundOffset], zLocalFp32[roundOffset], numLastDim);
@@ -202,8 +202,8 @@ private:
             float var_local_temp = ReduceSumFP32(yLocalFp32, numLastDim);
             float rstd_local_temp = 1 / sqrt(var_local_temp + eps);
             eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Muls(xLocalFp32, zLocalFp32[roundOffset], rstd_local_temp, numLastDim);
             PipeBarrier<PIPE_V>();
 
@@ -264,8 +264,8 @@ private:
         }
 
         event_t eventMTE2S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, eventMTE2S);
-        wait_flag(PIPE_MTE2, PIPE_S, eventMTE2S);
+        SetFlag<HardEvent::MTE2_S>(eventMTE2S);
+        WaitFlag<HardEvent::MTE2_S>(eventMTE2S);
         inRowsQue.EnQue(constCopyIn);
         auto constLocal = inRowsQue.template DeQue<S>();
 

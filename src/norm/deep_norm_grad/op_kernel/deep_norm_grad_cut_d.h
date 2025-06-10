@@ -366,8 +366,8 @@ private:
         SetAtomicNone();
 
         event_t eventMTE3S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_S));
-        set_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
-        wait_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
+        SetFlag<HardEvent::MTE3_S>(eventMTE3S);
+        WaitFlag<HardEvent::MTE3_S>(eventMTE3S);
 
         outputPdGammaQue.FreeTensor(outputPdGammaLocal);
         outputPdBetaQue.FreeTensor(outputPdBetaLocal);
@@ -452,13 +452,13 @@ private:
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
 
         // 2.1. scalar
-        set_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte2_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte2_s);
         float inputMeanNum = inputMean.GetValue(0);
         float inputRstdNum = inputRstd.GetValue(0);
         float rstdSqrtTmpNum = inputRstdNum * inputRstdNum * inputRstdNum;
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         // 3.1. tmpTensor2 = x_sum - mean
         Adds(inputGx, inputGx, inputMeanNum * (-1.0f), processElem);
@@ -573,14 +573,14 @@ private:
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
 
         // 2.1. scalar
-        set_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte2_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte2_s);
         float inputMeanNum = inputMean.GetValue(0);
         float inputRstdNum = inputRstd.GetValue(0);
         float tmpVarPdNum = tmpVarPdLocal.GetValue(0);
         float tmpMeanPdNum = tmpMeanPdLocal.GetValue(0);
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         // 2.1. tmpTensor2 = x - mean
         Adds(inputGx, inputGx, inputMeanNum * (-1.0f), processElem);
@@ -647,12 +647,12 @@ private:
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
 
         // 2.1. scalar
-        set_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte2_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte2_s);
         float inputMeanNum = inputMean.GetValue(0);
         float inputRstdNum = inputRstd.GetValue(0);
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         rstdQue.FreeTensor(inputRstd);
         meanQue.FreeTensor(inputMean);

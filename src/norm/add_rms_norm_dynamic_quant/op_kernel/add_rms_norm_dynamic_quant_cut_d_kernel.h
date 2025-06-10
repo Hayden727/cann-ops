@@ -365,22 +365,22 @@ private:
     __aicore__ inline void PIPE_MTE3_MTE2()
     {
         event_t eventMTE3MTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
     }
 
     __aicore__ inline void PIPE_S_V()
     {
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
     }
 
     __aicore__ inline void PIPE_V_S()
     {
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
     }
 
 private:

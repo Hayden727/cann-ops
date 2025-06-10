@@ -377,14 +377,14 @@ private:
 
         // 2. x2Tensor = inputX - inputMean
         event_t event_mte2_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte2_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte2_s);
         float inputMeanNum = inputMean.GetValue(0);
         float inputRstdNum = inputRstd.GetValue(0);
         float tmpLocalNum = inputRstdNum * inputRstdNum * inputRstdNum;
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Adds(outputDx, inputX1, inputMeanNum * (-1.0f), elem_cout_d_x_y);
         PipeBarrier<PIPE_V>();
 
@@ -400,7 +400,7 @@ private:
         auto aveLocalTemp = ReduceSumCustom(inputX1, numLastDim);
         inputMeanNum = aveLocalTemp * -reduceAxisSize;
         event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
 
         // 4. pd_mean = np.sum((-1.0) * x1Tensor * inputRstd)
         // output: gamma = x2Tensor * rstd * inputDy
@@ -413,7 +413,7 @@ private:
         Add(outputDbeta, outputDbeta, inputDy, elem_cout_d_x_y);
 
         // 4.1. res1 = (-1.0) * x1Tensor * rstd
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Muls(inputX1, outputDx, inputMeanNum, elem_cout_d_x_y);
         PipeBarrier<PIPE_V>();
         Muls(outputDx, inputX2, inputRstdNum, elem_cout_d_x_y);
@@ -426,7 +426,7 @@ private:
         aveLocalTemp = ReduceSumCustom(inputDy, elem_cout_d_x_y);
         inputMeanNum = aveLocalTemp * reduceAxisSize;
         event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
 
         // 5. d_x = x1Tensor * inputRstd +
         //           pd_var * (2.0 / reduceAxisSize) * x2Tensor +
@@ -435,7 +435,7 @@ private:
         // 5.2. res1 = pd_var*(2.0 / reduceAxisSize)*(x2Tensor)
         // 5.3. res2 = pd_mean*(1.0 / reduceAxisSize)
         // 5.4. d_x = res0 + res1 + res2
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Adds(outputDx, inputX2, inputMeanNum, elem_cout_d_x_y);
         PipeBarrier<PIPE_V>();
         if constexpr (HAS_ADDITIONAL_INPUT) {

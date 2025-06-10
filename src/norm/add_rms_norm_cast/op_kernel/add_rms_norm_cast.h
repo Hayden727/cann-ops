@@ -165,12 +165,12 @@ private:
         Div(sqx, reduce_buf_local, sqx, 1);
         PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float rstdValue = sqx.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         rstdLocal.SetValue(inner_progress, rstdValue);
         PipeBarrier<PIPE_V>();
         Muls(x_fp32, x_fp32, rstdValue, numCol);
@@ -184,19 +184,19 @@ private:
         PipeBarrier<PIPE_V>();
 
         event_t event_v_mte = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, event_v_mte);
-        wait_flag(PIPE_V, PIPE_MTE2, event_v_mte);
+        SetFlag<HardEvent::V_MTE2>(event_v_mte);
+        WaitFlag<HardEvent::V_MTE2>(event_v_mte);
 
         outQueueY.EnQue<bfloat16_t>(yLocal);
         Cast(x_fp32, yLocal, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
         event_t event_v_mte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
-        wait_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
+        SetFlag<HardEvent::V_MTE3>(event_v_mte3);
+        WaitFlag<HardEvent::V_MTE3>(event_v_mte3);
         DataCopyCustom<float>(y1Gm[progress], x_fp32, numCol);
         event_t event_mte3_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
-        wait_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
+        SetFlag<HardEvent::MTE3_V>(event_mte3_v);
+        WaitFlag<HardEvent::MTE3_V>(event_mte3_v);
     }
 
     __aicore__ inline void Compute(
@@ -224,12 +224,12 @@ private:
         Div(sqx, reduce_buf_local, sqx, 1);
         PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float rstdValue = sqx.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         rstdLocal.SetValue(inner_progress, rstdValue);
         PipeBarrier<PIPE_V>();
         Muls(x_fp32, x_fp32, rstdValue, numCol);
@@ -238,8 +238,8 @@ private:
         Cast(yLocal, x_fp32, RoundMode::CAST_NONE, numCol);
 
         event_t event_v_mte = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, event_v_mte);
-        wait_flag(PIPE_V, PIPE_MTE2, event_v_mte);
+        SetFlag<HardEvent::V_MTE2>(event_v_mte);
+        WaitFlag<HardEvent::V_MTE2>(event_v_mte);
 
         PipeBarrier<PIPE_V>();
         Mul(yLocal, gammaLocal, yLocal, numCol);
@@ -248,12 +248,12 @@ private:
         Cast(x_fp32, yLocal, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
         event_t event_v_mte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
-        wait_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
+        SetFlag<HardEvent::V_MTE3>(event_v_mte3);
+        WaitFlag<HardEvent::V_MTE3>(event_v_mte3);
         DataCopyCustom<float>(y1Gm[progress], x_fp32, numCol);
         event_t event_mte3_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
-        wait_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
+        SetFlag<HardEvent::MTE3_V>(event_mte3_v);
+        WaitFlag<HardEvent::MTE3_V>(event_mte3_v);
     }
 
     __aicore__ inline void CopyOutY(uint32_t progress)

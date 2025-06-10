@@ -227,8 +227,8 @@ private:
             LocalTensor<bfloat16_t> scales1Bf16 = scales1Buf.Get<bfloat16_t>()[ubFactor];
             DataCopyCustom<bfloat16_t>(scales1Bf16, scales1Gm[jIdx * ubFactor], num);
             event_t eventMte2V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-            set_flag(PIPE_MTE2, PIPE_V, eventMte2V);
-            wait_flag(PIPE_MTE2, PIPE_V, eventMte2V);
+            SetFlag<HardEvent::MTE2_V>(eventMte2V);
+            WaitFlag<HardEvent::MTE2_V>(eventMte2V);
             Cast(scales1Local, scales1Bf16, RoundMode::CAST_NONE, num);
             PipeBarrier<PIPE_V>();
         }
@@ -238,16 +238,16 @@ private:
                 LocalTensor<int32_t> zeroPoints1Int32 = zeroPoints1Buf.Get<int32_t>();
                 DataCopyCustom<int32_t>(zeroPoints1Int32, zeroPoints1Gm[jIdx * ubFactor], num);
                 event_t eventMte2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-                set_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
-                wait_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
+                SetFlag<HardEvent::MTE2_V>(eventMte2V2);
+                WaitFlag<HardEvent::MTE2_V>(eventMte2V2);
                 Cast(zeroPoints1Fp32, zeroPoints1Int32, RoundMode::CAST_NONE, num);
                 PipeBarrier<PIPE_V>();
             } else {
                 LocalTensor<bfloat16_t> zeroPoints1Bf16 = zeroPoints1Buf.Get<bfloat16_t>()[ubFactor];
                 DataCopyCustom<bfloat16_t>(zeroPoints1Bf16, zeroPoints1Gm[jIdx * ubFactor], num);
                 event_t eventMte2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-                set_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
-                wait_flag(PIPE_MTE2, PIPE_V, eventMte2V2);
+                SetFlag<HardEvent::MTE2_V>(eventMte2V2);
+                WaitFlag<HardEvent::MTE2_V>(eventMte2V2);
                 Cast(zeroPoints1Fp32, zeroPoints1Bf16, RoundMode::CAST_NONE, num);
                 PipeBarrier<PIPE_V>();
             }
@@ -263,12 +263,12 @@ private:
         LocalTensor<float> xFp32Local = xFp32Buf.Get<float>();
         LocalTensor<float> sqx = sqxBuf.Get<float>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float rstdValue = rstdLocal.GetValue(iIIdx);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         PipeBarrier<PIPE_V>();
         Muls(xFp32Local, xFp32Local, rstdValue, num);
         PipeBarrier<PIPE_V>();

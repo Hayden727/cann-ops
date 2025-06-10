@@ -248,8 +248,8 @@ private:
         SetAtomicNone();
 
         event_t eventMTE3S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_S));
-        set_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
-        wait_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
+        SetFlag<HardEvent::MTE3_S>(eventMTE3S);
+        WaitFlag<HardEvent::MTE3_S>(eventMTE3S);
 
         outputPdBetaQue.FreeTensor(dbeta);
         outputPdGammaQue.FreeTensor(dgamma);

@@ -201,8 +201,8 @@ __aicore__ inline float ReduceSumHalfInterval(const LocalTensor<float> &src_loca
         DEFAULT_REPEAT_STRIDE);
 #endif
     event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-    set_flag(PIPE_V, PIPE_S, event_v_s);
-    wait_flag(PIPE_V, PIPE_S, event_v_s);
+    SetFlag<HardEvent::V_S>(event_v_s);
+    WaitFlag<HardEvent::V_S>(event_v_s);
     return src_local.GetValue(0);
 }
 #endif  // REDUCE_COMMON_H_

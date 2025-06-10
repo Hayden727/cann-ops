@@ -633,7 +633,7 @@ private:
         PipeBarrier<PIPE_V>();
         acc_val = GetAccVal();
         sumValue = *reinterpret_cast<float *>(&acc_val);
-        set_mask_norm();
+        SetMaskNorm();
     }
 
 private:

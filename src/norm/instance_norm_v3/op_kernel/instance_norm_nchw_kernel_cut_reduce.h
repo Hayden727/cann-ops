@@ -113,8 +113,8 @@ private:
         ReduceSum(xSumTensor, xSumTensor, xSumTensor, this->ubFactor);
         ReduceSum(xSquareSumTensor, xSquareSumTensor, xSquareSumTensor, this->ubFactor);
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float meanScalar = xSumTensor.GetValue(0);
         float xSquareMeanScalar = xSquareSumTensor.GetValue(0);
         float varScalar = xSquareMeanScalar - meanScalar * meanScalar;  // Var(x) = E(x**2) - E(x)**2
@@ -122,8 +122,8 @@ private:
         varTensor.SetValue(cIdx, varScalar);
         float rstdScalar = 1 / sqrt(varScalar + this->eps);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
 
         PipeBarrier<PIPE_V>();
 
@@ -217,8 +217,8 @@ private:
             DataCopyCustomGM2UB(gammaLocal, this->gammaGm[cGmOffset], size);
             DataCopyCustomGM2UB(betaLocal, this->betaGm[cGmOffset], size);
             event_t eventMTE2S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-            set_flag(PIPE_MTE2, PIPE_S, eventMTE2S);
-            wait_flag(PIPE_MTE2, PIPE_S, eventMTE2S);
+            SetFlag<HardEvent::MTE2_S>(eventMTE2S);
+            WaitFlag<HardEvent::MTE2_S>(eventMTE2S);
         } else {
             auto gammaLocalHalf = gammaLocal.ReinterpretCast<half>()[this->cAxisFactor];
             auto betaLocalHalf = betaLocal.ReinterpretCast<half>()[this->cAxisFactor];
@@ -226,14 +226,14 @@ private:
             DataCopyCustomGM2UB(betaLocalHalf, this->betaGm[cGmOffset], size);
 
             event_t eventMTE2V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-            set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
-            wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
+            SetFlag<HardEvent::MTE2_V>(eventMTE2V);
+            WaitFlag<HardEvent::MTE2_V>(eventMTE2V);
 
             Cast(gammaLocal, gammaLocalHalf, RoundMode::CAST_NONE, size);
             Cast(betaLocal, betaLocalHalf, RoundMode::CAST_NONE, size);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventVS);
-            wait_flag(PIPE_V, PIPE_S, eventVS);
+            SetFlag<HardEvent::V_S>(eventVS);
+            WaitFlag<HardEvent::V_S>(eventVS);
             PipeBarrier<PIPE_V>();
         }
     }

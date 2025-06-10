@@ -93,11 +93,11 @@ __aicore__ inline float ReduceMaxFP32(const LocalTensor<float> &srcLocal, int32_
         ReduceMax(srcLocal, srcLocal, srcLocal, 1);
         PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         uint64_t reg_val = get_max_min_cnt();
         value = *reinterpret_cast<float *>(&reg_val);
-        set_mask_norm();
+        SetMaskNorm();
         SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else
@@ -147,11 +147,11 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &srcLocal, int32_
         ReduceSum(srcLocal, srcLocal, srcLocal, 1);
         PipeBarrier<PIPE_V>();
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         uint64_t acc_val = GetAccVal();
         value = *reinterpret_cast<float *>(&acc_val);
-        set_mask_norm();
+        SetMaskNorm();
         SetVectorMask<float>(static_cast<uint64_t>(-1), static_cast<uint64_t>(-1));
     }
 #else

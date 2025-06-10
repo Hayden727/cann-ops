@@ -285,8 +285,8 @@ __aicore__ inline void RmsNormGradWholeReduceN<half>::ComputeMain(LocalTensor<ha
     for (uint32_t i = 0; i < calcLen; i++) {
         float rstdValue = rstd.GetValue(i);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Muls(tmp32Buf2[i * colVal], tmp32Buf2[i * colVal], rstdValue, colVal);
         PipeBarrier<PIPE_V>();
         Cast(tmp32Buf[i * colVal], gamma, RoundMode::CAST_NONE, colVal);
@@ -315,12 +315,12 @@ __aicore__ inline void RmsNormGradWholeReduceN<half>::ComputeMain(LocalTensor<ha
         }
         WholeReduceSum(dySum[i * colVal], dySum[i * colVal], colSplitNum, 1, 1, 1, 8);
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float dySumVal = dySum.GetValue(i * colVal) * avgFactor;
         event_t eventSV2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV2);
-        wait_flag(PIPE_S, PIPE_V, eventSV2);
+        SetFlag<HardEvent::S_V>(eventSV2);
+        WaitFlag<HardEvent::S_V>(eventSV2);
         Muls(dySum[i * colVal], tmp32Buf2[i * colVal], dySumVal, colVal);
         PipeBarrier<PIPE_V>();
         Sub(dySum[i * colVal], tmp32Buf[i * colVal], dySum[i * colVal], colVal);
@@ -367,8 +367,8 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
     for (uint32_t i = 0; i < calcLen; i++) {
         float rstdValue = rstd.GetValue(i);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         // grad_y = dy * g
         Mul(tmp_buf[i * colVal], dy[i * colVal], gamma, colVal);
         // y = x * rstd
@@ -418,22 +418,22 @@ __aicore__ inline void RmsNormGradWholeReduceN<float>::ComputeMain(LocalTensor<f
         }
         WholeReduceSum(dy[i * colVal], dy[i * colVal], colSplitNum, 1, 1, 1, 8);
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float dySumVal = dy.GetValue(i * colVal) * avgFactor;
         event_t eventSV2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV2);
-        wait_flag(PIPE_S, PIPE_V, eventSV2);
+        SetFlag<HardEvent::S_V>(eventSV2);
+        WaitFlag<HardEvent::S_V>(eventSV2);
         Muls(x[i * colVal], x[i * colVal], dySumVal, colVal);
         PipeBarrier<PIPE_V>();
         Sub(tmp_buf[i * colVal], tmp_buf[i * colVal], x[i * colVal], colVal);
         event_t eventVS2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS2);
-        wait_flag(PIPE_V, PIPE_S, eventVS2);
+        SetFlag<HardEvent::V_S>(eventVS2);
+        WaitFlag<HardEvent::V_S>(eventVS2);
         float rstdValue = rstd.GetValue(i);
         event_t eventSV3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV3);
-        wait_flag(PIPE_S, PIPE_V, eventSV3);
+        SetFlag<HardEvent::S_V>(eventSV3);
+        WaitFlag<HardEvent::S_V>(eventSV3);
         if (i == calcLen - 1) {
             inQueX.FreeTensor(x);
             inQueDY.FreeTensor(dy);

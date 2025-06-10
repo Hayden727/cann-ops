@@ -79,26 +79,18 @@ public:
                 AscendCUtils::SetMask<float>(elementNumPerRep);
                 ReduceSum(srcLocal, srcLocal, srcLocal, repeatTimes);
                 event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-                set_flag(PIPE_V, PIPE_S, event_v_s);
-                wait_flag(PIPE_V, PIPE_S, event_v_s);
-#ifdef __CCE_KT_TEST__
-                uint64_t accVal = get_acc_val();
-#else
+                SetFlag<HardEvent::V_S>(event_v_s);
+                WaitFlag<HardEvent::V_S>(event_v_s);
                 uint64_t accVal = GetAccVal();
-#endif
                 value = *reinterpret_cast<float *>(&accVal);
             }
             if (unlikely(tailCount != 0)) {
                 AscendCUtils::SetMask<float>(tailCount);
                 ReduceSum(srcLocal[bodyCount], srcLocal[bodyCount], srcLocal[bodyCount], 1);
                 event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-                set_flag(PIPE_V, PIPE_S, event_v_s);
-                wait_flag(PIPE_V, PIPE_S, event_v_s);
-#ifdef __CCE_KT_TEST__
-                uint64_t accVal = get_acc_val();
-#else
+                SetFlag<HardEvent::V_S>(event_v_s);
+                WaitFlag<HardEvent::V_S>(event_v_s);
                 uint64_t accVal = GetAccVal();
-#endif
                 value += *reinterpret_cast<float *>(&accVal);
             }
         }
@@ -112,8 +104,8 @@ public:
 #else
         ReduceSum(src_local, src_local, src_local, count);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float rstd_value = src_local.GetValue(0);
         return rstd_value;
 #endif
@@ -452,15 +444,15 @@ __aicore__ inline void DataCopyCustom(const U &dstTensor, const R &srcTensor, co
         }
         DataCopy(dstTensor[curOffset], srcTensor[idx * RoundUp(processElem, blockNumel)], blkLength);
         if (tail != 0) {
-            set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-            wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
             for (uint32_t i = 0; i < blockNumel; i++) {
                 T tensorValue =
                     srcTensor.GetValue(idx * RoundUp(processElem, blockNumel) + processElem - blockNumel + i);
                 srcTensor.SetValue(idx * RoundUp(processElem, blockNumel) + i, tensorValue);
             }
-            set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+            SetFlag<HardEvent::S_MTE3>(EVENT_ID0);
+            WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);
             DataCopy(dstTensor[curOffset + processElem - blockNumel],
                 srcTensor[idx * RoundUp(processElem, blockNumel)],
                 blockNumel);

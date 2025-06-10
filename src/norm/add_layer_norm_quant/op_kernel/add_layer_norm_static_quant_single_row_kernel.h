@@ -137,8 +137,8 @@ private:
         Muls(tmpTensor, xTensor, this->aveNum, this->numLastDim);         // x / N
         float aveLocalTemp = ReduceSumFP32(tmpTensor, this->numLastDim);  // E(X)
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Adds(xTensor, xTensor, -1 * aveLocalTemp, this->numLastDim);  // x - E(X)
         PipeBarrier<PIPE_V>();
         Mul(tmpTensor, xTensor, xTensor, this->numLastDim);  // (x - E(X)) ** 2
@@ -149,8 +149,8 @@ private:
         PipeBarrier<PIPE_V>();
         float rstdLocalTemp = 1 / sqrt(varLocalTemp + this->eps);  // rstd = 1 / Sqrt(Var(x) + this->eps)
         event_t eventSV1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV1);
-        wait_flag(PIPE_S, PIPE_V, eventSV1);
+        SetFlag<HardEvent::S_V>(eventSV1);
+        WaitFlag<HardEvent::S_V>(eventSV1);
         Muls(xTensor, xTensor, rstdLocalTemp, this->numLastDim);  // (x - E(X)) * rstd
 
         rowInQue.EnQue(scales01In);
@@ -232,8 +232,8 @@ private:
 
         Div(constsTensor, xTensor, constsTensor, this->numLastDim);  // ((x - E(X)) * rstd * gamma + beta) / scales
         event_t event_v_mte2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, event_v_mte2);
-        wait_flag(PIPE_V, PIPE_MTE2, event_v_mte2);
+        SetFlag<HardEvent::V_MTE2>(event_v_mte2);
+        WaitFlag<HardEvent::V_MTE2>(event_v_mte2);
 
         PipeBarrier<PIPE_V>();
         if (isZeroPoint2Exist) {
@@ -387,8 +387,8 @@ private:
         Muls(tmpTensor, xTensor, this->aveNum, this->numLastDim);
         PipeBarrier<PIPE_V>();
         float aveLocalTemp = ReduceSumFP32(tmpTensor, this->numLastDim);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+        SetFlag<HardEvent::S_V>(EVENT_ID0);
+        WaitFlag<HardEvent::S_V>(EVENT_ID0);
         Adds(xTensor, xTensor, -1 * aveLocalTemp, this->numLastDim);
         PipeBarrier<PIPE_V>();
         Mul(tmpTensor, xTensor, xTensor, this->numLastDim);
@@ -397,8 +397,8 @@ private:
         PipeBarrier<PIPE_V>();
         float varLocalTemp = ReduceSumFP32(tmpTensor, this->numLastDim);
         float rstdLocalTemp = 1 / sqrt(varLocalTemp + this->eps);
-        set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-        wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+        SetFlag<HardEvent::S_V>(EVENT_ID0);
+        WaitFlag<HardEvent::S_V>(EVENT_ID0);
 
         LocalTensor<T> inTensor = rowOutQue.template AllocTensor<T>();
         DataCopyEx(inTensor, scalesGm, this->numLastDim);
@@ -423,16 +423,16 @@ private:
         PipeBarrier<PIPE_V>();
 
         event_t eventMTE2V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V);
         Cast(tmpTensor, inTensor, RoundMode::CAST_NONE, this->numLastDim);
         PipeBarrier<PIPE_V>();
 
         event_t eventVMTE2;
         if (isOffsetExist) {
             eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-            set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-            wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+            SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+            WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
             DataCopyEx(inTensor, offsetsGm, this->numLastDim);
         }
         Div(xTensor, xTensor, tmpTensor, this->numLastDim);
@@ -440,8 +440,8 @@ private:
 
         if (isOffsetExist) {
             eventMTE2V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-            set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
-            wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
+            SetFlag<HardEvent::MTE2_V>(eventMTE2V);
+            WaitFlag<HardEvent::MTE2_V>(eventMTE2V);
             Cast(tmpTensor, inTensor, RoundMode::CAST_NONE, this->numLastDim);
             PipeBarrier<PIPE_V>();
             Add(xTensor, xTensor, tmpTensor, this->numLastDim);
@@ -449,8 +449,8 @@ private:
 
         rowOutQue.FreeTensor(inTensor);
         eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-        wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+        SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+        WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
 
         LocalTensor<int8_t> yLocal = quantizeOutQue.template AllocTensor<int8_t>();
         Cast(xTensor.ReinterpretCast<int32_t>(), xTensor, RoundMode::CAST_RINT, this->numLastDim);

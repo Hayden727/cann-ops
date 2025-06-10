@@ -220,8 +220,8 @@ private:
             auto roundOffset = rid * this->numLastDimAligned;
             auto aveLocalTemp = ReduceSumFP32(yLocalFp32[roundOffset], this->numLastDim);  // aveLocalTemp <-- E(x)
             event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Adds(xLocalFp32[roundOffset],
                 xLocalFp32[roundOffset],
                 aveLocalTemp * -1,
@@ -241,8 +241,8 @@ private:
             float rstdLocalTemp = 1 / sqrt(varLocalTemp + this->eps);                       // rstdLocalTemp <-- rstd
 
             event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Muls(xLocalFp32[roundOffset],
                 xLocalFp32[roundOffset],
                 rstdLocalTemp,

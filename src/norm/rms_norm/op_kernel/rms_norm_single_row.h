@@ -126,12 +126,12 @@ private:
         // 2. Rstd = 1 / sqrt(1 / reduceDim * reducesum(x^2) + eps)
         float reduceOut = ReduceSumHalfInterval(xLocal, numCol);
         inQueueX.FreeTensor(xLocal);
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float rstdValue = 1 / sqrt(reduceOut * avgFactor + epsilon);
         rstdLocal.SetValue(innerProgress, rstdValue);
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
 
         // 3. Y = x * rstd * gamma
         Muls(xLocalFp32, xLocalFp32, rstdValue, numCol);

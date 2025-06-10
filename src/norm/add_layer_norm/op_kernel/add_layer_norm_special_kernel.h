@@ -281,8 +281,8 @@ private:
 #if OUTPUT_MEAN_RSTD == 1
             meanLocal.SetValue(rid, aveLocalTemp);
 #endif
-            set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::S_V>(EVENT_ID0);
+            WaitFlag<HardEvent::S_V>(EVENT_ID0);
             Adds(yLocalFp32[rid * numLastDimAligned],
                 xLocalFp32[rid * numLastDimAligned],
                 aveLocalTemp * -1,
@@ -302,8 +302,8 @@ private:
 #if OUTPUT_MEAN_RSTD == 1
             rstdLocal.SetValue(rid, rstdLocalTemp);
 #endif
-            set_flag(PIPE_S, PIPE_V, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_V, EVENT_ID0);
+            SetFlag<HardEvent::S_V>(EVENT_ID0);
+            WaitFlag<HardEvent::S_V>(EVENT_ID0);
             Muls(xLocalFp32[rid * numLastDimAligned], yLocalFp32[rid * numLastDimAligned], rstdLocalTemp, numLastDim);
         }
         PipeBarrier<PIPE_V>();

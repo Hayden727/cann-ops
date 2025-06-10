@@ -110,11 +110,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
             ReduceSum(src_local, src_local, src_local, repeatTimes);
             SetFlag<HardEvent::V_S>(EVENT_ID0);
             WaitFlag<HardEvent::V_S>(EVENT_ID0);
-#ifdef __CCE_KT_TEST__
-            uint64_t acc_val = get_acc_val();
-#else
             uint64_t acc_val = GetAccVal();
-#endif
             value = *reinterpret_cast<float *>(&acc_val);
         }
         if (unlikely(tailCount != 0)) {
@@ -122,11 +118,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
             ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             SetFlag<HardEvent::V_S>(EVENT_ID0);
             WaitFlag<HardEvent::V_S>(EVENT_ID0);
-#ifdef __CCE_KT_TEST__
-            uint64_t acc_val = get_acc_val();
-#else
             uint64_t acc_val = GetAccVal();
-#endif
             value += *reinterpret_cast<float *>(&acc_val);
         }
     }

@@ -159,14 +159,14 @@ __aicore__ inline void DataCopyCustom(const U &dstTensor, const R &srcTensor, co
         } else {
             int32_t num = count / numPerBlock * numPerBlock;
             DataCopy(dstTensor, srcTensor, num);
-            set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-            wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+            SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+            WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
             for (int32_t i = 0; i < numPerBlock; i++) {
                 T tensorValue = srcTensor.GetValue(count - numPerBlock + i);
                 srcTensor.SetValue(i, tensorValue);
             }
-            set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
-            wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+            SetFlag<HardEvent::S_MTE3>(EVENT_ID0);
+            WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);
             DataCopy(dstTensor[count - numPerBlock], srcTensor, numPerBlock);
         }
     }

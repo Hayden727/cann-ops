@@ -137,8 +137,8 @@ private:
         float squareSumTemp = ReduceSumHalfInterval(yLocalFp32, this->numLastDim);
         float rstdLocalTemp = 1 / sqrt(squareSumTemp * this->aveNum + this->eps);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Muls(xLocalFp32, xLocalFp32, rstdLocalTemp, this->numLastDim);  // xLocalFp32 <- x * rstd
         PipeBarrier<PIPE_V>();
         LocalTensor<T> gammaLocal = inRowsQue.template DeQue<T>();
@@ -209,14 +209,14 @@ private:
         PipeBarrier<PIPE_V>();
         ReduceMaxInplace(tmpTensor, this->numLastDim);
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float maxTemp = tmpTensor.GetValue(0);
         float scaleTemp = DYNAMIC_QUANT_DIVIDEND / maxTemp;
         scaleTensor.SetValue(idx, 1 / scaleTemp);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Muls(srcTensor, srcTensor, scaleTemp, this->numLastDim);
         PipeBarrier<PIPE_V>();
     }

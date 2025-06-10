@@ -168,12 +168,12 @@ private:
         Div(sqx[start_index], reduce_buf_local, sqx[start_index], NUM_PER_BLK_FP32, last_repeat_num, DivParams);
         event_t eventId = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
         event_t eventId_S_V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_V, PIPE_S, eventId);
-        wait_flag(PIPE_V, PIPE_S, eventId);
+        SetFlag<HardEvent::V_S>(eventId);
+        WaitFlag<HardEvent::V_S>(eventId);
         for (uint32_t i_i = 0; i_i < calc_row_num; i_i++) {
             float rstdValue = sqx.GetValue(i_i * NUM_PER_BLK_FP32);
-            set_flag(PIPE_S, PIPE_V, eventId_S_V);
-            wait_flag(PIPE_S, PIPE_V, eventId_S_V);
+            SetFlag<HardEvent::S_V>(eventId_S_V);
+            WaitFlag<HardEvent::S_V>(eventId_S_V);
             Muls(x[i_i * num_col_align], x[i_i * num_col_align], rstdValue, num_col_align);
             rstdLocal.SetValue(inner_progress + i_i, rstdValue);
         }
@@ -313,8 +313,8 @@ private:
     __aicore__ inline void CopyOutRstd(uint32_t outer_progress, uint32_t num)
     {
         event_t event = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_MTE3));
-        set_flag(PIPE_S, PIPE_MTE3, event);
-        wait_flag(PIPE_S, PIPE_MTE3, event);
+        SetFlag<HardEvent::S_MTE3>(event);
+        WaitFlag<HardEvent::S_MTE3>(event);
 
         LocalTensor<float> rstdLocal = outQueueRstd.DeQue<float>();
         DataCopy(rstdGm[outer_progress], rstdLocal, num);

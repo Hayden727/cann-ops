@@ -174,8 +174,8 @@ private:
         auto tmpLocal = xBufLocal.template ReinterpretCast<T_NEEDCAST>();
         DataCopyEx(tmpLocal, xNeedCastGm[gmOffset], size);
 
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V);
         Cast(yBufLocal, tmpLocal, RoundMode::CAST_NONE, size);  // cast together with MTE2
         DataCopyEx(xNoCastLocalIn, xNoCastGm[gmOffset], size);
         inputOutputQue.EnQue(xNoCastLocalIn);
@@ -274,11 +274,11 @@ private:
         tmpQueFp32.FreeTensor(tmpLocal);
 
         // 3. x1 datacopy to ub
-        set_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
-        wait_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
+        SetFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
+        WaitFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
         DataCopyEx(yLocalHalf, x1Gm[gmOffset], size);
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V);
 
         // 4. fp32 add x1 to x2/bias
         LocalTensor<T> xOutLocal = inputOutputQue.template AllocTensor<T>();
@@ -319,18 +319,18 @@ private:
 
         if constexpr (IsSame<T, float>::value) {
             auto addBufLocal = xBufFp32.Get<float>();
-            set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-            wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+            SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+            WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
             DataCopyEx(xGm[gmOffset], addBufLocal, size);
         } else {
             event_t eventMTE3MTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
             LocalTensor<float> xOutLocal = inputOutputQue.template DeQue<float>();
             auto xOutLocalHalf = xOutLocal.ReinterpretCast<T>();
-            set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-            wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+            SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+            WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
             DataCopyEx(xGm[gmOffset], xOutLocalHalf, size);
-            set_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
-            wait_flag(PIPE_MTE3, PIPE_MTE2, eventMTE3MTE2);
+            SetFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
+            WaitFlag<HardEvent::MTE3_MTE2>(eventMTE3MTE2);
             inputOutputQue.FreeTensor(xOutLocal);
         }
     }
@@ -353,8 +353,8 @@ private:
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
         LocalTensor<T_GAMMA> betaLocal = yBufFp32.Get<float>();
 
-        set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-        wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+        SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+        WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
         DataCopyEx(betaLocal, betaGm, numLastDim);
     }
 
@@ -366,16 +366,16 @@ private:
         auto yLocalFp32 = yBufFp32.Get<float>();
         uint32_t gmOffset = rowIdx * rowStep * numLastDim;
 
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         if constexpr (IsSame<T, float>::value) {
             DataCopyEx(yGm[gmOffset], yLocalFp32, numLastDim, row_count);
         } else if constexpr (IS_X_B16_GAMMA_B32) {
             auto yLocalFp32Half = yLocalFp32.ReinterpretCast<T>();
             DataCopyEx(yGm[gmOffset], yLocalFp32Half, numLastDim, row_count);
         }
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V);
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V);
 
 #if OUTPUT_MEAN_RSTD == 1
         uint32_t gm_offset_mean = rowIdx * rowStep;
@@ -405,14 +405,14 @@ private:
         PipeBarrier<PIPE_V>();
         // 2. mean end: reduce(1/N * x_sum)
         float meanLocalTemp = ReduceSumFP32(yLocalFp32, numLastDim);
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
 
         // 3. rstd process: x - mean
         Adds(yLocalFp32, xLocalFp32, meanLocalTemp * -1, numLastDim);
         PipeBarrier<PIPE_V>();
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);  // need make sure xout MTE3 finish.
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V);  // need make sure xout MTE3 finish.
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V);
         // 4. rstd process: (x - mean) ^ 2
         Mul(xLocalFp32, yLocalFp32, yLocalFp32, numLastDim);
         PipeBarrier<PIPE_V>();
@@ -427,8 +427,8 @@ private:
         meanLocal.SetValue(0, meanLocalTemp);
         rstdLocal.SetValue(0, rstdLocalTemp);
 #endif
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         // 7. y process: (x - mean) / rstd
         Muls(xLocalFp32, yLocalFp32, rstdLocalTemp, numLastDim);
         PipeBarrier<PIPE_V>();
@@ -455,8 +455,8 @@ private:
 
         Mul(xLocalFp32, xLocalFp32, gammaLocal, numLastDim);
         PipeBarrier<PIPE_V>();
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V);  // unuse deque, need make sure MTE2 finish.
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V);  // unuse deque, need make sure MTE2 finish.
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V);
         if constexpr (IsSame<T, float>::value) {
             Add(yLocalFp32, xLocalFp32, yLocalFp32, numLastDim);
         } else if constexpr (IsSame<T, half>::value) {

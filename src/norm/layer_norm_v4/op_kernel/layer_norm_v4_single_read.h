@@ -150,7 +150,7 @@ private:
         }
 
         // calculate x * coefficient
-        set_mask_norm();
+        SetMaskNorm();
         Muls(yLocal, xLocal, coefficient, tileLength);
         PipeBarrier<PIPE_V>();
 
@@ -164,7 +164,7 @@ private:
             acc_val = GetAccVal();
             value = *reinterpret_cast<float *>(&acc_val);
             meanLocal.SetValue(rowIdx, static_cast<float>(value));
-            set_mask_norm();
+            SetMaskNorm();
             Adds(yLocal[currentRowOffset], xLocal[currentRowOffset], -value, rowSize);
         }
 
@@ -231,7 +231,7 @@ private:
                     padParams);
             }
 
-            set_mask_norm();
+            SetMaskNorm();
             Muls(yLocal[currentRowOffset], yLocal[currentRowOffset], rstdValue, rowSize);
 
             // if sizeof(Tweight) == 2, wait for gamma loaded, cast gamma to float
