@@ -56,7 +56,7 @@ namespace optiling {
             case DT_INT8:
                 printf("dt=int8\n");break;
             default:
-                printf("dt=UNKNOWN: %d\n", context->GetInputTensor(0)->GetDataType());
+                printf("dt=UNKNOWN: %d\n", context->GetInputTensor(0)->GetDataType());break;
         }
         uint32_t mini_batch = 32 / type_sz;
         uint32_t ub_size_per_it = 0;
@@ -79,6 +79,7 @@ namespace optiling {
             case DT_INT8:
                 ub_size_per_it = 2;
                 break;
+            default:break;
         }
         printf("sizeof(data)= %u, ", type_sz);
         if(ub_size_per_it != 0) { // known data types
