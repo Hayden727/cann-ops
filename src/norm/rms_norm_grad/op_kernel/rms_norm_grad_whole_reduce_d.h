@@ -266,12 +266,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<half>::ComputeDgamma(
     LocalTensor<float> tmp32Buf3 = ndBufFp32Buf3.Get<float>();
     // dy * (x * rstd)  -> sum
     event_t eventMteS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventMteS);
-    wait_flag(PIPE_MTE2, PIPE_S, eventMteS);
+    SetFlag<HardEvent::MTE2_S>(eventMteS);
+    WaitFlag<HardEvent::MTE2_S>(eventMteS);
     float rstdValue = rstdUb.GetValue(0);
     event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventSV);
-    wait_flag(PIPE_S, PIPE_V, eventSV);
+    SetFlag<HardEvent::S_V>(eventSV);
+    WaitFlag<HardEvent::S_V>(eventSV);
     Cast(tmp32Buf2, xUb, RoundMode::CAST_NONE, calcLen);
     PipeBarrier<PIPE_V>();
     Muls(tmp32Buf2, tmp32Buf2, rstdValue, calcLen);
@@ -296,12 +296,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<float>::ComputeDgamma(
     LocalTensor<float> rstdUb = inQueRstd.DeQue<float>();
     // dy * (x * rstd)  -> sum
     event_t eventMteS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventMteS);
-    wait_flag(PIPE_MTE2, PIPE_S, eventMteS);
+    SetFlag<HardEvent::MTE2_S>(eventMteS);
+    WaitFlag<HardEvent::MTE2_S>(eventMteS);
     float rstdValue = rstdUb.GetValue(0);
     event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventSV);
-    wait_flag(PIPE_S, PIPE_V, eventSV);
+    SetFlag<HardEvent::S_V>(eventSV);
+    WaitFlag<HardEvent::S_V>(eventSV);
     Muls(xUb, xUb, rstdValue, calcLen);
     PipeBarrier<PIPE_V>();
     inQueRstd.FreeTensor(rstdUb);
@@ -324,12 +324,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<half>::ComputeMain(
     LocalTensor<float> tmp32Buf2 = ndBufFp32Buf2.Get<float>();
     LocalTensor<float> tmp32Buf3 = ndBufFp32Buf3.Get<float>();
     event_t eventMteS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventMteS);
-    wait_flag(PIPE_MTE2, PIPE_S, eventMteS);
+    SetFlag<HardEvent::MTE2_S>(eventMteS);
+    WaitFlag<HardEvent::MTE2_S>(eventMteS);
     float rstdValue = rstdUb.GetValue(0);
     event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventSV);
-    wait_flag(PIPE_S, PIPE_V, eventSV);
+    SetFlag<HardEvent::S_V>(eventSV);
+    WaitFlag<HardEvent::S_V>(eventSV);
     Cast(tmp32Buf2, xUb, RoundMode::CAST_NONE, calcLen);
     PipeBarrier<PIPE_V>();
     inQueX.FreeTensor(xUb);
@@ -373,12 +373,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<float>::ComputeMain(
     LocalTensor<float> dyUb = inQueDY.DeQue<float>();
     LocalTensor<float> rstdUb = inQueRstd.DeQue<float>();
     event_t eventMteS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventMteS);
-    wait_flag(PIPE_MTE2, PIPE_S, eventMteS);
+    SetFlag<HardEvent::MTE2_S>(eventMteS);
+    WaitFlag<HardEvent::MTE2_S>(eventMteS);
     float rstdValue = rstdUb.GetValue(0);
     event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventSV);
-    wait_flag(PIPE_S, PIPE_V, eventSV);
+    SetFlag<HardEvent::S_V>(eventSV);
+    WaitFlag<HardEvent::S_V>(eventSV);
     Muls(xUb, xUb, rstdValue, calcLen);
     PipeBarrier<PIPE_V>();
     inQueRstd.FreeTensor(rstdUb);
@@ -408,12 +408,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<half>::ComputeDySum(
     LocalTensor<half> dyUb = inQueDY.DeQue<half>();
     LocalTensor<float> rstdUb = inQueRstd.DeQue<float>();
     event_t eventMteS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventMteS);
-    wait_flag(PIPE_MTE2, PIPE_S, eventMteS);
+    SetFlag<HardEvent::MTE2_S>(eventMteS);
+    WaitFlag<HardEvent::MTE2_S>(eventMteS);
     float rstd_value = rstdUb.GetValue(0);
     event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventSV);
-    wait_flag(PIPE_S, PIPE_V, eventSV);
+    SetFlag<HardEvent::S_V>(eventSV);
+    WaitFlag<HardEvent::S_V>(eventSV);
 
     LocalTensor<float> dySumPart = ndBufFp32Buf1.Get<float>();
     LocalTensor<float> tmp32Buf = ndBufFp32Buf2.Get<float>();
@@ -467,12 +467,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<float>::ComputeDySum(
     LocalTensor<float> dyUb = inQueDY.DeQue<float>();
     LocalTensor<float> rstdUb = inQueRstd.DeQue<float>();
     event_t eventMteS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-    set_flag(PIPE_MTE2, PIPE_S, eventMteS);
-    wait_flag(PIPE_MTE2, PIPE_S, eventMteS);
+    SetFlag<HardEvent::MTE2_S>(eventMteS);
+    WaitFlag<HardEvent::MTE2_S>(eventMteS);
     float rstd_value = rstdUb.GetValue(0);
     event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    set_flag(PIPE_S, PIPE_V, eventSV);
-    wait_flag(PIPE_S, PIPE_V, eventSV);
+    SetFlag<HardEvent::S_V>(eventSV);
+    WaitFlag<HardEvent::S_V>(eventSV);
     LocalTensor<float> dySumPart = ndBufFp32Buf1.Get<float>();
     Duplicate(dySumPart, 0.0f, ubTailAlign);
     PipeBarrier<PIPE_V>();
@@ -524,12 +524,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<half>::ProcessMain(uint32_t loopL
         Muls(dySum, dySum, avgFactor, alignLen);
         PipeBarrier<PIPE_V>();
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float dySumVal = dySum.GetValue(0);
         event_t eventSMte2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_MTE2));
-        set_flag(PIPE_S, PIPE_MTE2, eventSMte2);
-        wait_flag(PIPE_S, PIPE_MTE2, eventSMte2);
+        SetFlag<HardEvent::S_MTE2>(eventSMte2);
+        WaitFlag<HardEvent::S_MTE2>(eventSMte2);
         for (uint32_t j = 0; j < (ubCalcTail == 0 ? ubCalcLoop : ubCalcLoop - 1); j++) {
             CopyIn(i, j, ubFactor);
             CopyGammaIn(j, ubFactor);
@@ -574,12 +574,12 @@ __aicore__ inline void RmsNormGradWholeReduceD<float>::ProcessMain(uint32_t loop
         Muls(dySum, dySum, avgFactor, alignLen);
         PipeBarrier<PIPE_V>();
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float dySumVal = dySum.GetValue(0);
         event_t eventSMte2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_MTE2));
-        set_flag(PIPE_S, PIPE_MTE2, eventSMte2);
-        wait_flag(PIPE_S, PIPE_MTE2, eventSMte2);
+        SetFlag<HardEvent::S_MTE2>(eventSMte2);
+        WaitFlag<HardEvent::S_MTE2>(eventSMte2);
         for (uint32_t j = 0; j < (ubCalcTail == 0 ? ubCalcLoop : ubCalcLoop - 1); j++) {
             CopyGammaIn(j, ubFactor);
             LocalTensor<float> gammaUb = inQueGamma.DeQue<float>();

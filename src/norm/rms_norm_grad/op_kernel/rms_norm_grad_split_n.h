@@ -387,8 +387,8 @@ public:
         for (uint32_t i = 0; i < calc_len; i++) {
             float rstd_value = rstd.GetValue(i);
             event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, event_s_v);
-            wait_flag(PIPE_S, PIPE_V, event_s_v);
+            SetFlag<HardEvent::S_V>(event_s_v);
+            WaitFlag<HardEvent::S_V>(event_s_v);
             // grad_y = dy * g
             Mul(tmp_buf[i * col_val_align], dy[i * col_val_align], gamma, col_val_align);
             // y = x * rstd
@@ -571,8 +571,8 @@ public:
         for (uint32_t i = 0; i < calc_len; i++) {
             float rstd_value = rstd.GetValue(i);
             event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, event_s_v);
-            wait_flag(PIPE_S, PIPE_V, event_s_v);
+            SetFlag<HardEvent::S_V>(event_s_v);
+            WaitFlag<HardEvent::S_V>(event_s_v);
             // y = x * rstd
             Cast(tmp_32_buf_2[i * col_val_align], x[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
             PipeBarrier<PIPE_V>();
@@ -773,12 +773,12 @@ public:
             Cast(tmp_32_buf[i * col_val_align], dy[i * col_val_align], RoundMode::CAST_NONE, col_val_align);
             PipeBarrier<PIPE_V>();
             event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-            set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-            wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+            SetFlag<HardEvent::MTE2_S>(event_mte_s);
+            WaitFlag<HardEvent::MTE2_S>(event_mte_s);
             float rstd_value = rstd.GetValue(i);
             event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, event_s_v);
-            wait_flag(PIPE_S, PIPE_V, event_s_v);
+            SetFlag<HardEvent::S_V>(event_s_v);
+            WaitFlag<HardEvent::S_V>(event_s_v);
             // y = x * rstd
             Muls(tmp_32_buf_2[i * col_val_align], tmp_32_buf_2[i * col_val_align], rstd_value, col_val_align);
             PipeBarrier<PIPE_V>();

@@ -68,15 +68,15 @@ __aicore__ inline void DataCopyEx(const R<T> &dst, const S<T> &src, const uint32
             DataCopy(dst, src, num);
             if (elementCount != num) {
                 event_t eventMTE3S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_S));
-                set_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
-                wait_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
+                SetFlag<HardEvent::MTE3_S>(eventMTE3S);
+                WaitFlag<HardEvent::MTE3_S>(eventMTE3S);
                 for (int32_t i = 0; i < numPerBlock; i++) {
                     auto tensorValue = src.GetValue(elementCount - numPerBlock + i);
                     src.SetValue(i, tensorValue);
                 }
                 event_t eventSMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_MTE3));
-                set_flag(PIPE_S, PIPE_MTE3, eventSMTE3);
-                wait_flag(PIPE_S, PIPE_MTE3, eventSMTE3);
+                SetFlag<HardEvent::S_MTE3>(eventSMTE3);
+                WaitFlag<HardEvent::S_MTE3>(eventSMTE3);
                 DataCopy(dst[elementCount - numPerBlock], src, numPerBlock);
             }
         }
@@ -103,26 +103,18 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
             AscendCUtils::SetMask<float>(elementNumPerRep);
             ReduceSum(src_local, src_local, src_local, repeatTimes);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventVS);
-            wait_flag(PIPE_V, PIPE_S, eventVS);
-#ifdef __CCE_KT_TEST__
-            uint64_t acc_val = get_acc_val();
-#else
+            SetFlag<HardEvent::V_S>(eventVS);
+            WaitFlag<HardEvent::V_S>(eventVS);
             uint64_t acc_val = GetAccVal();
-#endif
             value = *reinterpret_cast<float *>(&acc_val);
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
             ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventVS);
-            wait_flag(PIPE_V, PIPE_S, eventVS);
-#ifdef __CCE_KT_TEST__
-            uint64_t acc_val = get_acc_val();
-#else
+            SetFlag<HardEvent::V_S>(eventVS);
+            WaitFlag<HardEvent::V_S>(eventVS);
             uint64_t acc_val = GetAccVal();
-#endif
             value += *reinterpret_cast<float *>(&acc_val);
         }
     }

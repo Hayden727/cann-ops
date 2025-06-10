@@ -182,8 +182,8 @@ public:
 
                 CopyIn(offsetUbXY, offsetUbMeanVar, elemCoutXYUb, DRstdInUb, nAvailInUb, offsetUbGamma);
                 event_t event_mte2_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-                set_flag(PIPE_MTE2, PIPE_V, event_mte2_v);
-                wait_flag(PIPE_MTE2, PIPE_V, event_mte2_v);
+                SetFlag<HardEvent::MTE2_V>(event_mte2_v);
+                WaitFlag<HardEvent::MTE2_V>(event_mte2_v);
                 LocalTensor<T> inputDy = dyQue.DeQue<T>();
                 LocalTensor<T> inputX1 = x1Que.DeQue<T>();
                 LocalTensor<T> inputX2 = x2Que.DeQue<T>();
@@ -239,8 +239,8 @@ public:
                 dGammaQue.EnQue(outputDgamma);
                 dBetaQue.EnQue(outputDbeta);
                 event_t event_v_mte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-                set_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
-                wait_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
+                SetFlag<HardEvent::V_MTE3>(event_v_mte3);
+                WaitFlag<HardEvent::V_MTE3>(event_v_mte3);
                 CopyOutBetaGamma(offsetUbGamma, elemCoutXYUb);
                 PipeBarrier<PIPE_ALL>();
             }
@@ -255,8 +255,8 @@ public:
 
                 CopyIn(offsetUbXY, offsetUbMeanVar, elemCoutXYUb, DRstdInUb, nAvailInUb, offsetUbGamma, true);
                 event_t event_mte2_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-                set_flag(PIPE_MTE2, PIPE_V, event_mte2_v);
-                wait_flag(PIPE_MTE2, PIPE_V, event_mte2_v);
+                SetFlag<HardEvent::MTE2_V>(event_mte2_v);
+                WaitFlag<HardEvent::MTE2_V>(event_mte2_v);
                 LocalTensor<T> inputDy = dyQue.DeQue<T>();
                 LocalTensor<T> inputX1 = x1Que.DeQue<T>();
                 LocalTensor<T> inputX2 = x2Que.DeQue<T>();
@@ -324,8 +324,8 @@ public:
                 }
                 dXQue.EnQue(outputDx);
                 event_t event_v_mte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-                set_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
-                wait_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
+                SetFlag<HardEvent::V_MTE3>(event_v_mte3);
+                WaitFlag<HardEvent::V_MTE3>(event_v_mte3);
                 CopyOutX(offsetUbXY, elemCoutXYUb, nAvailInUb);
             }
         }
@@ -416,10 +416,10 @@ private:
         // 1. x1Tensor = inputDy * inputGamma
         Add(inputX1, inputX1, inputX2, elem_cout_d_x_y);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
         Mul(inputGamma, inputDy, inputGamma, elem_cout_d_x_y);
         // 2. x2Tensor = inputX - inputMean
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float inputMeanNum = inputMean.GetValue(0);
         float inputRstdNum = inputRstd.GetValue(0);
         Duplicate<float>(outputDx, inputMeanNum, elem_cout_d_x_y);
@@ -427,8 +427,8 @@ private:
         PipeBarrier<PIPE_V>();
         float tmpLocalNum = inputRstdNum * inputRstdNum * inputRstdNum;
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Sub(outputDx, inputX1, outputDx, elem_cout_d_x_y);
 
         // 3. pd_var = np.sum((-0.5) * x1Tensor * x2Tensor * np.power(inputRstd, 3))
@@ -494,8 +494,8 @@ private:
         Duplicate<float>(inputGamma, inputMeanNum, elem_cout_d_x_y);
         PipeBarrier<PIPE_V>();
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         // 5.4. d_x = res0 + res1 + res2
         Add(inputX2, inputGamma, inputX2, elem_cout_d_x_y);

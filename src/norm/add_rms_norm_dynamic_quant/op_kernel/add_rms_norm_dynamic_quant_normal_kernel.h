@@ -172,8 +172,8 @@ private:
                 ReduceSumHalfInterval(yLocalFp32[roundOffset], this->numLastDim);  // aveLocalTemp <-- E(x**2)
             float rstdLocalTemp = 1 / sqrt(squareSumTemp * this->aveNum + this->eps);
             event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Muls(xLocalFp32[roundOffset],
                 xLocalFp32[roundOffset],
                 rstdLocalTemp,
@@ -290,14 +290,14 @@ private:
         for (int32_t rid = 0; rid < nums; ++rid) {
             ReduceMaxInplace(tmpTensor[rid * this->numLastDimAligned], this->numLastDim);
             eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventVS);
-            wait_flag(PIPE_V, PIPE_S, eventVS);
+            SetFlag<HardEvent::V_S>(eventVS);
+            WaitFlag<HardEvent::V_S>(eventVS);
             maxTemp = tmpTensor[rid * this->numLastDimAligned].GetValue(0);  // Reduce
             scaleTemp = DYNAMIC_QUANT_DIVIDEND / maxTemp;
             scaleTensor.SetValue(rid, 1 / scaleTemp);
             eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             auto srcSlice = srcTensor[rid * this->numLastDimAligned];
             Muls(srcSlice, srcSlice, scaleTemp, this->numLastDim);
         }

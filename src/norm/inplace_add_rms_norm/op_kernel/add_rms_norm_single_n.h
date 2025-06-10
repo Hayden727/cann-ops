@@ -73,30 +73,30 @@ private:
 
         DataCopyCustom<T>(x1Local, x1Gm, numCol);
         event_t eventMTE2V1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V1);
         DataCopyCustom<T>(x2Local, x2Gm, numCol);
         event_t eventMTE2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V1);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V2);
         Add(x1Local, x1Local, x2Local, numCol);
         PipeBarrier<PIPE_V>();
 
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-        wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+        SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+        WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
 
         DataCopyCustom<T>(x2Local, gammaGm, numCol);  // gammaLocal use x2Local
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V2);
 
         // copy x out
         event_t eventVMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<T>(xGm, x1Local, numCol);
         event_t eventMTE3V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V);
 
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
@@ -116,27 +116,27 @@ private:
 
         // copyout rstd
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<float>(rstdGm, sqxLocal, 1);
 #endif
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float rstdValue = sqxLocal.GetValue(0);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
 
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
         PipeBarrier<PIPE_V>();
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V);
         Cast(x1Local, xFp32Local, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V2);
         Mul(x1Local, x1Local, x2Local, numCol);
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<T>(yGm, x1Local, numCol);
     }
 
@@ -150,30 +150,30 @@ private:
 
         DataCopyCustom<T>(x1Local, x1Gm, numCol);
         event_t eventMTE2V1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V1);
         DataCopyCustom<T>(x2Local, x2Gm, numCol);
         event_t eventMTE2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V1);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V2);
         Add(x1Local, x1Local, x2Local, numCol);
         PipeBarrier<PIPE_V>();
 
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-        wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+        SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+        WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
 
         DataCopyCustom<T>(x2Local, gammaGm, numCol);  // gammaLocal use x2Local
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V2);
 
         // copy x out
         event_t eventVMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<T>(xGm, x1Local, numCol);
         event_t eventMTE3V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V);
 
         Mul(sqxLocal, x1Local, x1Local, numCol);
         PipeBarrier<PIPE_V>();
@@ -191,24 +191,24 @@ private:
 
         // copyout rstd
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<float>(rstdGm, sqxLocal, 1);
 #endif
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float rstdValue = sqxLocal.GetValue(0);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V);
         Muls(x1Local, x1Local, rstdValue, numCol);
         PipeBarrier<PIPE_V>();
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V2);
         Mul(x1Local, x1Local, x2Local, numCol);
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<T>(yGm, x1Local, numCol);
     }
 
@@ -224,13 +224,13 @@ private:
 
         DataCopyCustom<T>(x1Local, x1Gm, numCol);
         event_t eventMTE2V1 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V1);
         DataCopyCustom<T>(x2Local, x2Gm, numCol);
         event_t eventMTE2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V1);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V1);
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V2);
         Cast(sqxLocal, x2Local, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
         Add(xFp32Local, xFp32Local, sqxLocal, numCol);
@@ -239,19 +239,19 @@ private:
         PipeBarrier<PIPE_V>();
         // copy gamma
         event_t eventVMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE2));
-        set_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
-        wait_flag(PIPE_V, PIPE_MTE2, eventVMTE2);
+        SetFlag<HardEvent::V_MTE2>(eventVMTE2);
+        WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
 
         DataCopyCustom<T>(x2Local, gammaGm, numCol);  // gammaLocal use x2Local
-        set_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        SetFlag<HardEvent::MTE2_V>(eventMTE2V2);
 
         // copy x out
         event_t eventVMTE3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<T>(xGm, x1Local, numCol);
         event_t eventMTE3V = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V);
 
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
@@ -271,37 +271,37 @@ private:
 
         // copyout rstd
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<float>(rstdGm, sqxLocal, 1);
         event_t eventMTE3V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, eventMTE3V2);
+        SetFlag<HardEvent::MTE3_V>(eventMTE3V2);
 #endif
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float rstdValue = sqxLocal.GetValue(0);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Muls(xFp32Local, xFp32Local, rstdValue, numCol);
         PipeBarrier<PIPE_V>();
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V);
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V);
         Cast(x1Local, xFp32Local, RoundMode::CAST_RINT, numCol);
         PipeBarrier<PIPE_V>();
         Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
-        wait_flag(PIPE_MTE2, PIPE_V, eventMTE2V2);
+        WaitFlag<HardEvent::MTE2_V>(eventMTE2V2);
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
-        wait_flag(PIPE_MTE3, PIPE_V, eventMTE3V2);
+        WaitFlag<HardEvent::MTE3_V>(eventMTE3V2);
 #endif
         Cast(sqxLocal, x2Local, RoundMode::CAST_NONE, numCol);
         PipeBarrier<PIPE_V>();
         Mul(xFp32Local, xFp32Local, sqxLocal, numCol);
         PipeBarrier<PIPE_V>();
         Cast(x1Local, xFp32Local, RoundMode::CAST_RINT, numCol);
-        set_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
-        wait_flag(PIPE_V, PIPE_MTE3, eventVMTE3);
+        SetFlag<HardEvent::V_MTE3>(eventVMTE3);
+        WaitFlag<HardEvent::V_MTE3>(eventVMTE3);
         DataCopyCustom<T>(yGm, x1Local, numCol);
     }
 

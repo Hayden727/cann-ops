@@ -354,8 +354,8 @@ private:
             xLocalFp32, xLocalFp32, yLocalFp32, numLastDimAligned, numLastDim, tailCount, repeat, repStride);
 
         // 3. rstd process: x - mean
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         for (int32_t rid = 0; rid < nums; ++rid) {
             auto roundOffset = rid * numLastDimAligned;
 
@@ -363,8 +363,8 @@ private:
 #if OUTPUT_MEAN_RSTD == 1
             meanLocal.SetValue(rid, meanTemp);
 #endif
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Adds(zLocalFp32[roundOffset], zLocalFp32[roundOffset], meanTemp * -1, numLastDim);
         }
         PipeBarrier<PIPE_V>();
@@ -391,8 +391,8 @@ private:
         Div(xLocalFp32, yLocalFp32, xLocalFp32, repeat);
 
         // 7. y process: (x - mean) / rstd
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         for (int32_t rid = 0; rid < nums; ++rid) {
             auto roundOffset = rid * numLastDimAligned;
 
@@ -400,8 +400,8 @@ private:
 #if OUTPUT_MEAN_RSTD == 1
             rstdLocal.SetValue(rid, rstdTmp);
 #endif
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             Muls(zLocalFp32[roundOffset], zLocalFp32[roundOffset], rstdTmp, numLastDim);
         }
         PipeBarrier<PIPE_V>();

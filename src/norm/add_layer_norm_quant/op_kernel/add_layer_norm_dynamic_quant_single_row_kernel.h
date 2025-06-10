@@ -179,8 +179,8 @@ private:
         PipeBarrier<PIPE_V>();
         float aveLocalTemp = ReduceSumFP32(yLocalFp32, this->numLastDim);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Adds(xLocalFp32, xLocalFp32, aveLocalTemp * -1, this->numLastDim);
         PipeBarrier<PIPE_V>();
         Mul(yLocalFp32, xLocalFp32, xLocalFp32, this->numLastDim);
@@ -190,8 +190,8 @@ private:
         float varLocalTemp = ReduceSumFP32(yLocalFp32, this->numLastDim);
         float rstdLocalTemp = 1 / sqrt(varLocalTemp + this->eps);
         eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         Muls(xLocalFp32, xLocalFp32, rstdLocalTemp, this->numLastDim);
         PipeBarrier<PIPE_V>();
 
@@ -228,8 +228,8 @@ private:
             float scaleTemp = maxTemp / DYNAMIC_QUANT_DIVIDEND;
             scalesLocalOut.SetValue(idx, scaleTemp);
             event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             PipeBarrier<PIPE_V>();
             auto dividendTensor = divisorBuf.Get<float>();
             DivScalarFP32(yLocalFp32, xLocalFp32, dividendTensor, scaleTemp, this->numLastDim);
@@ -321,14 +321,14 @@ private:
         PipeBarrier<PIPE_V>();
         ReduceMaxInplace(tmpTensor, this->numLastDim);
         event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float maxTemp = tmpTensor.GetValue(0);
         float scaleTemp = maxTemp / DYNAMIC_QUANT_DIVIDEND;
         scaleTensor.SetValue(idx, scaleTemp);
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         auto dividendTensor = divisorBuf.Get<float>();
         DivScalarFP32(srcTensor, srcTensor, dividendTensor, scaleTemp, this->numLastDim);  // srcTensor <-- y / scale
     }

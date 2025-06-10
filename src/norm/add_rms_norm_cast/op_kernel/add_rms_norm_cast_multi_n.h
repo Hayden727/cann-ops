@@ -236,12 +236,12 @@ private:
         Cast(x_fp32, yLocal, RoundMode::CAST_NONE, calc_row_num * numColAlign);
         PipeBarrier<PIPE_V>();
         event_t event_v_mte3 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
-        set_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
-        wait_flag(PIPE_V, PIPE_MTE3, event_v_mte3);
+        SetFlag<HardEvent::V_MTE3>(event_v_mte3);
+        WaitFlag<HardEvent::V_MTE3>(event_v_mte3);
         DataCopyCustom<float>(y1Gm[gm_bias], x_fp32, calc_row_num * numCol);
         event_t event_mte3_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_V));
-        set_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
-        wait_flag(PIPE_MTE3, PIPE_V, event_mte3_v);
+        SetFlag<HardEvent::MTE3_V>(event_mte3_v);
+        WaitFlag<HardEvent::MTE3_V>(event_mte3_v);
         outQueueY.EnQue<T>(yLocal);
     }
 

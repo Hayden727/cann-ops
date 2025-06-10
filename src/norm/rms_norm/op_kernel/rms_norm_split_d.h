@@ -182,13 +182,13 @@ private:
                     CopyIn(rowIndex, jOuterIdx * jInnerMax + jInnerIdx, ub_factor);
                     ComputeSumPrecision(sumLocal[jInnerIdx * NUM_PER_BLK_FP32], ub_factor);
                 }
-                set_flag(PIPE_V, PIPE_S, eventVS);
-                wait_flag(PIPE_V, PIPE_S, eventVS);
+                SetFlag<HardEvent::V_S>(eventVS);
+                WaitFlag<HardEvent::V_S>(eventVS);
                 for (uint32_t jInnerIdx = 0; jInnerIdx < jInnerMax; jInnerIdx++) {
                     reduceOut += sumLocal.GetValue(jInnerIdx * NUM_PER_BLK_FP32);
                 }
-                set_flag(PIPE_S, PIPE_V, eventSV);
-                wait_flag(PIPE_S, PIPE_V, eventSV);
+                SetFlag<HardEvent::S_V>(eventSV);
+                WaitFlag<HardEvent::S_V>(eventSV);
             }
             // 2. jInner main loop
             uint32_t outerOffsetIdx = (jOuterMax - 1) * jInnerMax;
@@ -196,22 +196,22 @@ private:
                 CopyIn(rowIndex, outerOffsetIdx + jInnerIdx, ub_factor);
                 ComputeSumPrecision(sumLocal[jInnerIdx * NUM_PER_BLK_FP32], ub_factor);
             }
-            set_flag(PIPE_V, PIPE_S, eventVS);
-            wait_flag(PIPE_V, PIPE_S, eventVS);
+            SetFlag<HardEvent::V_S>(eventVS);
+            WaitFlag<HardEvent::V_S>(eventVS);
             for (uint32_t jInnerIdx = 0; jInnerIdx < jInnerTail - 1; jInnerIdx++) {
                 reduceOut += sumLocal.GetValue(jInnerIdx * NUM_PER_BLK_FP32);
             }
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
             // 3. jInner tail loop
             CopyIn(rowIndex, outerOffsetIdx + jInnerTail - 1, jTail);
             ComputeSumPrecision(sumLocal[0], jTail);
-            set_flag(PIPE_V, PIPE_S, eventVS);
-            wait_flag(PIPE_V, PIPE_S, eventVS);
+            SetFlag<HardEvent::V_S>(eventVS);
+            WaitFlag<HardEvent::V_S>(eventVS);
             reduceOut += sumLocal.GetValue(0);
             rstdLocal.SetValue(iInner, reduceOut);
-            set_flag(PIPE_S, PIPE_V, eventSV);
-            wait_flag(PIPE_S, PIPE_V, eventSV);
+            SetFlag<HardEvent::S_V>(eventSV);
+            WaitFlag<HardEvent::S_V>(eventSV);
         }
     }
 
@@ -321,11 +321,11 @@ private:
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         LocalTensor<T> xLocal = inQueueX.DeQue<T>();
         LocalTensor<float> sqx = sqx_buf.Get<float>();
-        set_flag(PIPE_V, PIPE_S, eventVS);
-        wait_flag(PIPE_V, PIPE_S, eventVS);
+        SetFlag<HardEvent::V_S>(eventVS);
+        WaitFlag<HardEvent::V_S>(eventVS);
         float rstdValue = rstdLocal.GetValue(rstdIdx);
-        set_flag(PIPE_S, PIPE_V, eventSV);
-        wait_flag(PIPE_S, PIPE_V, eventSV);
+        SetFlag<HardEvent::S_V>(eventSV);
+        WaitFlag<HardEvent::S_V>(eventSV);
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         // 1. Cast x and Mul rstd
         if constexpr (IsSame<T, float>::value) {

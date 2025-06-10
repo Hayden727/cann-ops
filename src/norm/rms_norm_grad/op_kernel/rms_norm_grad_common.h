@@ -104,26 +104,18 @@ __aicore__ inline float ReduceSumFP32_V2(const LocalTensor<float> &src_local, in
             AscendCUtils::SetMask<float>(elementNumPerRep);
             ReduceSum(src_local, src_local, src_local, repeatTimes);
             event_t eventId = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventId);
-            wait_flag(PIPE_V, PIPE_S, eventId);
-#ifdef __CCE_KT_TEST__
-            uint64_t acc_val = get_acc_val();
-#else
+            SetFlag<HardEvent::V_S>(eventId);
+            WaitFlag<HardEvent::V_S>(eventId);
             uint64_t acc_val = GetAccVal();
-#endif
             value = *reinterpret_cast<float *>(&acc_val);
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
             ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
             event_t eventId = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-            set_flag(PIPE_V, PIPE_S, eventId);
-            wait_flag(PIPE_V, PIPE_S, eventId);
-#ifdef __CCE_KT_TEST__
-            uint64_t acc_val = get_acc_val();
-#else
+            SetFlag<HardEvent::V_S>(eventId);
+            WaitFlag<HardEvent::V_S>(eventId);
             uint64_t acc_val = GetAccVal();
-#endif
             value += *reinterpret_cast<float *>(&acc_val);
         }
     }
@@ -163,15 +155,15 @@ __aicore__ inline void DataCopyCustom(GlobalTensor<T> &dstTensor, LocalTensor<T>
     uint32_t calcLenTail32 = blockCount % alignLen_;
 
     if (calcLenTail32 > 0) {
-        set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-        wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+        SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+        WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
         for (uint32_t i = 0; i < calcLenTail32; i++) {
             dstTensor.SetValue(dstOffset + calcLenAlign32 + i, srcTensor.GetValue(srcOffset + calcLenAlign32 + i));
         }
         DataCacheCleanAndInvalid<T, CacheLine::ENTIRE_DATA_CACHE>(dstTensor);
         PipeBarrier<PIPE_ALL>();
-        set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
-        wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+        SetFlag<HardEvent::S_MTE3>(EVENT_ID0);
+        WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);
     }
 }
 
@@ -184,12 +176,12 @@ __aicore__ inline void InitGmZero(
 
     Duplicate(temp_zero_tensor, (T)0.0, zeroLen);
     PipeBarrier<PIPE_ALL>();
-    set_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
-    wait_flag(PIPE_V, PIPE_MTE3, EVENT_ID0);
+    SetFlag<HardEvent::V_MTE3>(EVENT_ID0);
+    WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);
 
     DataCopy(outGm[outOffset], temp_zero_tensor, ROUND_UP(zeroLen, alignLen_));
-    set_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
-    wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID0);
+    SetFlag<HardEvent::MTE3_S>(EVENT_ID0);
+    WaitFlag<HardEvent::MTE3_S>(EVENT_ID0);
 
     PipeBarrier<PIPE_ALL>();
 }

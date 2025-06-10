@@ -460,7 +460,7 @@ private:
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventVS);
             WaitFlag<HardEvent::V_S>(eventVS);
-            (*(__ubuf__ int32_t *)((__ubuf__ float *)TempReduceResult[i].GetPhyAddr())) = get_acc_val();
+            (*(__ubuf__ int32_t *)((__ubuf__ float *)TempReduceResult[i].GetPhyAddr())) = GetAccVal();
         }
         AscendCUtils::SetMaskNorm<float>();
         event_t eventSV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));

@@ -294,12 +294,12 @@ public:
         LocalTensor<float> rstd_ub = inQueRstd.DeQue<float>();
         // dy * (x * rstd)  -> sum
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Muls(x_ub, x_ub, rstd_value, calc_len);
         PipeBarrier<PIPE_V>();
         inQueRstd.FreeTensor(rstd_ub);
@@ -321,12 +321,12 @@ public:
         LocalTensor<T1> dy_ub = inQueDY.DeQue<T1>();
         LocalTensor<float> rstd_ub = inQueRstd.DeQue<float>();
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         LocalTensor<float> dy_sum_part = ndBufFp32Buf1.Get<float>();
         Duplicate(dy_sum_part, 0.0f, ub_tail_align);
         PipeBarrier<PIPE_V>();
@@ -399,16 +399,16 @@ public:
         LocalTensor<T1> dy_ub = inQueDY.DeQue<T1>();
         LocalTensor<float> rstd_ub = inQueRstd.DeQue<float>();
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float dy_sum_val = dy_sum.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         Muls(x_ub, x_ub, rstd_value, calc_len);
         PipeBarrier<PIPE_V>();
@@ -492,12 +492,12 @@ public:
         LocalTensor<float> tmp_32_buf_2 = ndBufFp32Buf3.Get<float>();
         // dy * (x * rstd)  -> sum
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Cast(tmp_32_buf_2, x_ub, RoundMode::CAST_NONE, calc_len);
         PipeBarrier<PIPE_V>();
         Muls(tmp_32_buf_2, tmp_32_buf_2, rstd_value, calc_len);
@@ -525,12 +525,12 @@ public:
         LocalTensor<T1> dy_ub = inQueDY.DeQue<T1>();
         LocalTensor<float> rstd_ub = inQueRstd.DeQue<float>();
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         LocalTensor<float> dy_sum_part = ndBufFp32Buf1.Get<float>();
         LocalTensor<float> tmp_32_buf = ndBufFp32Buf2.Get<float>();
@@ -567,16 +567,16 @@ public:
         LocalTensor<float> tmp_32_buf_2 = ndBufFp32Buf2.Get<float>();
         LocalTensor<float> tmp_32_buf_3 = ndBufFp32Buf3.Get<float>();
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float dy_sum_val = dy_sum.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         // dg = sum((dy * (x * rstd)), dim=0)
         Cast(tmp_32_buf_2, x_ub, RoundMode::CAST_NONE, calc_len);
         PipeBarrier<PIPE_V>();
@@ -681,12 +681,12 @@ public:
         LocalTensor<float> tmp_32_buf_1 = ndBufFp32Buf1.Get<float>();
         // dy * (x * rstd)  -> sum
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         Cast(tmp_32_buf_2, x_ub, RoundMode::CAST_NONE, calc_len);
         Cast(tmp_32_buf_1, dy_ub, RoundMode::CAST_NONE, calc_len);
         PipeBarrier<PIPE_V>();
@@ -719,12 +719,12 @@ public:
         LocalTensor<T1> dy_ub = inQueDY.DeQue<T1>();
         LocalTensor<float> rstd_ub = inQueRstd.DeQue<float>();
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         LocalTensor<float> dy_sum_part = ndBufFp32Buf1.Get<float>();
         LocalTensor<float> tmp_32_buf = ndBufFp32Buf2.Get<float>();
@@ -765,16 +765,16 @@ public:
         LocalTensor<float> tmp_32_buf_2 = ndBufFp32Buf2.Get<float>();
         LocalTensor<float> tmp_32_buf_3 = ndBufFp32Buf3.Get<float>();
         event_t event_mte_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
-        set_flag(PIPE_MTE2, PIPE_S, event_mte_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte_s);
         float rstd_value = rstd_ub.GetValue(0);
         event_t event_v_s = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-        set_flag(PIPE_V, PIPE_S, event_v_s);
-        wait_flag(PIPE_V, PIPE_S, event_v_s);
+        SetFlag<HardEvent::V_S>(event_v_s);
+        WaitFlag<HardEvent::V_S>(event_v_s);
         float dy_sum_val = dy_sum.GetValue(0);
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
         // dg = sum((dy * (x * rstd)), dim=0)
         Cast(tmp_32_buf_2, x_ub, RoundMode::CAST_NONE, calc_len);
         Cast(tmp_32_buf_1, dy_ub, RoundMode::CAST_NONE, calc_len);

@@ -236,8 +236,8 @@ private:
         SetAtomicNone();
 
         event_t eventMTE3S = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_S));
-        set_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
-        wait_flag(PIPE_MTE3, PIPE_S, eventMTE3S);
+        SetFlag<HardEvent::MTE3_S>(eventMTE3S);
+        WaitFlag<HardEvent::MTE3_S>(eventMTE3S);
 
         output_pd_beta_que.FreeTensor(dbeta);
         output_pd_gamma_que.FreeTensor(dgamma);
@@ -424,13 +424,13 @@ private:
         event_t event_s_v = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
 
         // 2. x2Tensor = x_sum - mean
-        set_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
-        wait_flag(PIPE_MTE2, PIPE_S, event_mte2_s);
+        SetFlag<HardEvent::MTE2_S>(event_mte2_s);
+        WaitFlag<HardEvent::MTE2_S>(event_mte2_s);
         float input_mean_num = inputMean.GetValue(0);
         float input_rstd_num = inputRstd.GetValue(0);
         float rstd_sqrt_tmp_num = input_rstd_num * input_rstd_num * input_rstd_num;
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         Adds(inputX2, inputX2, input_mean_num * (-1.0f), process_elem);
         PipeBarrier<PIPE_V>();
@@ -444,8 +444,8 @@ private:
         // 3.2. d_var = sum(tmp)
         auto reduce_tmp_num = this->ReduceSumCustom(outputPdGx, process_elem);
         input_mean_num = reduce_tmp_num * one_div_D;
-        set_flag(PIPE_S, PIPE_V, event_s_v);
-        wait_flag(PIPE_S, PIPE_V, event_s_v);
+        SetFlag<HardEvent::S_V>(event_s_v);
+        WaitFlag<HardEvent::S_V>(event_s_v);
 
         // other (2 / D * d_var * x2Tensor)
         Muls(outputPdGx, inputX2, input_mean_num, process_elem);
