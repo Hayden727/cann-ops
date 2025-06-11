@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <cstdint>
 #include "acl/acl.h"
 #include "aclnn_dynamic_quant.h"
 
@@ -40,12 +42,15 @@ int64_t GetShapeSize(const std::vector<int64_t>& shape) {
 
 void PrintOutResult(std::vector<int64_t> &shape, void** deviceAddr) {
   auto size = GetShapeSize(shape);
-  std::vector<float> resultData(size, 0);
+  std::vector<int8_t> resultData(size, 0);
   auto ret = aclrtMemcpy(resultData.data(), resultData.size() * sizeof(resultData[0]),
                          *deviceAddr, size * sizeof(resultData[0]), ACL_MEMCPY_DEVICE_TO_HOST);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("copy result from device to host failed. ERROR: %d\n", ret); return);
+  std::ofstream fout("../output/output_out.bin", std::ios::binary);
+  fout.write(reinterpret_cast<const char*>(resultData.data()), resultData.size() * sizeof(int8_t));
+  fout.close();
   for (int64_t i = 0; i < size; i++) {
-    LOG_PRINT("mean result[%ld] is: %f\n", i, resultData[i]);
+    LOG_PRINT("mean result[%ld] is: %d\n", i, resultData[i]);
   }
 }
 
@@ -92,8 +97,8 @@ int main() {
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
 
   // 2. 构造输入与输出，需要根据API的接口自定义构造
-  int rowNum = 4;
-  int rowLen = 2;
+  int rowNum = 1;
+  int rowLen = 8;
   std::vector<int64_t> xShape = {rowNum, rowLen};
   std::vector<int64_t> smoothShape = {rowLen};
   std::vector<int64_t> yShape = {rowNum, rowLen};
@@ -109,14 +114,13 @@ int main() {
   aclTensor* y = nullptr;
   aclTensor* scale = nullptr;
 
-  std::vector<aclFloat16> xHostData;
+  std::vector<aclFloat16> xHostData = {0, 1, 2, 3, 4, 5, 6, 7};
   std::vector<aclFloat16> smoothHostData;
   std::vector<int8_t> yHostData;
   std::vector<float> scaleHostData;
   for (int i = 0; i < rowNum; ++i) {
     for (int j = 0; j < rowLen; ++j) {
       float value1 = i * rowLen + j;
-      xHostData.push_back(aclFloatToFloat16(value1));
       yHostData.push_back(0);
     }
     scaleHostData.push_back(0);
@@ -145,7 +149,7 @@ int main() {
   aclOpExecutor* executor;
 
   // 调用aclnnDynamicQuant第一段接口
-  ret = aclnnDynamicQuantGetWorkspaceSize(x, smooth, y, scale, &workspaceSize, &executor);
+  ret = aclnnDynamicQuantGetWorkspaceSize(x, nullptr, y, scale, &workspaceSize, &executor);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnDynamicQuantGetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
 
   // 根据第一段接口计算出的workspaceSize申请device内存
