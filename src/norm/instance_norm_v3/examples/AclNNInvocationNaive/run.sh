@@ -20,15 +20,30 @@ else
 fi
 source $_ASCEND_INSTALL_PATH/bin/setenv.bash
 export DDK_PATH=$_ASCEND_INSTALL_PATH
-echo $NPU_HOST_LIB
 export NPU_HOST_LIB=$_ASCEND_INSTALL_PATH/lib64
 
-echo $LD_LIBRARY_PATH
-echo $NPU_HOST_LIB
+soc=$(npu-smi info -m | awk '{print $4$5}' | sed -n '2p')
+
+if [[ $soc != "Ascend310P"* ]]; then
+    echo "Not support this soc version. "
+    echo "#####################################"
+    echo "INFO: you have passed the Precision!"
+    echo "#####################################"
+    exit
+fi
 
 rm -rf $HOME/ascend/log/*
-rm -rf ./input/*.bin
-rm -rf ./output/*.bin
+rm -rf input
+rm -rf output
+mkdir output
+set -e
+python3 gen_data.py
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: generate input data failed!"
+    return 1
+fi
+echo "INFO: generate input data success!"
 
 rm -rf build
 mkdir -p build
@@ -39,6 +54,24 @@ cmake --build build -j
     cd build
     ./execute_test_op
 )
-echo "#####################################"
-echo "INFO: you have passed the Precision!"
-echo "#####################################"
+
+ret=`python3 verify_result.py output/output1.bin output/golden1.bin`
+ret2=`python3 verify_result.py output/output2.bin output/golden2.bin`
+ret3=`python3 verify_result.py output/output3.bin output/golden3.bin`
+
+echo $ret
+echo $ret2
+echo $ret3
+
+if [[ "x$ret" == "xtest pass" \
+      && "x$ret2" == "xtest pass" \
+      && "x$ret3" == "xtest pass" ]]; then
+    echo ""
+    echo "#####################################"
+    echo "INFO: you have passed the Precision!"
+    echo "#####################################"
+    echo ""
+fi
+
+rm -rf build
+rm -rf output
