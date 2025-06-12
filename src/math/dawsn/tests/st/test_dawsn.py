@@ -14,7 +14,10 @@ import numpy as np
 # 'pylint: disable=too-few-public-methods
 
 
-class Constant:
+class Const:
+    """
+    The class for constant
+    """
     # Taylor coefficient
     COEF_AN = (1.13681498971755972054E-11,
                8.49262267667473811108E-10,
@@ -35,7 +38,7 @@ class Constant:
                3.25524741826057911661E-4,
                3.48805814657162590916E-3,
                2.79448531198828973716E-2,
-               1.58874242E-1,
+               1.5887424E-1,
                5.74918629489320327824E-1,
                1.00000000000000000539E0)
     COEF_AD_COUNT = 10
@@ -86,13 +89,13 @@ def _polevl(data_x, coef, n):
     """
     y = polevl( x, coef, n );
     DESCRIPTION:
-    Evaluates polynomial of degree n:
-                        2          n
+    Evaluates polynomial of degree N:
+                        2          N
     y  =  C  + C x + C x  +...+ C x
-             0    1     2          n
+             0    1     2          N
     Coefficients are stored in reverse order:
-    coef[0] = C  , ..., coef[n] = C  .
-                 n                   0
+    coef[0] = C  , ..., coef[N] = C  .
+                 N                   0
     Parameters:
     ----------
     data_x : the placeholder of data input
@@ -111,16 +114,16 @@ def _polevl(data_x, coef, n):
 
 def _p1evl(data_x, coef, n):
     """
-    y = p1evl( x, coef, n );
+    y = p1evl( x, coef, N );
     DESCRIPTION:
-    Evaluates polynomial of degree n:
-                        2          n
+    Evaluates polynomial of degree N:
+                        2          N
     y  =  C  + C x + C x  +...+ C x
-             0    1     2          n
+             0    1     2          N
     Coefficients are stored in reverse order:
-    coef[0] = C  , ..., coef[n] = C  .
-                 n                   0
-    The function p1evl() assumes that coef[n] = 1.0 and is
+    coef[0] = C  , ..., coef[N] = C  .
+                 N                   0
+    The function p1evl() assumes that coef[N] = 1.0 and is
     omitted from the array.  Its calling arguments are
     otherwise the same as polevl().
     -------
@@ -138,12 +141,18 @@ def _calc_condition_lt_three_p_two_five(input_x):
     do arcsinx compute use the 15th order taylor expansion when 0 <= x < 3.25
     x = xx*xx
     y = xx * polevl( x, AN, 9 )/polevl( x, AD, 10 )
+
+    Parameters:
+    ----------
+    input_x : the data input
+    -------
     """
     data_square = input_x * input_x
-    data_polevl_an = _polevl(data_square, Constant.COEF_AN, Constant.COEF_AN_COUNT)
-    data_polevl_ad = _polevl(data_square, Constant.COEF_AD, Constant.COEF_AD_COUNT)
+    data_polevl_an = _polevl(data_square, Const.COEF_AN, Const.COEF_AN_COUNT)
+    data_polevl_ad = _polevl(data_square, Const.COEF_AD, Const.COEF_AD_COUNT)
     res = input_x * data_polevl_an
     res = res / data_polevl_ad
+
     return res
 
 
@@ -152,17 +161,24 @@ def _calc_condition_lt_six_p_two_five(input_x):
     do arcsinx compute use the 15th order taylor expansion when 3.25 <= x < 6.25
     x = 1.0/(xx*xx);
     y = (1.0/xx + x * polevl( x, BN, 10) / (p1evl( x, BD, 10) * xx)) * 0.5
+
+    Parameters:
+    ----------
+    input_x : the data input
+    -------
     """
     data_temp = input_x * input_x
     data_temp = 1 / data_temp
     data_rec = 1 / input_x
-    data_polevl_bn = _polevl(data_temp, Constant.COEF_BN, Constant.COEF_BN_COUNT)
+    data_polevl_bn = _polevl(data_temp, Const.COEF_BN, Const.COEF_BN_COUNT)
     data_polevl_bn = data_polevl_bn * data_temp
-    data_plevl_bd = _p1evl(data_temp, Constant.COEF_BD, Constant.COEF_BD_COUNT)
+    data_plevl_bd = _p1evl(data_temp, Const.COEF_BD, Const.COEF_BD_COUNT)
     data_plevl_bd = data_plevl_bd * input_x
     res = data_polevl_bn / data_plevl_bd
     res = data_rec + res
-    return res * 0.5
+    res = res * 0.5
+
+    return res
 
 
 def _calc_condition_le_one_e_nine(input_x):
@@ -170,29 +186,42 @@ def _calc_condition_le_one_e_nine(input_x):
     do arcsinx compute use the 15th order taylor expansion when 6.25 <= x <= 1.0e9
     x = 1.0/(xx*xx);
     y = (1.0/xx + x * polevl( x, CN, 4) / (p1evl( x, CD, 5) * xx)) * 0.5
+
+    Parameters:
+    ----------
+    input_x : the data input
+    -------
     """
     data_temp = input_x * input_x
     data_temp = 1 / data_temp
     data_rec = 1 / input_x
-    data_polevl_cn = _polevl(data_temp, Constant.COEF_CN, Constant.COEF_CN_COUNT)
+    data_polevl_cn = _polevl(data_temp, Const.COEF_CN, Const.COEF_CN_COUNT)
     data_polevl_cn = data_polevl_cn * data_temp
-    data_plevl_cd = _p1evl(data_temp, Constant.COEF_CD, Constant.COEF_CD_COUNT)
+    data_plevl_cd = _p1evl(data_temp, Const.COEF_CD, Const.COEF_CD_COUNT)
     data_plevl_cd = data_plevl_cd * input_x
     res = data_polevl_cn / data_plevl_cd
     res = data_rec + res
-    return res * 0.5
+    res = res * 0.5
+
+    return res
 
 
 def _calc_condition_gt_one_e_nine(input_x):
     """
     do arcsinx compute use the 15th order taylor expansion when x > 1.0e9
     y = 1/xx * 0.5
+
+    Parameters:
+    ----------
+    input_x : the data input
+    -------
     """
     res = 0.5 / input_x
+
     return res
 
 
-def dawsn(x):
+def Dawsn(x):
     input_x = x
     for i in np.nditer(input_x, op_flags=['readwrite']):
         sign = 1
@@ -210,9 +239,8 @@ def dawsn(x):
     return [input_x, ]
 
 
-
 def dawsn_test(x):
-    golden = np.array(dawsn(x))
+    golden = np.array(Dawsn(x))
     return golden
 
 
