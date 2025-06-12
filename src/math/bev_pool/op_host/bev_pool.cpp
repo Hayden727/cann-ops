@@ -18,8 +18,7 @@
 namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
-  BevPoolTilingData tiling;
+    BevPoolTilingData tiling;
     int32_t B,N,D,fH,fW,C,D_Z,D_Y,D_X,N_points,N_pillar;
     B = context->GetInputShape(0)->GetStorageShape().GetDim(0);
     N = context->GetInputShape(0)->GetStorageShape().GetDim(1);
@@ -48,7 +47,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_D_X(D_X);
     tiling.set_N_points(N_points);
     tiling.set_N_pillar(N_pillar);
-
 
   context->SetBlockDim(1);
   tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
@@ -129,7 +127,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 

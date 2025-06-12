@@ -12,10 +12,21 @@
 import os
 import torch
 import numpy as np
+from dataclasses import dataclass
 
 
-def bev_pool(depth, feat, ranks_depth, ranks_feat, ranks_bev,
-             bev_feat_shape, interval_starts, interval_lengths):
+@dataclass
+class BevPoolInputs:
+    depth: np.ndarray
+    feat: np.ndarray
+    ranks_depth: np.ndarray
+    ranks_feat: np.ndarray
+    ranks_bev: np.ndarray
+    bev_feat_shape: tuple
+    interval_starts: np.ndarray
+    interval_lengths: np.ndarray
+
+def bev_pool(inputs: BevPoolInputs) -> np.ndarray:
     """
     Args:
         depth: (B, N, D, fH, fW)
@@ -29,11 +40,10 @@ def bev_pool(depth, feat, ranks_depth, ranks_feat, ranks_bev,
     Returns:
         x: bev feature in shape (B, C, Dz, Dy, Dx)
     """
-    B, D_Z, D_Y, D_X, C = bev_feat_shape
     bev_feat = np.zeros(bev_feat_shape, dtype=np.float16)
 
-    N_pillar = len(interval_starts)
-    for i in range(N_pillar):
+    n_pillar = len(interval_starts)
+    for i in range(n_pillar):
         start = interval_starts[i]
         length = interval_lengths[i]
         end = start + length
@@ -91,6 +101,17 @@ if __name__ == "__main__":
     interval_starts = np.random.randint(0, N_points // 2, N_pillar).astype(np.int32)
     interval_lengths = np.random.randint(1, N_points - interval_starts.max(), N_pillar).astype(np.int32).astype(np.int32)
 
+    inputs = BevPoolInputs(
+        depth=depth,
+        feat=feat,
+        ranks_depth=ranks_depth,
+        ranks_feat=ranks_feat,
+        ranks_bev=ranks_bev,
+        bev_feat_shape=bev_feat_shape,
+        interval_starts=interval_starts,
+        interval_lengths=interval_lengths
+    )
+
     os.system("mkdir -p input")
     depth.tofile("./input/input_depth.bin")
     feat.tofile("./input/input_feat.bin")
@@ -101,8 +122,7 @@ if __name__ == "__main__":
     interval_lengths.tofile("./input/input_interval_lengths.bin")
 
     # 调用 bev_pool 算子
-    result = bev_pool(depth, feat, ranks_depth, ranks_feat, ranks_bev,
-                      bev_feat_shape, interval_starts, interval_lengths)
+    result = bev_pool(inputs)
     
     os.system("mkdir -p output")
     result.tofile("./output/result.bin")

@@ -12,9 +12,21 @@
 
 import tensorflow as tf
 import numpy as np
+from dataclasses import dataclass
 
 
-def bev_pool_test(depth, feat, ranks_depth, ranks_feat, ranks_bev, bev_feat_shape, interval_starts, interval_lengths):
+@dataclass
+class BevPoolInputs:
+    depth: np.ndarray
+    feat: np.ndarray
+    ranks_depth: np.ndarray
+    ranks_feat: np.ndarray
+    ranks_bev: np.ndarray
+    bev_feat_shape: tuple
+    interval_starts: np.ndarray
+    interval_lengths: np.ndarray
+
+def bev_pool_test(inputs: BevPoolInputs) -> np.ndarray:
     """
     Args:
         depth: (B, N, D, fH, fW)
@@ -28,11 +40,10 @@ def bev_pool_test(depth, feat, ranks_depth, ranks_feat, ranks_bev, bev_feat_shap
     Returns:
         x: bev feature in shape (B, C, Dz, Dy, Dx)
     """
-    B, D_Z, D_Y, D_X, C = bev_feat_shape
     bev_feat = np.zeros(bev_feat_shape, dtype=np.float16)
 
-    N_pillar = len(interval_starts)
-    for i in range(N_pillar):
+    n_pillar = len(interval_starts)
+    for i in range(n_pillar):
         start = interval_starts[i]
         length = interval_lengths[i]
         end = start + length
@@ -44,11 +55,9 @@ def bev_pool_test(depth, feat, ranks_depth, ranks_feat, ranks_bev, bev_feat_shap
             # 从 depth 和 feat 中提取对应元素
             b, n, d, fh, fw = np.unravel_index(rank_depth, depth.shape)
             b_, n_, fh_, fw_, c = np.unravel_index(rank_feat, feat.shape)
-            # assert b == b_ and n == n_ and fh == fh_ and fw == fw_
 
             # 计算 bev_feat 中的位置
             b__, dz, dy, dx, c_ = np.unravel_index(rank_bev, bev_feat_shape)
-            # assert b == b__ and c == c_
 
             # 累加特征
             bev_feat[b__, dz, dy, dx, c_] += depth[b, n, d, fh, fw] * feat[b_, n_, fh_, fw_, c]
@@ -60,5 +69,15 @@ def bev_pool_test(depth, feat, ranks_depth, ranks_feat, ranks_bev, bev_feat_shap
 
 def calc_expect_func(depth, feat, ranks_depth, ranks_feat, ranks_bev, interval_starts, interval_lengths, out, bev_feat_shape):
 
-    res = bev_pool_test(depth["value"], feat["value"], ranks_depth["value"], ranks_feat["value"], ranks_bev["value"], bev_feat_shape, interval_starts["value"], interval_lengths["value"])
+    inputs = BevPoolInputs(
+        depth=depth["value"],
+        feat=feat["value"],
+        ranks_depth=ranks_depth["value"],
+        ranks_feat=ranks_feat["value"],
+        ranks_bev=ranks_bev["value"],
+        bev_feat_shape=bev_feat_shape["value"],
+        interval_starts=interval_starts["value"],
+        interval_lengths=interval_lengths["value"]
+    )
+    res = bev_pool_test(inputs)
     return [res]

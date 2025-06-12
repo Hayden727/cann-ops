@@ -11,6 +11,8 @@
 /**
  * @file bev_pool_tiling.h
  */
+#ifndef BEV_POOL_TILING_H
+#define BEV_POOL_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -30,3 +32,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(BevPool, BevPoolTilingData)
 }
+#endif // BEV_POOL_TILING_H

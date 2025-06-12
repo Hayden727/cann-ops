@@ -48,12 +48,10 @@ public:
         pipe.InitBuffer(QueueTmp3, 32 * sizeof(float));
     }
     __aicore__ inline void Process() {
-
         for(int32_t i=0;i<this->B*this->C*this->D_Z*this->D_Y*this->D_X;i++)
         {
             outGm.SetValue(i, 0);
         }
-
         int32_t b1 = this->D_Z * this->D_Y * this->D_X * this->C;
         int32_t b2 = this->D_Y * this->D_X * this->C;
         int32_t b3 = this->D_X * this->C;
@@ -80,7 +78,6 @@ public:
                 rank_depth = ranks_depthGm.GetValue(j);//ranks_depth[j];
                 rank_feat = ranks_featGm.GetValue(j);//ranks_feat[j];
                 rank_bev = ranks_bevGm.GetValue(j);//ranks_bev[j];
-    
               
                 mb = rank_bev / b1;
                 remainder = rank_bev - mb*b1;
@@ -104,7 +101,6 @@ public:
                 outGm.SetValue(outaddr, tmp1.GetValue(0));
             }
         }
-
     }
 
 private:
@@ -125,7 +121,6 @@ private:
 
 extern "C" __global__ __aicore__ void bev_pool(GM_ADDR depth, GM_ADDR feat, GM_ADDR ranks_depth, GM_ADDR ranks_feat, GM_ADDR ranks_bev, GM_ADDR interval_starts, GM_ADDR interval_lengths, GM_ADDR out, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
-    // TODO: user kernel impl
     KernelBevPool op;
         op.Init(depth, feat, ranks_depth, ranks_feat, ranks_bev, interval_starts, interval_lengths, out,
             tiling_data.B, tiling_data.N, tiling_data.D, tiling_data.fH, tiling_data.fW, tiling_data.C, tiling_data.D_Z, tiling_data.D_Y, tiling_data.D_X, tiling_data.N_points, tiling_data.N_pillar);

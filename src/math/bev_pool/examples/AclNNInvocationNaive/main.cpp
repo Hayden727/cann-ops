@@ -202,16 +202,16 @@ int main(int argc, char **argv)
     size_t dataType = 2;
     size_t dataType1 = 4;
     size_t fileSize = 0;
-    void ** input1=(void **)(&depthHostData);
-    void ** input2=(void **)(&featHostData);
-    void ** input3=(void **)(&ranks_depthHostData);
-    void ** input4=(void **)(&ranks_featHostData);
-    void ** input5=(void **)(&ranks_bevHostData);
-    void ** input6=(void **)(&interval_startsHostData);
-    void ** input7=(void **)(&interval_lengthsHostData);
+    void** input1=(void**)(&depthHostData);
+    void** input2=(void**)(&featHostData);
+    void** input3=(void**)(&ranks_depthHostData);
+    void** input4=(void**)(&ranks_featHostData);
+    void** input5=(void**)(&ranks_bevHostData);
+    void** input6=(void**)(&interval_startsHostData);
+    void** input7=(void**)(&interval_lengthsHostData);
     //读取数据
-    ReadFile("../input/input_depth.bin", fileSize, *input1, B*N*D*fH*fW * dataType);
-    ReadFile("../input/input_feat.bin", fileSize, *input2, B*N*fH*fW*C * dataType);
+    ReadFile("../input/input_depth.bin", fileSize, *input1, B * N * D * fH * fW * dataType);
+    ReadFile("../input/input_feat.bin", fileSize, *input2, B * N * fH * fW * C * dataType);
     ReadFile("../input/input_ranks_depth.bin", fileSize, *input3, N_points * dataType1);
     ReadFile("../input/input_ranks_feat.bin", fileSize, *input4, N_points * dataType1);
     ReadFile("../input/input_ranks_bev.bin", fileSize, *input5, N_points * dataType1);
