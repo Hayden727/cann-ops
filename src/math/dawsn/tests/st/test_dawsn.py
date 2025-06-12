@@ -9,16 +9,12 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-
 import os
 import numpy as np
 # 'pylint: disable=too-few-public-methods
 
 
 class Constant:
-    """
-    The class for constant
-    """
     # Taylor coefficient
     COEF_AN = (1.13681498971755972054E-11,
                8.49262267667473811108E-10,
@@ -242,12 +238,11 @@ def dawsn(x):
 
 
 def dawsn_test(x):
-
     golden = np.array(dawsn(x))
     return golden
 
 
 def calc_expect_func(x, y):
 
-    y = dawsn_test(x["value"])
-    return [y, ]
+    res = dawsn_test(x["value"])
+    return [res, ]
