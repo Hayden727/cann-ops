@@ -61,17 +61,6 @@ aclnnStatus aclnnBevPool(void *workspace, int64_t workspaceSize, aclOpExecutor *
     ```bash
     bash run.sh
     ```
-  - 样例修改
-    
-    可通过修改main.cpp和gen_data.py文件设置不同的输入形状
-    
-    ```bash
-    #define CASE_NUM 50
-    ```
-
-    ```bash
-    case_num = 50
-    ```
 
 
 ## 更新说明

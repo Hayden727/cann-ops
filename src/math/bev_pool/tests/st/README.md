@@ -44,7 +44,6 @@
 
     ```bash
     ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./BevPool_float_type.json -soc {Soc Version} -out ./output -conf msopst.ini
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./BevPool_half_type.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明

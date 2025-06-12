@@ -13,6 +13,7 @@
 import tensorflow as tf
 import numpy as np
 
+
 def bev_pool_test(depth, feat, ranks_depth, ranks_feat, ranks_bev, bev_feat_shape, interval_starts, interval_lengths):
     """
     Args:
@@ -58,18 +59,6 @@ def bev_pool_test(depth, feat, ranks_depth, ranks_feat, ranks_bev, bev_feat_shap
 
 
 def calc_expect_func(depth, feat, ranks_depth, ranks_feat, ranks_bev, interval_starts, interval_lengths, out, bev_feat_shape):
-    # B = 1
-    # N = 2
-    # D = 3
-    # fH = 4
-    # fW = 5
-    # C = 6
-    # D_Z = 3
-    # D_Y = 4
-    # D_X = 5
-    # N_points = 10
-    # N_pillar = 5
-    # res = depth["value"]
-    # bev_feat_shape1 = (B, D_Z, D_Y, D_X, C)
+
     res = bev_pool_test(depth["value"], feat["value"], ranks_depth["value"], ranks_feat["value"], ranks_bev["value"], bev_feat_shape, interval_starts["value"], interval_lengths["value"])
     return [res]
