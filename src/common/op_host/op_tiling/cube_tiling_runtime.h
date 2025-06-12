@@ -18,6 +18,7 @@
 #include <map>
 #include <nlohmann/json.hpp>
 #include <vector>
+#include <tiling/platform/platform_ascendc.h>
 
 #include "platform/platform_infos_def.h"
 #include "exe_graph/runtime/storage_shape.h"
@@ -96,6 +97,7 @@ class CubeCompileInfo {
   std::vector<uint64_t> batch_tiling_ids;  // for dynamic batch
   std::map<uint64_t, uint32_t> block_dim;
   std::string soc_version = "";
+  platform_ascendc::SocVersion shortSocVersion;
 
   uint32_t core_num = 0;
   uint64_t ub_size = 0;

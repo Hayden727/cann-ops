@@ -190,7 +190,7 @@ private:
             }
         }
         if (deterministicFlag == 1) {
-            pipe_barrier(PIPE_MTE3);
+            AscendC::PipeBarrier<PIPE_MTE3>();
         }
     }
 

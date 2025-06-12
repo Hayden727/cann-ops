@@ -82,8 +82,17 @@ static ge::graphStatus GetDataFormat(const gert::TilingContext *context, TilingC
             return ge::GRAPH_FAILED;
         );
         // 设置Format
- 
-        if (opType == string("Conv2DTransposeV2")) {
+        if (opType == string("Conv2DBackpropFilterV3")) {
+            param.input0Format3D = ge::FORMAT_NDC1HWC0;
+            param.input1Format3D = context->GetInputDesc(INPUT1_INDEX)->GetStorageFormat(); // ND
+            param.input1OralFormat3D = context->GetInputDesc(INPUT1_INDEX)->GetOriginFormat(); // ND
+            param.input2Format3D = ge::FORMAT_NDC1HWC0;
+        } else if (opType == string("Conv2DBackpropInputV2")) {
+            param.input0Format3D = context->GetInputDesc(INPUT0_INDEX)->GetStorageFormat(); // ND
+            param.input0OralFormat3D = context->GetInputDesc(INPUT0_INDEX)->GetOriginFormat(); // ND
+            param.input1Format3D = ge::FORMAT_FRACTAL_Z_3D;
+            param.input2Format3D = ge::FORMAT_NDC1HWC0;
+        } else if (opType == string("Conv2DTransposeV2")) {
             param.input0Format3D = context->GetInputDesc(INPUT0_INDEX)->GetStorageFormat(); // ND
             param.input0OralFormat3D = context->GetInputDesc(INPUT0_INDEX)->GetOriginFormat(); // ND
             param.input1Format3D = ge::FORMAT_NDC1HWC0;
@@ -153,8 +162,23 @@ static ge::graphStatus GetTilingContextInStorageShape(gert::TilingContext *conte
     gert::StorageShape input0Shape3D;
     gert::StorageShape input1Shape3D;
     gert::StorageShape input2Shape3D;
-
-    if (opType == string("Conv2DTransposeV2")) {
+    if (opType == string("Conv2DBackpropFilterV3")) {
+        input0Shape3D = {
+            {in0OriginShape.GetDim(0), in0OriginShape.GetDim(1), 1, in0OriginShape.GetDim(2), in0OriginShape.GetDim(3)}, // NCDHW
+            {in0StorageShape.GetDim(0), 1, in0StorageShape.GetDim(1), in0StorageShape.GetDim(2), in0StorageShape.GetDim(3), in0StorageShape.GetDim(4)}}; // NDC1HWC0
+        input1Shape3D = {{5}, {5}}; // 5dim
+        input2Shape3D = {
+            {in2OriginShape.GetDim(0), in2OriginShape.GetDim(1), 1, in2OriginShape.GetDim(2), in2OriginShape.GetDim(3)}, // NCDHW
+            {in2StorageShape.GetDim(0), 1, in2StorageShape.GetDim(1), in2StorageShape.GetDim(2), in2StorageShape.GetDim(3), in2StorageShape.GetDim(4)}}; // NDC1HWC0
+    } else if (opType == string("Conv2DBackpropInputV2")) {
+        input0Shape3D = {{5}, {5}}; // 5dim
+        input1Shape3D = {
+            {in1OriginShape.GetDim(0), in1OriginShape.GetDim(1), 1, in1OriginShape.GetDim(2), in1OriginShape.GetDim(3)}, // NCDHW
+            {in1StorageShape.GetDim(0), in1StorageShape.GetDim(1), in1StorageShape.GetDim(2), in1StorageShape.GetDim(3)}}; // FRACTAL_Z_3D
+        input2Shape3D = {
+            {in2OriginShape.GetDim(0), in2OriginShape.GetDim(1), 1, in2OriginShape.GetDim(2), in2OriginShape.GetDim(3)}, // NCDHW
+            {in2StorageShape.GetDim(0), 1, in2StorageShape.GetDim(1), in2StorageShape.GetDim(2), in2StorageShape.GetDim(3), in2StorageShape.GetDim(4)}}; // NDC1HWC0
+    } else if (opType == string("Conv2DTransposeV2")) {
         input0Shape3D = {{5}, {5}}; // 5dim
         input1Shape3D = {
             {in1OriginShape.GetDim(0), in1OriginShape.GetDim(1), 1, in1OriginShape.GetDim(2), in1OriginShape.GetDim(3)}, // NCDHW
@@ -250,6 +274,10 @@ static ge::graphStatus AdaptConv3DBpTiliingAndCopy(gert::TilingContext *tilingCo
 {
     // 调用3D的tiling模板
     auto ret = TilingRegistry::GetInstance().DoTilingImpl(tilingContext3D);
+    if (ret != ge::GRAPH_SUCCESS) {
+        OP_LOGE("AdaptConv3DBpTiliingAndCopy: DoTilingImpl failed\n");
+        return ge::GRAPH_FAILED;
+    }
     // 将3DContext的TilingData信息拷贝至context
     context->GetRawTilingData()->SetDataSize(tilingContext3D->GetRawTilingData()->GetDataSize());
     auto cpRet = memcpy_s(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetDataSize(),
