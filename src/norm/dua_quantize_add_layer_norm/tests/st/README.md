@@ -20,8 +20,8 @@
   - 配置环境变量
 
     ```bash
-    export DDK_PATH=${INSTALL_DIR}
-    export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/devlib
+    export DDK_PATH=$ASCEND_HOME_PATH
+    export NPU_HOST_LIB=$ASCEND_HOME_PATH/{arch-os}/devlib
     ```
 
   - 进入到测试用例目录
@@ -34,9 +34,9 @@
 
   - 查看Soc Version
     ```bash
-    npu-smi info
+    npu-smi info -m | awk '{print $4$5}' | sed -n '2p'
     ```
-    打印的表格中Name列即为Soc Version
+    打印的结果即为Soc Version
 
   - 执行测试用例
 

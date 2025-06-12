@@ -198,15 +198,15 @@ int main()
     aclTensor *outputpdgamma = nullptr;
     aclTensor *outputpdbeta = nullptr;
     std::vector<float> dyHostData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    std::vector<int32_t> x1HostData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    std::vector<int32_t> x2HostData = {2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8};
-    std::vector<int32_t> rstdHostData = {0, 1, 2};
-    std::vector<int32_t> meanHostData = {0, 1, 2};
-    std::vector<int32_t> gammaHostData = {0, 1, 2, 3};
-    std::vector<int32_t> dsumOptionalHostData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    std::vector<int32_t> outputpdxHostData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    std::vector<int32_t> outputpdgammaHostData = {0, 1, 2, 3};
-    std::vector<int32_t> outputpdbetaHostData = {0, 1, 2, 3};
+    std::vector<float> x1HostData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    std::vector<float> x2HostData = {2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8};
+    std::vector<float> rstdHostData = {0, 1, 2};
+    std::vector<float> meanHostData = {0, 1, 2};
+    std::vector<float> gammaHostData = {0, 1, 2, 3};
+    std::vector<float> dsumOptionalHostData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    std::vector<float> outputpdxHostData(3 * 1 * 4);
+    std::vector<float> outputpdgammaHostData(4);
+    std::vector<float> outputpdbetaHostData(4);
 
     // 创建self aclTensor
     ret = CreateAclTensor(dyHostData, dyShape, &dyDeviceAddr, aclDataType::ACL_FLOAT, &dy);
@@ -272,6 +272,10 @@ int main()
     for (int64_t i = 0; i < outputpdxsize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataPdx[i]);
     }
+    // 写出数据
+    void **output1 = (void **)(&resultDataPdx);
+    WriteFile("../output/output1.bin", *output1, outputpdxsize * sizeof(resultDataPdx[0]));
+
     auto outputpdgammasize = GetShapeSize(outputpdgammaShape);
     std::vector<float> resultDataPdGamma(outputpdgammasize, 0);
     ret = aclrtMemcpy(resultDataPdGamma.data(),
@@ -284,6 +288,10 @@ int main()
     for (int64_t i = 0; i < outputpdgammasize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataPdGamma[i]);
     }
+    // 写出数据
+    void **output2 = (void **)(&resultDataPdGamma);
+    WriteFile("../output/output2.bin", *output2, outputpdgammasize * sizeof(resultDataPdGamma[0]));
+
     auto outputpdbetasize = GetShapeSize(outputpdbetaShape);
     std::vector<float> resultDataPdBeta(outputpdbetasize, 0);
     ret = aclrtMemcpy(resultDataPdBeta.data(),
@@ -296,6 +304,9 @@ int main()
     for (int64_t i = 0; i < outputpdbetasize; i++) {
         LOG_PRINT("result[%ld] is: %f\n", i, resultDataPdBeta[i]);
     }
+    // 写出数据
+    void **output3 = (void **)(&resultDataPdBeta);
+    WriteFile("../output/output3.bin", *output3, outputpdbetasize * sizeof(resultDataPdBeta[0]));
 
     // 6. 释放aclTensor和aclScalar，需要根据具体API的接口定义修改
     aclDestroyTensor(dy);
