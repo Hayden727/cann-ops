@@ -84,15 +84,15 @@ class Constant:
 
 def _polevl(data_x, coef, n):
     """
-    y = polevl( x, coef, N );
+    y = polevl( x, coef, n );
     DESCRIPTION:
-    Evaluates polynomial of degree N:
-                        2          N
+    Evaluates polynomial of degree n:
+                        2          n
     y  =  C  + C x + C x  +...+ C x
-             0    1     2          N
+             0    1     2          n
     Coefficients are stored in reverse order:
-    coef[0] = C  , ..., coef[N] = C  .
-                 N                   0
+    coef[0] = C  , ..., coef[n] = C  .
+                 n                   0
     Parameters:
     ----------
     data_x : the placeholder of data input
@@ -111,16 +111,16 @@ def _polevl(data_x, coef, n):
 
 def _p1evl(data_x, coef, n):
     """
-    y = p1evl( x, coef, N );
+    y = p1evl( x, coef, n );
     DESCRIPTION:
-    Evaluates polynomial of degree N:
-                        2          N
+    Evaluates polynomial of degree n:
+                        2          n
     y  =  C  + C x + C x  +...+ C x
-             0    1     2          N
+             0    1     2          n
     Coefficients are stored in reverse order:
-    coef[0] = C  , ..., coef[N] = C  .
-                 N                   0
-    The function p1evl() assumes that coef[N] = 1.0 and is
+    coef[0] = C  , ..., coef[n] = C  .
+                 n                   0
+    The function p1evl() assumes that coef[n] = 1.0 and is
     omitted from the array.  Its calling arguments are
     otherwise the same as polevl().
     -------
@@ -138,18 +138,12 @@ def _calc_condition_lt_three_p_two_five(input_x):
     do arcsinx compute use the 15th order taylor expansion when 0 <= x < 3.25
     x = xx*xx
     y = xx * polevl( x, AN, 9 )/polevl( x, AD, 10 )
-
-    Parameters:
-    ----------
-    input_x : the data input
-    -------
     """
     data_square = input_x * input_x
     data_polevl_an = _polevl(data_square, Constant.COEF_AN, Constant.COEF_AN_COUNT)
     data_polevl_ad = _polevl(data_square, Constant.COEF_AD, Constant.COEF_AD_COUNT)
     res = input_x * data_polevl_an
     res = res / data_polevl_ad
-
     return res
 
 
@@ -158,11 +152,6 @@ def _calc_condition_lt_six_p_two_five(input_x):
     do arcsinx compute use the 15th order taylor expansion when 3.25 <= x < 6.25
     x = 1.0/(xx*xx);
     y = (1.0/xx + x * polevl( x, BN, 10) / (p1evl( x, BD, 10) * xx)) * 0.5
-
-    Parameters:
-    ----------
-    input_x : the data input
-    -------
     """
     data_temp = input_x * input_x
     data_temp = 1 / data_temp
@@ -174,7 +163,6 @@ def _calc_condition_lt_six_p_two_five(input_x):
     res = data_polevl_bn / data_plevl_bd
     res = data_rec + res
     res = res * 0.5
-
     return res
 
 
@@ -183,11 +171,6 @@ def _calc_condition_le_one_e_nine(input_x):
     do arcsinx compute use the 15th order taylor expansion when 6.25 <= x <= 1.0e9
     x = 1.0/(xx*xx);
     y = (1.0/xx + x * polevl( x, CN, 4) / (p1evl( x, CD, 5) * xx)) * 0.5
-
-    Parameters:
-    ----------
-    input_x : the data input
-    -------
     """
     data_temp = input_x * input_x
     data_temp = 1 / data_temp
@@ -199,7 +182,6 @@ def _calc_condition_le_one_e_nine(input_x):
     res = data_polevl_cn / data_plevl_cd
     res = data_rec + res
     res = res * 0.5
-
     return res
 
 
@@ -207,14 +189,8 @@ def _calc_condition_gt_one_e_nine(input_x):
     """
     do arcsinx compute use the 15th order taylor expansion when x > 1.0e9
     y = 1/xx * 0.5
-
-    Parameters:
-    ----------
-    input_x : the data input
-    -------
     """
     res = 0.5 / input_x
-
     return res
 
 
