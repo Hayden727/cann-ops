@@ -16,15 +16,16 @@ import numpy as np
 
 @dataclass
 class BevPoolInputs:
+    """封装BevPool输入的配置参数"""
     depth: np.ndarray
     feat: np.ndarray
     ranks_depth: np.ndarray
     ranks_feat: np.ndarray
     ranks_bev: np.ndarray
-    bev_feat_shape: tuple
     interval_starts: np.ndarray
     interval_lengths: np.ndarray
-
+    bev_feat_shape: tuple
+    
 
 def bev_pool(inputs: BevPoolInputs) -> np.ndarray:
     """
@@ -42,11 +43,13 @@ def bev_pool(inputs: BevPoolInputs) -> np.ndarray:
     """
     bev_feat = np.zeros(bev_feat_shape, dtype=np.float16)
 
+    # 遍历每一个结构
     n_pillar = len(interval_starts)
     for i in range(n_pillar):
         start = interval_starts[i]
         length = interval_lengths[i]
         end = start + length
+        # 遍历当前结构中的每一个点
         for j in range(start, end):
             rank_depth = ranks_depth[j]
             rank_feat = ranks_feat[j]
@@ -110,9 +113,9 @@ if __name__ == "__main__":
         ranks_depth=ranks_depth,
         ranks_feat=ranks_feat,
         ranks_bev=ranks_bev,
-        bev_feat_shape=bev_feat_shape,
         interval_starts=interval_starts,
-        interval_lengths=interval_lengths
+        interval_lengths=interval_lengths,
+        bev_feat_shape=bev_feat_shape
     )
 
     os.system("mkdir -p input")
