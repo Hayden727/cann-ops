@@ -35,7 +35,7 @@ class Constant:
                3.25524741826057911661E-4,
                3.48805814657162590916E-3,
                2.79448531198828973716E-2,
-               1.5887424E-1,
+               1.58874242E-1,
                5.74918629489320327824E-1,
                1.00000000000000000539E0)
     COEF_AD_COUNT = 10
@@ -162,8 +162,7 @@ def _calc_condition_lt_six_p_two_five(input_x):
     data_plevl_bd = data_plevl_bd * input_x
     res = data_polevl_bn / data_plevl_bd
     res = data_rec + res
-    res = res * 0.5
-    return res
+    return res * 0.5
 
 
 def _calc_condition_le_one_e_nine(input_x):
@@ -181,8 +180,7 @@ def _calc_condition_le_one_e_nine(input_x):
     data_plevl_cd = data_plevl_cd * input_x
     res = data_polevl_cn / data_plevl_cd
     res = data_rec + res
-    res = res * 0.5
-    return res
+    return res * 0.5
 
 
 def _calc_condition_gt_one_e_nine(input_x):
