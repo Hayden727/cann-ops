@@ -10,7 +10,6 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-import os
 from dataclasses import dataclass
 import numpy as np
 
@@ -28,19 +27,7 @@ class BevPoolInputs:
 
 
 def bev_pool_test(inputs: BevPoolInputs) -> np.ndarray:
-    """
-    Args:
-        depth: (B, N, D, fH, fW)
-        feat:  (B, N, fH, fW, C)
-        ranks_depth: (N_points, ),
-        ranks_feat:  (N_points, ),
-        ranks_bev:   (N_points, ),
-        bev_feat_shape: (B, D_Z, D_Y, D_X, C)
-        interval_starts: (N_pillar, )
-        interval_lengths: (N_pillar, )
-    Returns:
-        x: bev feature in shape (B, C, Dz, Dy, Dx)
-    """
+
     bev_feat = np.zeros(bev_feat_shape, dtype=np.float16)
 
     n_pillar = len(interval_starts)
@@ -68,7 +55,15 @@ def bev_pool_test(inputs: BevPoolInputs) -> np.ndarray:
     return x
 
 
-def calc_expect_func(depth, feat, ranks_depth, ranks_feat, ranks_bev, interval_starts, interval_lengths, out, bev_feat_shape):
+def calc_expect_func(**kwargs):
+    depth = kwargs.get('depth', {'value': None})
+    feat = kwargs.get('feat', {'value': None})
+    ranks_depth = kwargs.get('ranks_depth', {'value': None})
+    ranks_feat = kwargs.get('ranks_feat', {'value': None})
+    ranks_bev = kwargs.get('ranks_bev', {'value': None})
+    interval_starts = kwargs.get('interval_starts', {'value': None})
+    interval_lengths = kwargs.get('interval_lengths', {'value': None})
+    bev_feat_shape = kwargs.get('bev_feat_shape', {'value': None})
 
     inputs = BevPoolInputs(
         depth=depth["value"],
