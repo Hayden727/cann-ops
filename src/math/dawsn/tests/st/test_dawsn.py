@@ -19,7 +19,7 @@ class Const:
     The class for constant
     """
     # Taylor coefficient
-    COEF_AN = (1.13681498971755972054E-11,
+    COEFF_AN = (1.13681498971755972054E-11,
                8.49262267667473811108E-10,
                1.94434204175553054283E-8,
                9.53151741254484363489E-7,
@@ -29,8 +29,8 @@ class Const:
                4.22618223005546594270E-2,
                -9.17480371773452345351E-2,
                9.99999999999999994612E-1)
-    COEF_AN_COUNT = 9
-    COEF_AD = (2.40372073066762605484E-11,
+    COEFF_AN_COUNT = 9
+    COEFF_AD = (2.40372073066762605484E-11,
                1.48864681368493396752E-9,
                5.21265281010541664570E-8,
                1.27258478273186970203E-6,
@@ -41,9 +41,9 @@ class Const:
                1.5887424E-1,
                5.74918629489320327824E-1,
                1.00000000000000000539E0)
-    COEF_AD_COUNT = 10
+    COEFF_AD_COUNT = 10
 
-    COEF_BN = (5.08955156417900903354E-1,
+    COEFF_BN = (5.08955156417900903354E-1,
                -2.44754418142697847934E-1,
                9.41512335303534411857E-2,
                -2.18711255142039025206E-2,
@@ -54,8 +54,8 @@ class Const:
                9.10010780076391431042E-8,
                -2.40274520828250956942E-9,
                3.59233385440928410398E-11)
-    COEF_BN_COUNT = 10
-    COEF_BD = (-6.31839869873368190192E-1,
+    COEFF_BN_COUNT = 10
+    COEFF_BD = (-6.31839869873368190192E-1,
                2.36706788228248691528E-1,
                -5.31806367003223277662E-2,
                8.48041718586295374409E-3,
@@ -65,27 +65,27 @@ class Const:
                1.89100358111421846170E-7,
                -4.91324691331920606875E-9,
                7.18466403235734541950E-11)
-    COEF_BD_COUNT = 10
+    COEFF_BD_COUNT = 10
 
-    COEF_CN = (-5.90592860534773254987E-1,
+    COEFF_CN = (-5.90592860534773254987E-1,
                6.29235242724368800674E-1,
                -1.72858975380388136411E-1,
                1.64837047825189632310E-2,
                -4.86827613020462700845E-4)
-    COEF_CN_COUNT = 4
-    COEF_CD = (-2.69820057197544900361E0,
+    COEFF_CN_COUNT = 4
+    COEFF_CD = (-2.69820057197544900361E0,
                1.73270799045947845857E0,
                -3.93708582281939493482E-1,
                3.44278924041233391079E-2,
                -9.73655226040941223894E-4)
-    COEF_CD_COUNT = 5
+    COEFF_CD_COUNT = 5
 
     THRESHOLD_3_25 = 3.25
     THRESHOLD_6_25 = 6.25
     THRESHOLD_1E_9 = 1.0e9
 
 
-def _polevl(data_x, coef, n):
+def _poleval(data_x, coef, n):
     """
     y = polevl( x, coef, n );
     DESCRIPTION:
@@ -112,7 +112,7 @@ def _polevl(data_x, coef, n):
     return res
 
 
-def _p1evl(data_x, coef, n):
+def _p1eval(data_x, coef, n):
     """
     y = p1evl( x, coef, N );
     DESCRIPTION:
@@ -136,7 +136,7 @@ def _p1evl(data_x, coef, n):
     return res
 
 
-def _calc_condition_lt_three_p_two_five(input_x):
+def _calc_lt_three_p_two_five(input_x):
     """
     do arcsinx compute use the 15th order taylor expansion when 0 <= x < 3.25
     x = xx*xx
@@ -148,15 +148,15 @@ def _calc_condition_lt_three_p_two_five(input_x):
     -------
     """
     data_square = input_x * input_x
-    data_polevl_an = _polevl(data_square, Const.COEF_AN, Const.COEF_AN_COUNT)
-    data_polevl_ad = _polevl(data_square, Const.COEF_AD, Const.COEF_AD_COUNT)
+    data_polevl_an = _poleval(data_square, Const.COEFF_AN, Const.COEFF_AN_COUNT)
+    data_polevl_ad = _poleval(data_square, Const.COEFF_AD, Const.COEFF_AD_COUNT)
     res = input_x * data_polevl_an
     res = res / data_polevl_ad
 
     return res
 
 
-def _calc_condition_lt_six_p_two_five(input_x):
+def _calc_lt_six_p_two_five(input_x):
     """
     do arcsinx compute use the 15th order taylor expansion when 3.25 <= x < 6.25
     x = 1.0/(xx*xx);
@@ -170,9 +170,9 @@ def _calc_condition_lt_six_p_two_five(input_x):
     data_temp = input_x * input_x
     data_temp = 1 / data_temp
     data_rec = 1 / input_x
-    data_polevl_bn = _polevl(data_temp, Const.COEF_BN, Const.COEF_BN_COUNT)
+    data_polevl_bn = _poleval(data_temp, Const.COEFF_BN, Const.COEFF_BN_COUNT)
     data_polevl_bn = data_polevl_bn * data_temp
-    data_plevl_bd = _p1evl(data_temp, Const.COEF_BD, Const.COEF_BD_COUNT)
+    data_plevl_bd = _p1eval(data_temp, Const.COEFF_BD, Const.COEFF_BD_COUNT)
     data_plevl_bd = data_plevl_bd * input_x
     res = data_polevl_bn / data_plevl_bd
     res = data_rec + res
@@ -181,7 +181,7 @@ def _calc_condition_lt_six_p_two_five(input_x):
     return res
 
 
-def _calc_condition_le_one_e_nine(input_x):
+def _calc_le_one_e_nine(input_x):
     """
     do arcsinx compute use the 15th order taylor expansion when 6.25 <= x <= 1.0e9
     x = 1.0/(xx*xx);
@@ -195,9 +195,9 @@ def _calc_condition_le_one_e_nine(input_x):
     data_temp = input_x * input_x
     data_temp = 1 / data_temp
     data_rec = 1 / input_x
-    data_polevl_cn = _polevl(data_temp, Const.COEF_CN, Const.COEF_CN_COUNT)
+    data_polevl_cn = _poleval(data_temp, Const.COEFF_CN, Const.COEFF_CN_COUNT)
     data_polevl_cn = data_polevl_cn * data_temp
-    data_plevl_cd = _p1evl(data_temp, Const.COEF_CD, Const.COEF_CD_COUNT)
+    data_plevl_cd = _p1eval(data_temp, Const.COEFF_CD, Const.COEFF_CD_COUNT)
     data_plevl_cd = data_plevl_cd * input_x
     res = data_polevl_cn / data_plevl_cd
     res = data_rec + res
@@ -206,7 +206,7 @@ def _calc_condition_le_one_e_nine(input_x):
     return res
 
 
-def _calc_condition_gt_one_e_nine(input_x):
+def _calc_gt_one_e_nine(input_x):
     """
     do arcsinx compute use the 15th order taylor expansion when x > 1.0e9
     y = 1/xx * 0.5
@@ -221,7 +221,7 @@ def _calc_condition_gt_one_e_nine(input_x):
     return res
 
 
-def Dawsn(x):
+def dawsn(x):
     input_x = x
     for i in np.nditer(input_x, op_flags=['readwrite']):
         sign = 1
@@ -229,18 +229,18 @@ def Dawsn(x):
             i[...] = -i
             sign = -1
         if i < 3.25:
-            i[...] = _calc_condition_lt_three_p_two_five(i) * sign
+            i[...] = _calc_lt_three_p_two_five(i) * sign
         elif i < 6.25:
-            i[...] = _calc_condition_lt_six_p_two_five(i) * sign
+            i[...] = _calc_lt_six_p_two_five(i) * sign
         elif i <= 1.0e9:
-            i[...] = _calc_condition_le_one_e_nine(i) * sign
+            i[...] = _calc_le_one_e_nine(i) * sign
         else:
-            i[...] = _calc_condition_gt_one_e_nine(i) * sign
+            i[...] = _calc_gt_one_e_nine(i) * sign
     return [input_x, ]
 
 
 def dawsn_test(x):
-    golden = np.array(Dawsn(x))
+    golden = np.array(dawsn(x))
     return golden
 
 
