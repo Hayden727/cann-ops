@@ -10,9 +10,9 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-import tensorflow as tf
-import numpy as np
+import os
 from dataclasses import dataclass
+import numpy as np
 
 
 @dataclass
@@ -25,6 +25,7 @@ class BevPoolInputs:
     bev_feat_shape: tuple
     interval_starts: np.ndarray
     interval_lengths: np.ndarray
+
 
 def bev_pool_test(inputs: BevPoolInputs) -> np.ndarray:
     """

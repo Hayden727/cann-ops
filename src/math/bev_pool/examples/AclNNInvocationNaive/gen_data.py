@@ -10,9 +10,8 @@
 # ======================================================================================================================
 
 import os
-import torch
-import numpy as np
 from dataclasses import dataclass
+import numpy as np
 
 
 @dataclass
@@ -25,6 +24,7 @@ class BevPoolInputs:
     bev_feat_shape: tuple
     interval_starts: np.ndarray
     interval_lengths: np.ndarray
+
 
 def bev_pool(inputs: BevPoolInputs) -> np.ndarray:
     """
@@ -88,18 +88,21 @@ if __name__ == "__main__":
     d_indices = np.random.randint(0, D, N_points).astype(np.int32)
     c_indices = np.random.randint(0, C, N_points).astype(np.int32)
 
-    ranks_depth = np.ravel_multi_index((b_indices, n_indices, d_indices, fh_indices, fw_indices), depth.shape).astype(np.int32)
-    ranks_feat = np.ravel_multi_index((b_indices, n_indices, fh_indices, fw_indices, c_indices), feat.shape).astype(np.int32)
+    ranks_depth = np.ravel_multi_index((b_indices, n_indices, d_indices, fh_indices, fw_indices),
+                                        depth.shape).astype(np.int32)
+    ranks_feat = np.ravel_multi_index((b_indices, n_indices, fh_indices, fw_indices, c_indices), 
+                                       feat.shape).astype(np.int32)
 
     # 保证 ranks_bev 中的 b 和 c 与 ranks_depth 和 ranks_feat 一致
     dz_indices = np.random.randint(0, D_Z, N_points).astype(np.int32)
     dy_indices = np.random.randint(0, D_Y, N_points).astype(np.int32)
     dx_indices = np.random.randint(0, D_X, N_points).astype(np.int32)
-    ranks_bev = np.ravel_multi_index((b_indices, dz_indices, dy_indices, dx_indices, c_indices), (B, D_Z, D_Y, D_X, C)).astype(np.int32)
+    ranks_bev = np.ravel_multi_index((b_indices, dz_indices, dy_indices, dx_indices, c_indices), 
+                                    (B, D_Z, D_Y, D_X, C)).astype(np.int32)
 
     bev_feat_shape = (B, D_Z, D_Y, D_X, C)
     interval_starts = np.random.randint(0, N_points // 2, N_pillar).astype(np.int32)
-    interval_lengths = np.random.randint(1, N_points - interval_starts.max(), N_pillar).astype(np.int32).astype(np.int32)
+    interval_lengths = np.random.randint(1, N_points - interval_starts.max(), N_pillar).astype(np.int32)
 
     inputs = BevPoolInputs(
         depth=depth,
