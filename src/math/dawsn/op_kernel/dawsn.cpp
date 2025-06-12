@@ -110,7 +110,8 @@ public:
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
 
         this->totalLength = paramList.totalLength;
-        this->blockLength = paramList.core_size + (GetBlockNum() == GetBlockIdx() + 1 ? paramList.core_remain : 0);
+        uint32_t remainLength = GetBlockNum() == GetBlockIdx() + 1 ? paramList.core_remain : 0;
+        this->blockLength = paramList.core_size + remainLength;
         this->tileLength = paramList.block_size;
         uint32_t ALIGN_NUM = paramList.ALIGN_NUM
         ASSERT(ALIGN_NUM != 0 && "ALIGN_NUM can not be zero!");
@@ -170,7 +171,8 @@ public:
       float polevl_an = _polevl(x_square, COEF_AN, COEF_AN_COUNT);
       float polevl_ad = _polevl(x_square, COEF_AD, COEF_AD_COUNT);
       ASSERT(polevl_ad != 0 && "polevl_ad can not be zero!");
-      return input_x * polevl_an / polevl_ad;
+      float res = input_x * polevl_an / polevl_ad;
+      return res;
     }
 
     __aicore__ inline float _calc_condition_lt_six_p_two_five(float input_x) {
@@ -179,7 +181,8 @@ public:
       float rec =  static_cast<float>(1.0) / input_x;
       float polevl_bn = _polevl(temp, COEF_BN, COEF_BN_COUNT) * temp;
       float p1evl_bd = _p1evl(temp, COEF_BD, COEF_BD_COUNT) * input_x;
-      return (rec + polevl_bn / p1evl_bd) * HALF_FACTOR;
+      float res = (rec + polevl_bn / p1evl_bd) * HALF_FACTOR;
+      return res;
     }
 
     __aicore__ inline float _calc_condition_le_one_e_nine(float x) {
@@ -188,12 +191,14 @@ public:
       float rec = static_cast<float>(1.0) / x;
       float polevl_cn = _polevl(temp, COEF_CN, COEF_CN_COUNT) * temp;
       float p1evl_cd = _p1evl(temp, COEF_CD, COEF_CD_COUNT) * x;
-      return (rec + polevl_cn / p1evl_cd) * HALF_FACTOR;
+      float res = (rec + polevl_cn / p1evl_cd) * HALF_FACTOR;
+      return res;
     }
 
     __aicore__ inline float _calc_condition_gt_one_e_nine(float input_x) {
       ASSERT(input_x != 0 && "input_x can not be zero!");
-      return HALF_FACTOR / input_x;
+      float res = HALF_FACTOR / input_x;
+      return res;
     }
 
 private:

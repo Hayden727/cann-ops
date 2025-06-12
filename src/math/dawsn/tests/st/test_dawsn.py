@@ -10,9 +10,11 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-import numpy as np
 import os
+import numpy as np
 # 'pylint: disable=too-few-public-methods
+
+
 class Constant:
     """
     The class for constant
@@ -37,7 +39,7 @@ class Constant:
                3.25524741826057911661E-4,
                3.48805814657162590916E-3,
                2.79448531198828973716E-2,
-               1.58874241960120565368E-1,
+               1.5887424E-1,
                5.74918629489320327824E-1,
                1.00000000000000000539E0)
     COEF_AD_COUNT = 10
@@ -84,7 +86,7 @@ class Constant:
     THRESHOLD_1E_9 = 1.0e9
 
 
-def _polevl(data_x, coef, N):
+def _polevl(data_x, coef, n):
     """
     y = polevl( x, coef, N );
     DESCRIPTION:
@@ -105,13 +107,13 @@ def _polevl(data_x, coef, N):
     -------
     """
     res = coef[0]
-    for index in range(1, N + 1):
+    for index in range(1, n + 1):
         res = res * data_x
         res = res + coef[index]
     return res
 
 
-def _p1evl(data_x, coef, N):
+def _p1evl(data_x, coef, n):
     """
     y = p1evl( x, coef, N );
     DESCRIPTION:
@@ -129,7 +131,7 @@ def _p1evl(data_x, coef, N):
     """
     res = coef[0]
     res = res + data_x
-    for index in range(1, N):
+    for index in range(1, n):
         res = res * data_x
         res = res + coef[index]
     return res
@@ -220,7 +222,6 @@ def _calc_condition_gt_one_e_nine(input_x):
     return res
 
 
-# 'pylint': disable=unused-argument
 def dawsn(x):
     input_x = x
     for i in np.nditer(input_x, op_flags=['readwrite']):
@@ -249,4 +250,4 @@ def dawsn_test(x):
 def calc_expect_func(x, y):
 
     y = dawsn_test(x["value"])
-    return [y,]
+    return [y, ]
