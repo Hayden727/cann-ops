@@ -41,10 +41,10 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_add_op
+    ./execute_matmul_all_reduce_op
 )
 
-python3 verify_result.py output/output_z.bin output/golden.bin
+python3 verify_result.py output
 if [ $? -eq 0 ]; then
     echo ""
     echo "#####################################"

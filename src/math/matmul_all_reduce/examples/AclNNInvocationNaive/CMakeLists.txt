@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_add)
+project(acl_execute_matmul_all_reduce)
 
 # Compile options
 add_compile_options(-std=c++11)
@@ -45,17 +45,22 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_add_op
+add_executable(execute_matmul_all_reduce_op
     main.cpp
 )
 
-target_link_libraries(execute_add_op
+target_link_libraries(execute_matmul_all_reduce_op
+    ascendalog
     ascendcl
-    cust_opapi
     acl_op_compiler
+    cust_opapi
+    hccl
     nnopbase
+    graph
     stdc++
+    pthread
 )
 
-install(TARGETS execute_add_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_matmul_all_reduce_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
 
