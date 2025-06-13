@@ -20,39 +20,50 @@ class KernelMuls
 public:
     __aicore__ inline KernelMuls() {}
     __aicore__ inline void Init(GM_ADDR x,GM_ADDR value, GM_ADDR y, uint32_t smallCoreDataNum,
-                                uint32_t bigCoreDataNum, uint32_t finalBigTileNum,
-                                uint32_t finalSmallTileNum, uint32_t tileDataNum,
-                                uint32_t smallTailDataNum, uint32_t bigTailDataNum,
-                                uint32_t tailBlockNum)
+                                uint32_t bigCoreDataNum, uint32_t ubPartDataNum,
+                                uint32_t smallCoreTailDataNum, uint32_t bigCoreTailDataNum,
+                                uint32_t smallCoreLoopNum, uint32_t bigCoreLoopNum,
+                                uint32_t tailBlockNum,bool IsExistBigCore)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
-        this->tileDataNum = tileDataNum;
-        if (coreNum < tailBlockNum)
+        this->ubPartDataNum = ubPartDataNum;
+        this->IsExistBigCore = IsExistBigCore;
+        if (IsExistBigCore) 
         {
+          if (coreNum < tailBlockNum) 
+          { 
             this->coreDataNum = bigCoreDataNum;
-            this->tileNum = finalBigTileNum;
-            this->tailDataNum = bigTailDataNum;
+            this->tileNum = bigCoreLoopNum;
+            this->tailDataNum = bigCoreTailDataNum;
+          }
+          else 
+          { 
+            this->coreDataNum = smallCoreDataNum;
+            this->tileNum = smallCoreLoopNum;
+            this->tailDataNum = smallCoreTailDataNum;
+            globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (AscendC::GetBlockIdx() - tailBlockNum);
+          }
         }
         else
         {
-            this->coreDataNum = smallCoreDataNum;
-            this->tileNum = finalSmallTileNum;
-            this->tailDataNum = smallTailDataNum;
-            globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (GetBlockIdx() - tailBlockNum);
+          this->coreDataNum = smallCoreDataNum;
+          this->tileNum = smallCoreLoopNum;
+          this->tailDataNum = smallCoreTailDataNum;
+          globalBufferIndex = smallCoreDataNum * AscendC::GetBlockIdx();
         }
         xGm.SetGlobalBuffer((__gm__ TYPE_X *)x + globalBufferIndex, this->coreDataNum);
         yGm.SetGlobalBuffer((__gm__ TYPE_X *)y + globalBufferIndex, this->coreDataNum);
         valueGm.SetGlobalBuffer((__gm__ TYPE_X *)value);
-        pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
-        pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
-        //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
+        pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
+        pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
+        //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>){
-            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float32_t));
+            pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(float32_t));
         }else if constexpr (std::is_same_v<TYPE_X, int64_t>){
-            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(int32_t));
+            pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(int32_t));
         }
         #endif
     }
@@ -60,7 +71,7 @@ public:
     {
         //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
-        this->processDataNum = this->tileDataNum;
+        this->processDataNum = this->ubPartDataNum;
         for (int32_t i = 0; i < loopCount; i++)
         {
             CopyIn(i);
@@ -76,7 +87,7 @@ private:
     __aicore__ inline void CopyIn(int32_t progress)
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.AllocTensor<TYPE_X>();
-        DataCopy(xLocal, xGm[progress * this->tileDataNum], this->processDataNum);
+        DataCopy(xLocal, xGm[progress * this->ubPartDataNum], this->processDataNum);
         inQueueX.EnQue(xLocal);
     }
     __aicore__ inline void Compute(int32_t progress)
@@ -110,7 +121,7 @@ private:
     __aicore__ inline void CopyOut(int32_t progress)
     {
         LocalTensor<TYPE_X> yLocal = outQueueY.DeQue<TYPE_X>();
-        DataCopy(yGm[progress * this->tileDataNum], yLocal, this->processDataNum);
+        DataCopy(yGm[progress * this->ubPartDataNum], yLocal, this->processDataNum);
         outQueueY.FreeTensor(yLocal);
     }
 private:
@@ -124,7 +135,8 @@ private:
     GlobalTensor<TYPE_X> yGm;
     uint32_t coreDataNum;
     uint32_t tileNum;
-    uint32_t tileDataNum;
+    uint32_t ubPartDataNum;
+    bool IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
 };
@@ -135,44 +147,55 @@ class KernelMulsComplex32
 public:
     __aicore__ inline KernelMulsComplex32() {}
     __aicore__ inline void Init(GM_ADDR x,GM_ADDR value, GM_ADDR y, uint32_t smallCoreDataNum,
-        uint32_t bigCoreDataNum, uint32_t finalBigTileNum,
-        uint32_t finalSmallTileNum, uint32_t tileDataNum,
-        uint32_t smallTailDataNum, uint32_t bigTailDataNum,
-        uint32_t tailBlockNum)
+        uint32_t bigCoreDataNum, uint32_t ubPartDataNum,
+        uint32_t smallCoreTailDataNum, uint32_t bigCoreTailDataNum,
+        uint32_t smallCoreLoopNum, uint32_t bigCoreLoopNum,
+        uint32_t tailBlockNum,bool IsExistBigCore)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
-        this->tileDataNum = tileDataNum;
-        if (coreNum < tailBlockNum)
+        this->ubPartDataNum = ubPartDataNum;
+        this->IsExistBigCore = IsExistBigCore;
+        if (IsExistBigCore) 
         {
+          if (coreNum < tailBlockNum) 
+          { 
             this->coreDataNum = bigCoreDataNum;
-            this->tileNum = finalBigTileNum;
-            this->tailDataNum = bigTailDataNum;
+            this->tileNum = bigCoreLoopNum;
+            this->tailDataNum = bigCoreTailDataNum;
+          }
+          else 
+          { 
+            this->coreDataNum = smallCoreDataNum;
+            this->tileNum = smallCoreLoopNum;
+            this->tailDataNum = smallCoreTailDataNum;
+            globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (AscendC::GetBlockIdx() - tailBlockNum);
+          }
         }
         else
         {
-            this->coreDataNum = smallCoreDataNum;
-            this->tileNum = finalSmallTileNum;
-            this->tailDataNum = smallTailDataNum;
-            globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (GetBlockIdx() - tailBlockNum);
+          this->coreDataNum = smallCoreDataNum;
+          this->tileNum = smallCoreLoopNum;
+          this->tailDataNum = smallCoreTailDataNum;
+          globalBufferIndex = smallCoreDataNum * AscendC::GetBlockIdx();
         }
         xGm.SetGlobalBuffer((__gm__ float *)x + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM); // 1 complex = 2 float
         yGm.SetGlobalBuffer((__gm__ float *)y + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM);
-        pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * BUFFER_NUM * sizeof(float));
-        pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * BUFFER_NUM * sizeof(float));
+        pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
+        pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         valueGm.SetGlobalBuffer((__gm__ TYPE_X *)value);
         // tBufXReal, tBufXImag,tBufYReal, tBufYImag,tBufRealOffset, tBufImagOffset
-        pipe.InitBuffer(tBufXReal, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tBufXImag, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tBufRealOffset, this->tileDataNum * BUFFER_NUM * sizeof(uint32_t));
-        pipe.InitBuffer(tBufImagOffset, this->tileDataNum * BUFFER_NUM * sizeof(uint32_t));
+        pipe.InitBuffer(tBufXReal, this->ubPartDataNum * sizeof(float));
+        pipe.InitBuffer(tBufXImag, this->ubPartDataNum * sizeof(float));
+        pipe.InitBuffer(tBufRealOffset, this->ubPartDataNum * BUFFER_NUM * sizeof(uint32_t));
+        pipe.InitBuffer(tBufImagOffset, this->ubPartDataNum * BUFFER_NUM * sizeof(uint32_t));
     }
     __aicore__ inline void Process()
     {
         //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
-        this->processDataNum = this->tileDataNum;
+        this->processDataNum = this->ubPartDataNum;
         for (int32_t i = 0; i < loopCount; i++)
         {
             CopyIn(i);
@@ -189,7 +212,7 @@ private:
     {
         LocalTensor<float> xLocal = inQueueX.AllocTensor<float>();
 
-        DataCopy(xLocal, xGm[progress * this->tileDataNum * 2], this->processDataNum * 2);
+        DataCopy(xLocal, xGm[progress * this->ubPartDataNum * 2], this->processDataNum * 2);
 
         inQueueX.EnQue(xLocal);
     }
@@ -233,7 +256,7 @@ private:
     {
         LocalTensor<float> yLocal = outQueueY.DeQue<float>();
 
-        DataCopy(yGm[progress * this->tileDataNum * BUFFER_NUM], yLocal, this->processDataNum * BUFFER_NUM);
+        DataCopy(yGm[progress * this->ubPartDataNum * BUFFER_NUM], yLocal, this->processDataNum * BUFFER_NUM);
         outQueueY.FreeTensor(yLocal);
     }
 private:
@@ -249,7 +272,8 @@ private:
     TBuf<QuePosition::VECCALC> tBufImagOffset;
     uint32_t coreDataNum;
     uint32_t tileNum;
-    uint32_t tileDataNum;
+    uint32_t ubPartDataNum;
+    bool IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
 };
@@ -260,44 +284,55 @@ class KernelMulsComplex64
 public:
     __aicore__ inline KernelMulsComplex64() {}
     __aicore__ inline void Init(GM_ADDR x,GM_ADDR value, GM_ADDR y, uint32_t smallCoreDataNum,
-        uint32_t bigCoreDataNum, uint32_t finalBigTileNum,
-        uint32_t finalSmallTileNum, uint32_t tileDataNum,
-        uint32_t smallTailDataNum, uint32_t bigTailDataNum,
-        uint32_t tailBlockNum)
+        uint32_t bigCoreDataNum, uint32_t ubPartDataNum,
+        uint32_t smallCoreTailDataNum, uint32_t bigCoreTailDataNum,
+        uint32_t smallCoreLoopNum, uint32_t bigCoreLoopNum,
+        uint32_t tailBlockNum,bool IsExistBigCore)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
-        this->tileDataNum = tileDataNum;
-        if (coreNum < tailBlockNum)
+        this->ubPartDataNum = ubPartDataNum;
+        this->IsExistBigCore = IsExistBigCore;
+        if (IsExistBigCore) 
         {
+          if (coreNum < tailBlockNum) 
+          { 
             this->coreDataNum = bigCoreDataNum;
-            this->tileNum = finalBigTileNum;
-            this->tailDataNum = bigTailDataNum;
+            this->tileNum = bigCoreLoopNum;
+            this->tailDataNum = bigCoreTailDataNum;
+          }
+          else 
+          { 
+            this->coreDataNum = smallCoreDataNum;
+            this->tileNum = smallCoreLoopNum;
+            this->tailDataNum = smallCoreTailDataNum;
+            globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (AscendC::GetBlockIdx() - tailBlockNum);
+          }
         }
         else
         {
-            this->coreDataNum = smallCoreDataNum;
-            this->tileNum = finalSmallTileNum;
-            this->tailDataNum = smallTailDataNum;
-            globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (GetBlockIdx() - tailBlockNum);
+          this->coreDataNum = smallCoreDataNum;
+          this->tileNum = smallCoreLoopNum;
+          this->tailDataNum = smallCoreTailDataNum;
+          globalBufferIndex = smallCoreDataNum * AscendC::GetBlockIdx();
         }
         xGm.SetGlobalBuffer((__gm__ float *)x + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM); // 1 complex = 2 float
         yGm.SetGlobalBuffer((__gm__ float *)y + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM);
-        pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * BUFFER_NUM * sizeof(float));
-        pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * BUFFER_NUM * sizeof(float));
+        pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
+        pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         valueGm.SetGlobalBuffer((__gm__ TYPE_X *)value);
         // tBufXReal, tBufXImag,tBufYReal, tBufYImag,tBufRealOffset, tBufImagOffset
-        pipe.InitBuffer(tBufXReal, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tBufXImag, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tBufRealOffset, this->tileDataNum * BUFFER_NUM * sizeof(uint32_t));
-        pipe.InitBuffer(tBufImagOffset, this->tileDataNum * BUFFER_NUM * sizeof(uint32_t));
+        pipe.InitBuffer(tBufXReal, this->ubPartDataNum * sizeof(float));
+        pipe.InitBuffer(tBufXImag, this->ubPartDataNum * sizeof(float));
+        pipe.InitBuffer(tBufRealOffset, this->ubPartDataNum * BUFFER_NUM * sizeof(uint32_t));
+        pipe.InitBuffer(tBufImagOffset, this->ubPartDataNum * BUFFER_NUM * sizeof(uint32_t));
     }
     __aicore__ inline void Process()
     {
         //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
-        this->processDataNum = this->tileDataNum;
+        this->processDataNum = this->ubPartDataNum;
         for (int32_t i = 0; i < loopCount; i++)
         {
             CopyIn(i);
@@ -314,7 +349,7 @@ private:
     {
         LocalTensor<float> xLocal = inQueueX.AllocTensor<float>();
 
-        DataCopy(xLocal, xGm[progress * this->tileDataNum * BUFFER_NUM], this->processDataNum * BUFFER_NUM);
+        DataCopy(xLocal, xGm[progress * this->ubPartDataNum * BUFFER_NUM], this->processDataNum * BUFFER_NUM);
 
         inQueueX.EnQue(xLocal);
     }
@@ -357,7 +392,7 @@ private:
     __aicore__ inline void CopyOut(int32_t progress)
     {
         LocalTensor<float> yLocal = outQueueY.DeQue<float>();
-        DataCopy(yGm[progress * this->tileDataNum * BUFFER_NUM], yLocal, this->processDataNum * BUFFER_NUM);
+        DataCopy(yGm[progress * this->ubPartDataNum * BUFFER_NUM], yLocal, this->processDataNum * BUFFER_NUM);
         outQueueY.FreeTensor(yLocal);
     }
 private:
@@ -373,7 +408,8 @@ private:
     TBuf<QuePosition::VECCALC> tBufImagOffset;
     uint32_t coreDataNum;
     uint32_t tileNum;
-    uint32_t tileDataNum;
+    uint32_t ubPartDataNum;
+    bool IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
 };
@@ -388,66 +424,66 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
     if(TILING_KEY_IS(0)){
         KernelMuls<bfloat16_t> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }else if(TILING_KEY_IS(1)){
         KernelMuls<float16_t> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }else if(TILING_KEY_IS(2)){
         KernelMuls<float32_t> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }else if(TILING_KEY_IS(3)){
         KernelMuls<int16_t> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }else if(TILING_KEY_IS(4)){
         KernelMuls<int32_t> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }else if(TILING_KEY_IS(5)){
         KernelMuls<int64_t> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();}
     else if(TILING_KEY_IS(6)){
         KernelMulsComplex32<float> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }else if(TILING_KEY_IS(7)){
         KernelMulsComplex64<float> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum);
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }
     #endif

@@ -22,24 +22,65 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
     MulsTilingData tiling;
     // 获取硬件信息（UB 内存大小、核心数、SOC版本）
-    uint64_t ubSize;
+    uint64_t ubLength = 0;
+    uint32_t bigCoreDataNum = 0;
+    uint32_t bigCoreLoopNum = 0;
+    uint32_t bigCoreTailDataNum = 0;
+    
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
-    ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
+    ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
     auto coreNum = ascendcPlatform.GetCoreNum();
-    auto socVersion = ascendcPlatform.GetSocVersion();
-    //获取输入数据量的大小
-    uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-    // 获取输入数据的类型长度（如 float16=2, float32=4）
-    uint32_t typeLength = 0;
-    ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
-    //获取输入长度以及输入类型
-    uint64_t inputLength = inputNum * typeLength;
-    uint64_t inputBytes = 0;//inputBytes=typeLength
-    if(inputNum != 0){
-        inputBytes = inputLength / inputNum;//inputBytes=typeLength
-    }else{
-        return ge::GRAPH_FAILED;
+    
+    // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
+    uint32_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+    uint32_t dataTypeLength = 0;
+    ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
+    uint32_t inputLength = inputDataNum * dataTypeLength;
+    
+    // There are a total of 3 shared UB spaces in the input and output. If it's int8, there are 2 more TBUFs
+    uint32_t ubPartNum = (dataTypeLength == 1) ? 5 : 3;
+    uint32_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
+    // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
+    uint32_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
+    uint32_t ubPartDataNum = (ubPartBlockNum * BLOCK_SIZE) / dataTypeLength;
+
+    // Input data for 32B alignment
+    uint32_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+    if(ubPartDataNum >= inputDataNum)
+    {
+        coreNum=1;
     }
+    else
+    {
+        // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
+        coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
+    }
+    
+    uint32_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
+    uint32_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
+    
+    // Small chunks are calculated and sliced several times using the number of data on each core
+    uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
+    uint32_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
+    smallCoreLoopNum = (everyCoreInputBlockNum % ubPartDataNum) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
+    // Tail block calculation for small chunks of data
+    uint32_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
+    smallCoreTailDataNum = smallCoreTailDataNum == 0 ? ubPartDataNum : smallCoreTailDataNum;
+    bool IsExistBigCore = true;
+    if(0 != tailBlockNum)
+    {
+        everyCoreInputBlockNum += 1;
+        bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
+        bigCoreLoopNum = bigCoreDataNum / ubPartDataNum;
+        bigCoreLoopNum = (everyCoreInputBlockNum % ubPartDataNum) == 0 ? bigCoreLoopNum : bigCoreLoopNum + 1;
+        bigCoreTailDataNum = bigCoreDataNum - ubPartDataNum * (bigCoreLoopNum-1);
+        bigCoreTailDataNum = bigCoreTailDataNum == 0 ? ubPartDataNum : bigCoreTailDataNum;
+        IsExistBigCore = true;
+    }
+    else{
+        IsExistBigCore = false;
+    }
+    
     //在上面部分，complex和其他数据类型是相同的处理方式，但在下面具体核分配中，要分流处理，先获取数据类型
     uint32_t dataType = context->GetInputDesc(0)->GetDataType();
     //根据不同的数据类型来这设置tilingkey
@@ -62,65 +103,30 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
     // 计算每个核心可处理的数据块大小（考虑 UB 内存限制）
     //ubDataNumber需要根据数据类型进行变动，其中complex为特殊数据，需要进行特殊处理
-    constexpr uint64_t UB_DATA_NUM_NORMAL = 12;     // Normal data types
-    constexpr uint64_t UB_DATA_NUM_FLOAT32 = 6;     // For float32/int32
-    constexpr uint64_t UB_DATA_NUM_COMPLEX64 = 4; 
-    uint64_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT||context->GetInputDesc(0)->GetDataType() == ge::DT_INT32) ? UB_DATA_NUM_FLOAT32 : UB_DATA_NUM_NORMAL;
-    if(dataType == ge::DT_COMPLEX64){
-        ubDataNumber = UB_DATA_NUM_COMPLEX64;
-    }
-    uint64_t tileBlockNum = (ubSize / BLOCK_SIZE / BUFFER_NUM) / ubDataNumber;
-    uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes; // 每次搬运的数据量
-    // 数据对齐到 32B
-    uint64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
-    // 确定核心数（不超过数据块数）
-    if (inputNum <= tileDataNum) {
-        coreNum = 1;
-    } else {
-        uint32_t maxCoreNum = inputNum / tileDataNum;
-        coreNum = (coreNum < maxCoreNum) ? coreNum : maxCoreNum;
-        coreNum = (coreNum >= 1) ? coreNum : 1;
-    }
-    uint64_t everyCoreInputBlockNum = 0;
-    uint64_t tailBlockNum = 0;
-    // 计算大核和小核的分块参数
-    if(BLOCK_SIZE!=0 && coreNum!=0){
-        everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
-        tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
-    }else{
-        return ge::GRAPH_FAILED;
-    }
-    // 小核参数（处理较少数据）
-    uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / typeLength;
-    uint64_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
-    uint64_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
-    uint64_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
-    //避免出现smallTailDataNum等于0的情况出现
-    smallTailDataNum = smallTailDataNum == 0 ? tileDataNum : smallTailDataNum;
-    // 大核参数（处理更多数据）
-    everyCoreInputBlockNum += 1; // 大核多处理一个块
-    uint64_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
-    uint64_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
-    uint64_t finalBigTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? bigTileNum : bigTileNum + 1;
-    uint64_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
-    //避免出现bigTailDataNum==0的情况出现
-    bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum;
-    // 将参数保存到 Tiling 结构体
-    tiling.set_smallCoreDataNum((uint32_t)smallCoreDataNum);
-    tiling.set_bigCoreDataNum((uint32_t)bigCoreDataNum);
-    tiling.set_tileDataNum((uint32_t)tileDataNum);
-    tiling.set_smallTailDataNum((uint32_t)smallTailDataNum);
-    tiling.set_bigTailDataNum((uint32_t)bigTailDataNum);
-    tiling.set_finalSmallTileNum((uint32_t)finalSmallTileNum);
-    tiling.set_finalBigTileNum((uint32_t)finalBigTileNum);
-    tiling.set_tailBlockNum((uint32_t)tailBlockNum);
-    // 设置核心数和 Tiling 数据
+    // constexpr uint64_t UB_DATA_NUM_NORMAL = 12;     // Normal data types
+    // constexpr uint64_t UB_DATA_NUM_FLOAT32 = 6;     // For float32/int32
+    // constexpr uint64_t UB_DATA_NUM_COMPLEX64 = 4; 
+    // uint64_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT||context->GetInputDesc(0)->GetDataType() == ge::DT_INT32) ? UB_DATA_NUM_FLOAT32 : UB_DATA_NUM_NORMAL;
+    // if(dataType == ge::DT_COMPLEX64){
+    //     ubDataNumber = UB_DATA_NUM_COMPLEX64;
+    // }
+    return ge::GRAPH_SUCCESS;
+    tiling.set_smallCoreDataNum(smallCoreDataNum);
+    tiling.set_bigCoreDataNum(bigCoreDataNum);
+    tiling.set_ubPartDataNum(ubPartDataNum);
+    tiling.set_smallCoreTailDataNum(smallCoreTailDataNum);
+    tiling.set_bigCoreTailDataNum(bigCoreTailDataNum);
+    tiling.set_smallCoreLoopNum(smallCoreLoopNum);
+    tiling.set_bigCoreLoopNum(bigCoreLoopNum);
+    tiling.set_tailBlockNum(tailBlockNum);
+    tiling.set_tailBlockNum(IsExistBigCore);
     context->SetBlockDim(coreNum);
+    
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     size_t *currentWorkspace = context->GetWorkspaceSizes(1);
     currentWorkspace[0] = 0;
-    return ge::GRAPH_SUCCESS;
+
 }
 }
 namespace ge {
@@ -145,7 +151,7 @@ public:
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND});
         this->Input("value")
             .ParamType(REQUIRED)
-            .DataType({ge::DT_BF16, ge::DT_FLOAT16, ge::DT_FLOAT,ge::DT_INT32, ge::DT_INT16,ge::DT_INT64, ge::DT_COMPLEX64})
+            .DataType({ge::DT_FLOAT, ge::DT_FLOAT, ge::DT_FLOAT,ge::DT_FLOAT, ge::DT_FLOAT,ge::DT_FLOAT, ge::DT_FLOAT})
             .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND, ge::FORMAT_ND,ge::FORMAT_ND,  ge::FORMAT_ND}).Scalar();
         this->Output("y")
