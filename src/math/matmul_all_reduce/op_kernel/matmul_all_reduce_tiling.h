@@ -29,7 +29,7 @@ struct AllReduceRCSTiling {
     uint32_t dataType;
 };
 
-class MatmulAllReduceCustomTilingData {
+class MatmulAllReduceTilingData {
 public:
     Mc2InitTiling mc2InitTiling;
     Mc2CcTiling mc2CcTiling;

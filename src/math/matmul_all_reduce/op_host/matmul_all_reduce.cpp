@@ -65,7 +65,7 @@ static ge::graphStatus ParamsCheck(gert::TilingContext* context)
     return ge::GRAPH_SUCCESS;
 }
 
-static ge::graphStatus MatmulAllReduceCustomTilingFunc(gert::TilingContext *context) {
+static ge::graphStatus MatmulAllReduceTilingFunc(gert::TilingContext *context) {
     // 对参数进行校验
     if (ParamsCheck(context) != ge::GRAPH_SUCCESS) {
         ERROR_LOG("Param check failed.");
@@ -106,7 +106,7 @@ static ge::graphStatus MatmulAllReduceCustomTilingFunc(gert::TilingContext *cont
     uint64_t tailM = M % TILE_M;
     INFO_LOG("tileNum %lu, tailNum %lu, tailM %lu", tileNum, tailNum, tailM);
 
-    MatmulAllReduceCustomTilingData *tiling = context->GetTilingData<MatmulAllReduceCustomTilingData>();
+    MatmulAllReduceTilingData *tiling = context->GetTilingData<MatmulAllReduceTilingData>();
 
     tiling->param.rankDim = RANK_NUM;
     tiling->param.rankM = M;
@@ -167,9 +167,9 @@ static ge::graphStatus MatmulAllReduceCustomTilingFunc(gert::TilingContext *cont
 }
 
 namespace ops {
-class MatmulAllReduceCustom : public OpDef {
+class MatmulAllReduce : public OpDef {
 public:
-    explicit MatmulAllReduceCustom(const char *name) : OpDef(name)
+    explicit MatmulAllReduce(const char *name) : OpDef(name)
     {
         this->Input("x1")
             .ParamType(REQUIRED)
@@ -210,11 +210,11 @@ public:
             .ExtendCfgInfo("aclnnSupport.value", "support_aclnn")
             .ExtendCfgInfo("jitCompile.flag", "static_false")
             .ExtendCfgInfo("multiKernelSupportDynamicGraph.value", "multi_kernel");
-        this->AICore().SetTiling(MatmulAllReduceCustomTilingFunc);
+        this->AICore().SetTiling(MatmulAllReduceTilingFunc);
         this->AICore().AddConfig("ascend910b", aicore_config);
         this->MC2().HcclGroup("group");
     }
 };
 
-OP_ADD(MatmulAllReduceCustom);
+OP_ADD(MatmulAllReduce);
 }

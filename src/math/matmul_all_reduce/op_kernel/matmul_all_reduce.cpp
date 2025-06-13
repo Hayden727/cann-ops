@@ -31,8 +31,8 @@ extern "C" __global__ __aicore__ void matmul_all_reduce(GM_ADDR aGM, GM_ADDR bGM
         return;
     }
 
-    REGISTER_TILING_DEFAULT(MatmulAllReduceCustomTilingData);
-    auto tiling1 = (__gm__ MatmulAllReduceCustomTilingData*)tilingGM;
+    REGISTER_TILING_DEFAULT(MatmulAllReduceTilingData);
+    auto tiling1 = (__gm__ MatmulAllReduceTilingData*)tilingGM;
     __gm__ void *mc2InitTiling = (__gm__ void *)(&(tiling1->mc2InitTiling));
     __gm__ void *mc2CcTiling = (__gm__ void *)(&(tiling1->mc2CcTiling));
 
