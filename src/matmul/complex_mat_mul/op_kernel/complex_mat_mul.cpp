@@ -16,7 +16,6 @@
 
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
-#define ALIGNMENT 64
 
 using namespace AscendC;
 using namespace matmul;
@@ -31,7 +30,7 @@ __aicore__ inline uint32_t AlignDown(uint32_t x, uint32_t p)
     return x & ~(p - 1);
 }
 
-template <uint32_t LEN, uint32_t TILE_M, uint32_t TILE_N>
+template <uint32_t LEN, uint32_t TILE_M, uint32_t TILE_N, uint32_t Alignment = 64>
 class KernelMatMulComplex
 {
   public:
@@ -47,7 +46,7 @@ class KernelMatMulComplex
         this->K = K;
         this->N = N;
         this->M0 = AlignUP(M, TILE_M);
-        this->K0 = AlignUP(K, ALIGNMENT);
+        this->K0 = AlignUP(K, Alignment);
         this->N0 = AlignUP(N, TILE_N);
         this->tiling = tiling;
 
@@ -136,7 +135,7 @@ class KernelMatMulComplex
                     const uint32_t len = MIN(LEN, K - j);
                     CopyInX<true>(x1Gm[2 * (i * K + j)], 2 * len);
                     SplitAndAdd();
-                    CopyOutWork(i * K0 + j, M0 * K0, AlignUP(len, ALIGNMENT));
+                    CopyOutWork(i * K0 + j, M0 * K0, AlignUP(len, Alignment));
                 }
             }
 
@@ -147,7 +146,7 @@ class KernelMatMulComplex
                     const uint32_t len = MIN(LEN, N - j);
                     CopyInX(x2Gm[2 * (i * N + j)], 2 * len);
                     SplitAndAdd();
-                    CopyOutWork(3 * M0 * K0 + i * N0 + j, K0 * N0, AlignUP(len, ALIGNMENT));
+                    CopyOutWork(3 * M0 * K0 + i * N0 + j, K0 * N0, AlignUP(len, Alignment));
                 }
             }
 
@@ -184,7 +183,7 @@ class KernelMatMulComplex
     __aicore__ inline void CopyInX(const GlobalTensor<float> &ComplexGm, uint32_t len)
     {
         LocalTensor<float> xLocal = inQueueComplex.AllocTensor<float>();
-        if (need_reset && AlignDown(len, 2 * ALIGNMENT) != len)
+        if (need_reset && AlignDown(len, 2 * Alignment) != len)
         {
             Duplicate(xLocal[AlignDown(len, 2 * ALIGNMENT)], 0.0f, 2 * ALIGNMENT);
         }
