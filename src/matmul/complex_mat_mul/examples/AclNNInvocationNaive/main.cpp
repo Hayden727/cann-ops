@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
+#include <complex>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fstream>
