@@ -14,8 +14,11 @@
 #include "kernel_operator.h"
 #include "lib/matmul_intf.h"
 
-#define MIN(x, y) ((x) < (y) ? (x) : (y))
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
+template <typename T>
+__aicore__ inline T Min(T x, T y) { return x < y ? x : y; }
+
+template <typename T>
+__aicore__ inline T Max(T x, T y) { return x > y ? x : y; }
 
 using namespace AscendC;
 using namespace matmul;
@@ -101,8 +104,8 @@ class KernelMatMulComplex
             return;
         }
 
-        uint32_t tailM = MIN(tiling.M - mCoreIndx * tiling.singleCoreM, tiling.singleCoreM);
-        uint32_t tailN = MIN(tiling.N - nCoreIndx * tiling.singleCoreN, tiling.singleCoreN);
+        uint32_t tailM = Min(tiling.M - mCoreIndx * tiling.singleCoreM, tiling.singleCoreM);
+        uint32_t tailN = Min(tiling.N - nCoreIndx * tiling.singleCoreN, tiling.singleCoreN);
         if (tailM < tiling.singleCoreM || tailN < tiling.singleCoreN)
         {
             matmulObj.SetTail(tailM, tailN);
@@ -130,7 +133,7 @@ class KernelMatMulComplex
             {
                 for (uint32_t j = 0; j < K; j += LEN)
                 {
-                    const uint32_t len = MIN(LEN, K - j);
+                    const uint32_t len = Min(LEN, K - j);
                     CopyInX<true>(x1Gm[2 * (i * K + j)], 2 * len);
                     SplitAndAdd();
                     CopyOutWork(i * K0 + j, M0 * K0, AlignUP(len, Alignment));
@@ -141,7 +144,7 @@ class KernelMatMulComplex
             {
                 for (uint32_t j = 0; j < N; j += LEN)
                 {
-                    const uint32_t len = MIN(LEN, N - j);
+                    const uint32_t len = Min(LEN, N - j);
                     CopyInX(x2Gm[2 * (i * N + j)], 2 * len);
                     SplitAndAdd();
                     CopyOutWork(3 * M0 * K0 + i * N0 + j, K0 * N0, AlignUP(len, Alignment));
@@ -156,11 +159,11 @@ class KernelMatMulComplex
 
             for (uint32_t i = 0; i < M; i += TILE_M, idx += N / TILE_N)
             {
-                uint32_t len_m = MIN(TILE_M, M - i);
+                uint32_t len_m = Min(TILE_M, M - i);
                 uint32_t j_start = TILE_N * ((GetBlockIdx() + cnt - idx % cnt) % cnt);
                 for (uint32_t j = j_start; j < N; j += TILE_N * cnt)
                 {
-                    uint32_t len_n = MIN(TILE_N, N - j);
+                    uint32_t len_n = Min(TILE_N, N - j);
                     if (addBias)
                     {
                         CopyInBias(i, j, len_m, len_n);
