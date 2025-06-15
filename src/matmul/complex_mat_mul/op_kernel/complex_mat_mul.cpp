@@ -104,8 +104,8 @@ class KernelMatMulComplex
             return;
         }
 
-        uint32_t tailM = Min(tiling.M - mCoreIndx * tiling.singleCoreM, tiling.singleCoreM);
-        uint32_t tailN = Min(tiling.N - nCoreIndx * tiling.singleCoreN, tiling.singleCoreN);
+        uint32_t tailM = Min(tiling.M - mCoreIndx * tiling.singleCoreM, (uint32_t) tiling.singleCoreM);
+        uint32_t tailN = Min(tiling.N - nCoreIndx * tiling.singleCoreN, (uint32_t) tiling.singleCoreN);
         if (tailM < tiling.singleCoreM || tailN < tiling.singleCoreN)
         {
             matmulObj.SetTail(tailM, tailN);
@@ -186,7 +186,7 @@ class KernelMatMulComplex
         LocalTensor<float> xLocal = inQueueComplex.AllocTensor<float>();
         if (need_reset && AlignDown(len, 2 * Alignment) != len)
         {
-            Duplicate(xLocal[AlignDown(len, 2 * ALIGNMENT)], 0.0f, 2 * ALIGNMENT);
+            Duplicate(xLocal[AlignDown(len, 2 * Alignment)], 0.0f, 2 * Alignment);
         }
         DataCopyExtParams copyParamsX{1, static_cast<uint32_t>(len * sizeof(float)), 0, 0, 0};
         DataCopyPadExtParams<float> padParams{false, 0, 0, 0};
