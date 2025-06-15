@@ -55,9 +55,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     int32_t K = shape_a.GetDim(dim - 1);
     int32_t N = shape_b.GetDim(dim - 1);
 
-    // uint64_t ub_size;
-    // ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
-    // printf("ub_size = %d\n", ub_size);
     MultiCoreMatmulTiling tiling(ascendcPlatform);
     MatMulTilingData tiling1;
 
@@ -81,7 +78,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
 
     tiling.SetBias(false);
 
-    // tiling.SetBatchInfoForNormal(3, 3, TILE_M, TILE_N, K0);
     tiling.SetBufferSpace(-1, -1, -1);
     uint32_t n_core = ascendcPlatform.GetCoreNumAiv();
     tiling.SetDim(n_core);

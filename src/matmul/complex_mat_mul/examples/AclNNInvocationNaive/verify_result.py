@@ -15,6 +15,7 @@ import numpy as np
 LOSS = 1e-3
 MINIMUM = 10e-10
 
+
 def verify_result(actual, golden):
     dtype = np.complex64
     actual = np.fromfile(actual, dtype=dtype)

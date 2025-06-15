@@ -161,7 +161,7 @@ int main() {
     aclrtFree(inputYDevice);
     aclrtFree(biasDevice);
     aclrtFree(outputDevice);
-    if (workspace) aclrtFree(workspace);
+    if (workspace) { aclrtFree(workspace); }
     aclrtDestroyStream(stream);
     aclrtResetDevice(deviceId);
     aclFinalize();
