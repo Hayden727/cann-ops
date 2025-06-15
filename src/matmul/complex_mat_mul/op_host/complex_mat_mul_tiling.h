@@ -11,6 +11,8 @@
 /**
  * @file complex_mat_mul_tiling.h
  */
+#ifndef COMPLEX_MAT_MUL_TILING_H
+#define COMPLEX_MAT_MUL_TILING_H
 #include "register/tilingdata_base.h"
 #include "tiling/tiling_api.h"
 
@@ -26,3 +28,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(ComplexMatMul, MatMulTilingData)
 } // namespace optil
+#endif
