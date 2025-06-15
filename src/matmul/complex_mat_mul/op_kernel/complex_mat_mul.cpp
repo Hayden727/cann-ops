@@ -120,8 +120,6 @@ class KernelMatMulComplex
     {
         uint32_t offsetA, offsetB, offsetC;
         CalcOffset(GetBlockIdx(), *tiling, offsetA, offsetB, offsetC);
-        // printf("offsetA = %d; offsetB = %d; offsetC = %d\n", offsetA, offsetB, offsetC);
-        // printf("singleCoreM = %d; singleCoreN = %d", singleCoreM, singleCoreN);
 
         const int cnt = GetBlockNum() * GetTaskRation();
         for (uint32_t b = 0; b < BatchSize; b++)
@@ -373,6 +371,4 @@ extern "C" __global__ __aicore__ void complex_mat_mul(GM_ADDR x, GM_ADDR y,
                       &tilingData.cubeTilingData);
     op.Init(&pipe, x, y, z, bias, workspace, BatchSize, M, K, N, &tilingData.cubeTilingData);
     op.Process();
-
-    // TODO: user kernel impl
 }
