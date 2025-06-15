@@ -14,7 +14,6 @@
  */
 #include "register/op_impl_registry.h"
 #include "weight_quant_batch_matmul_v2_adaptive_split_tiling.h"
-#include "weight_quant_batch_matmul_v2_reg_base_tiling.h"
 #include "weight_quant_batch_matmul_v2_tiling_custom.h"
 #include "weight_quant_batch_matmul_v2_tiling_custom_nz_splitk.h"
 #include "weight_quant_batch_matmul_v2_tiling_fixpipe.h"
@@ -42,7 +41,6 @@ REGISTER_TILING_TEMPLATE("WeightQuantBatchMatmulV2", WeightQuantBatchMatmulV2Cus
 REGISTER_TILING_TEMPLATE("WeightQuantBatchMatmulV2", WeightQuantBatchMatmulV2TilingCustom, CUSTOM_PRIORITY);
 REGISTER_TILING_TEMPLATE("WeightQuantBatchMatmulV2", WeightQuantBatchMatmulV2TilingFixpipe, FIXPIPE_PRIORITY);
 REGISTER_TILING_TEMPLATE("WeightQuantBatchMatmulV2", WeightQuantBatchMatmulV2WeightNz, WEIGHT_NZ_PRIORITY);
-REGISTER_TILING_TEMPLATE("WeightQuantBatchMatmulV2", WeightQuantBatchMatmulV2RegBase, ANTI_REG_PRIORITY);
 REGISTER_TILING_TEMPLATE("WeightQuantBatchMatmulV2", WeightQuantBatchMatmulV2TilingAS, ADAPTIVE_SPLIT_PRIORITY);
 
 static ge::graphStatus WeightQuantBatchMatmulV2TilingFunc(gert::TilingContext *context)

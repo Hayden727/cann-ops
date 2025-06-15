@@ -13,7 +13,6 @@ target_sources(optiling PRIVATE
         op_host/weight_quant_batch_matmul_v2_adaptive_split_tiling.cpp
         op_host/weight_quant_batch_matmul_v2_basic_block_tiling.cpp
         op_host/weight_quant_batch_matmul_v2_compute_matmul_tiling.cpp
-        op_host/weight_quant_batch_matmul_v2_reg_base_tiling.cpp
         op_host/weight_quant_batch_matmul_v2_tiling_custom_nz_splitk.cpp
         op_host/weight_quant_batch_matmul_v2_tiling_custom.cpp
         op_host/weight_quant_batch_matmul_v2_tiling_fixpipe.cpp
@@ -117,15 +116,6 @@ install(FILES op_kernel/weight_quant_batch_matmul_v2_msd_multicore.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
 install(FILES op_kernel/weight_quant_batch_matmul_v2_msd_split_k.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/weight_quant_batch_matmul_v2_reg_base_common.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/weight_quant_batch_matmul_v2_reg_base.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/weight_quant_batch_matmul_v2_vf.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
 install(FILES op_kernel/weight_quant_batch_matmul_v2_weight_nz_performance_base.h

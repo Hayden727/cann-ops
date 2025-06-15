@@ -114,10 +114,7 @@ __aicore__ inline void MatMulUnAlignedKernelDeterministicSplitK(GM_ADDR aGM, GM_
     if ASCEND_IS_AIC {
         WaitEvent(ND2NZ_AIV_SYNC_AIC_FLAG);
         if (GetBlockIdx() >= tiling.usedCoreNum) {
-#if defined(__DAV_C310__)
-            NotifyEvent<PIPE_FIX>(AIC_SYNC_AIV_FLAG + FLAG_ID_MAX);
-            NotifyEvent<PIPE_FIX>(AIC_SYNC_AIV_FLAG);
-#elif defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
+#if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
             NotifyEvent<PIPE_FIX>(AIC_SYNC_AIV_FLAG);
 #endif
             PipeBarrier<PIPE_ALL>();

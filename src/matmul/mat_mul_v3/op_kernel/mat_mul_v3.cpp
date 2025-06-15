@@ -13,7 +13,6 @@
  * \brief
  */
 #include "mat_mul_v3_common.h"
-#include "mat_mul_asw_kernel.h"
 #include "mat_mul_base_kernel.h"
 #include "mat_mul_deterministic_splitk_kernel.h"
 #include "mat_mul_sc_splitk_kernel.h"
@@ -146,12 +145,6 @@ extern "C" __global__ __aicore__ void mat_mul_v3(GM_ADDR aGM, GM_ADDR bGM, GM_AD
     GET_TILING_DATA(tilingData, tilingGM);
     __gm__ uint8_t *user = GetUserWorkspace(workspaceGM);
 
-#if defined(__DAV_C310__)
-    // Adaptive Sliding Window Kernel
-    if (TILING_KEY_IS(10000000000000000001UL)) {
-        MMV3_IMPL_CLASS(MatmulV3::MatmulAswKernel, format_x1, MatmulV3::MatmulAswBlock, MM_CFG_NO_PRELOAD);
-    }
-#else
 #if defined(__CCE_AICORE__) && __CCE_AICORE__ < 220
     // 第一个模板使用mix类型的，使得整个算子的coreType在dyn场景都为mix，静态则根据选择的tilingkey决定coreType
     if (TILING_KEY_IS(10000000000000000000UL)) {
@@ -195,6 +188,5 @@ extern "C" __global__ __aicore__ void mat_mul_v3(GM_ADDR aGM, GM_ADDR bGM, GM_AD
         MMV3_IMPL_C_CLASS(MatmulBaseUnalignedNKernel, format_x1, CubeFormat::NZ, MatmulBaseBlock, MM_CFG_NO_PRELOAD,
                         MatmulCallBackFunc<nullptr, nullptr, CopyBL1>, FIXPIPE_OPT_SELECT::VEC_NZ2ND_UNALIGNOUT);
     }
-#endif
 #endif
 }

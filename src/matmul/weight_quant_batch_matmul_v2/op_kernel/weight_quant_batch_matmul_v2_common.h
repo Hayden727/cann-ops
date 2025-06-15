@@ -147,11 +147,7 @@ protected:
     };
     __aicore__ inline void WaitFlagDevLocal(int64_t flagID)
     {
-#if defined(__DAV_C310__)
-        wait_flag_dev(PIPE_S, flagID);
-#else
         wait_flag_dev(flagID);
-#endif
     }
     __aicore__ inline void WaitForVector()
     {

@@ -13,8 +13,24 @@ import sys
 import numpy as np
 import torch
 
-THRESH = 2**-6
+THRESH = 2**-7
 
+
+def get_eb(golden: torch.Tensor, actual: torch.Tensor):
+    golden = golden.to(torch.float32)
+    golden_nmax = torch.clamp(torch.abs(golden), min=1)
+    actual_error = actual.to(torch.float32) - golden
+    eb = torch.mean(actual_error / golden_nmax)
+    result = eb <= 2 ** (-7)
+    return result
+
+
+def ref_compare(golden: torch.Tensor, actual: torch.Tensor, thresh: float):
+    golden = golden.to(torch.float32)
+    golden_nmax = torch.clamp(torch.abs(golden), min=1)
+    abs_error = torch.abs(actual.to(torch.float32) - golden)
+    result = (abs_error <= thresh * golden_nmax).all()
+    return result
 
 def verify_result(real_result, golden):
     dtype = np.float16
@@ -22,8 +38,9 @@ def verify_result(real_result, golden):
     golden = np.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
     real_result = torch.tensor(real_result)
     golden = torch.tensor(golden)
-    result = torch.allclose(real_result, golden, rtol=0.002, atol=0.002)
-
+    eb = get_eb(golden, real_result)
+    cmp = ref_compare(golden, real_result, THRESH)
+    result = eb and cmp
     if not result:
         print("[ERROR] result error")
         return False
