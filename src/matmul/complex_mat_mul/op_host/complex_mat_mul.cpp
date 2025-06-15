@@ -20,6 +20,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
         return ge::GRAPH_FAILED;
     }
+    auto socVersion = ascendcPlatform.GetSocVersion();
+    if (socVersion != platform_ascendc::SocVersion::ASCEND910B) {
+        return ge::GRAPH_FAILED;
+    }
     int dim = shape_a.GetDimNum();
     int32_t BatchSize = 1;
     for (int i = 0; i < dim - 2; i++)
@@ -66,7 +70,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
 
     // tiling.SetBatchInfoForNormal(3, 3, TILE_M, TILE_N, K0);
     tiling.SetBufferSpace(-1, -1, -1);
-    uint32_t n_core = 40;
+    uint32_t n_core = ascendcPlatform.GetCoreNumAiv();
     tiling.SetDim(n_core);
 
     while (n_core > 0 && tiling.GetTiling(tiling1.cubeTilingData) == -1)
@@ -85,7 +89,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     tiling1.set_N(N);
     tiling1.set_BatchSize(BatchSize);
 
-    uint32_t coreNum = ascendcPlatform.GetCoreNum();
     context->SetBlockDim((n_core + 1) / 2);
     tiling1.SaveToBuffer(context->GetRawTilingData()->GetData(),
                          context->GetRawTilingData()->GetCapacity());
