@@ -20,6 +20,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
         return ge::GRAPH_FAILED;
     }
+    auto ascendcPlatform =
+        platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto socVersion = ascendcPlatform.GetSocVersion();
     if (socVersion != platform_ascendc::SocVersion::ASCEND910B) {
         return ge::GRAPH_FAILED;
@@ -40,8 +42,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     int32_t K = shape_a.GetDim(dim - 1);
     int32_t N = shape_b.GetDim(dim - 1);
 
-    auto ascendcPlatform =
-        platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     // uint64_t ub_size;
     // ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ub_size);
     // printf("ub_size = %d\n", ub_size);
