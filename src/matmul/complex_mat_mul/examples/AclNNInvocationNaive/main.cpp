@@ -97,10 +97,10 @@ int main() {
     CHECK_RET(ret == SUCCESS, return FAILED);
 
     // Input shapes: [batch, m, k] for x, [batch, k, n] for y, [batch, m, n] for bias
-    std::vector<int64_t> inputXShape = {2, 3, 4};
-    std::vector<int64_t> inputYShape = {2, 4, 5};
-    std::vector<int64_t> biasShape = {2, 3, 5};
-    std::vector<int64_t> outputShape = {2, 3, 5};
+    std::vector<int64_t> inputXShape = {4, 300, 400};
+    std::vector<int64_t> inputYShape = {4, 400, 500};
+    std::vector<int64_t> biasShape = {4, 300, 500};
+    std::vector<int64_t> outputShape = {4, 300, 500};
 
     // Create tensors
     void *inputXDevice = nullptr, *inputYDevice = nullptr, *biasDevice = nullptr, *outputDevice = nullptr;

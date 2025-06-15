@@ -14,8 +14,8 @@ import numpy as np
 
 def gen_golden_data_simple():
     dtype = np.complex64
-    batch_size = 2
-    m, k, n = 3, 4, 5
+    batch_size = 4
+    m, k, n = 300, 400, 500
 
     # Generate random complex matrices
     input_x = (np.random.randn(batch_size, m, k) + 1j * np.random.randn(batch_size, m, k)).astype(dtype)

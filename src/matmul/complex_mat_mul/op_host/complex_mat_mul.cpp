@@ -1,4 +1,4 @@
-#include "mat_mul_tiling.h"
+#include "complex_mat_mul_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "tiling/tiling_api.h"
@@ -85,7 +85,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     tiling1.set_N(N);
     tiling1.set_BatchSize(BatchSize);
 
-    printf("n_core = %d\n", n_core);
     uint32_t coreNum = ascendcPlatform.GetCoreNum();
     context->SetBlockDim((n_core + 1) / 2);
     tiling1.SaveToBuffer(context->GetRawTilingData()->GetData(),
