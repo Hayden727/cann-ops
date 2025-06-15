@@ -15,14 +15,14 @@ import numpy as np
 LOSS = 1e-3
 MINIMUM = 10e-10
 
-def verify_result(real_result, golden):
+def verify_result(actual, golden):
     dtype = np.complex64
-    real_result = np.fromfile(real_result, dtype=dtype)
+    actual = np.fromfile(actual, dtype=dtype)
     golden = np.fromfile(golden, dtype=dtype)
     
     # Calculate absolute and relative errors
-    abs_diff = np.abs(real_result - golden)
-    max_vals = np.maximum(np.abs(real_result), np.abs(golden))
+    abs_diff = np.abs(actual - golden)
+    max_vals = np.maximum(np.abs(actual), np.abs(golden))
     
     abs_ok = np.all(abs_diff <= LOSS)
     rel_ok = np.all(abs_diff / (max_vals + MINIMUM) <= LOSS)
@@ -32,7 +32,7 @@ def verify_result(real_result, golden):
         return True
     else:
         error_count = np.sum((abs_diff > LOSS) & (abs_diff / (max_vals + MINIMUM) > LOSS))
-        total = real_result.size
+        total = actual.size
         error_percent = error_count / total
         if error_percent > LOSS:
             print(f"[ERROR] result error: {error_count}/{total} elements failed")
