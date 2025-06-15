@@ -37,7 +37,7 @@ def verify_result(actual, golden):
         if error_percent > LOSS:
             print(f"[ERROR] result error: {error_count}/{total} elements failed")
             return False
-        print("test pass (within tolerance)")
+        print("test pass")
         return True
 
 if __name__ == '__main__':
