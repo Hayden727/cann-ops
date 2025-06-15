@@ -6,7 +6,7 @@
 #define ALIGNMENT 64
 
 using namespace AscendC;
-using namespace ComplexMatMul;
+using namespace MatMul;
 
 __aicore__ inline uint32_t AlignUP(uint32_t x, uint32_t p)
 {
@@ -330,7 +330,7 @@ class KernelMatMulComplex
     GlobalTensor<float> x1Gm, x2Gm, yGm, zGm, biasGm, workGm;
     TBuf<TPosition::VECCALC> tBufOffset, tBufAcc;
 
-    ComplexMatMul<MatmulType<TPosition::GM, CubeFormat::ND, float>,
+    MatMul<MatmulType<TPosition::GM, CubeFormat::ND, float>,
            MatmulType<TPosition::GM, CubeFormat::ND, float>,
            MatmulType<TPosition::GM, CubeFormat::ND, float>,
            MatmulType<TPosition::GM, CubeFormat::ND, float>, CFG_MDL>
