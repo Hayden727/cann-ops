@@ -11,6 +11,8 @@
 import os
 import torch
 import numpy as np
+
+
 def add_random_zeros(tensor, zero_ratio=0.2):
     num_elements = tensor.size
     num_zeros = int(num_elements * zero_ratio)
@@ -18,14 +20,14 @@ def add_random_zeros(tensor, zero_ratio=0.2):
     tensor.flat[random_indices] = 0
     return tensor
 def gen_golden_data_simple():
-    case_data={
+    case_data = {
         'input_shape': [517, 517],
         'data_type': np.float16,
         'values_shape': [517, 517]
     }
-    input_input = np.random.uniform(-100, 100,case_data['input_shape']).astype(case_data['data_type'])
-    input_input=add_random_zeros(input_input,0.2)
-    input_values = np.random.uniform(-100, 100,case_data['values_shape']).astype(case_data['data_type'])
+    input_input = np.random.uniform(-100, 100, case_data['input_shape']).astype(case_data['data_type'])
+    input_input = add_random_zeros(input_input, 0.2)
+    input_values = np.random.uniform(-100, 100, case_data['values_shape']).astype(case_data['data_type'])
     golden = torch.heaviside(torch.from_numpy(input_input), torch.from_numpy(input_values)).numpy()
     os.system("mkdir -p input")
     os.system("mkdir -p output")
