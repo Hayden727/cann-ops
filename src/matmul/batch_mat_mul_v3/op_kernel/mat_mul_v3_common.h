@@ -91,11 +91,7 @@ __aicore__ inline uint64_t MMLcm(uint64_t m, uint64_t n) {
 
 __aicore__ inline void WaitFlagDevLocal(int64_t flagID)
 {
-#if defined(__DAV_C310__)
-    wait_flag_dev(PIPE_S, flagID);
-#else
     wait_flag_dev(flagID);
-#endif
 }
 
 template <HardEvent event>
@@ -163,27 +159,6 @@ __aicore__ inline uint64_t MMV3FloorAlign(uint64_t a, uint64_t b)
     return b == 0 ? 0 : a / b * b;
 }
 
-#if defined(__DAV_C310__)
-template <class T>
-__aicore__ inline void CopyGmToUbufAlign(__ubuf__ void* dst, __gm__ void* src, uint8_t sid, uint16_t nBurst,
-    uint32_t lenBurst, uint8_t leftPaddingNum, uint8_t rightPaddingNum, uint32_t srcGap, uint32_t dstGap)
-{
-    bool constantPaddingCtl = true;
-    uint8_t l2CacheCtl = 0;
-    uint32_t dstStride = lenBurst + dstGap * 32 + (leftPaddingNum + rightPaddingNum) * sizeof(T); // 32 is blocksize
-    copy_gm_to_ubuf_align_v2((__ubuf__ T*)dst, (__gm__ T*)src, sid, nBurst, lenBurst, leftPaddingNum, rightPaddingNum,
-                             constantPaddingCtl, l2CacheCtl, (lenBurst + srcGap), dstStride);
-}
-
-template <typename T>
-__aicore__ inline void CopyUbufToGmAlign(__gm__ void* dst, __ubuf__ void* src, uint8_t sid, uint16_t nBurst,
-    uint32_t lenBurst, uint8_t leftPaddingNum, uint8_t rightPaddingNum, uint32_t srcGap, uint32_t dstGap)
-{
-    uint8_t l2CacheCtl = 0;
-    copy_ubuf_to_gm_align_v2((__gm__ T*)dst, (__ubuf__ T*)src, sid, nBurst, lenBurst, l2CacheCtl,
-                             (lenBurst + dstGap), (lenBurst + srcGap * 32)); // 32 is blocksize
-}
-#else
 template <class T>
 __aicore__ inline void CopyGmToUbufAlign(__ubuf__ void* dst, __gm__ void* src, uint8_t sid, uint16_t nBurst,
     uint32_t lenBurst, uint8_t leftPaddingNum, uint8_t rightPaddingNum, uint32_t srcGap, uint32_t dstGap)
@@ -213,7 +188,6 @@ __aicore__ inline void CopyUbufToGmAlign(__gm__ void* dst, __ubuf__ void* src, u
         ASSERT(false);
     }
 }
-#endif
 
 template <typename T>
 __aicore__ inline void CopyCast(const LocalTensor<float>& ubSrc, const LocalTensor<T>& ubDst, __gm__ float* src,

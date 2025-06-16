@@ -30,6 +30,11 @@ target_include_directories(optiling PRIVATE
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/metadef
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/runtime
         ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/msprof
+        ${ASCEND_CANN_PACKAGE_PATH}/include/exe_graph
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn
+        ${ASCEND_CANN_PACKAGE_PATH}/include/aclnn/opdev
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/slog/toolchain
+        ${ASCEND_CANN_PACKAGE_PATH}/include/experiment/mmpa
 )
 
 # opproto
@@ -75,12 +80,6 @@ install(FILES op_kernel/mat_mul_v3.cpp
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
 install(FILES op_kernel/batch_mat_mul_nd2nz.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/mat_mul_asw_block.h
-        DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
-
-install(FILES op_kernel/mat_mul_asw_kernel.h
         DESTINATION ${ASCEND_IMPL_OUT_DIR}/dynamic)
 
 install(FILES op_kernel/mat_mul_base_block.h
