@@ -22,7 +22,6 @@ def gen_golden_data_simple():
     input_y = (np.random.randn(batch_size, k, n) + 1j * np.random.randn(batch_size, k, n)).astype(dtype)
     bias = (np.random.randn(batch_size, m, n) + 1j * np.random.randn(batch_size, m, n)).astype(dtype)
 
-    # Compute expected result: z = x * y + bias
     golden = np.matmul(input_x, input_y) + bias
 
     os.system("mkdir -p input")

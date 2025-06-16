@@ -88,4 +88,4 @@ Atlas A2 训练系列产品
 
 ## 调用示例
 
-详见[ComplexMatMul自定义算子样例说明算子调用章节](../../README.md#算子调用)
+详见[ComplexMatMul自定义算子样例说明算子调用章节](../README.md#算子调用)
