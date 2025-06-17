@@ -11,22 +11,25 @@
 /**
  * @file eye_fp64_tiling.h
  */
+#ifndef EYE_FP64_TILING_H
+#define EYE_FP64_TILING_H
 #include "register/tilingdata_base.h"
 namespace optiling {
-    BEGIN_TILING_DATA_DEF(EyeFp64TilingData)
-        TILING_DATA_FIELD_DEF(uint16_t, totalMatrixNum);
-        TILING_DATA_FIELD_DEF(uint16_t, numRows);
-        TILING_DATA_FIELD_DEF(uint16_t, numColumns);
-    END_TILING_DATA_DEF;
-    REGISTER_TILING_DATA_CLASS(EyeFp64, EyeFp64TilingData)
-    BEGIN_TILING_DATA_DEF(EyeFp64TilingData_slice)
-        TILING_DATA_FIELD_DEF(uint64_t, mask0);
-        TILING_DATA_FIELD_DEF(uint64_t, mask1);
-        TILING_DATA_FIELD_DEF(uint64_t, mask_remain0);
-        TILING_DATA_FIELD_DEF(uint64_t, mask_remain1);
-        TILING_DATA_FIELD_DEF(int, totalMatrixNum);
-        TILING_DATA_FIELD_DEF(int, numRows);
-        TILING_DATA_FIELD_DEF(int, numColumns);
-    END_TILING_DATA_DEF;
-    REGISTER_TILING_DATA_CLASS(EyeFp64_2, EyeFp64TilingData_slice)
-}
+BEGIN_TILING_DATA_DEF(EyeFp64TilingData)
+TILING_DATA_FIELD_DEF(uint16_t, totalMatrixNum);
+TILING_DATA_FIELD_DEF(uint16_t, numRows);
+TILING_DATA_FIELD_DEF(uint16_t, numColumns);
+END_TILING_DATA_DEF;
+REGISTER_TILING_DATA_CLASS(EyeFp64, EyeFp64TilingData)
+BEGIN_TILING_DATA_DEF(EyeFp64TilingData_slice)
+TILING_DATA_FIELD_DEF(uint64_t, mask0);
+TILING_DATA_FIELD_DEF(uint64_t, mask1);
+TILING_DATA_FIELD_DEF(uint64_t, mask_remain0);
+TILING_DATA_FIELD_DEF(uint64_t, mask_remain1);
+TILING_DATA_FIELD_DEF(int, totalMatrixNum);
+TILING_DATA_FIELD_DEF(int, numRows);
+TILING_DATA_FIELD_DEF(int, numColumns);
+END_TILING_DATA_DEF;
+REGISTER_TILING_DATA_CLASS(EyeFp64_2, EyeFp64TilingData_slice)
+} // namespace optiling
+#endif // EYE_FP64_TILING_H
