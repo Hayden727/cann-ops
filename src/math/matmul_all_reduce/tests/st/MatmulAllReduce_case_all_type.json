@@ -1,0 +1,109 @@
+[
+    {
+        "case_name": "Test_MatmulAllReduce_001",
+        "op": "MatmulAllReduce",
+        "calc_expect_func_file": "test_matmul_all_reduce.py:calc_expect_func",
+        "input_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float16",
+                    "bfloat16"
+                ],
+                "shape": [16384, 640],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x1"
+            },
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float16",
+                    "bfloat16"
+                ],
+                "shape": [640, 5120],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x2"
+            },
+            {
+                "format": [
+                    "UNDEFINED"
+                ],
+                "type": [
+                    "UNDEFINED",
+                    "UNDEFINED"
+                ],
+                "shape": [16384, 5120],
+                "data_distribute": [
+                    "uniform"
+                ],
+                "value_range": [
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "bias"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float16",
+                    "bfloat16"
+                ],
+                "shape": [],
+                "name": "y"
+            }
+        ],
+        "attr": [
+            {
+                "name": "group",
+                "type": "string",
+                "value": ""
+            },
+            {
+                "name": "reduce_op",
+                "type": "string",
+                "value": "sum"
+            },
+            {
+                "name": "is_trans_a",
+                "type": "bool",
+                "value": false
+            },
+            {
+                "name": "is_trans_b",
+                "type": "bool",
+                "value": false
+            },
+            {
+                "name": "comm_turn",
+                "type": "int",
+                "value": 0
+            }
+        ]
+    }
+]

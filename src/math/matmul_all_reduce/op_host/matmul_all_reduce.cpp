@@ -19,7 +19,7 @@
 #define ERROR_LOG(fmt, args...) fprintf(stderr, "[ERROR]  " fmt "\n", ##args)
 
 // tiling
-constexpr uint32_t RANK_NUM = 8;
+constexpr uint32_t RANK_NUM = 1;
 constexpr uint32_t CUSTOM_TILING_KEY = 1000UL; // full mesh + no nd2nz + no cast bias
 constexpr uint32_t TILE_M = 4096;
 constexpr int32_t L1_BUFFER_SIZE = 512 * 1024;
@@ -194,7 +194,7 @@ public:
             .Format({ge::FORMAT_ND, ge::FORMAT_ND})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND});
 
-        this->Attr("group").AttrType(REQUIRED).String();
+        this->Attr("group").String();
         this->Attr("reduce_op").AttrType(OPTIONAL).String("sum");
         this->Attr("is_trans_a").AttrType(OPTIONAL).Bool(false);
         this->Attr("is_trans_b").AttrType(OPTIONAL).Bool(false);
