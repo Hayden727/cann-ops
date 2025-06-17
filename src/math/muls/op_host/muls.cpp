@@ -37,8 +37,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint32_t inputLength = inputDataNum * dataTypeLength;
     
-    // There are a total of 3 shared UB spaces in the input and output. If it's int8, there are 2 more TBUFs
-    uint32_t ubPartNum = (dataTypeLength == 1) ? 5 : 3;
+    // There are a total of 3 shared UB spaces in the input and output. If it's bf16 and int64, there are 2 more TBUFs
+    uint32_t dataType = context->GetInputDesc(0)->GetDataType();
+    uint32_t ubPartNum = (dataType == ge::DT_BF16 || dataType == ge::DT_INT64) ? 5 : 3;
     uint32_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
     // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
     uint32_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
@@ -81,25 +82,23 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         IsExistBigCore = false;
     }
     
+    // else if(dataType == ge::DT_FLOAT16){
+    //     context->SetTilingKey(1);
+    // }else if(dataType == ge::DT_FLOAT){
+    //     context->SetTilingKey(2);
+    // }else if(dataType == ge::DT_INT16){
+    //     context->SetTilingKey(3);
+    // }else if(dataType == ge::DT_INT32){
+    //     context->SetTilingKey(4);
+    // }else if(dataType == ge::DT_INT64){
+    //     context->SetTilingKey(5);
+    // }
     //在上面部分，complex和其他数据类型是相同的处理方式，但在下面具体核分配中，要分流处理，先获取数据类型
-    uint32_t dataType = context->GetInputDesc(0)->GetDataType();
     //根据不同的数据类型来这设置tilingkey
-    if (dataType == ge::DT_BF16) {
-        context->SetTilingKey(0);
-    }else if(dataType == ge::DT_FLOAT16){
+    if (dataType == ge::DT_COMPLEX64) {
         context->SetTilingKey(1);
-    }else if(dataType == ge::DT_FLOAT){
-        context->SetTilingKey(2);
-    }else if(dataType == ge::DT_INT16){
-        context->SetTilingKey(3);
-    }else if(dataType == ge::DT_INT32){
-        context->SetTilingKey(4);
-    }else if(dataType == ge::DT_INT64){
-        context->SetTilingKey(5);
-    }else if(dataType == ge::DT_COMPLEX32){
-        context->SetTilingKey(6);
-    }else if(dataType == ge::DT_COMPLEX64){
-        context->SetTilingKey(7);
+    }else{
+        context->SetTilingKey(0);
     }
     // 计算每个核心可处理的数据块大小（考虑 UB 内存限制）
     //ubDataNumber需要根据数据类型进行变动，其中complex为特殊数据，需要进行特殊处理
