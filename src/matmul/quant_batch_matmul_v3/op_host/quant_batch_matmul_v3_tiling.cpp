@@ -1416,7 +1416,7 @@ int32_t QuantBatchMatmulV3Tiling::CalcND2NZSpace() const {
 
 void QuantBatchMatmulV3Tiling::PrintTilingData()
 {
-    if (CheckLogLevel(OP, DLOG_DEBUG) != 1) {
+    if (AlogCheckDebugLevel(OP, DLOG_DEBUG) != 1) {
         return;
     }
 
@@ -1441,7 +1441,7 @@ void QuantBatchMatmulV3Tiling::PrintTilingData()
 
 void QuantBatchMatmulV3Tiling::PrintTbeTiling()
 {
-    if (CheckLogLevel(OP, DLOG_DEBUG) != 1) {
+    if (AlogCheckDebugLevel(OP, DLOG_DEBUG) != 1) {
         return;
     }
 
@@ -1476,7 +1476,7 @@ void QuantBatchMatmulV3Tiling::PrintTbeTiling()
 
 void QuantBatchMatmulV3Tiling::PrintTilingParams() const
 {
-    if (CheckLogLevel(OP, DLOG_DEBUG) != 1) {
+    if (AlogCheckDebugLevel(OP, DLOG_DEBUG) != 1) {
         return;
     }
 

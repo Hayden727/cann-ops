@@ -14,13 +14,13 @@
  */
 #ifndef OPS_BUILT_IN_OP_TILING_ERROR_LOG_H_
 #define OPS_BUILT_IN_OP_TILING_ERROR_LOG_H_
-
+#include <base/err_msg.h>
 namespace optiling {
 
 #define VECTOR_INNER_ERR_REPORT_TILIING(op_name, err_msg, ...)                                       \
   do {                                                                                               \
     OP_LOGE_WITHOUT_REPORT(op_name, err_msg, ##__VA_ARGS__);                                         \
-    REPORT_INNER_ERROR("E89999", "op[%s], " err_msg, get_cstr(get_op_info(op_name)), ##__VA_ARGS__); \
+    REPORT_INNER_ERR_MSG("E89999", "op[%s], " err_msg, get_cstr(get_op_info(op_name)), ##__VA_ARGS__); \
   } while (0)
 
 #define OP_TILING_CHECK(cond, log_func, expr) \

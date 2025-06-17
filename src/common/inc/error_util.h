@@ -18,7 +18,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "common/util/error_manager/error_manager.h"
 #include "error_code.h"
 #include "graph/operator.h"
 // #include "op_log.h"

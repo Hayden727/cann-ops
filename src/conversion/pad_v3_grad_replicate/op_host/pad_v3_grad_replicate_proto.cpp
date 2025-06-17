@@ -13,7 +13,6 @@
  * \brief
  */
 #include "register/op_def_registry.h"
-#include "experiment/metadef/common/util/error_manager/error_manager.h"
 
 namespace {
 constexpr size_t INDEX_X = 0;

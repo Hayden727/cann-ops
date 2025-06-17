@@ -52,7 +52,7 @@ namespace optiling
   {                                                                                              \
     const char *name = ((context)->GetNodeName() == nullptr) ? "nil" : (context)->GetNodeName(); \
     std::printf(name, "is nullptr!");                                                            \
-    REPORT_CALL_ERROR("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                           \
+    REPORT_INNER_ERR_MSG("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                           \
     return ge::GRAPH_FAILED;                                                                     \
   }
 #define OPS_CHECK_NULL_WITH_CONTEXT_RET(context, ptr, ret)                                       \
@@ -60,7 +60,7 @@ namespace optiling
   {                                                                                              \
     const char *name = ((context)->GetNodeName() == nullptr) ? "nil" : (context)->GetNodeName(); \
     std::printf(name, "is nullptr!");                                                            \
-    REPORT_CALL_ERROR("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                           \
+    REPORT_INNER_ERR_MSG("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                           \
     return ret;                                                                                  \
   }
 #define unlikely(x) __builtin_expect((x), 0)

@@ -12,7 +12,6 @@
  * @file roi_align_rotated_grad_proto.cpp
  */
 #include "register/op_def_registry.h"
-#include "experiment/metadef/common/util/error_manager/error_manager.h"
 
 using namespace ge;
 using namespace std;
