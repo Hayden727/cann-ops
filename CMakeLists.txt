@@ -30,6 +30,16 @@ message(STATUS "Third party lib packages search path: ${CMAKE_PREFIX_PATH}")
 find_package(json MODULE REQUIRED)
 include_directories(${JSON_INCLUDE_DIR})
 
+set(CMAKE_MODULE_PATH 
+        ${CMAKE_MODULE_PATH} 
+        ${CMAKE_CURRENT_LIST_DIR}/cmake/modules
+)
+
+set(CMAKE_PREFIX_PATH 
+        ${CMAKE_PREFIX_PATH} 
+        ${ASCEND_CANN_PACKAGE_PATH}
+)
+
 set(_op_host_aclnn_link
         $<BUILD_INTERFACE:intf_pub>
         exe_graph
@@ -38,6 +48,7 @@ set(_op_host_aclnn_link
         c_sec
 )
 
+find_package(alog MODULE REQUIRED)
 add_library(op_host_aclnn SHARED EXCLUDE_FROM_ALL)
 target_link_libraries(op_host_aclnn PRIVATE
         ${_op_host_aclnn_link}

@@ -1320,7 +1320,7 @@ uint64_t QuantBatchMatmulV3BasicTiling::GetTilingKey() const
 
 void QuantBatchMatmulV3BasicTiling::PrintBasicTiling() const
 {
-    if (CheckLogLevel(OP, DLOG_DEBUG) != 1) {
+    if (AlogCheckDebugLevel(OP, DLOG_DEBUG) != 1) {
         return;
     }
 

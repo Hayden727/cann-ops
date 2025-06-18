@@ -34,7 +34,7 @@ namespace ops{
   if ((ptr) == nullptr) {                                                                          \
     const char* name = ((context)->GetNodeName() == nullptr) ? "nil" : (context)->GetNodeName();   \
     std::printf(name, "is nullptr!");                                                              \
-    REPORT_CALL_ERROR("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                             \
+    REPORT_INNER_ERR_MSG("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                             \
     return ge::GRAPH_FAILED;                                                                       \
   }
     
@@ -50,7 +50,7 @@ namespace ops{
   if ((ptr) == nullptr) {                                                                         \
     const char* name = ((context)->GetNodeName() == nullptr) ? "nil" : (context)->GetNodeName();  \
     std::printf(name, "is nullptr!");                                                             \
-    REPORT_CALL_ERROR("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                            \
+    REPORT_INNER_ERR_MSG("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                            \
     return ret;                                                                                   \
   }
 }
@@ -220,7 +220,7 @@ void CircularPadCommonTiling::SetTilingData()
 
 void CircularPadCommonTiling::DumpTilingInfo()
 {
-    int32_t enable = CheckLogLevel(static_cast<int32_t>(OP), DLOG_DEBUG);
+    int32_t enable = AlogCheckDebugLevel(static_cast<int32_t>(OP), DLOG_DEBUG);
     if (enable != 1) {
         return;
     }

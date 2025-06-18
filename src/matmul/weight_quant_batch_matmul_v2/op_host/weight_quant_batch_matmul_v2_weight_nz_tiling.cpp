@@ -1099,7 +1099,7 @@ uint64_t WeightQuantBatchMatmulV2WeightNz::CalCubFactorTiling(uint64_t cubNz2NdC
 
 void WeightQuantBatchMatmulV2WeightNz::PrintCVTilingData(bool debugLevel)
 {
-    if (debugLevel && CheckLogLevel(OP, DLOG_DEBUG) != 1) {
+    if (debugLevel && AlogCheckDebugLevel(OP, DLOG_DEBUG) != 1) {
         return;
     }
 

@@ -14,7 +14,7 @@
  */
 #ifndef OPS_BUILT_IN_OP_TILING_ERROR_LOG_H_
 #define OPS_BUILT_IN_OP_TILING_ERROR_LOG_H_
-
+#include <inttypes.h>
 namespace optiling {
 
 #define OPPROTO_SUBMOD_NAME "OP_PROTO"
@@ -32,8 +32,14 @@ class OpLog {
  };
 
  #define OpLogSub(moduleId, level, op_info, fmt, ...)                                                                   \
- DlogSub(static_cast<int>(moduleId), OPPROTO_SUBMOD_NAME, level, "[%s][%" PRIu64 "] OpName:[%s] " #fmt, __FUNCTION__, \
-         OpLog::GetTid(), get_cstr(op_info), ##__VA_ARGS__)
+    do {                                                                                                                \
+      if (AlogCheckDebugLevel(static_cast<int>(moduleId), level) == 1) {                                                \
+                  AlogRecord(static_cast<int>(moduleId), DLOG_TYPE_DEBUG, level,                                        \
+                      "[%s:%d][%s][%s][%" PRIu64 "] OpName:[%s] " #fmt,                                                 \
+                      __FILE__, __LINE__, OPPROTO_SUBMOD_NAME,                                                          \
+                      __FUNCTION__, OpLog::GetTid(), get_cstr(op_info), ##__VA_ARGS__);                                 \
+        }                                                                                                               \
+  } while (0)
 
 
 #define D_OP_LOGE(opname, fmt, ...) OpLogSub(OP, DLOG_ERROR, opname, fmt, ##__VA_ARGS__)

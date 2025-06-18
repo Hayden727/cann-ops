@@ -12,9 +12,8 @@
  * \file adaptive_avg_pool3d_proto.cpp
  * \brief
  */
-
+#include <base/err_msg.h>
 #include "register/op_def_registry.h"
-#include "experiment/metadef/common/util/error_manager/error_manager.h"
 #include "aclnn/opdev/op_log.h"
 
 // tools api
@@ -31,7 +30,7 @@
 #define VECTOR_INFER_SHAPE_INNER_ERR_REPORT(op_name, err_msg)                                \
   do {                                                                                       \
     OP_LOGE_WITHOUT_REPORT(op_name, "%s", err_msg);                                          \
-    REPORT_INNER_ERROR("89999", "%s",                                                        \
+    REPORT_INNER_ERR_MSG("89999", "%s",                                                        \
                        err_msg);                                                             \
   } while (0)
 

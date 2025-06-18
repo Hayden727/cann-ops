@@ -14,7 +14,6 @@
  */
 
 #include "register/op_def_registry.h"
-#include "experiment/metadef/common/util/error_manager/error_manager.h"
 
 // tools api
 #define OPS_CHECK_NULL_WITH_CONTEXT(context, ptr)                                                \

@@ -35,7 +35,7 @@ namespace optiling {
   if ((ptr) == nullptr) {                                                                         \
     const char* name = ((context)->GetNodeName() == nullptr) ? "nil" : (context)->GetNodeName();  \
     std::printf(name, "is nullptr!");                                                             \
-    REPORT_CALL_ERROR("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                            \
+    REPORT_INNER_ERR_MSG("EZ9999", "op[%s], %s is nullptr!", name, #ptr);                            \
     return ret;                                                                                   \
   }
 

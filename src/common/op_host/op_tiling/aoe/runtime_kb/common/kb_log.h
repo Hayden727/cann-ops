@@ -9,33 +9,58 @@
  */
 #ifndef RUNTIME_KB_COMMON_UTILS_KB_LOG_H_
 #define RUNTIME_KB_COMMON_UTILS_KB_LOG_H_
-#include "slog.h"
+#include <base/alog_pub.h>
 #include "mmpa_api.h"
 
 constexpr int TUNE_MODULE = static_cast<int>(TUNE);
 
-#define CANNKB_LOGD(format, ...)                                                                   \
-  do {                                                                                             \
-    DlogSub(TUNE_MODULE, "CANNKB", DLOG_DEBUG, "[Tid:%d]" format "\n", mmGetTid(), ##__VA_ARGS__); \
+#define CANNKB_LOGD(format, ...)                                                                    \
+  do {                                                                                              \
+    if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_DEBUG) == 1) {                                        \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_DEBUG,                                \
+                    "[%s:%d][%s][Tid:%d]" format "\n",                                              \
+                    __FILE__, __LINE__, "CANNKB",                                                   \
+                    mmGetTid(), ##__VA_ARGS__);                                                     \
+            }                                                                                       \
   } while (0)
 
 #define CANNKB_LOGI(format, ...)                                                                  \
   do {                                                                                            \
-    DlogSub(TUNE_MODULE, "CANNKB", DLOG_INFO, "[Tid:%d]" format "\n", mmGetTid(), ##__VA_ARGS__); \
+    if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_INFO) == 1) {                                        \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_INFO,                                \
+                    "[%s:%d][%s][Tid:%d]" format "\n",                                              \
+                    __FILE__, __LINE__, "CANNKB",                                                   \
+                    mmGetTid(), ##__VA_ARGS__);                                                     \
+            }                                                                                       \
   } while (0)
 
 #define CANNKB_LOGW(format, ...)                                                                  \
   do {                                                                                            \
-    DlogSub(TUNE_MODULE, "CANNKB", DLOG_WARN, "[Tid:%d]" format "\n", mmGetTid(), ##__VA_ARGS__); \
+    if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_WARN) == 1) {                                        \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_WARN,                                \
+                    "[%s:%d][%s][Tid:%d]" format "\n",                                              \
+                    __FILE__, __LINE__, "CANNKB",                                                   \
+                    mmGetTid(), ##__VA_ARGS__);                                                     \
+            }                                                                                       \
   } while (0)
 
 #define CANNKB_LOGE(format, ...)                                                                   \
   do {                                                                                             \
-    DlogSub(TUNE_MODULE, "CANNKB", DLOG_ERROR, "[Tid:%d]" format "\n", mmGetTid(), ##__VA_ARGS__); \
+    if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_ERROR) == 1) {                                        \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_ERROR,                                \
+                    "[%s:%d][%s][Tid:%d]" format "\n",                                              \
+                    __FILE__, __LINE__, "CANNKB",                                                   \
+                    mmGetTid(), ##__VA_ARGS__);                                                     \
+            }                                                                                       \
   } while (0)
 
 #define CANNKB_LOGEVENT(format, ...)                                                               \
   do {                                                                                             \
-    DlogSub(TUNE_MODULE, "CANNKB", DLOG_EVENT, "[Tid:%d]" format "\n", mmGetTid(), ##__VA_ARGS__); \
+    if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_INFO) == 1) {                                        \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_INFO,                                \
+                    "[%s:%d][%s][Tid:%d]" format "\n",                                              \
+                    __FILE__, __LINE__, "CANNKB",                                                   \
+                    mmGetTid(), ##__VA_ARGS__);                                                     \
+            }                                                                                       \
   } while (0)
 #endif

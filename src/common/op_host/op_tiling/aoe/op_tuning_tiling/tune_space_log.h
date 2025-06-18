@@ -12,7 +12,7 @@
 
 #include <cstdint>
 #include <memory>
-#include "slog.h"
+#include <base/alog_pub.h>
 #include "mmpa_api.h"
 
 namespace OpTuneSpace {
@@ -22,20 +22,55 @@ constexpr Status FAILED = 1;
 constexpr Status TILING_NUMBER_EXCEED = 2;
 
 constexpr int TUNE_MODULE = static_cast<int>(TUNE);
-#define TUNE_SPACE_LOGD(format, ...) \
-do {DlogSub(TUNE_MODULE, "TUNE_SPACE", DLOG_DEBUG, "[Tid:%d]" #format"\n", mmGetTid(), ##__VA_ARGS__);} while (0)
+#define TUNE_SPACE_LOGD(format, ...)                                                        \
+    do {                                                                                    \
+        if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_DEBUG) == 1) {                            \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_DEBUG,                        \
+                    "[%s:%d][%s][Tid:%d]" #format"\n",                                      \
+                    __FILE__, __LINE__, "TUNE_SPACE",                                       \
+                    mmGetTid(), ##__VA_ARGS__);                                             \
+            }                                                                               \
+    } while (0)
+
 
 #define TUNE_SPACE_LOGI(format, ...) \
-    do {DlogSub(TUNE_MODULE, "TUNE_SPACE", DLOG_INFO, "[Tid:%d]" #format"\n", mmGetTid(), ##__VA_ARGS__);} while(0)
+    do {                                                                                    \
+        if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_INFO) == 1) {                             \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_INFO,                         \
+                    "[%s:%d][%s][Tid:%d]" #format"\n",                                      \
+                    __FILE__, __LINE__, "TUNE_SPACE",                                       \
+                    mmGetTid(), ##__VA_ARGS__);                                             \
+            }                                                                               \
+    } while (0)
 
 #define TUNE_SPACE_LOGW(format, ...) \
-    do {DlogSub(TUNE_MODULE, "TUNE_SPACE", DLOG_WARN, "[Tid:%d]" #format"\n", mmGetTid(), ##__VA_ARGS__);} while(0)
-
+    do {                                                                                    \
+        if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_WARN) == 1) {                             \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_WARN,                         \
+                    "[%s:%d][%s][Tid:%d]" #format"\n",                                      \
+                    __FILE__, __LINE__, "TUNE_SPACE",                                       \
+                    mmGetTid(), ##__VA_ARGS__);                                             \
+            }                                                                               \
+    } while (0)
 #define TUNE_SPACE_LOGE(format, ...) \
-    do {DlogSub(TUNE_MODULE, "TUNE_SPACE", DLOG_ERROR, "[Tid:%d]" #format"\n", mmGetTid(), ##__VA_ARGS__);} while(0)
+    do {                                                                                    \
+        if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_ERROR) == 1) {                             \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_ERROR,                         \
+                    "[%s:%d][%s][Tid:%d]" #format"\n",                                      \
+                    __FILE__, __LINE__, "TUNE_SPACE",                                       \
+                    mmGetTid(), ##__VA_ARGS__);                                             \
+            }                                                                               \
+    } while (0)
 
 #define TUNE_SPACE_LOGV(format, ...) \
-    do {DlogSub(TUNE_MODULE, "TUNE_SPACE", DLOG_EVENT, "[Tid:%d]" #format"\n", mmGetTid(), ##__VA_ARGS__);} while(0)
+    do {                                                                                    \
+        if (AlogCheckDebugLevel(TUNE_MODULE, DLOG_INFO) == 1) {                             \
+                AlogRecord(TUNE_MODULE, DLOG_TYPE_DEBUG, DLOG_INFO,                         \
+                    "[%s:%d][%s][Tid:%d]" #format"\n",                                      \
+                    __FILE__, __LINE__, "TUNE_SPACE",                                       \
+                    mmGetTid(), ##__VA_ARGS__);                                             \
+            }                                                                               \
+    } while (0)
 
 #define TUNE_SPACE_MAKE_SHARED(execExpr0, execExpr1) \
     do {                                            \

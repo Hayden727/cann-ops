@@ -17,6 +17,7 @@
 
  #include <map>
  #include <numeric>
+ #include <cinttypes>
  
  #include "cube_tiling_runtime.h"
  #include "graph/utils/type_utils.h"
@@ -311,8 +312,14 @@ public:
 };
 
 #define OpLogSub(moduleId, level, op_info, fmt, ...)                                                                   \
-DlogSub(static_cast<int>(moduleId), OPPROTO_SUBMOD_NAME, level, "[%s][%" PRIu64 "] OpName:[%s] " #fmt, __FUNCTION__, \
-        OpLog::GetTid(), get_cstr(op_info), ##__VA_ARGS__)
+    do {                                                                                                                \
+      if (AlogCheckDebugLevel(static_cast<int>(moduleId), level) == 1) {                                                \
+                  AlogRecord(static_cast<int>(moduleId), DLOG_TYPE_DEBUG, level,                                        \
+                      "[%s:%d][%s][%s][%" PRIu64 "] OpName:[%s] " #fmt,                                                 \
+                      __FILE__, __LINE__, OPPROTO_SUBMOD_NAME,                                                          \
+                      __FUNCTION__, OpLog::GetTid(), get_cstr(op_info), ##__VA_ARGS__);                                 \
+        }                                                                                                               \
+  } while (0)
 
 #define MSG_LENGTH 1024
 constexpr const int OP_MAX_LOG_SIZE = 16000;
