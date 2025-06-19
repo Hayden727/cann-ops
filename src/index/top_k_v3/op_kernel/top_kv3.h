@@ -123,7 +123,7 @@ private:
   {
     LocalTensor<int32_t> baseIdxLocal = baseIdxBuf.Get<int32_t>();
     CreateVecIndex(baseIdxLocal, (int32_t)0, ubFactor);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
 
   __aicore__ inline void WriteIdxBuf(uint32_t j, uint32_t calcColNum)
@@ -131,7 +131,7 @@ private:
     LocalTensor<int32_t> baseIdxLocal = baseIdxBuf.Get<int32_t>();
     LocalTensor<int32_t> idxLocal = idxBuf.Get<int32_t>();
     Adds(idxLocal, baseIdxLocal, static_cast<int32_t>(j * ubFactor), calcColNum);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
 
   __aicore__ inline void EncodeIdxToProposal(uint32_t calcColNum)
@@ -149,13 +149,13 @@ private:
     uint64_t rsvdCntHigh16 = 0; // 用于保存筛选后保留下来的元素个数
     uint8_t High16Pattern = 2; // 每两个元素取第二个元素
     GatherMask(idxHigh16Local, idxFp16Local, High16Pattern, false, mask, {1, gatherRepeat, 8, 0}, rsvdCntHigh16);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     LocalTensor<T> proposalLocal = proposalBuf.Get<T>();
     uint32_t proposalRepeat = DivCeil(calcColNum, 16);
     ProposalConcat(proposalLocal, idxLow16Local, proposalRepeat, 0);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     ProposalConcat(proposalLocal, idxHigh16Local, proposalRepeat, 1);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
 
   __aicore__ inline void DecodeValuesFromProposal(uint32_t calcRowNum)
@@ -163,10 +163,10 @@ private:
     LocalTensor<T> valuesLocal = outQueueValues.AllocTensor<T>();
     LocalTensor<T> proposalOutLocal = proposalOutBuf.Get<T>();
     ProposalExtract(valuesLocal, proposalOutLocal, DivCeil(calcRowNum * kValue, PROPOSAL_NUM_PER_REP), 4); // 从score位置取出
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     if (largest == 0) {
       Muls(valuesLocal, valuesLocal, static_cast<T>(-1.0), calcRowNum * kValue);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
     outQueueValues.EnQue<T>(valuesLocal);
   }
@@ -179,7 +179,7 @@ private:
     uint8_t int32Pattern = 3; // 每四个元素取第一个元素
     uint16_t gatherRepeat = static_cast<uint16_t>(DivCeil(calcRowNum * kValue * 4, 64));
     GatherMask(indicesLocal, proposalOutInt32Local, int32Pattern, false, 0, {1, gatherRepeat, 8, 0}, rsvdCnt);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     outQueueIndices.EnQue<int32_t>(indicesLocal);
   }
 
@@ -205,7 +205,7 @@ private:
       uint16_t elementLengths[4] = {static_cast<uint16_t>(kValue), proposalNum, proposalNum, proposalNum};
       struct MrgSort4Info srcInfo(elementLengths, true, 1, 1);
       MrgSort4(proposalTopkLocal[pingpongIdx * pingpongAddrBias], srcList, srcInfo);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
 
     for (uint32_t n = 0; n < bodyRepeat; n++) {
@@ -217,7 +217,7 @@ private:
       struct MrgSort4Info srcInfo(elementLengths, true, 15, 1); //当k小于16时，可将ifExhaustedSuspension置为true
       pingpongIdx = pingpongIdx ^ 1; // 1->0, 0->1
       MrgSort4(proposalTopkLocal[pingpongIdx * pingpongAddrBias], srcList, srcInfo);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
     //tail
     struct MrgSortSrcList<T> srcList(proposalTopkLocal[pingpongIdx * pingpongAddrBias],
@@ -234,14 +234,14 @@ private:
       pingpongIdx = pingpongIdx ^ 1;
       MrgSort4(proposalTopkLocal[pingpongIdx * pingpongAddrBias], srcList, srcInfo);
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
   __aicore__ inline void Compute(uint32_t iInner, uint32_t j, uint32_t calcColNum)
   {
     LocalTensor<T> xLocal = inQueueX.DeQue<T>();
     if (largest == 0) {
       Muls(xLocal, xLocal, static_cast<T>(-1.0), calcColNum);
-      pipe_barrier(PIPE_V);
+      AscendC::PipeBarrier<PIPE_V>();
     }
     uint32_t proposalRepeat = DivCeil(calcColNum, PROPOSAL_NUM_PER_REP);
     uint32_t calcColNumAlign = proposalRepeat * PROPOSAL_NUM_PER_REP;
@@ -260,11 +260,11 @@ private:
 
     LocalTensor<T> proposalLocal = proposalBuf.Get<T>();
     ProposalConcat(proposalLocal, xLocal, proposalRepeat, 4); // 合入score
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     inQueueX.FreeTensor(xLocal);
 
     RpSort16(proposalLocal, proposalLocal, proposalRepeat);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     MrgSortCustom(iInner, j, proposalRepeat, proposalLocal);
   }
 

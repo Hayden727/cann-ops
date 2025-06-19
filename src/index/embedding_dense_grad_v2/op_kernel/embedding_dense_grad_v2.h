@@ -235,7 +235,7 @@ private:
             SetAtomicNone();
             tmpQue_.FreeTensor<float>(tmpLocal);
         }
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
         ResetAddQue(addResLocal);
         ResetAddCount(addAddrOffset);
         addResQue_[addAddrOffset].EnQue<T>(addResLocal);

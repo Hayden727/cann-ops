@@ -123,46 +123,46 @@ __aicore__ inline void PowsBase<T>::ComputePowsBase(
   LocalTensor<float>& ubx2_fp32, LocalTensor<float>& result, const int64_t& dataLength) {
   if (scalar >= NEGTIVE_SQUARE_EXP_LOWER && scalar <= NEGTIVE_SQUARE_EXP_UPPER) {
     // 1.0/(x*x)
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Mul(result, ubx2_fp32, ubx2_fp32, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Duplicate(ubx2_fp32, scalarOne, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Div(result, ubx2_fp32, result,dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   } else if (scalar >= NEGTIVE_ONE_EXP_LOWER && scalar <= NEGTIVE_ONE_EXP_UPPER) {
     // 1.0/x
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Duplicate(result, scalarOne, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Div(result, result, ubx2_fp32, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   } else if (scalar >= SQRT_EXP_LOWER && scalar <= SQRT_EXP_UPPER) {
     // sqrt(x)
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Sqrt(result, ubx2_fp32, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   } else if (scalar >= NEGTIVE_SQRT_EXP_LOWER && scalar <= NEGTIVE_SQRT_EXP_UPPER) {
     // 1.0/sqrt(x)
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Sqrt(result, ubx2_fp32, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Duplicate(ubx2_fp32, scalarOne, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Div(result, ubx2_fp32, result,dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   } else if (scalar >= SQUARE_EXP_LOWER && scalar <= SQUARE_EXP_UPPER) {
     // x*x
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Mul(result, ubx2_fp32, ubx2_fp32, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   } else if (scalar >= CUBE_EXP_LOWER && scalar <= CUBE_EXP_UPPER) {
     // x*x*x
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Mul(result, ubx2_fp32, ubx2_fp32, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Mul(result, ubx2_fp32, result, dataLength);
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
   }
 }
 

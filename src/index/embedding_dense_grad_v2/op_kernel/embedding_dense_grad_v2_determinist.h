@@ -255,7 +255,7 @@ __aicore__ inline void CopyOut(const uint64_t addrOffset, const uint64_t indice,
         SetAtomicNone();
         tmpQue_.FreeTensor<float>(tmpLocal);
     }
-    pipe_barrier(PIPE_ALL);
+    AscendC::PipeBarrier<PIPE_ALL>();
     ResetAddQue(addResLocal);
     ResetAddCount(addrOffset);
     addResQue_[addrOffset].EnQue<T>(addResLocal);

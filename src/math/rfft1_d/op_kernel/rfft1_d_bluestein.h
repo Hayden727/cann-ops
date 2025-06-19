@@ -203,7 +203,7 @@ private:
         doubleMatrix.SetValue(0, 1.f);
         doubleMatrix.SetValue(1, 1.f);
         DataCopy(doubleXGm[matmulTmpsSize + (GetBlockNum() - 1) * (COMPLEX * fftLengthPad + BLOCK_LEN_FP32)], doubleMatrix, BLOCK_LEN_FP32);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         ct.FreeTmpTensor(BLOCK_LEN_FP32);
 
         ct.matmulObj4.SetTensorA(xGm[curBatch * fftLength]);
@@ -255,13 +255,13 @@ private:
             
             if (backward){
                 Muls(ubInput, ubInput, norm, tailing);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
             }
             Copy(tmpTensor, ubInput, MAX_VEC_ELEMS_PER_REP, tailing / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             
             Muls(tmpTensor, ubInput, 0.f, (uint64_t*) MASK170, tailing / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             
             PairReduceSum(tmpTensor, tmpTensor, tailing / MAX_VEC_ELEMS_PER_REP, MAX_VEC_ELEMS_PER_REP, 1, 1, BLOCK_LEN_FP32);
             
@@ -271,10 +271,10 @@ private:
             DataCopy(dst[partUb / COMPLEX * it], tmpTensor, tailing / COMPLEX);
             
             Copy(tmpTensor2, ubInput, MAX_VEC_ELEMS_PER_REP, tailing / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             
             Muls(tmpTensor2, ubInput, 0.f, (uint64_t*) MASK85, tailing / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             
             PairReduceSum(tmpTensor2, tmpTensor2, tailing / MAX_VEC_ELEMS_PER_REP, MAX_VEC_ELEMS_PER_REP, 1, 1, BLOCK_LEN_FP32);
             
@@ -319,10 +319,10 @@ private:
         Mul(tmpResTensor, betaReal, tmpResTensor, tail);
 
         ct.InverseInput(input[part * partSize], paddedResTensor, tmpTensor1, tailSizePadded, info);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         Mul(paddedResTensor, betaImag, paddedResTensor, tail);
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
 
         Add(tmpResTensor, paddedResTensor, tmpResTensor, tail);
         SetFlag<HardEvent::V_MTE3>(eventIdVToMte3);
@@ -334,7 +334,7 @@ private:
         if (copy_els_pad) {
             DataCopyPad(output[part * partSize + copy_els], tmpResTensor[copy_els], copyPadParams);
         }
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
         
         SetFlag<HardEvent::MTE3_MTE2>(eventIdMte3ToMte2);
     }
@@ -365,14 +365,14 @@ private:
             
             if (backward){
                 Muls(ubInput, ubInput, norm, partUb);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
             }
             
             Copy(tmpTensor, ubInput, MAX_VEC_ELEMS_PER_REP, partUb / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             
             Muls(tmpTensor, ubInput, 0.f, (uint64_t*) MASK170, partUb / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             PairReduceSum(tmpTensor, tmpTensor, partUb / MAX_VEC_ELEMS_PER_REP, MAX_VEC_ELEMS_PER_REP, 1, 1, BLOCK_LEN_FP32);
             
             SetFlag<HardEvent::V_MTE3>(eventIdVToMte3);
@@ -381,10 +381,10 @@ private:
             DataCopy(dst[partUb / COMPLEX * i], tmpTensor, partUb / COMPLEX);
             
             Copy(tmpTensor2, ubInput, MAX_VEC_ELEMS_PER_REP, partUb / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
             
             Muls(tmpTensor2, ubInput, 0.f, (uint64_t*) MASK85, partUb / MAX_VEC_ELEMS_PER_REP, {1, 1, 8, 8});
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
 
             PairReduceSum(tmpTensor2, tmpTensor2, partUb / MAX_VEC_ELEMS_PER_REP, MAX_VEC_ELEMS_PER_REP, 1, 1, BLOCK_LEN_FP32);
             
@@ -443,10 +443,10 @@ private:
 
             ct.InverseInput(input[p * partSize], paddedResTensor, tmpTensor1, partSizePadded, info);
 
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
 
             Mul(paddedResTensor, betaImag, paddedResTensor, partSize);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
 
             Add(tmpResTensor, paddedResTensor, tmpResTensor, partSize);
             SetFlag<HardEvent::V_MTE3>(eventIdVToMte3);
@@ -489,10 +489,10 @@ private:
             SplitInput(ctResGm, doubleXGm);
   
             ct.ReInit(doubleXPos, dftAddr, ctXPos + sizeof(DTYPE_X));
-            pipe_barrier(PIPE_ALL);
+            AscendC::PipeBarrier<PIPE_ALL>();
             this->ct.Process();
               
-            pipe_barrier(PIPE_ALL);
+            AscendC::PipeBarrier<PIPE_ALL>();
             MulsCoeffs(ctResGm, ctResGm[1]);
   
             SetFlag<HardEvent::MTE3_MTE2>(eventIdMte3ToMte2);
@@ -501,10 +501,10 @@ private:
             SplitInput(ctResGm[1], doubleXGm);
   
             ct.ReInit(doubleXPos, dftAddr + fftMatrOverallSize * sizeof(DTYPE_X), doubleXPos + sizeof(DTYPE_X));
-            pipe_barrier(PIPE_ALL);
+            AscendC::PipeBarrier<PIPE_ALL>();
             this->ct.Process();
   
-            pipe_barrier(PIPE_ALL);
+            AscendC::PipeBarrier<PIPE_ALL>();
             MulsCoeffs(doubleXGm, yGm[curBatch * COMPLEX * outLength], 1);
             
             SetFlag<HardEvent::MTE3_MTE2>(eventIdMte3ToMte2);

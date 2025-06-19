@@ -157,7 +157,7 @@ class KernelRfftFastDFT {
         matmulObj.IterateAll(c1, accumulate);
     
         matmulObj.End();
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
     }
     
     __aicore__ void CubeDftMul1(GlobalTensor<DTYPE_X>& a1, GlobalTensor<DTYPE_X>& b1, GlobalTensor<DTYPE_Y>& c1,
@@ -167,7 +167,7 @@ class KernelRfftFastDFT {
         matmulObjNZ.IterateAll(c1, accumulate);
     
         matmulObjNZ.End();
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
     }
   
     // Count DFT directly (the entire input is multiplied on 1 DFT matrix)

@@ -171,7 +171,7 @@ class KernelRfftCooleyTukey {
     
         if (negative_imag) {
             Muls(tmpTensor, tmpTensor, -1.f, sizePadded);
-            pipe_barrier(PIPE_V);
+            AscendC::PipeBarrier<PIPE_V>();
         }
         
         for (uint32_t i=0; i<iter; ++i){
@@ -182,7 +182,7 @@ class KernelRfftCooleyTukey {
             Muls(tmpTensor[iter * MAX_VEC_REP * MAX_VEC_ELEMS_PER_REP], tmpTensor[iter * MAX_VEC_REP * MAX_VEC_ELEMS_PER_REP], 0.f, (uint64_t*)MASK170, tail, {1, 1, 8, 8});
             Muls(resTensor[iter * MAX_VEC_REP * MAX_VEC_ELEMS_PER_REP], resTensor[iter * MAX_VEC_REP * MAX_VEC_ELEMS_PER_REP], 0.f, (uint64_t*)MASK85, tail, {1, 1, 8, 8});
         }
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
     
         Add(resTensor, resTensor, tmpTensor, sizePadded);
     }
@@ -232,10 +232,10 @@ class KernelRfftCooleyTukey {
 
                 Mul(tmpResTensor, twiddleTensorReal, tmpResTensor, curSize);
                 InverseInput(matmulTmps[innerIterOffset + i * curSize], paddedResTensor, tmpTensor1, curSizePadded, info);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
 
                 Mul(paddedResTensor, twiddleTensorImag, paddedResTensor, curSize);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
 
                 Add(tmpResTensor, paddedResTensor, tmpResTensor, curSize);
 
@@ -311,7 +311,7 @@ class KernelRfftCooleyTukey {
             matmulObj3.SetTensorB(matmulTmps[imagOffset + firstSize], false);
             matmulObj3.IterateAll<false>(curYGm[halfCurRadix * trueCurSize], true);
         }
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
         
         if (!isBluestein) {
             matmulObj3.SetOrgShape(halfCurRadix, trueCurSize, curRadix);
@@ -324,12 +324,12 @@ class KernelRfftCooleyTukey {
         matmulObj3.SetTensorA(dftTensorReal, false);
         matmulObj3.SetTensorB(matmulTmps[1], false);
         matmulObj3.IterateAll(curYGm);
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
 
         matmulObj3.SetTensorA(dftTensorImag, false);
         matmulObj3.SetTensorB(matmulTmps[imagOffset], false);
         matmulObj3.IterateAll(curYGm, true);
-        pipe_barrier(PIPE_ALL);
+        AscendC::PipeBarrier<PIPE_ALL>();
     }
 
     __aicore__ inline void IntermediateIterFirstStep(const uint32_t prevRadices, const uint32_t nextRadices, 
@@ -410,10 +410,10 @@ class KernelRfftCooleyTukey {
 
                 WaitFlag<HardEvent::MTE3_MTE2>(eventIdMte3ToMte2Second);
                 InverseInput(matmulTmps[innerIterOffset + i * trueCurSize], paddedResTensor, tmpTensor1, curSizePadded, info);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
 
                 Mul(paddedResTensor, twiddleTensorImag, paddedResTensor, curSize);
-                pipe_barrier(PIPE_V);
+                AscendC::PipeBarrier<PIPE_V>();
 
                 Add(tmpResTensor, paddedResTensor, tmpResTensor, curSize);
 
@@ -464,12 +464,12 @@ class KernelRfftCooleyTukey {
             matmulObj2.SetTensorA(dftTensorReal, false);
             matmulObj2.SetTensorB(matmulTmps[1 + i * trueCurSize], false);
             matmulObj2.IterateAll(matmulTmps[1 + i * trueCurSize]);
-            pipe_barrier(PIPE_ALL);
+            AscendC::PipeBarrier<PIPE_ALL>();
 
             matmulObj2.SetTensorA(dftTensorImag, false);
             matmulObj2.SetTensorB(matmulTmps[1 + firstSize + i * trueCurSize], false);
             matmulObj2.IterateAll(matmulTmps[1 + i * trueCurSize], true);
-            pipe_barrier(PIPE_ALL);
+            AscendC::PipeBarrier<PIPE_ALL>();
         }
         FreeTmpTensor(COMPLEX * trueCurSizePadded);
     }
