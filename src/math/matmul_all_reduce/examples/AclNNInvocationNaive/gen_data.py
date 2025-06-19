@@ -34,6 +34,7 @@ def gen_cpu_data(rank, port):
     cpu_mm_out = torch.matmul(cpu_input, cpu_weight)
     dist.all_reduce(cpu_mm_out, op=dist.ReduceOp.SUM)
     # cpu_scatter_out = cpu_mm_out.narrow(0, rank * rank_m // rank_dim, rank_m // rank_dim)
+    #np.array(cpu_mm_out.to(torch.float16).cpu()).tofile('./output/cpu_out_{}.bin'.format(rank))
     np.array(cpu_mm_out.cpu()).tofile('./output/cpu_out_{}.bin'.format(rank))
 
 
