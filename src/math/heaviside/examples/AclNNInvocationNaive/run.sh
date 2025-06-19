@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_add_op
+    ./execute_heaviside_op
 )
 
 ret=`python3 verify_result.py output/output.bin output/golden.bin`

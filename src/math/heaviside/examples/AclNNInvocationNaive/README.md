@@ -53,7 +53,7 @@ aclnnStatus aclnnHeaviside(void *workspace, int64_t workspaceSize, aclOpExecutor
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_add_op
+    ./execute_heaviside_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。
