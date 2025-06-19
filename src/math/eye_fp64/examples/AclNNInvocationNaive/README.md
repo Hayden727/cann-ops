@@ -53,7 +53,7 @@ aclnnStatus aclnnEyeFp64(void *workspace, int64_t workspaceSize, aclOpExecutor *
     mkdir -p build
     cd build
     cmake .. && make
-    ./execute_add_op
+    ./execute_eye_fp64_op
     ```
     
     用户亦可参考run.sh脚本进行编译与运行。
