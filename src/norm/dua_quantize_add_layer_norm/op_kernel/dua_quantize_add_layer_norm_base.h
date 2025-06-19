@@ -101,7 +101,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
     if (g_coreType == AIV) {
         if (likely(repeatTimes > 0)) {
             AscendCUtils::SetMask<float>(elementNumPerRep);
-            ReduceSum(src_local, src_local, src_local, repeatTimes);
+            ReduceSum(src_local, src_local, src_local, count);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventVS);
             WaitFlag<HardEvent::V_S>(eventVS);
@@ -110,7 +110,7 @@ __aicore__ inline float ReduceSumFP32(const LocalTensor<float> &src_local, int32
         }
         if (unlikely(tailCount != 0)) {
             AscendCUtils::SetMask<float>(tailCount);
-            ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], 1);
+            ReduceSum(src_local[bodyCount], src_local[bodyCount], src_local[bodyCount], count);
             event_t eventVS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
             SetFlag<HardEvent::V_S>(eventVS);
             WaitFlag<HardEvent::V_S>(eventVS);
