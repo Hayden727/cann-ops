@@ -43,20 +43,6 @@ def gen_golden_data_simple():
 
     golden = res.numpy().astype(src_type)
 
-    np.set_printoptions(precision=2, suppress=True)
-
-    print("input_x: ")
-    print(input_x)
-
-    print("input_src: ")
-    print(input_src)
-
-    print("input_index: ")
-    print(input_index)
-
-    print("golden: ")
-    print(golden)
-
     os.system("mkdir -p input")
     os.system("mkdir -p output")
 

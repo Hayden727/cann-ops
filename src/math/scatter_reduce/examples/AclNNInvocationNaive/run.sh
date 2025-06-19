@@ -42,13 +42,12 @@ cmake --build build -j
     ./execute_scatter_reduce_op
 )
 
-python3 verify_result.py output/output_y.bin output/golden.bin
-# ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
-# echo $ret
-# if [ "x$ret" == "xtest pass" ]; then
-#     echo ""
-#     echo "#####################################"
-#     echo "INFO: you have passed the Precision!"
-#     echo "#####################################"
-#     echo ""
-# fi
+ret=`python3 verify_result.py output/output_y.bin output/golden.bin`
+echo $ret
+if [ "x$ret" == "xtest pass" ]; then
+    echo ""
+    echo "#####################################"
+    echo "INFO: you have passed the Precision!"
+    echo "#####################################"
+    echo ""
+fi
