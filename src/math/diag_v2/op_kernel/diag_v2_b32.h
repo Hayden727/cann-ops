@@ -166,7 +166,7 @@ __aicore__ inline void DiagV2B32<T>::Compute(const LocalTensor<int16_t> &ubAssis
     inQueueX.FreeTensor(xLocal);
 
     for (int64_t idx = 2; idx <= m_tilingData.matrixRowLength; idx = idx * 2) {
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Or(yLocalInt16[0],
             yLocalInt16[m_tilingData.matrixRowLength * m_tilingData.matrixRowLength * 2 / idx],
             yLocalInt16[0],

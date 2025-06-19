@@ -167,7 +167,7 @@ __aicore__ inline void DiagV2B8<T>::Compute(const LocalTensor<int16_t> &ubAssist
     inQueueX.FreeTensor(xLocal);
 
     for (int64_t idx = 2; idx < m_tilingData.matrixRowLength; idx = idx * 2) {
-        pipe_barrier(PIPE_V);
+        AscendC::PipeBarrier<PIPE_V>();
         Or(yLocalInt16[0],
             yLocalInt16[m_tilingData.matrixRowLength * m_tilingData.matrixRowLength / 2 / idx],
             yLocalInt16[0],
@@ -175,7 +175,7 @@ __aicore__ inline void DiagV2B8<T>::Compute(const LocalTensor<int16_t> &ubAssist
             m_tilingData.matrixRowLength / 2 / idx,
             {1, 1, 1, 8, 8, 8});
     }
-    pipe_barrier(PIPE_V);
+    AscendC::PipeBarrier<PIPE_V>();
     Or(yLocalInt16[0], yLocalInt16[m_tilingData.matrixRowLength / 2], yLocalInt16[0], mask / 2, 1, {1, 1, 1, 0, 4, 0});
     outQueueY.EnQue(yLocal);
 }

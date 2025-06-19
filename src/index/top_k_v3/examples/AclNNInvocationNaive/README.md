@@ -36,7 +36,7 @@ aclnnStatus aclnnTopk(void *workspace, uint64_t workspaceSize, aclOpExecutor *ex
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/top_kv3/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/index/top_kv3/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置

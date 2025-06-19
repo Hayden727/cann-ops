@@ -35,7 +35,7 @@ aclnnStatus aclnnInplaceIndexAddWithSorted(void *workspace, uint64_t workspaceSi
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/inplace_index_add_with_sorted/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/index/inplace_index_add_with_sorted/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置

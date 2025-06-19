@@ -36,7 +36,7 @@ aclnnStatus aclnnScatterList(void* workspace, uint64_t workspaceSize, aclOpExecu
   - 进入样例代码所在路径
   
   ```bash
-  cd ${git_clone_path}/cann-ops/src/math/scatter_list/examples/AclNNInvocationNaive
+  cd ${git_clone_path}/cann-ops/src/index/scatter_list/examples/AclNNInvocationNaive
   ```
   
   - 环境变量配置
