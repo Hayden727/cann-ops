@@ -62,7 +62,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     tiling.set_includeSelf(includeSelf);
 
     uint32_t inputBytes = GetSizeByDataType(context->GetInputDesc(0)->GetDataType());
-
     if (batchSize == 1 && dimSizeX == dimSizeSrc && includeSelf == false && reduction == 4 && inputBytes == 4)
     {
         int BlockSize = BLOCK_BYTES_SIZE / inputBytes;

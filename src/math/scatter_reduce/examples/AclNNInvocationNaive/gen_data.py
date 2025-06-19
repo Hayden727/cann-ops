@@ -16,11 +16,11 @@ def gen_golden_data_simple():
     np.random.seed(0)
     src_type = np.float32
     target_type = np.int32
-    dimSize = 5
+    dim_size = 5
 
-    input_x = np.random.uniform(1, 5, [dimSize, dimSize]).astype(src_type)
-    input_src = np.random.uniform(1, 5, [dimSize, dimSize]).astype(src_type)
-    input_index = np.random.uniform(0, dimSize - 1, [dimSize, dimSize]).astype(
+    input_x = np.random.uniform(1, 5, [dim_size, dim_size]).astype(src_type)
+    input_src = np.random.uniform(1, 5, [dim_size, dim_size]).astype(src_type)
+    input_index = np.random.uniform(0, dim_size - 1, [dim_size, dim_size]).astype(
         target_type
     )
 

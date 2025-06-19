@@ -63,7 +63,7 @@ class ScatterDeduceSca {
             case 4:
                 return a < b ? a : b;
             default:
-                return 0;
+                return a;
         }
     }
 
@@ -95,7 +95,7 @@ class ScatterDeduceSca {
         }
     }
 
-    __aicore__ inline void Process() {
+    __aicore__ void Process() {
         auto tmpBuf = TmpBuf.Get<DTYPE_Y>();
         auto cntBuf = CntBuf.Get<int32_t>();
         auto aBuf = ABuf.Get<DTYPE_Y>();
