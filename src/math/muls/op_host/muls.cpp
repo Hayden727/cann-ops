@@ -82,33 +82,13 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         IsExistBigCore = false;
     }
     
-    // else if(dataType == ge::DT_FLOAT16){
-    //     context->SetTilingKey(1);
-    // }else if(dataType == ge::DT_FLOAT){
-    //     context->SetTilingKey(2);
-    // }else if(dataType == ge::DT_INT16){
-    //     context->SetTilingKey(3);
-    // }else if(dataType == ge::DT_INT32){
-    //     context->SetTilingKey(4);
-    // }else if(dataType == ge::DT_INT64){
-    //     context->SetTilingKey(5);
-    // }
-    //在上面部分，complex和其他数据类型是相同的处理方式，但在下面具体核分配中，要分流处理，先获取数据类型
-    //根据不同的数据类型来这设置tilingkey
+
     if (dataType == ge::DT_COMPLEX64) {
         context->SetTilingKey(1);
     }else{
         context->SetTilingKey(0);
     }
-    // 计算每个核心可处理的数据块大小（考虑 UB 内存限制）
-    //ubDataNumber需要根据数据类型进行变动，其中complex为特殊数据，需要进行特殊处理
-    // constexpr uint64_t UB_DATA_NUM_NORMAL = 12;     // Normal data types
-    // constexpr uint64_t UB_DATA_NUM_FLOAT32 = 6;     // For float32/int32
-    // constexpr uint64_t UB_DATA_NUM_COMPLEX64 = 4; 
-    // uint64_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT||context->GetInputDesc(0)->GetDataType() == ge::DT_INT32) ? UB_DATA_NUM_FLOAT32 : UB_DATA_NUM_NORMAL;
-    // if(dataType == ge::DT_COMPLEX64){
-    //     ubDataNumber = UB_DATA_NUM_COMPLEX64;
-    // }
+
     return ge::GRAPH_SUCCESS;
     tiling.set_smallCoreDataNum(smallCoreDataNum);
     tiling.set_bigCoreDataNum(bigCoreDataNum);

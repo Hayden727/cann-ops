@@ -286,9 +286,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
     GET_TILING_DATA(tiling_data, tiling);
     #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
     if(TILING_KEY_IS(0)){
-        if constexpr (std::is_same_v<TYPE_X, bfloat16_t> || std::is_same_v<TYPE_X, float32_t>
-        ||std::is_same_v<TYPE_X, float16_t> || std::is_same_v<TYPE_X, int64_t>
-        ||std::is_same_v<TYPE_X, int32_t>||std::is_same_v<TYPE_X, int16_t>){
+        #if TYPE_X!= complex64
             KernelMuls<TYPE_X> op;
             op.Init(x,value, y, tiling_data.smallCoreDataNum,
                 tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
@@ -296,7 +294,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
                 tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
                 tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
             op.Process();
-        }
+        #endif
 
     }
     else if(TILING_KEY_IS(1)){
