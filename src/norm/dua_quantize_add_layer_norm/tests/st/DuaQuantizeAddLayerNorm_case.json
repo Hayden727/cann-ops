@@ -2,15 +2,17 @@
     {
         "case_name": "Test_DuaQuantizeAddLayerNorm_001",
         "op": "DuaQuantizeAddLayerNorm",
+        "calc_expect_func_file":"test_st.py:dua_quantize_add_layer_norm",
         "input_desc": [
             {
                 "format": [
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [4,1,8],
+                "value": [[[1, 2, 3, 4, 5, 6, 7, 8]],[[1, 2, 3, 4, 5, 6, 7, 8]],[[1, 2, 3, 4, 5, 6, 7, 8]],[[1, 2, 3, 4, 5, 6, 7, 8]]],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -27,9 +29,10 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [4,1,8],
+                "value": [[[1, 2, 3, 4, 5, 6, 7, 8]],[[1, 2, 3, 4, 5, 6, 7, 8]],[[1, 2, 3, 4, 5, 6, 7, 8]],[[1, 2, 3, 4, 5, 6, 7, 8]]],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -46,9 +49,10 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [8],
+                "value": [1,1,1,1,1,1,1,1],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -65,9 +69,10 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [8],
+                "value": [1,1,1,1,1,1,1,1],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -84,9 +89,10 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [8],
+                "value": [1,1,1,1,1,1,1,1],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -103,9 +109,10 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [8],
+                "value": [1,1,1,1,1,1,1,1],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -122,9 +129,10 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [8],
+                "value": [1,1,1,1,1,1,1,1],
                 "data_distribute": [
                     "uniform"
                 ],
@@ -201,7 +209,7 @@
                     "ND"
                 ],
                 "type": [
-                    "float"
+                    "bfloat16"
                 ],
                 "shape": [4,1,8],
                 "name": "x"
