@@ -1,4 +1,4 @@
-eye_fp64_ops_compile_options(
+add_ops_compile_options(
         OP_NAME EyeFp64
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
