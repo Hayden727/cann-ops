@@ -11,12 +11,12 @@
 /**
  * @file scatter_reduce_sca.cpp
  */
+#ifndef SCATTER_REDUCE_SCA_H
+#define SCATTER_REDUCE_SCA_H
 
 #include "kernel_operator.h"
 using namespace AscendC;
 
-// #define SCA
-// #define PRINTF
 
 class ScatterDeduceSca {
    public:
@@ -28,27 +28,26 @@ class ScatterDeduceSca {
         this->coreIndex = GetBlockIdx();
         this->pipe = pipeIn;
 
-        this->batchSize = batchSize;
-        this->dimSizeX = dimSizeX;
-        this->dimSizeSrc = dimSizeSrc;
-        this->strideSize = strideSize;
         this->reduction = reduction;
         this->includeSelf = includeSelf;
         this->totalSizeX = batchSize * dimSizeX * strideSize;
         this->totalSizeSrc = batchSize * dimSizeSrc * strideSize;
+
+        this->batchSize = batchSize;
+        this->dimSizeX = dimSizeX;
+        this->dimSizeSrc = dimSizeSrc;
+        this->strideSize = strideSize;
 
         xGm.SetGlobalBuffer((__gm__ DTYPE_Y*)x, totalSizeX * sizeof(DTYPE_Y));
         indexGm.SetGlobalBuffer((__gm__ DTYPE_INDEX*)index, totalSizeSrc * sizeof(DTYPE_INDEX));
         srcGm.SetGlobalBuffer((__gm__ DTYPE_Y*)src, totalSizeSrc * sizeof(DTYPE_Y));
         yGm.SetGlobalBuffer((__gm__ DTYPE_Y*)y, totalSizeX * sizeof(DTYPE_Y));
 
-
         pipe->InitBuffer(TmpBuf, dimSizeX * sizeof(DTYPE_Y));
         pipe->InitBuffer(CntBuf, dimSizeX * sizeof(int32_t));
 
         pipe->InitBuffer(ABuf, 128 * sizeof(DTYPE_Y));
         pipe->InitBuffer(BBuf, 128);
-
     }
 
     __aicore__ inline float Reduce(float a, float b) {
@@ -96,9 +95,7 @@ class ScatterDeduceSca {
         }
     }
 
-
     __aicore__ inline void Process() {
-
         auto tmpBuf = TmpBuf.Get<DTYPE_Y>();
         auto cntBuf = CntBuf.Get<int32_t>();
         auto aBuf = ABuf.Get<DTYPE_Y>();
@@ -154,7 +151,6 @@ class ScatterDeduceSca {
                     DTYPE_Y res = (DTYPE_Y)Reduce((float)xValue, (float)srcValue);
                     int cnt = cntBuf.GetValue(idx) + 1;
 
-
                     cntBuf.SetValue(idx, cnt);
                     tmpBuf.SetValue(idx, res);
                 }
@@ -188,3 +184,5 @@ class ScatterDeduceSca {
     bool includeSelf;
     TBuf<QuePosition::VECCALC> TmpBuf, CntBuf, ABuf, BBuf;
 };
+
+#endif //  SCATTER_REDUCE_SCA_H

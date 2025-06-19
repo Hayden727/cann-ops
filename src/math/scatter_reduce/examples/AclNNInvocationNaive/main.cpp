@@ -158,7 +158,7 @@ int main(int argc, char **argv)
     std::vector<int64_t> inputIndexShape = {dimSize, dimSize};
     std::vector<int64_t> outputYShape = {dimSize, dimSize};
     int64_t dim = 0;
-    char * reduce = "amin";
+    char* reduce = "amin";
     bool include_self = false;
 
     void *inputXDeviceAddr = nullptr;
@@ -254,6 +254,3 @@ int main(int argc, char **argv)
 
     return SUCCESS;
 }
-
-
-

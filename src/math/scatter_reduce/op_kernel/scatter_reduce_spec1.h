@@ -11,19 +11,18 @@
 /**
  * @file scatter_reduce_spec1.h
  */
+#ifndef SCATTER_REDUCE_SPEC1_H 
+#define SCATTER_REDUCE_SPEC1_H
+
 #include "kernel_operator.h"
 using namespace AscendC;
 
-// #define SCA
-// #define PRINTF
-
-#define BLOCK_BYTES_SIZE 32
-#define MAX_VALUE 10000
-
-constexpr int32_t BUFFER_NUM = 1;
 
 class ScatterDeduceSpec1 {
    public:
+   static constexpr int BLOCK_BYTES_SIZE = 32;
+   static constexpr int MAX_VALUE = 10000;
+   static constexpr int BUFFER_NUM = 1;
     __aicore__ inline ScatterDeduceSpec1() {}
     __aicore__ inline void Init(GM_ADDR x, GM_ADDR index, GM_ADDR src, GM_ADDR y, int32_t batchSize,
                                 int32_t dimSizeX, int32_t dimSizeSrc, int32_t strideSize,
@@ -72,7 +71,7 @@ class ScatterDeduceSpec1 {
 
         auto vectorIdxBuf = VectorIdxBuf.Get<DTYPE_INDEX>();
 
-#if 0
+#if USE_VEC_INDEX
         CreateVecIndex(vectorIdxBuf, 0, BlockSize);
         Muls(vectorIdxBuf, vectorIdxBuf, (DTYPE_INDEX)4, BlockSize);
 #else
@@ -234,12 +233,14 @@ class ScatterDeduceSpec1 {
     GlobalTensor<DTYPE_Y> srcGm;
     GlobalTensor<DTYPE_Y> yGm;
 
-    int32_t batchSize, dimSizeX, dimSizeSrc, strideSize, reduction, totalSizeX, totalSizeSrc;
-    uint32_t coreIndex, coreNum;
-    uint32_t BlockSize, BlockTotalNum, BlockNum, BlockBegin, totalBlockSizeRow;
-
     bool includeSelf;
     TBuf<QuePosition::VECCALC> TmpYBuf, VectorIdxBuf, CalIdxBuf, CmpBuf;
     TQue<QuePosition::VECIN, BUFFER_NUM> InX, InIndex, InSrc;
     TQue<QuePosition::VECOUT, BUFFER_NUM> OutY;
+
+    int32_t batchSize, dimSizeX, dimSizeSrc, strideSize, reduction, totalSizeX, totalSizeSrc;
+    uint32_t coreIndex, coreNum;
+    uint32_t BlockSize, BlockTotalNum, BlockNum, BlockBegin, totalBlockSizeRow;
 };
+
+#endif // SCATTER_REDUCE_SPEC1_H

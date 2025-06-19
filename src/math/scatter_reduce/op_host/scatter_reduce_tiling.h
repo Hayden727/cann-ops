@@ -11,6 +11,8 @@
 /**
  * @file scatter_reduce_tiling.h
  */
+#ifndef SCATTER_REDUCE_TILING_H
+#define SCATTER_REDUCE_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -25,3 +27,4 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(ScatterReduce, ScatterReduceTilingData)
 }  // namespace optiling
+#endif // SCATTER_REDUCE_TILING_H

@@ -14,11 +14,12 @@
 #include "register/op_def_registry.h"
 #include "scatter_reduce_tiling.h"
 
-#define CORENUM 1
-#define BLOCK_BYTES_SIZE 32
-
 namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context) {
+
+    constexpr int CORENUM = 1;
+    constexpr int BLOCK_BYTES_SIZE = 32;
+
     ScatterReduceTilingData tiling;
 
     const int64_t* dimAttr = context->GetAttrs()->GetInt(0);
@@ -60,9 +61,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
     tiling.set_reduction(reduction);
     tiling.set_includeSelf(includeSelf);
 
-
     uint32_t inputBytes = GetSizeByDataType(context->GetInputDesc(0)->GetDataType());
-
 
     if (batchSize == 1 && dimSizeX == dimSizeSrc && includeSelf == false && reduction == 4 && inputBytes == 4)
     {
@@ -75,7 +74,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context) {
         context->SetBlockDim(1);
         context->SetTilingKey(2);
     }
-    
     
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
                         context->GetRawTilingData()->GetCapacity());
@@ -118,7 +116,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b").AddConfig("ascend310b");
-
     }
 };
 
