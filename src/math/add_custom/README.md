@@ -7,22 +7,21 @@
 ### 算子规格描述
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">AddCustom</td></tr>
-</tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-<tr><td align="center">y</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-</tr>
-</tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
-</tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">AddCustom</th></tr> 
+<tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
+<tr><td rowspan="3" align="center">算子输入</td>
+
+<tr><td align="center">x1</td><td align="center">tensor</td><td align="center">float32,float16,int8</td><td align="center">ND</td></tr> 
+
+<tr><td align="center">x2</td><td align="center">tensor</td><td align="center">float32,float16,int8</td><td align="center">ND</td></tr> 
+
+<tr><td rowspan="1" align="center">算子输出</td>
+<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int8</td><td align="center">ND</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">add_custom</td></tr>  
 </table>
 
 ### 支持的产品型号
 本样例支持如下产品型号：
-- Atlas 训练系列产品
-- Atlas 推理系列产品
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
