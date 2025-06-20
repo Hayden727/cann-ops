@@ -1,6 +1,6 @@
 声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 
-# MatmulLeakyReluCustom
+# MatmulLeakyreluCustom
 
 ## 支持的产品型号
 
@@ -13,7 +13,7 @@
 
 ## 功能描述
 
-`MatmulLeakyReluCustom`算子使用了MatmulLeakyRelu高阶API，实现了快速的MatmulLeakyRelu矩阵乘法的运算操作。
+`MatmulLeakyreluCustom`算子使用了MatmulLeakyRelu高阶API，实现了快速的MatmulLeakyRelu矩阵乘法的运算操作。
 
 MatmulLeakyRelu的计算公式为：
 
@@ -29,17 +29,17 @@ C = C > 0 ? C : C * 0.001
 
 ## 算子执行接口
 
-每个算子分为两段式接口，必须先调用“aclnnMatmulLeakyReluCustomGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMatmulLeakyReluCustom”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnMatmulLeakyreluCustomGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMatmulLeakyreluCustom”接口执行计算。
 
-* `aclnnStatus aclnnMatmulLeakyReluCustomGetWorkspaceSize(const aclTensor *a, const aclTensor *b, const aclTensor *bias, const aclTensor *y, const alcTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`;
-* `aclnnStatus aclnnMatmulLeakyReluCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
+* `aclnnStatus aclnnMatmulLeakyreluCustomGetWorkspaceSize(const aclTensor *a, const aclTensor *b, const aclTensor *bias, const aclTensor *y, const alcTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`;
+* `aclnnStatus aclnnMatmulLeakyreluCustom(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnMatmulLeakyReluCustomGetWorkspaceSize
+### aclnnMatmulLeakyreluCustomGetWorkspaceSize
 
 - **参数说明：**
 
@@ -62,7 +62,7 @@ C = C > 0 ? C : C * 0.001
   - 返回161002（ACLNN_ERR_PARAM_INVALID）：predict，label, reduction 的数据类型和数据格式不在支持的范围内。
     ```
 
-### aclnnMatmulLeakyReluCustom
+### aclnnMatmulLeakyreluCustom
 
 - **参数说明：**
 
@@ -82,7 +82,7 @@ C = C > 0 ? C : C * 0.001
 ## 算子原型
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyReluCustom</th></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyreluCustom</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>

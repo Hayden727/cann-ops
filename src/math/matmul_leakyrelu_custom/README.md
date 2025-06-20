@@ -1,10 +1,10 @@
-## `MatmulLeakyReluCustom`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`MatmulLeakyReluCustom`算子。
+## `MatmulLeakyreluCustom`自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`MatmulLeakyreluCustom`算子。
 
 ### 算子描述
-`MatmulLeakyReluCustom`算子使用了MatmulLeakyRelu高阶API，实现了快速的MatmulLeakyRelu矩阵乘法的运算操作。
+`MatmulLeakyreluCustom`算子使用了MatmulLeakyRelu高阶API，实现了快速的MatmulLeakyRelu矩阵乘法的运算操作。
 
-MatmulLeakyReluCustom的计算公式为：
+MatmulLeakyreluCustom的计算公式为：
 
 ```
 C = A * B + Bias
@@ -19,7 +19,7 @@ C = C > 0 ? C : C * 0.001
 ### 算子规格描述
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyReluCustom</th></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyreluCustom</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>

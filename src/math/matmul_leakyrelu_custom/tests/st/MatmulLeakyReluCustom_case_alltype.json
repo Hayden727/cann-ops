@@ -1,7 +1,7 @@
 [
     {
-        "case_name": "Test_MatmulLeakyReluCustom_001",
-        "op": "MatmulLeakyReluCustom",
+        "case_name": "Test_MatmulLeakyreluCustom_001",
+        "op": "MatmulLeakyreluCustom",
         "calc_expect_func_file": "./test_matmul_leakyrelu_custom.py:calc_expect_func",
         "input_desc": [
             {

@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME MatmulLeakyReluCustom
+        OP_NAME MatmulLeakyreluCustom
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
