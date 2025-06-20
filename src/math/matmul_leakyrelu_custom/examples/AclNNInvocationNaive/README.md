@@ -1,6 +1,6 @@
 ## 概述
 
-通过aclnn调用的方式调用MatmulLeakyRelu算子。
+通过aclnn调用的方式调用MatmulLeakyReluCustom算子。
 
 ## 目录结构介绍
 ``` 

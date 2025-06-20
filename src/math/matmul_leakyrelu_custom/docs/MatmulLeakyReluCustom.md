@@ -13,7 +13,7 @@
 
 ## 功能描述
 
-算子使用了MatmulLeakyRelu高阶API，实现了快速的MatmulLeakyRelu矩阵乘法的运算操作。
+`MatmulLeakyReluCustom`算子使用了MatmulLeakyRelu高阶API，实现了快速的MatmulLeakyRelu矩阵乘法的运算操作。
 
 MatmulLeakyRelu的计算公式为：
 
@@ -82,7 +82,7 @@ C = C > 0 ? C : C * 0.001
 ## 算子原型
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyRelu</th></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyReluCustom</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>

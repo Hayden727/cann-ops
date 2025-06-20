@@ -212,15 +212,15 @@ int main(int argc, char **argv)
     aclOpExecutor *executor;
     // 计算workspace大小并申请内存
     ret = aclnnMatmulLeakyReluCustomGetWorkspaceSize(inputA, inputB, inputBias, outputC, &workspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMatmulLeakyReluGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMatmulLeakyReluCustomGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return FAILED;);
     }
     // 执行算子
-    ret = aclnnMatmulLeakyRelu(workspaceAddr, workspaceSize, executor, stream);
-    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMatmulLeakyRelu failed. ERROR: %d\n", ret); return FAILED);
+    ret = aclnnMatmulLeakyReluCustom(workspaceAddr, workspaceSize, executor, stream);
+    CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMatmulLeakyReluCustom failed. ERROR: %d\n", ret); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束
     ret = aclrtSynchronizeStream(stream);
