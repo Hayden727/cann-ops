@@ -177,8 +177,8 @@ int main(int argc, char **argv)
     size_t inputBiasShapeSize_1=inputBiasShape[0];
     size_t outputCShapeSize_1=outputCShape[0] * outputCShape[1];
 
-    std::vector<ACL_FLOAT16> inputAHostData(inputAShape[0] * inputAShape[1]);
-    std::vector<ACL_FLOAT16> inputBHostData(inputBShape[0] * inputBShape[1]);
+    std::vector<aclFloat16> inputAHostData(inputAShape[0] * inputAShape[1]);
+    std::vector<aclFloat16> inputBHostData(inputBShape[0] * inputBShape[1]);
     std::vector<float> inputBiasHostData(inputBiasShape[0]);
     std::vector<float> outputCHostData(outputCShape[0] * outputCShape[1]);
 
