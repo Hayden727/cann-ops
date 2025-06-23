@@ -31,15 +31,15 @@ template<typename TYPE_X, typename TYPE_Y, typename TYPE_Z,bool IsExistBigCore> 
     using T = TYPE_X;
 public:
     __aicore__ inline KernelAdd() {}
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR z, uint32_t smallCoreDataNum,
-                                uint32_t bigCoreDataNum, uint32_t bigCoreLoopNum, 
-                                uint32_t smallCoreLoopNum, uint32_t ubPartDataNum, 
-                                uint32_t smallCoreTailDataNum, uint32_t bigCoreTailDataNum, 
-                                uint32_t tailBlockNum) 
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR z, uint64_t smallCoreDataNum,
+                                uint64_t bigCoreDataNum, uint64_t bigCoreLoopNum, 
+                                uint64_t smallCoreLoopNum, uint64_t ubPartDataNum, 
+                                uint64_t smallCoreTailDataNum, uint64_t bigCoreTailDataNum, 
+                                uint64_t tailBlockNum) 
     {
         ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
-        uint32_t coreNum = AscendC::GetBlockIdx();
-        uint32_t globalBufferIndex = bigCoreDataNum * AscendC::GetBlockIdx();
+        uint64_t coreNum = AscendC::GetBlockIdx();
+        uint64_t globalBufferIndex = bigCoreDataNum * AscendC::GetBlockIdx();
         this->ubPartDataNum = ubPartDataNum;
         if constexpr (IsExistBigCore) 
         {
@@ -148,11 +148,11 @@ private:
     AscendC::GlobalTensor<TYPE_X> xGm;
     AscendC::GlobalTensor<TYPE_Y> yGm;
     AscendC::GlobalTensor<TYPE_Z> zGm;
-    uint32_t coreDataNum;
-    uint32_t tileNum;
-    uint32_t ubPartDataNum;
-    uint32_t tailDataNum;
-    uint32_t processDataNum;
+    uint64_t coreDataNum;
+    uint64_t tileNum;
+    uint64_t ubPartDataNum;
+    uint64_t tailDataNum;
+    uint64_t processDataNum;
 };
 
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
