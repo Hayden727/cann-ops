@@ -55,10 +55,10 @@ static constexpr int INPUT_X_INDEX = 0;
 
 static bool InferShapeForTopK(gert::InferShapeContext* context, const int64_t* k) {
   const gert::Shape *input_x_shape = context->GetInputShape(INPUT_X_INDEX);
-  size_t dim_size = input_x_shape->GetDimNum();
   if (input_x_shape == nullptr) {
     return GRAPH_FAILED;
   }
+  size_t dim_size = input_x_shape->GetDimNum();
   
   gert::Shape *output_values_shape = context->GetOutputShape(OUTPUT_VALUES_INDEX);
   gert::Shape *output_indices_shape = context->GetOutputShape(OUTPUT_INDICES_INDEX);
