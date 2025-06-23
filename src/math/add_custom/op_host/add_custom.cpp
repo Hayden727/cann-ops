@@ -59,7 +59,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
         coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
     }
-    
+    assert(coreNum > 0 && "coreNum must be greater than zero");
+    assert(BLOCK_SIZE > 0 && "BLOCK_SIZE must be greater than zero");
     uint32_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
     uint32_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
     
