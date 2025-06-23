@@ -8,12 +8,23 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include "register/register.h"
+/**
+ * @file matmul_leakyrelu_tiling.h
+ */
 
-namespace domi {
-// register op info to GE
-REGISTER_CUSTOM_OP("MatmulLeakyreluCustom")
-    .FrameworkType(TENSORFLOW)   // type: CAFFE, TENSORFLOW
-    .OriginOpType("MatmulLeakyreluCustom")      // name in tf module
-    .ParseParamsByOperatorFn(AutoMappingByOpFn);
-}  // namespace domi
+#ifndef MATMUL_LEAKYRELU_TILING_H
+#define MATMUL_LEAKYRELU_TILING_H
+
+#include "register/tilingdata_base.h"
+#include "tiling/tiling_api.h"
+
+namespace optiling {
+BEGIN_TILING_DATA_DEF(MatmulLeakyreluTilingData)
+TILING_DATA_FIELD_DEF(float, alpha);
+TILING_DATA_FIELD_DEF_STRUCT(TCubeTiling, cubeTilingData);
+END_TILING_DATA_DEF;
+
+REGISTER_TILING_DATA_CLASS(MatmulLeakyrelu, MatmulLeakyreluTilingData)
+}  // namespace optiling
+
+#endif

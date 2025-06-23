@@ -12,7 +12,7 @@
 import numpy as np
 
 
-def matmul_leakyrelu_custom_test(a, b, bias):
+def matmul_leakyrelu_test(a, b, bias):
     alpha = 0.001
     golden = (np.matmul(a.astype(np.float32), b.astype(np.float32)) + bias).astype(np.float32)
     res = np.where(golden >= 0, golden, golden * alpha)
@@ -20,5 +20,5 @@ def matmul_leakyrelu_custom_test(a, b, bias):
 
 
 def calc_expect_func(a, b, bias, y):
-    res = matmul_leakyrelu_custom_test(a["value"], b["value"], bias["value"])
+    res = matmul_leakyrelu_test(a["value"], b["value"], bias["value"])
     return [res]

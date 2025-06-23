@@ -9,10 +9,10 @@
  */
 
 /**
- * @file matmul_leakyrelu_custom.cpp
+ * @file matmul_leakyrelu.cpp
  */
 
-#include "matmul_leakyrelu_custom_tiling.h"
+#include "matmul_leakyrelu_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/tiling_api.h"
 using namespace matmul_tiling;
@@ -42,7 +42,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     cubeTiling.SetFixSplit(baseM, baseN, -1); // Set the fixed baseM=128, baseN=128.
     cubeTiling.SetBias(true);
     cubeTiling.SetBufferSpace(-1, -1, -1);
-    MatmulLeakyreluCustomTilingData tiling;
+    MatmulLeakyreluTilingData tiling;
     if (cubeTiling.GetTiling(tiling.cubeTilingData) == -1) { // Get matmul tiling data.
         return ge::GRAPH_FAILED;
     }
@@ -73,9 +73,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
 } // namespace optiling
 
 namespace ops {
-class MatmulLeakyreluCustom : public OpDef {
+class MatmulLeakyrelu : public OpDef {
 public:
-    explicit MatmulLeakyreluCustom(const char *name) : OpDef(name)
+    explicit MatmulLeakyrelu(const char *name) : OpDef(name)
     {
         this->Input("a")
             .ParamType(REQUIRED)
@@ -101,5 +101,5 @@ public:
     }
 };
 
-OP_ADD(MatmulLeakyreluCustom);
+OP_ADD(MatmulLeakyrelu);
 } // namespace ops

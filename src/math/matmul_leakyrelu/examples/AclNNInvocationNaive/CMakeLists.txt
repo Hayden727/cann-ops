@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_matmul_leakyrelu_custom)
+project(acl_execute_matmul_leakyrelu)
 
 # Compile options
 add_compile_options(-std=c++11)
@@ -45,11 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_matmul_leakyrelu_custom_op
+add_executable(execute_matmul_leakyrelu_op
     main.cpp
 )
 
-target_link_libraries(execute_matmul_leakyrelu_custom_op
+target_link_libraries(execute_matmul_leakyrelu_op
     ascendcl
     cust_opapi
     acl_op_compiler
@@ -57,4 +57,4 @@ target_link_libraries(execute_matmul_leakyrelu_custom_op
     stdc++
 )
 
-install(TARGETS execute_matmul_leakyrelu_custom_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_matmul_leakyrelu_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

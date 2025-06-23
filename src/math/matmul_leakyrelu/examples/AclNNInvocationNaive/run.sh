@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_matmul_leakyrelu_custom_op
+    ./execute_matmul_leakyrelu_op
 )
 ret=`python3 verify_result.py output/output_c.bin output/golden.bin`
 echo $ret
