@@ -39,7 +39,17 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint32_t inputLength = inputDataNum * dataTypeLength;
-    
+    if (coreNum == 0) 
+    {
+        std::cerr << "Error: coreNum is zero!" << std::endl;
+        return ge::GRAPH_FAILED;
+    } 
+    if (BLOCK_SIZE == 0) 
+    {
+        std::cerr << "Error: BLOCK_SIZE is zero!" << std::endl;
+        return ge::GRAPH_FAILED;
+    } 
+
     // There are a total of 3 shared UB spaces in the input and output. If it's int8, there are 2 more TBUFs
     uint32_t ubPartNum = (dataTypeLength == 1) ? 5 : 3;
     uint32_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
@@ -49,7 +59,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     // Input data for 32B alignment
     uint32_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
-    
+   
     if(ubPartDataNum >= inputDataNum)
     {
         coreNum=1;
@@ -59,8 +69,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
         coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
     }
-    assert(coreNum > 0 && "coreNum must be greater than zero");
-    assert(BLOCK_SIZE > 0 && "BLOCK_SIZE must be greater than zero");
+    
     uint32_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
     uint32_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
     
