@@ -26,17 +26,10 @@ def verify_result(output, golden):
                                            atol=ABSOLUTE_TOL,
                                            equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
-    for index, real_index in enumerate(different_element_indexes):
-        golden_data = golden[real_index]
-        output_data = output[real_index]
-        print(
-            "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f" %
-            (real_index, golden_data, output_data,
-            abs(output_data - golden_data) / golden_data))
+    for index in enumerate(different_element_indexes):
         if index == 100:
             break
     error_ratio = float(different_element_indexes.size) / golden.size
-    print("error ratio: %.4f, tolrence: %.4f" % (error_ratio, ERROR_TOL))
     return error_ratio <= ERROR_TOL
 
 
