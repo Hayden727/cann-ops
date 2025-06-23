@@ -14,6 +14,7 @@
 #include "abs_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
+#define OP_LOGE(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__); std::printf("\n")
 constexpr int ABS_TILING_0 = 1; // 直接改变符号 :float16, bfp16, float32
 constexpr int ABS_TILING_1 = 2; //int32
 constexpr int ABS_TILING_2 = 3; //int64
@@ -52,7 +53,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     const gert::StorageShape* x1_shape = context->GetInputShape(0);
     auto totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     auto dt = context->GetInputTensor(0)->GetDataType();
-    uint32_t dataWidth;
+    uint32_t dataWidth = 4;
     uint32_t ubfactor;  
     uint32_t tilingKey;
     if ((dt == ge::DT_BF16) || (dt == ge::DT_FLOAT16)) { 
@@ -85,6 +86,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     int elementsPerRepeat = CALC_ALIGN_NUM / dataWidth;    
 
     int32_t totalLengthBlockAlign = RoundUp(totalLength, elementsPerBlock);
+    if (elementsPerBlock == 0) {
+        OP_LOGE(context->GetNodeName(), "elementsPerBlock is 0!");
+        return ge::GRAPH_FAILED;
+    }
     
     aivNum = (aivNum <  totalLengthBlockAlign / elementsPerBlock) ? aivNum : totalLengthBlockAlign / elementsPerBlock;
     aivNum = (aivNum >= 1) ? aivNum : 1;
