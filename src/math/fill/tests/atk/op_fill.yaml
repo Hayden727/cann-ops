@@ -1,0 +1,58 @@
+# op_fill.yaml
+api: pytorch
+api_type: aclnn_cpu_fill
+# api_type: function
+version: v2.1
+aclnn_name: Fill
+name: torch.fill_
+dtype_numbers: 200
+extra_numbers: 0
+# generate: Default
+generate: generate_fill
+backward: false
+standard:
+    acc: default
+    perf: not_key
+inputs:
+  - name: dims
+    type: attr_tuple
+    # type: tensor
+    required: true
+    dtypes:
+      values: [int]
+    ranges:
+      valid:
+        values: [[1, 9]] 
+      invalid:
+        values: [[1, 9]]
+    # shapes:
+    #   dim_numbers:
+    #     values: [1, 2, 3, 4, 5, 6, 7, 8]
+    #     max_length: 8
+    #   dim_values:
+    #     values: [[1, 8]]
+    #     max_length: 8
+    tuple_numbers: 
+      values: [1, 2, 3, 4, 5, 6]
+  - name: value
+    type: scalar
+    required: true
+    dtypes:
+      values: [fp32, fp16, int32, int8, bool, int64, bf16]
+    ranges:
+      valid:
+        values: [ [-5, 5] ]
+      invalid:
+        values: [ [-5, 5] ]
+  - name: value_dtype
+    type: attr
+    required: true
+    dtypes: 
+      values: [non_param]
+    ranges:
+      valid:
+        values: [fp32, fp16, int32, int8, bool, int64, bf16]
+      invalid:
+        values: [fp32, fp16, int32, int8, bool, int64, bf16]
+  
+    

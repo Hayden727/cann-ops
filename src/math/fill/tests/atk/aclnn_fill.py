@@ -1,0 +1,76 @@
+import torch
+
+from atk.configs.dataset_config import InputDataset
+from atk.tasks.api_execute import register
+from atk.tasks.api_execute.base_api import BaseApi
+from atk.configs.results_config import TaskResult
+
+@register("aclnn_cpu_fill")
+class FunctionApi(BaseApi):
+    def __init__(self, task_result: TaskResult):
+        # self.task_result = task_result
+        # self.api_name = api_name  # API名称，为yaml文件中设置的name
+        # self.output = output      # 指定output返回值：e
+        # self.device = task_result.backend    # 当前执行的设备，['npu','gpu','cpu']
+        # self.device_id = task_result.device_id  # 当前的设备ID
+        # self.change_flag = False  # tensor_api方式使用的参数，不需要使用
+        super().__init__(task_result)
+        self.dims = None
+        self.value = None
+        self.dtype = None  
+        
+    def __call__(self, input_data: InputDataset, with_output: bool = False):
+        #1.取参数
+        #2.封装
+        #3.执行,调用真正的标杆
+        #4. return
+        if self.device == "cpu":
+            # print("input_data", input_data.kwargs)
+            dims = input_data.kwargs["dims"]
+            dims_tensor = torch.zeros(dims).to(self.dtype)
+            output = torch.fill_(dims_tensor, self.value)
+            # print("output", output)
+
+        elif self.device == "npu":
+            # print("input_data", input_data.kwargs)
+            dims = input_data.kwargs["dims"]
+            dims_tensor = torch.zeros(dims).to(self.dtype)
+            output = torch.fill_(dims_tensor.npu(), self.value)
+            # print("output", output)
+            
+        return output
+    def init_by_input_data(self, input_data: InputDataset):
+        """
+        该接口可实现部门场景下api的初始化需要依赖于当前的输入数据，且不希望计入耗时，
+        可以在此接口实现
+        """
+        # print(input_data)
+        value_dtype = input_data.kwargs["value_dtype"]
+
+        if value_dtype == "fp16":
+            self.dtype =  torch.float16
+        elif value_dtype == "fp32":
+            self.dtype = torch.float32
+        elif value_dtype == "int8":
+            self.dtype = torch.int8
+        elif value_dtype == "int16":
+            self.dtype = torch.int16
+        elif value_dtype == "int32":
+            self.dtype = torch.int32
+        elif value_dtype == "int64":
+            self.dtype = torch.int64
+        elif value_dtype == "bf16":
+            self.dtype = torch.bfloat16
+        elif value_dtype == "bool":
+            self.dtype = torch.bool
+        else:
+            self.dtype = torch.int32
+        
+        del input_data.kwargs["value_dtype"]
+   
+        # dims = input_data.kwargs["dims"]
+        # self.dims = torch.zeros(dims).to(self.dtype)
+        self.value = input_data.kwargs["value"]
+        
+    def get_cpp_func_signature_type(self):
+        return "aclnnStatus aclnnFillGetWorkspaceSize(const aclIntArray *dims,const aclScalar *value, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **executor)"
