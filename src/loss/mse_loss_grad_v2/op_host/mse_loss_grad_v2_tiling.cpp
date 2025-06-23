@@ -57,7 +57,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_totalLength(totalLength);
     auto dyDataType = context->GetInputDesc(0)->GetDataType();
     uint32_t dtypeKey = 0;
-    uint32_t sizeofDataType;
+    uint32_t sizeofDataType = 2;
     uint32_t tmpBufferNum = 4;
     if(ge::DT_FLOAT == dyDataType) {
         // 4 means the size of float data type in bytes

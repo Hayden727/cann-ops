@@ -24,7 +24,7 @@ namespace optiling {
 
     uint32_t GetSizeOfDataType(gert::TilingContext* context)
     {
-        uint32_t sizeOfDataType;
+        uint32_t sizeOfDataType = 0;
         auto dt = context->GetInputDesc(0)->GetDataType();
         if (dt == 1) {
             sizeOfDataType = 2;
