@@ -36,7 +36,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
     uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-    uint64_t dataTypeLength = 0;
+    uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint64_t inputLength = inputDataNum * dataTypeLength;
     if (coreNum == 0) 
