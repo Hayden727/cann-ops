@@ -195,6 +195,7 @@ public:
     size_t GetOutputElementCount(size_t index) const;
     std::vector<int64_t> GetInputShape(size_t index) const;
     std::vector<int64_t> GetOutputShape(size_t index) const;
+    std::vector<int64_t> GetShapeFromTensorDesc(aclTensorDesc* desc) const;
 
     template<typename T>
     auto GetInputBuffer(size_t index) -> T*
@@ -402,31 +403,40 @@ aclFormat OpRunner::GetInputFormat(size_t index) const
     return aclGetTensorDescFormat(opDesc_->inputDesc[index]);
 }
 
-std::vector<int64_t> OpRunner::GetTensorShape(aclTensorDesc** descs, size_t numDescs, size_t index) const
-{
-    std::vector<int64_t> ret;
-    if (index >= numDescs) {
-        ERROR_LOG("index out of range. index = %zu, numDescs = %zu", index, numDescs);
-        return ret;
+std::vector<int64_t> OpRunner::GetShapeFromTensorDesc(aclTensorDesc* desc) const {
+    std::vector<int64_t> shape;
+    if (desc == nullptr) {
+        ERROR_LOG("tensor description is null");
+        return shape;
     }
 
-    auto desc = descs[index];
-    for (size_t i = 0; i < aclGetTensorDescNumDims(desc); ++i) {
+    size_t dims = aclGetTensorDescNumDims(desc);
+    for (size_t i = 0; i < dims; ++i) {
         int64_t dimSize;
         if (aclGetTensorDescDimV2(desc, i, &dimSize) != ACL_SUCCESS) {
             ERROR_LOG("get dims from tensor desc failed. dims index = %zu", i);
-            ret.clear();
-            return ret;
+            shape.clear();
+            return shape;
         }
-        ret.emplace_back(dimSize);
+        shape.emplace_back(dimSize);
     }
-
-    return ret;
+    return shape;
 }
 
-std::vector<int64_t> OpRunner::GetInputShape(size_t index) const
-{
-    return GetTensorShape(opDesc_->inputDesc, numInputs_, index);
+std::vector<int64_t> OpRunner::GetInputShape(size_t index) const {
+    if (index >= numInputs_) {
+        ERROR_LOG("index out of range. index = %zu, numInputs = %zu", index, numInputs_);
+        return {};
+    }
+    return GetShapeFromTensorDesc(opDesc_->inputDesc[index]);
+}
+
+std::vector<int64_t> OpRunner::GetOutputShape(size_t index) const {
+    if (index >= numOutputs_) {
+        ERROR_LOG("index out of range. index = %zu, numOutputs = %zu", index, numOutputs_);
+        return {};
+    }
+    return GetShapeFromTensorDesc(opDesc_->outputDesc[index]);
 }
 
 size_t OpRunner::GetOutputSize(size_t index) const
@@ -468,13 +478,6 @@ aclFormat OpRunner::GetOutputFormat(size_t index) const
     }
 
     return aclGetTensorDescFormat(opDesc_->outputDesc[index]);
-}
-
-std::vector<int64_t> OpRunner::GetOutputShape(size_t index) const
-{
-    return GetTensorShape(opDesc_->outputDesc, numOutputs_, index);
-}
-    return ret;
 }
 
 size_t OpRunner::GetInputElementCount(size_t index) const
