@@ -154,6 +154,8 @@ public:
         this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
         this->AICore()
             .SetTiling(optiling::TilingFunc)
+            .AddConfig("ascend310p")
+            .AddConfig("ascend910")
             .AddConfig("ascend310b")
             .AddConfig("ascend910b");
     }
