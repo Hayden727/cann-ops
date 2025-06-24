@@ -16,7 +16,7 @@ import torch
 import torch_npu
 
 
-debug_switch = False
+DEBUG_SWITCH = False
 
 
 class Result:
@@ -71,14 +71,18 @@ class Result:
     # 解析精度报错细节
     def check_result_debug(self, benchmark):
         reason_str = ''
+        # Check diff_big_max conditions
         if self.diff_big_max > benchmark.diff_big_max * 10:
             reason_str += ' diff_big_max error,'
         elif self.diff_big_max > benchmark.diff_big_max:
             reason_str += ' diff_big_max warning,'
+            
+        # Check diff_big_avg conditions
         if self.diff_big_avg > benchmark.diff_big_avg * 2:
             reason_str += ' diff_big_avg error,'
         elif self.diff_big_avg > benchmark.diff_big_avg:
             reason_str += ' diff_big_avg warning,'
+
         if self.diff_big_sum > benchmark.diff_big_sum * 2:
             reason_str += ' diff_big_sum error,'
         elif self.diff_big_sum > benchmark.diff_big_sum:
@@ -94,15 +98,11 @@ class Result:
         elif self.diff_rmse > benchmark.diff_rmse:
             reason_str += ' diff_rmse warning,'
 
-        # if self.rst_eb > benchmark.rst_eb*4:
-        #     reason_str += ' rst_eb error,'
-        # elif self.rst_eb > benchmark.rst_eb*2:
-        #     reason_str += ' rst_eb warning,'
-
         if self.err_total_nan > benchmark.err_total_nan:
             reason_str += ' err_total_nan error,'
         elif self.err_total_nan > 0:
             reason_str += ' err_total_nan warning,'
+
         if self.err_total_inf > benchmark.err_total_inf or self.err_total_ninf > benchmark.err_total_ninf:
             reason_str += ' err_total_inf error,'
         elif self.err_total_inf > 0 or self.err_total_ninf > 0:
@@ -112,30 +112,21 @@ class Result:
 
     # 与竞品对比精度结果，benchmark传入gpu竞品数据或基线版本数据，返回检查结果与检查不通过原因
     def check_result(self, benchmark):
-        # print(f"comparing result: {self.result_name} VS {benchmark.result_name}")
         if self.diff_big_max > benchmark.diff_big_max * 10 or \
                 self.diff_big_avg > benchmark.diff_big_avg * 2 or \
                 self.diff_big_sum > benchmark.diff_big_sum * 2 or \
                 self.err_small_num > benchmark.err_small_num * 2 or \
                 self.diff_rmse > benchmark.diff_rmse * 2:
-            # print('diff_big_max(大于0即error)', self.diff_big_max - benchmark.diff_big_max * 10)
-            # print('diff_big_sum(大于0即error)', self.diff_big_sum - benchmark.diff_big_sum * 2)
-            # print('err_small_num(大于0即error)', self.err_small_num - benchmark.err_small_num * 2)
-            # print('diff_rmse(大于0即error)', self.diff_rmse - benchmark.diff_rmse * 2)
-            # print(self.result_name + 'compare result: error')
             reason_str = self.check_result_debug(benchmark)
             return 'error', reason_str
 
-        # print(self.result_name + 'compare result: ok')
         return 'ok', ''
 
 
-def checkResult(value, golden, name):
-    # print(f"info：开始计算 {name} 精度。")
+def verify_tensor_result(value, golden, name):
     if value.shape == golden.shape:
         # 两个张量shape相同，开始对比
         if torch.all(torch.eq(value, golden)):
-            # print(f"info：{name} 计算结果与标杆完全相同。")
             ratio_diff = 0
             diff = 0
             if value.numel() == 0:
@@ -161,10 +152,6 @@ def checkResult(value, golden, name):
         mask_value_is_ninf = torch.isinf(value) & (value < 0)
         num_total_ninf = torch.sum(mask_golden_is_ninf)
         err_total_ninf = torch.sum(mask_golden_is_ninf.logical_xor(mask_value_is_ninf))
-
-        # if debug_switch:
-        #     print(f" inf/nan总数：{num_total_nan + num_total_inf + num_total_ninf}")
-        #     print(f" inf/nan误差数：{err_total_nan + err_total_inf + err_total_ninf}")
 
         # 对inf/nan统一赋1，忽略影响
         golden[torch.isinf(golden)] = 1
@@ -201,13 +188,6 @@ def checkResult(value, golden, name):
         diff_big_avg = diff_big_sum / total_big_num
         diff_big_ratio = diff_big / golden_big
 
-        # if debug_switch:
-        #     print(f" 大值总数：{total_big_num}")
-        #     print(f" 大值占比：{total_big_ratio:.2%}")
-        #     print(f" 大值最大误差：{diff_big_max:.8f}")
-        #     print(f" 大值平均误差：{diff_big_avg:.8f}")
-        #     print(f" 大值误差总和：{diff_big_sum:.2f}")
-
         # 小值对比
         total_small_num = torch.sum(golden < small_value)
         total_small_ratio = total_small_num / golden.numel()
@@ -222,25 +202,15 @@ def checkResult(value, golden, name):
         err_small_num = torch.sum(diff_small > small_value_atol)
         err_small_ratio = err_small_num / total_small_num
 
-        # if debug_switch:
-        #     print(f" 小值总数：{total_small_num}")
-        #     print(f" 小值占比：{total_small_ratio:.2%}")
-        #     print(f" 小值错误数：{err_small_num}，占比{err_small_ratio:.2%}")
-
         # 计算均方根误差（rmse）
         diff = torch.abs(value.sub(golden))
         diff_rmse = torch.sqrt(torch.mean(torch.square(diff)))
-        # if debug_switch:
-        #     print(f" 误差均方根（RMSE）：{diff_rmse:.8f}")
 
         # 计算误差均衡性（eb）
         eb_bigger = torch.sum(value > golden)
         eb_smaller = torch.sum(value < golden)
         rst_eb = torch.abs(eb_bigger.sub(eb_smaller))
         diff_eb = torch.sum(value.sub(golden))
-        # if debug_switch:
-        #     print(f" 均衡性偏差计数：{rst_eb}")
-        #     print(f" 均衡性diff总和：{diff_eb:.8f}")
 
         return Result(name, total_big_num, total_big_ratio, diff_big_max, diff_big_avg, diff_big_sum,
                       total_small_num, total_small_ratio, err_small_num, err_small_ratio, diff_rmse, rst_eb,
@@ -251,20 +221,16 @@ def checkResult(value, golden, name):
         print(f"debug: 输入shape {value.shape}")
         print(f"debug: 真值shape  {golden.shape}")
 
-    return
+    return None
 
 def data_compare(cpu_data, gpu_data, npu_data, rank):
-    rst_npu = checkResult(npu_data, cpu_data, "{}_dq_npu".format(rank))
-    # rst_npu.print_result()
-    rst_gpu = checkResult(gpu_data, cpu_data, "{}_dq_gpu".format(rank))
-    # rst_gpu.print_result()
+    rst_npu = verify_tensor_result(npu_data, cpu_data, "{}_dq_npu".format(rank))
+    rst_gpu = verify_tensor_result(gpu_data, cpu_data, "{}_dq_gpu".format(rank))
     str1, str2 = rst_npu.check_result(rst_gpu)
     if 'error' in str1:
         res = False
     else:
         res = True
-    # print('[INFO] device_{} 精度结果为：{}'.format(rank, res))
-    # print('[INFO] device_{} 精度计算结束：{} '.format(rank, time.strftime('%H:%M:%S', time.localtime())))
     return res
 
 

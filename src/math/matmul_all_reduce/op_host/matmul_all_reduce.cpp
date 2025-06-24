@@ -1,11 +1,15 @@
 /**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
  * @file matmul_all_reduce.cpp
- *
- * Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 #include "../op_kernel/matmul_all_reduce_tiling.h"
@@ -122,7 +126,7 @@ static ge::graphStatus MatmulAllReduceTilingFunc(gert::TilingContext *context) {
     // dataType 3 corresponds to DT_FLOAT16
     tiling->param.dataType = 3;
     // matmul tiling func
-    auto matmulTilingFunc = [&] (int64_t m, int64_t n, int64_t k, TCubeTiling &cubeTiling) -> bool {
+    auto matmulTilingFunc = [isTransA, isTransB, aicCoreNum, L1_BUFFER_SIZE] (int64_t m, int64_t n, int64_t k, TCubeTiling &cubeTiling) -> bool {
         matmul_tiling::MultiCoreMatmulTiling mmTiling;
         mmTiling.SetAType(matmul_tiling::TPosition::GM, matmul_tiling::CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16, *isTransA);
         mmTiling.SetBType(matmul_tiling::TPosition::GM, matmul_tiling::CubeFormat::ND, matmul_tiling::DataType::DT_FLOAT16, *isTransB);

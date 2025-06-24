@@ -33,50 +33,41 @@ using BIAS_DTYPE = DTYPE_Y;
 
 using namespace matmul;
 template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE>
-__aicore__ inline void CalcGMOffset(int blockIdx, int usedCoreNum, TCubeTiling &param, uint64_t &offsetA, uint64_t &offsetB,
-    uint64_t &offsetC, uint64_t &offsetBias, int32_t isTransposeAIn, int32_t isTransposeBIn)
+__aicore__ inline void CalcOffsetA(int blockIdx, int usedCoreNum, TCubeTiling &param, uint64_t &offsetA, 
+    int32_t isTransposeAIn, int mCoreIndx, int nCoreIndx, int subKindx)
 {
-    auto temp0 = Ceil(param.M, param.singleCoreM);
-    auto temp1 = Ceil(param.N, param.singleCoreN);
-    auto temp2 = Ceil(param.Ka, param.singleCoreK); // 不切K， 应该=1
-
-    auto divideKcoreNum = usedCoreNum / temp2;
-
-    auto mCoreIndx = (blockIdx % divideKcoreNum) % temp0; // 必须沿着N 轴方向输出
-    auto nCoreIndx = (blockIdx % divideKcoreNum) / temp0;
-    auto subKindx = blockIdx / divideKcoreNum; // 缺省为0
-
     if constexpr (A_TYPE::format == CubeFormat::ND) {
-        if (isTransposeAIn > 0) {
-            offsetA = mCoreIndx * param.singleCoreM + subKindx * param.M * param.singleCoreK;
-        } else {
-            offsetA = mCoreIndx * param.Ka * param.singleCoreM + subKindx * param.singleCoreK;
-        }
+        offsetA = isTransposeAIn > 0 
+            ? mCoreIndx * param.singleCoreM + subKindx * param.M * param.singleCoreK
+            : mCoreIndx * param.Ka * param.singleCoreM + subKindx * param.singleCoreK;
     } else if constexpr (A_TYPE::format == CubeFormat::NZ) {
         offsetA = subKindx * param.singleCoreK * param.M + mCoreIndx * param.singleCoreM * BLOCK_CUBE;
-    } else if constexpr (A_TYPE::format == CubeFormat::SCALAR) {
-    } else if constexpr (A_TYPE::format == CubeFormat::VECTOR) {
     } else {
         ASSERT(false && "Data format of A matrix should be ND or NZ.");
     }
+}
 
+template <class B_TYPE, class C_TYPE, class BIAS_TYPE>
+__aicore__ inline void CalcOffsetB(int blockIdx, int usedCoreNum, TCubeTiling &param, uint64_t &offsetB, 
+    int32_t isTransposeBIn, int mCoreIndx, int nCoreIndx, int subKindx)
+{
     if constexpr (B_TYPE::format == CubeFormat::ND) {
-        if (isTransposeBIn > 0) {
-            offsetB = subKindx * param.singleCoreK + nCoreIndx * param.Ka * param.singleCoreN;
-        } else {
-            offsetB = subKindx * param.singleCoreK * param.N + nCoreIndx * param.singleCoreN;
-        }
+        offsetB = isTransposeBIn > 0
+            ? subKindx * param.singleCoreK + nCoreIndx * param.Ka * param.singleCoreN
+            : subKindx * param.singleCoreK * param.N + nCoreIndx * param.singleCoreN;
     } else if constexpr (B_TYPE::format == CubeFormat::NZ) {
-        if (isTransposeBIn > 0) {
-            offsetB =  nCoreIndx * param.singleCoreN * 16;
-        }
-        else {
-            offsetB = param.Ka * nCoreIndx * param.singleCoreN + subKindx * param.singleCoreK * BLOCK_CUBE;
-        }
+        offsetB = isTransposeBIn > 0
+            ? nCoreIndx * param.singleCoreN * 16
+            : param.Ka * nCoreIndx * param.singleCoreN + subKindx * param.singleCoreK * BLOCK_CUBE;
     } else {
         ASSERT(false && "Data format of B matrix should be ND or NZ.");
     }
+}
 
+template <class C_TYPE, class BIAS_TYPE>
+__aicore__ inline void CalcOffsetCAndBias(TCubeTiling &param, uint64_t &offsetC, uint64_t &offsetBias, 
+    int mCoreIndx, int nCoreIndx)
+{
     if constexpr (C_TYPE::format == CubeFormat::ND || C_TYPE::format == CubeFormat::ND_ALIGN) {
         offsetC = mCoreIndx * param.N * param.singleCoreM + nCoreIndx * param.singleCoreN;
     } else if constexpr (C_TYPE::format == CubeFormat::NZ) {
@@ -90,7 +81,10 @@ __aicore__ inline void CalcGMOffset(int blockIdx, int usedCoreNum, TCubeTiling &
     } else {
         ASSERT(false && "Data format of BIAS should be ND.");
     }
+}
 
+__aicore__ inline void CalcTailBlocks(TCubeTiling &param, int mCoreIndx, int nCoreIndx, int subKindx)
+{
     // 尾块M
     int gmUseM = param.M - mCoreIndx * param.singleCoreM;
     param.singleCoreM = gmUseM < param.singleCoreM ? gmUseM : param.singleCoreM;
@@ -102,6 +96,24 @@ __aicore__ inline void CalcGMOffset(int blockIdx, int usedCoreNum, TCubeTiling &
     // 尾块K
     int gmUseK = param.Ka - subKindx * param.singleCoreK;
     param.singleCoreK = gmUseK < param.singleCoreK ? gmUseK : param.singleCoreK;
+}
+
+template <class A_TYPE, class B_TYPE, class C_TYPE, class BIAS_TYPE>
+__aicore__ inline void CalcGMOffset(int blockIdx, int usedCoreNum, TCubeTiling &param, uint64_t &offsetA, uint64_t &offsetB,
+    uint64_t &offsetC, uint64_t &offsetBias, int32_t isTransposeAIn, int32_t isTransposeBIn)
+{
+    auto temp0 = Ceil(param.M, param.singleCoreM);
+    auto temp2 = Ceil(param.Ka, param.singleCoreK);
+    auto divideKcoreNum = usedCoreNum / temp2;
+
+    auto mCoreIndx = (blockIdx % divideKcoreNum) % temp0;
+    auto nCoreIndx = (blockIdx % divideKcoreNum) / temp0;
+    auto subKindx = blockIdx / divideKcoreNum;
+
+    CalcOffsetA<A_TYPE, B_TYPE, C_TYPE, BIAS_TYPE>(blockIdx, usedCoreNum, param, offsetA, isTransposeAIn, mCoreIndx, nCoreIndx, subKindx);
+    CalcOffsetB<B_TYPE, C_TYPE, BIAS_TYPE>(blockIdx, usedCoreNum, param, offsetB, isTransposeBIn, mCoreIndx, nCoreIndx, subKindx);
+    CalcOffsetCAndBias<C_TYPE, BIAS_TYPE>(param, offsetC, offsetBias, mCoreIndx, nCoreIndx);
+    CalcTailBlocks(param, mCoreIndx, nCoreIndx, subKindx);
 }
 
 __aicore__ __inline__ GM_ADDR GetTailA(GM_ADDR aGM, TCubeTiling& tiling, uint32_t size)

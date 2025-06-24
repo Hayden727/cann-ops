@@ -197,7 +197,7 @@ public:
     std::vector<int64_t> GetOutputShape(size_t index) const;
 
     template<typename T>
-    T *GetInputBuffer(size_t index)
+    auto GetInputBuffer(size_t index) -> T*
     {
         if (index >= numInputs_) {
             ERROR_LOG("index out of range. index = %zu, numInputs = %zu", index, numInputs_);
@@ -207,13 +207,13 @@ public:
     }
 
     template<typename T>
-    const T *GetOutputBuffer(size_t index)
+    auto GetOutputBuffer(size_t index) -> const T*
     {
         if (index >= numOutputs_) {
             ERROR_LOG("index out of range. index = %zu, numOutputs = %zu", index, numOutputs_);
             return nullptr;
         }
-        return reinterpret_cast<T *>(hostOutputs_[index]);
+        return reinterpret_cast<const T *>(hostOutputs_[index]);
     }
 
     void PrintInput(size_t index, size_t elementsPerRow = 16);
@@ -402,15 +402,15 @@ aclFormat OpRunner::GetInputFormat(size_t index) const
     return aclGetTensorDescFormat(opDesc_->inputDesc[index]);
 }
 
-std::vector<int64_t> OpRunner::GetInputShape(size_t index) const
+std::vector<int64_t> OpRunner::GetTensorShape(aclTensorDesc** descs, size_t numDescs, size_t index) const
 {
     std::vector<int64_t> ret;
-    if (index >= numInputs_) {
-        ERROR_LOG("index out of range. index = %zu, numInputs = %zu", index, numInputs_);
+    if (index >= numDescs) {
+        ERROR_LOG("index out of range. index = %zu, numDescs = %zu", index, numDescs);
         return ret;
     }
 
-    auto desc = opDesc_->inputDesc[index];
+    auto desc = descs[index];
     for (size_t i = 0; i < aclGetTensorDescNumDims(desc); ++i) {
         int64_t dimSize;
         if (aclGetTensorDescDimV2(desc, i, &dimSize) != ACL_SUCCESS) {
@@ -422,6 +422,11 @@ std::vector<int64_t> OpRunner::GetInputShape(size_t index) const
     }
 
     return ret;
+}
+
+std::vector<int64_t> OpRunner::GetInputShape(size_t index) const
+{
+    return GetTensorShape(opDesc_->inputDesc, numInputs_, index);
 }
 
 size_t OpRunner::GetOutputSize(size_t index) const
@@ -467,22 +472,8 @@ aclFormat OpRunner::GetOutputFormat(size_t index) const
 
 std::vector<int64_t> OpRunner::GetOutputShape(size_t index) const
 {
-    std::vector<int64_t> ret;
-    if (index >= numOutputs_) {
-        ERROR_LOG("index out of range. index = %zu, numOutputs = %zu", index, numOutputs_);
-        return ret;
-    }
-
-    auto desc = opDesc_->outputDesc[index];
-    for (size_t i = 0; i < aclGetTensorDescNumDims(desc); ++i) {
-        int64_t dimSize;
-        if (aclGetTensorDescDimV2(desc, i, &dimSize) != ACL_SUCCESS) {
-            ERROR_LOG("get dims from tensor desc failed. dims index = %zu", i);
-            ret.clear();
-            return ret;
-        }
-        ret.emplace_back(dimSize);
-    }
+    return GetTensorShape(opDesc_->outputDesc, numOutputs_, index);
+}
     return ret;
 }
 
@@ -572,7 +563,10 @@ bool OpRunner::RunOp(std::string group, aclrtStream stream)
 template<typename T>
 void DoPrintData(const T *data, size_t count, size_t elementsPerRow)
 {
-    assert(elementsPerRow != 0);
+    if (elementsPerRow == 0) {
+        ERROR_LOG("elementsPerRow cannot be zero");
+        return;
+    }
     for (size_t i = 0; i < count; ++i) {
         std::cout << std::setw(10) << data[i];
         if (i % elementsPerRow == elementsPerRow - 1) {
@@ -583,13 +577,23 @@ void DoPrintData(const T *data, size_t count, size_t elementsPerRow)
 
 void DoPrintFp16Data(const aclFloat16 *data, size_t count, size_t elementsPerRow)
 {
-    assert(elementsPerRow != 0);
+    if (elementsPerRow == 0) {
+        ERROR_LOG("elementsPerRow cannot be zero");
+        return;
+    }
     for (size_t i = 0; i < count; ++i) {
         std::cout << std::setw(10) << std::setprecision(4) << aclFloat16ToFloat(data[i]);
         if (i % elementsPerRow == elementsPerRow - 1) {
             std::cout << std::endl;
         }
     }
+}
+
+template<typename T>
+void PrintDataImpl(const void *data, size_t count, size_t elementsPerRow)
+{
+    const T *typedData = static_cast<const T*>(data);
+    DoPrintData(typedData, count, elementsPerRow);
 }
 
 void PrintData(const void *data, size_t count, aclDataType dataType, size_t elementsPerRow)
@@ -601,40 +605,40 @@ void PrintData(const void *data, size_t count, aclDataType dataType, size_t elem
 
     switch (dataType) {
         case ACL_BOOL:
-            DoPrintData(reinterpret_cast<const bool *>(data), count, elementsPerRow);
+            PrintDataImpl<bool>(data, count, elementsPerRow);
             break;
         case ACL_INT8:
-            DoPrintData(reinterpret_cast<const int8_t *>(data), count, elementsPerRow);
+            PrintDataImpl<int8_t>(data, count, elementsPerRow);
             break;
         case ACL_UINT8:
-            DoPrintData(reinterpret_cast<const uint8_t *>(data), count, elementsPerRow);
+            PrintDataImpl<uint8_t>(data, count, elementsPerRow);
             break;
         case ACL_INT16:
-            DoPrintData(reinterpret_cast<const int16_t *>(data), count, elementsPerRow);
+            PrintDataImpl<int16_t>(data, count, elementsPerRow);
             break;
         case ACL_UINT16:
-            DoPrintData(reinterpret_cast<const uint16_t *>(data), count, elementsPerRow);
+            PrintDataImpl<uint16_t>(data, count, elementsPerRow);
             break;
         case ACL_INT32:
-            DoPrintData(reinterpret_cast<const int32_t *>(data), count, elementsPerRow);
+            PrintDataImpl<int32_t>(data, count, elementsPerRow);
             break;
         case ACL_UINT32:
-            DoPrintData(reinterpret_cast<const uint32_t *>(data), count, elementsPerRow);
+            PrintDataImpl<uint32_t>(data, count, elementsPerRow);
             break;
         case ACL_INT64:
-            DoPrintData(reinterpret_cast<const int64_t *>(data), count, elementsPerRow);
+            PrintDataImpl<int64_t>(data, count, elementsPerRow);
             break;
         case ACL_UINT64:
-            DoPrintData(reinterpret_cast<const uint64_t *>(data), count, elementsPerRow);
+            PrintDataImpl<uint64_t>(data, count, elementsPerRow);
             break;
         case ACL_FLOAT16:
-            DoPrintFp16Data(reinterpret_cast<const aclFloat16 *>(data), count, elementsPerRow);
+            DoPrintFp16Data(static_cast<const aclFloat16 *>(data), count, elementsPerRow);
             break;
         case ACL_FLOAT:
-            DoPrintData(reinterpret_cast<const float *>(data), count, elementsPerRow);
+            PrintDataImpl<float>(data, count, elementsPerRow);
             break;
         case ACL_DOUBLE:
-            DoPrintData(reinterpret_cast<const double *>(data), count, elementsPerRow);
+            PrintDataImpl<double>(data, count, elementsPerRow);
             break;
         default:
             ERROR_LOG("Unsupported type: %d", dataType);
