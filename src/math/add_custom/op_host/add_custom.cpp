@@ -41,12 +41,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint64_t inputLength = inputDataNum * dataTypeLength;
     if (coreNum == 0) 
     {
-        std::cerr << "Error: coreNum is zero!" << std::endl;
         return ge::GRAPH_FAILED;
     } 
     if (BLOCK_SIZE == 0) 
     {
-        std::cerr << "Error: BLOCK_SIZE is zero!" << std::endl;
         return ge::GRAPH_FAILED;
     } 
 
