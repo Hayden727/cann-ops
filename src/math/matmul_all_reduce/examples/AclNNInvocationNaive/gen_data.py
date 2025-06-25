@@ -13,7 +13,6 @@ import os
 import random
 import numpy as np
 import torch
-import torch_npu
 import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.distributed.distributed_c10d import ReduceOp
@@ -51,33 +50,6 @@ def gen_cpu():
         p.join()
 
 
-def gen_gpu_data(rank, port=50001):
-    input_x1 = torch.tensor(np.fromfile("./input/input_x1_{}.bin".format(rank), np.float16)
-        .reshape([RANK_M, RANK_K])).npu()
-    input_x2 = torch.tensor(np.fromfile("./input/input_x2_{}.bin".format(rank), np.float16)
-        .reshape([RANK_K, RANK_N])).npu()
-    torch_npu.npu.set_device(rank)
-    dist.init_process_group(backend="hccl", rank=rank, world_size=RANK_DIM, init_method=f'tcp://127.0.0.1:{port}')
-    print('[INFO] device_{} 构造gpu_out数据'.format(rank))
-    gpu_out = torch.zeros([RANK_M, RANK_N], dtype=torch.float16).npu()
-    gpu_mm_out = torch.matmul(input_x1, input_x2)
-    dist.all_reduce(gpu_mm_out.npu(), op=ReduceOp.SUM)
-    np.array(gpu_out.cpu()).tofile('./output/gpu_out_{}.bin'.format(rank))
-
-
-def gen_gpu():
-    from torch.multiprocessing import Process
-    p_list = []
-    mp.set_start_method("forkserver", force=True)
-    port = 50001
-    for rank in range(RANK_DIM):
-        p = Process(target=gen_gpu_data, args=(rank, port))
-        p.start()
-        p_list.append(p)
-    for p in p_list:
-        p.join()
-
-
 if __name__ == "__main__":
     if not os.path.exists("input"):
         os.mkdir("input")
@@ -93,4 +65,3 @@ if __name__ == "__main__":
         x2.tofile("./input/input_x2_{}.bin".format(rank))
 
     gen_cpu()
-    gen_gpu()
