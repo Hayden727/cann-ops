@@ -14,11 +14,11 @@ endif ()
 include(ExternalProject)
 
 if (CANN_PKG)
-    set(REQ_URL "${CANN_PKG}/libs/ge_nlohmann_json/v3.11.2/include.zip")
+    set(REQ_URL "${CANN_PKG}/libs/ge_nlohmann_json/v3.11.3/include.zip")
 elseif (ENABLE_GITHUB)
-    set(REQ_URL "https://github.com/nlohmann/json/releases/download/v3.11.2/include.zip")
+    set(REQ_URL "https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip")
 else ()
-    set(REQ_URL "https://gitee.com/mirrors/JSON-for-Modern-CPP/repository/archive/v3.11.2.zip")
+    set(REQ_URL "https://gitee.com/mirrors/JSON-for-Modern-CPP/repository/archive/v3.11.3.zip")
 endif ()
 
 ExternalProject_Add(json_build

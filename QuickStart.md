@@ -97,12 +97,12 @@ add_custom/
      # sudo make install                  # 非root用户安装googletest
      ```
 
-   - nlohmann_json (建议版本 [release-3.11.2](https://github.com/nlohmann/json/releases/tag/v3.11.2))
+   - nlohmann_json (建议版本 [release-3.11.3](https://github.com/nlohmann/json/releases/tag/v3.11.3))
 
      如下以[json源码](https://github.com/nlohmann/json.git)编译安装为例，安装命令如下：
 
      ```bash
-     git checkout v3.11.2                 # 切换到json项目的 v3.11.2 tag版本
+     git checkout v3.11.3                 # 切换到json项目的 v3.11.3 tag版本
      mkdir build && cd build              # 在json源码根目录下创建构建目录并进入
      cmake .. -DJSON_BuildTests=OFF       # 禁用测试以加快构建
      cmake --install .                    # root用户安装，默认安装到系统路径（/usr/local)
