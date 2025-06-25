@@ -227,9 +227,11 @@ ge::graphStatus AdaptiveMaxPool3DGradTilingBase::DoLibApiTiling()
 }
 
 ge::graphStatus AdaptiveMaxPool3DGradTilingBase::GetPlatformInfo() {
-    auto compileInfo = reinterpret_cast<const Tiling4AdaptiveMaxPool3DGradCompileInfo*>(context_->GetCompileInfo());
-    maxPoolGradParams.totalCoreNum = compileInfo->totalCoreNum;
-    maxPoolGradParams.maxUbSize = compileInfo->maxUbSize;
+    auto platformInfo = context_->GetPlatformInfo();
+    auto ascendcPlatform = platform_ascendc::PlatformAscendC(platformInfo);
+
+    maxPoolGradParams.totalCoreNum = ascendcPlatform.GetCoreNum();
+    ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, maxPoolGradParams.maxUbSize);
     return ge::GRAPH_SUCCESS;
 }
 
