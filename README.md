@@ -69,5 +69,9 @@ cann-ops仓欢迎广大开发者体验并参与贡献，在参与社区贡献之
 1.提交PR时，请按照PR模板仔细填写本次PR的业务背景、目的、方案等信息。<br>
 2.若您的修改不是简单的bug修复，而是涉及到新增特性、新增接口、新增配置参数或者修改代码流程等，请务必先通过Issue进行方案讨论，以避免您的代码被拒绝合入。若您不确定本次修改是否可被归为“简单的bug修复”，亦可通过提交Issue进行方案讨论。
 
+## ⚠️ 安全声明
+
+[cann-ops算子仓库 安全声明](./SECURITYNOTE.md)
+
 ## 📄 许可证书
 [CANN Open Software License Agreement Version 1.0](LICENSE)

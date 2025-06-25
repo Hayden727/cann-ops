@@ -153,7 +153,7 @@ class Parser:
             logging.error("Classify file(%s) not exist.", file)
             return False
         with open(file, 'r', encoding='utf-8') as f:
-            desc: Dict[str, Any] = yaml.load(f, Loader=yaml.SafeLoader)
+            desc: Dict[str, Any] = yaml.safe_load(f)
         for name, sub_desc in desc.items():
             if not cls._parse_classify_item(name=name, desc=sub_desc):
                 return False
