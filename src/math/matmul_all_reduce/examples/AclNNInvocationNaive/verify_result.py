@@ -8,12 +8,9 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-import os
 import sys
-import time
 import numpy as np
 import torch
-import torch_npu
 
 
 DEBUG_SWITCH = False
@@ -134,6 +131,7 @@ def validate_tensor_shapes(value, golden, name):
         return False
     return True
 
+
 def handle_special_values(value, golden):
     # 处理INF/NAN特殊值
     value = value.clone()
@@ -154,6 +152,7 @@ def handle_special_values(value, golden):
     
     return value, golden, nan_stats
 
+
 def process_large_values(value, golden, small_value):
     mask = golden >= small_value
     total_big_num = torch.sum(mask)
@@ -171,6 +170,7 @@ def process_large_values(value, golden, small_value):
         'diff_big_avg': diff_big.sum() / total_big_num if total_big_num > 0 else 0
     }
 
+
 def process_small_values(value, golden, small_value, small_value_atol):
     mask = golden < small_value
     total_small_num = torch.sum(mask)
@@ -187,9 +187,11 @@ def process_small_values(value, golden, small_value, small_value_atol):
         'err_small_num': err_small_num
     }
 
+
 def calculate_rmse(value, golden):
     diff = torch.abs(value - golden)
     return torch.sqrt(torch.mean(torch.square(diff)))
+
 
 def calculate_error_balance(value, golden):
     eb_bigger = torch.sum(value > golden)
@@ -198,6 +200,7 @@ def calculate_error_balance(value, golden):
         'rst_eb': torch.abs(eb_bigger - eb_smaller),
         'diff_eb': torch.sum(value - golden)
     }
+
 
 def verify_tensor_result(value, golden, name):
     if not validate_tensor_shapes(value, golden, name):
@@ -215,18 +218,19 @@ def verify_tensor_result(value, golden, name):
     eb_data = calculate_error_balance(value, golden)
 
     return Result(name,
-        total_big_num=big_data['total_big_num'],
-        total_big_ratio=big_data['total_big_num']/golden.numel(),
-        diff_big_max=big_data['diff_big_max'],
-        diff_big_avg=big_data['diff_big_avg'],
-        diff_big_sum=big_data['diff_big_sum'],
-        total_small_num=small_data['total_small_num'],
-        total_small_ratio=small_data['total_small_num']/golden.numel(),
-        err_small_num=small_data['err_small_num'],
-        err_small_ratio=small_data['err_small_num']/small_data['total_small_num'] if small_data['total_small_num'] > 0 else 0,
-        diff_rmse=rmse,
-        rst_eb=eb_data['rst_eb'],
-        diff_eb=eb_data['diff_eb'],
+        total_big_num = big_data['total_big_num'],
+        total_big_ratio = big_data['total_big_num'] / golden.numel(),
+        diff_big_max = big_data['diff_big_max'],
+        diff_big_avg = big_data['diff_big_avg'],
+        diff_big_sum = big_data['diff_big_sum'],
+        total_small_num = small_data['total_small_num'],
+        total_small_ratio = small_data['total_small_num'] / golden.numel(),
+        err_small_num = small_data['err_small_num'],
+        err_small_ratio = small_data['err_small_num'] / small_data['total_small_num'] 
+            if small_data['total_small_num'] > 0 else 0,
+        diff_rmse = rmse,
+        rst_eb = eb_data['rst_eb'],
+        diff_eb = eb_data['diff_eb'],
         **nan_stats
     )
 
