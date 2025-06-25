@@ -112,116 +112,124 @@ class Result:
 
     # 与竞品对比精度结果，benchmark传入gpu竞品数据或基线版本数据，返回检查结果与检查不通过原因
     def check_result(self, benchmark):
-        if self.diff_big_max > benchmark.diff_big_max * 10 or \
-                self.diff_big_avg > benchmark.diff_big_avg * 2 or \
-                self.diff_big_sum > benchmark.diff_big_sum * 2 or \
-                self.err_small_num > benchmark.err_small_num * 2 or \
-                self.diff_rmse > benchmark.diff_rmse * 2:
+        conditions = [
+            self.diff_big_max > benchmark.diff_big_max * 10,
+            self.diff_big_avg > benchmark.diff_big_avg * 2,
+            self.diff_big_sum > benchmark.diff_big_sum * 2,
+            self.err_small_num > benchmark.err_small_num * 2,
+            self.diff_rmse > benchmark.diff_rmse * 2
+        ]
+        if any(conditions):
             reason_str = self.check_result_debug(benchmark)
             return 'error', reason_str
 
         return 'ok', ''
 
 
-def verify_tensor_result(value, golden, name):
-    if value.shape == golden.shape:
-        # 两个张量shape相同，开始对比
-        if torch.all(torch.eq(value, golden)):
-            ratio_diff = 0
-            diff = 0
-            if value.numel() == 0:
-                return Result(name)
-        # inf nan对比
-        mask_golden_is_nan = torch.isnan(golden)
-        mask_value_is_nan = torch.isnan(value)
-        num_total_nan = torch.sum(mask_golden_is_nan)
-        err_total_nan = torch.sum(mask_golden_is_nan.logical_xor(mask_value_is_nan))
-
-        # 将所有inf处理为边界值（inf误差转换为数值误差）
-        golden[golden == torch.inf] = torch.finfo(value.dtype).max
-        golden[golden == -torch.inf] = torch.finfo(value.dtype).min
-        value[value == torch.inf] = torch.finfo(value.dtype).max
-        value[value == -torch.inf] = torch.finfo(value.dtype).min
-
-        mask_golden_is_inf = torch.isinf(golden) & (golden > 0)
-        mask_value_is_inf = torch.isinf(value) & (value > 0)
-        num_total_inf = torch.sum(mask_golden_is_inf)
-        err_total_inf = torch.sum(mask_golden_is_inf.logical_xor(mask_value_is_inf))
-
-        mask_golden_is_ninf = torch.isinf(golden) & (golden < 0)
-        mask_value_is_ninf = torch.isinf(value) & (value < 0)
-        num_total_ninf = torch.sum(mask_golden_is_ninf)
-        err_total_ninf = torch.sum(mask_golden_is_ninf.logical_xor(mask_value_is_ninf))
-
-        # 对inf/nan统一赋1，忽略影响
-        golden[torch.isinf(golden)] = 1
-        value[torch.isinf(value)] = 1
-        golden[torch.isnan(golden)] = 1
-        value[torch.isnan(value)] = 1
-
-        if value.dtype == torch.float16:
-            small_value = 0.001
-            small_value_atol = 0.00001
-        elif value.dtype == torch.bfloat16:
-            small_value = 0.001
-            small_value_atol = 0.00001
-        elif value.dtype == torch.float32:
-            small_value = 0.000001
-            small_value_atol = 0.000000001
-        else:
-            small_value = 0.000025
-            small_value_atol = 0.000000001
-
-        # 大值对比
-        total_big_num = torch.sum(golden >= small_value)
-        total_big_ratio = total_big_num / golden.numel()
-
-        # 对小值统一赋1，忽略影响
-        value_big = value.clone()
-        value_big[golden < small_value] = 1
-        golden_big = golden.clone()
-        golden_big[golden < small_value] = 1
-
-        diff_big = torch.abs(value_big.sub(golden_big))
-        diff_big_max = diff_big.max()
-        diff_big_sum = diff_big.sum()
-        diff_big_avg = diff_big_sum / total_big_num
-        diff_big_ratio = diff_big / golden_big
-
-        # 小值对比
-        total_small_num = torch.sum(golden < small_value)
-        total_small_ratio = total_small_num / golden.numel()
-
-        # 对大值统一赋1，忽略影响
-        value_small = value.clone()
-        value_small[golden > small_value] = 1
-        golden_small = golden.clone()
-        golden_small[golden > small_value] = 1
-
-        diff_small = torch.abs(value_small.sub(golden_small))
-        err_small_num = torch.sum(diff_small > small_value_atol)
-        err_small_ratio = err_small_num / total_small_num
-
-        # 计算均方根误差（rmse）
-        diff = torch.abs(value.sub(golden))
-        diff_rmse = torch.sqrt(torch.mean(torch.square(diff)))
-
-        # 计算误差均衡性（eb）
-        eb_bigger = torch.sum(value > golden)
-        eb_smaller = torch.sum(value < golden)
-        rst_eb = torch.abs(eb_bigger.sub(eb_smaller))
-        diff_eb = torch.sum(value.sub(golden))
-
-        return Result(name, total_big_num, total_big_ratio, diff_big_max, diff_big_avg, diff_big_sum,
-                      total_small_num, total_small_ratio, err_small_num, err_small_ratio, diff_rmse, rst_eb,
-                      diff_eb,
-                      num_total_nan, err_total_nan, num_total_inf, err_total_inf, num_total_ninf, err_total_ninf)
-    else:
+def validate_tensor_shapes(value, golden, name):
+    if value.shape != golden.shape:
         print(f"error: {name}计算结果错误，shape与标杆不匹配，用例执行失败！！！")
         print(f"debug: 输入shape {value.shape}")
         print(f"debug: 真值shape  {golden.shape}")
+        return False
+    return True
 
-    return None
+def handle_special_values(value, golden):
+    # 处理INF/NAN特殊值
+    value = value.clone()
+    golden = golden.clone()
+    
+    # 记录特殊值统计
+    nan_stats = {
+        'num_total_nan': torch.sum(torch.isnan(golden)),
+        'err_total_nan': torch.sum(torch.isnan(golden).logical_xor(torch.isnan(value)))
+    }
+    
+    inf_mask = golden == torch.inf
+    ninf_mask = golden == -torch.inf
+    golden = torch.where(inf_mask, torch.finfo(value.dtype).max, golden)
+    golden = torch.where(ninf_mask, torch.finfo(value.dtype).min, golden)
+    value = torch.where(value == torch.inf, torch.finfo(value.dtype).max, value)
+    value = torch.where(value == -torch.inf, torch.finfo(value.dtype).min, value)
+    
+    return value, golden, nan_stats
+
+def process_large_values(value, golden, small_value):
+    mask = golden >= small_value
+    total_big_num = torch.sum(mask)
+    
+    value_big = value.clone()
+    value_big[~mask] = 1
+    golden_big = golden.clone()
+    golden_big[~mask] = 1
+    
+    diff_big = torch.abs(value_big - golden_big)
+    return {
+        'total_big_num': total_big_num,
+        'diff_big_max': diff_big.max(),
+        'diff_big_sum': diff_big.sum(),
+        'diff_big_avg': diff_big.sum() / total_big_num if total_big_num > 0 else 0
+    }
+
+def process_small_values(value, golden, small_value, small_value_atol):
+    mask = golden < small_value
+    total_small_num = torch.sum(mask)
+    
+    value_small = value.clone()
+    value_small[~mask] = 1
+    golden_small = golden.clone()
+    golden_small[~mask] = 1
+    
+    diff_small = torch.abs(value_small - golden_small)
+    err_small_num = torch.sum(diff_small > small_value_atol)
+    return {
+        'total_small_num': total_small_num,
+        'err_small_num': err_small_num
+    }
+
+def calculate_rmse(value, golden):
+    diff = torch.abs(value - golden)
+    return torch.sqrt(torch.mean(torch.square(diff)))
+
+def calculate_error_balance(value, golden):
+    eb_bigger = torch.sum(value > golden)
+    eb_smaller = torch.sum(value < golden)
+    return {
+        'rst_eb': torch.abs(eb_bigger - eb_smaller),
+        'diff_eb': torch.sum(value - golden)
+    }
+
+def verify_tensor_result(value, golden, name):
+    if not validate_tensor_shapes(value, golden, name):
+        return None
+
+    value, golden, nan_stats = handle_special_values(value, golden)
+    
+    dtype = value.dtype
+    small_value = 0.001 if dtype in [torch.float16, torch.bfloat16] else 0.000001
+    small_value_atol = 0.00001 if dtype in [torch.float16, torch.bfloat16] else 0.000000001
+
+    big_data = process_large_values(value, golden, small_value)
+    small_data = process_small_values(value, golden, small_value, small_value_atol)
+    rmse = calculate_rmse(value, golden)
+    eb_data = calculate_error_balance(value, golden)
+
+    return Result(name,
+        total_big_num=big_data['total_big_num'],
+        total_big_ratio=big_data['total_big_num']/golden.numel(),
+        diff_big_max=big_data['diff_big_max'],
+        diff_big_avg=big_data['diff_big_avg'],
+        diff_big_sum=big_data['diff_big_sum'],
+        total_small_num=small_data['total_small_num'],
+        total_small_ratio=small_data['total_small_num']/golden.numel(),
+        err_small_num=small_data['err_small_num'],
+        err_small_ratio=small_data['err_small_num']/small_data['total_small_num'] if small_data['total_small_num'] > 0 else 0,
+        diff_rmse=rmse,
+        rst_eb=eb_data['rst_eb'],
+        diff_eb=eb_data['diff_eb'],
+        **nan_stats
+    )
+
 
 def data_compare(cpu_data, gpu_data, npu_data, rank):
     rst_npu = verify_tensor_result(npu_data, cpu_data, "{}_dq_npu".format(rank))

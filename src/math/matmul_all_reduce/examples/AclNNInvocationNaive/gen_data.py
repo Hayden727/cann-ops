@@ -52,8 +52,10 @@ def gen_cpu():
 
 
 def gen_gpu_data(rank, port=50001):
-    input_x1 = torch.tensor(np.fromfile("./input/input_x1_{}.bin".format(rank), np.float16).reshape([RANK_M, RANK_K])).npu()
-    input_x2 = torch.tensor(np.fromfile("./input/input_x2_{}.bin".format(rank), np.float16).reshape([RANK_K, RANK_N])).npu()
+    input_x1 = torch.tensor(np.fromfile("./input/input_x1_{}.bin".format(rank), np.float16)
+        .reshape([RANK_M, RANK_K])).npu()
+    input_x2 = torch.tensor(np.fromfile("./input/input_x2_{}.bin".format(rank), np.float16)
+        .reshape([RANK_K, RANK_N])).npu()
     torch_npu.npu.set_device(rank)
     dist.init_process_group(backend="hccl", rank=rank, world_size=RANK_DIM, init_method=f'tcp://127.0.0.1:{port}')
     print('[INFO] device_{} 构造gpu_out数据'.format(rank))
