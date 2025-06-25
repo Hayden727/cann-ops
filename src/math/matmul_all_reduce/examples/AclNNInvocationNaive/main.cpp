@@ -524,7 +524,7 @@ bool OpRunner::RunOp(std::string group, aclrtStream stream)
         ERROR_LOG("Get Operator Workspace failed. error code is %d", static_cast<int32_t>(ret));
         return false;
     }
-    INFO_LOG("Execute aclnnMatmulCustomGetWorkspaceSize success, workspace size %lu", workspaceSize);
+    INFO_LOG("Execute aclnnMatmulAllReduceGetWorkspaceSize success, workspace size %lu", workspaceSize);
     
     void *workspace = nullptr;
     if (workspaceSize != 0) {
@@ -538,7 +538,7 @@ bool OpRunner::RunOp(std::string group, aclrtStream stream)
         ERROR_LOG("Execute Operator failed. error code is %d", static_cast<int32_t>(ret));
         return false;
     }
-    INFO_LOG("Execute aclnnMatmulCustom success");
+    INFO_LOG("Execute aclnnMatmulAllReduce success");
 
     ret = aclrtSynchronizeStreamWithTimeout(stream, 10000); // 流同步超时10000 
     if (ret != SUCCESS) {
