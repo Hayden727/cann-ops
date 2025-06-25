@@ -59,13 +59,11 @@ public:
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
-        #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>){
             pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(float32_t));
         }else if constexpr (std::is_same_v<TYPE_X, int64_t>){
             pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(int32_t));
         }
-        #endif
     }
     __aicore__ inline void Process()
     {
@@ -94,7 +92,7 @@ private:
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         LocalTensor<TYPE_X> yLocal = outQueueY.AllocTensor<TYPE_X>();
-        #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
+        AscendC::printf(" 2-> \n");
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
         {
             
@@ -112,11 +110,23 @@ private:
         }
         else
         {
+            AscendC::printf(" 1-> \n");
+            for(int32_t site =0 ;site<7;site++){
+                AscendC::printf(" site is %d  value is %f\n",site,xLocal.GetValue(site));
+            }
+            AscendC::printf("processDataNum is %d\n",this->processDataNum);
+            DumpTensor(xLocal,1,32);
+            AscendC::printf("valueGm1 is %d\n",valueGm.GetValue(0));
+            AscendC::printf("valueGm2 is %d\n",(TYPE_X)valueGm.GetValue(0));
             Muls(yLocal, xLocal, (TYPE_X)valueGm.GetValue(0), this->processDataNum);
+            DumpTensor(yLocal,1,32);
+            for(int32_t site =0 ;site<7;site++){
+                AscendC::printf(" site is %d  value is %f\n",site,yLocal.GetValue(site));
+            }
         }
-        #endif
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX.FreeTensor(xLocal);
+
     }
     __aicore__ inline void CopyOut(int32_t progress)
     {
@@ -284,20 +294,57 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
       GM_ADDR tiling)
 {
     GET_TILING_DATA(tiling_data, tiling);
-    #if defined(__CCE_AICORE__) && __CCE_AICORE__ == 220
     if(TILING_KEY_IS(0)){
-        #if TYPE_X!= complex64
-            KernelMuls<TYPE_X> op;
-            op.Init(x,value, y, tiling_data.smallCoreDataNum,
-                tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
-                tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
-                tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
-                tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
-            op.Process();
-        #endif
-
+        KernelMuls<bfloat16_t> op;
+        op.Init(x,value, y, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        op.Process();
+    } else if(TILING_KEY_IS(1)){
+        KernelMuls<float16_t> op;
+        op.Init(x,value, y, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        op.Process();
+    } else if(TILING_KEY_IS(2)){
+        KernelMuls<float32_t> op;
+        op.Init(x,value, y, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        op.Process();
+    } else if(TILING_KEY_IS(3)){
+        KernelMuls<int16_t> op;
+        op.Init(x,value, y, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        op.Process();
+    } else if(TILING_KEY_IS(4)){
+        KernelMuls<int32_t> op;
+        op.Init(x,value, y, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        op.Process();
     }
-    else if(TILING_KEY_IS(1)){
+    else if(TILING_KEY_IS(5)){
+        KernelMuls<int64_t> op;
+        op.Init(x,value, y, tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
+            tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
+            tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
+            tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        op.Process();
+    }
+    else if(TILING_KEY_IS(6)){
         KernelMulsComplex64<float> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
@@ -306,7 +353,7 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
             tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }
-    #endif
+    AscendC::printf(" 4-> \n");
 }
 #ifndef ASCENDC_CPU_DEBUG
 // call of kernel function

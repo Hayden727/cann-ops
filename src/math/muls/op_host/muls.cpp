@@ -36,7 +36,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint32_t inputLength = inputDataNum * dataTypeLength;
-    
+    std::cout<<"is me New_muls "<<std::endl;
     // There are a total of 3 shared UB spaces in the input and output. If it's bf16 and int64, there are 2 more TBUFs
     uint32_t dataType = context->GetInputDesc(0)->GetDataType();
     uint32_t ubPartNum = (dataType == ge::DT_BF16 || dataType == ge::DT_INT64) ? 5 : 3;
@@ -63,7 +63,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     // Small chunks are calculated and sliced several times using the number of data on each core
     uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
     uint32_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
-    smallCoreLoopNum = (everyCoreInputBlockNum % ubPartDataNum) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
+    smallCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum ) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
     // Tail block calculation for small chunks of data
     uint32_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
     smallCoreTailDataNum = smallCoreTailDataNum == 0 ? ubPartDataNum : smallCoreTailDataNum;
@@ -73,7 +73,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         everyCoreInputBlockNum += 1;
         bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
         bigCoreLoopNum = bigCoreDataNum / ubPartDataNum;
-        bigCoreLoopNum = (everyCoreInputBlockNum % ubPartDataNum) == 0 ? bigCoreLoopNum : bigCoreLoopNum + 1;
+        bigCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum ) == 0 ? bigCoreLoopNum : bigCoreLoopNum + 1;
         bigCoreTailDataNum = bigCoreDataNum - ubPartDataNum * (bigCoreLoopNum-1);
         bigCoreTailDataNum = bigCoreTailDataNum == 0 ? ubPartDataNum : bigCoreTailDataNum;
         IsExistBigCore = true;
@@ -83,13 +83,23 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
     
 
-    if (dataType == ge::DT_COMPLEX64) {
-        context->SetTilingKey(1);
-    }else{
+    if (dataType == ge::DT_BF16) {
         context->SetTilingKey(0);
+    }else if(dataType == ge::DT_FLOAT16){
+        context->SetTilingKey(1);
+    }else if(dataType == ge::DT_FLOAT){
+        context->SetTilingKey(2);
+    }else if(dataType == ge::DT_INT16){
+        context->SetTilingKey(3);
+    }else if(dataType == ge::DT_INT32){
+        context->SetTilingKey(4);
+    }else if(dataType == ge::DT_INT64){
+        context->SetTilingKey(5);
+    }else if(dataType == ge::DT_COMPLEX64){
+        context->SetTilingKey(6);
     }
 
-    return ge::GRAPH_SUCCESS;
+    
     tiling.set_smallCoreDataNum(smallCoreDataNum);
     tiling.set_bigCoreDataNum(bigCoreDataNum);
     tiling.set_ubPartDataNum(ubPartDataNum);
@@ -105,7 +115,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
     size_t *currentWorkspace = context->GetWorkspaceSizes(1);
     currentWorkspace[0] = 0;
-
+    return ge::GRAPH_SUCCESS;
 }
 }
 namespace ge {
@@ -141,7 +151,7 @@ public:
         this->SetInferShape(ge::InferShape);
         this->AICore()
             .SetTiling(optiling::TilingFunc);
-        this->AICore().AddConfig("ascend310p").AddConfig("ascend910b");
+        this->AICore().AddConfig("ascend910b");
 
     }
 };
