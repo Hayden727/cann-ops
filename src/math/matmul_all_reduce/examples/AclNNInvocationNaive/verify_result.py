@@ -218,19 +218,19 @@ def verify_tensor_result(value, golden, name):
     eb_data = calculate_error_balance(value, golden)
 
     return Result(name,
-        total_big_num = big_data['total_big_num'],
-        total_big_ratio = big_data['total_big_num'] / golden.numel(),
-        diff_big_max = big_data['diff_big_max'],
-        diff_big_avg = big_data['diff_big_avg'],
-        diff_big_sum = big_data['diff_big_sum'],
-        total_small_num = small_data['total_small_num'],
-        total_small_ratio = small_data['total_small_num'] / golden.numel(),
-        err_small_num = small_data['err_small_num'],
-        err_small_ratio = small_data['err_small_num'] / small_data['total_small_num'] 
+        total_big_num=big_data['total_big_num'],
+        total_big_ratio=big_data['total_big_num'] / golden.numel(),
+        diff_big_max=big_data['diff_big_max'],
+        diff_big_avg=big_data['diff_big_avg'],
+        diff_big_sum=big_data['diff_big_sum'],
+        total_small_num=small_data['total_small_num'],
+        total_small_ratio=small_data['total_small_num'] / golden.numel(),
+        err_small_num=small_data['err_small_num'],
+        err_small_ratio=small_data['err_small_num'] / small_data['total_small_num'] 
             if small_data['total_small_num'] > 0 else 0,
-        diff_rmse = rmse,
-        rst_eb = eb_data['rst_eb'],
-        diff_eb = eb_data['diff_eb'],
+        diff_rmse=rmse,
+        rst_eb=eb_data['rst_eb'],
+        diff_eb=eb_data['diff_eb'],
         **nan_stats
     )
 
