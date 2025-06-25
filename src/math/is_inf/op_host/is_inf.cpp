@@ -25,6 +25,7 @@
 
 // tools api
 #define OP_LOGD(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__); std::printf("\n")
+#define OP_LOGE(nodeName, fmt, ...) std::printf(fmt, ##__VA_ARGS__); std::printf("\n")
 namespace ops {
 #define OPS_CHECK_NULL_WITH_CONTEXT(context, ptr)                                                \
   if ((ptr) == nullptr) {                                                                        \
@@ -93,6 +94,10 @@ private:
 };
 
 ge::graphStatus IsInfTiling::RunBigKernelTiling() {
+    if (tilingContext == nullptr) {
+        OP_LOGE(context->GetNodeName(), "tilingContext is nullptr!");
+        return ge::GRAPH_FAILED;
+    }
     auto platformInfo = platform_ascendc::PlatformAscendC(tilingContext->GetPlatformInfo());
 
     uint64_t ubSizePlatForm = 0;
