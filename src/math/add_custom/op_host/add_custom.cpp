@@ -39,11 +39,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint64_t inputLength = inputDataNum * dataTypeLength;
-    if (coreNum == 0) 
-    {
-        return ge::GRAPH_FAILED;
-    } 
-    if (BLOCK_SIZE == 0) 
+    if (coreNum == 0 || BLOCK_SIZE == 0) 
     {
         return ge::GRAPH_FAILED;
     } 
