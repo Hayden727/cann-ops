@@ -24,12 +24,12 @@ constexpr int32_t BUFFER_NUM = 1;
 constexpr int64_t BLOCK_DATA = 32;
 constexpr int64_t REPEAT_DATA = 256;
 
-constexpr uint16_t FLOAT16_NEG_INF = 0xFC00; // -inf 64512
-constexpr uint16_t FLOAT16_INF = 0x7C00; // inf 31744
-constexpr uint16_t FLOAT16_NAN_END = 0x8000; // 32768
+constexpr uint16_t FLOAT16_NEG_INF = 64512; // -inf 0xFC00
+constexpr uint16_t FLOAT16_INF = 31744; // inf 0x7C00
+constexpr uint16_t FLOAT16_NAN_END = 32768; // 0x8000
 
-constexpr int32_t FLOAT32_NEG_INF = 0xFF800000; // -inf -2139095040
-constexpr int32_t FLOAT32_INF = 0x7F800000; // inf 2139095040
+constexpr int32_t FLOAT32_NEG_INF = -2139095040; // -inf 0xFF800000
+constexpr int32_t FLOAT32_INF = 2139095040; // inf 0x7F800000
 constexpr int32_t FLOAT32_NEG_ZERO = -2147483648; // -0
 
 template<typename T>

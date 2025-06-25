@@ -478,7 +478,7 @@ __aicore__ inline void AdaptiveMaxPool3dSmallPool<T>::MaxPoolD(const uint8_t diF
     for (int i = kerDStartIdx + 1; i < kerDEndIdx; i++) {
       auto nexCmpOffset = VL_NUM * (i - kerDStartIdxTotal);
       Compare(cmpMask, mulHUb[nexCmpOffset], mulDUb[mulDOffset], CMPMODE::GT, mask, repeat, repeatParams);
-      Compare(cmpMask2, mulDUb[nexCmpOffset], mulDUb[nexCmpOffset], CMPMODE::EQ, mask, repeat, repeatParams2);
+      Compare(cmpMask2, mulHUb[nexCmpOffset], mulHUb[nexCmpOffset], CMPMODE::EQ, mask, repeat, repeatParams2);
       AscendC::PipeBarrier<PIPE_V>();
       Not(cmpMask2, cmpMask2, 128);
       AscendC::PipeBarrier<PIPE_V>();
