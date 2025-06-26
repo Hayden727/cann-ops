@@ -92,6 +92,9 @@ private:
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         LocalTensor<TYPE_X> yLocal = outQueueY.AllocTensor<TYPE_X>();
+        for(int32_t site =0 ;site<3;site++){
+            AscendC::printf(" site is %d  value is %f\n",site,xLocal.GetValue(site));
+        }
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
         {
             
@@ -102,14 +105,14 @@ private:
         }
         else if constexpr (std::is_same_v<TYPE_X, int64_t>)
         {
-            LocalTensor<int32_t> p2 = tmp2.Get<int32_t>();
+            LocalTensor<int32_t> p2 = tmp1.Get<int32_t>();
             Cast(p2, xLocal, RoundMode::CAST_NONE, this->processDataNum);
             Muls(p2, p2,(int32_t)valueGm.GetValue(0) , this->processDataNum);
             Cast(yLocal, p2, RoundMode::CAST_NONE, this->processDataNum);
         }
         else
         {
-            TYPE_X tmp = (TYPE_X)valueGm.GetValue(0);;
+            TYPE_X tmp = (TYPE_X)valueGm.GetValue(0);
             Muls(yLocal, xLocal, tmp, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
@@ -183,12 +186,7 @@ public:
         yGm.SetGlobalBuffer((__gm__ float *)y + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
-        valueGm.SetGlobalBuffer((__gm__ TYPE_X *)value);
-        // tBufXReal, tBufXImag,tBufYReal, tBufYImag,tBufRealOffset, tBufImagOffset
-        pipe.InitBuffer(tBufXReal, this->ubPartDataNum * sizeof(float));
-        pipe.InitBuffer(tBufXImag, this->ubPartDataNum * sizeof(float));
-        pipe.InitBuffer(tBufRealOffset, this->ubPartDataNum * BUFFER_NUM * sizeof(uint32_t));
-        pipe.InitBuffer(tBufImagOffset, this->ubPartDataNum * BUFFER_NUM * sizeof(uint32_t));
+        valueGm.SetGlobalBuffer((__gm__ float *)value);
     }
     __aicore__ inline void Process()
     {
@@ -219,35 +217,7 @@ private:
     {
         LocalTensor<float> xLocal = inQueueX.DeQue<float>();
         LocalTensor<float> yLocal = outQueueY.AllocTensor<float>();
-        // tBufXReal, tBufXImag,tBufYReal, tBufYImag,tBufRealOffset, tBufImagOffset
-        LocalTensor<float> xRealLocal = tBufXReal.Get<float>();
-        LocalTensor<float> xImagLocal = tBufXImag.Get<float>();
-        LocalTensor<uint32_t> realOffsetLocal = tBufRealOffset.Get<uint32_t>();
-        LocalTensor<uint32_t> imagOffsetLocal = tBufImagOffset.Get<uint32_t>();
-        // 设置每个元素的偏移量，用于从复数数据中提取实部和虚部
-        uint32_t COMPLEX64_ELEMENT_SIZE = 8;  // Size in bytes for complex64
-        uint32_t COMPLEX64_REAL_OFFSET = 0;   // Offset for real part
-        uint32_t COMPLEX64_IMAG_OFFSET = 4;   // Offset for imaginary part
-        for (size_t i = 0; i < this->processDataNum; i++)
-        {
-            realOffsetLocal.SetValue(i, i * COMPLEX64_ELEMENT_SIZE + COMPLEX64_REAL_OFFSET);
-            imagOffsetLocal.SetValue(i, i * COMPLEX64_ELEMENT_SIZE + COMPLEX64_IMAG_OFFSET);
-        }
-        // Gather 实部数据：从 xLocal 中按偏移量提取出实部到 xRealLocal 中
-        Gather(xRealLocal, xLocal, realOffsetLocal, (uint32_t)0, this->processDataNum);
-        // Gather 虚部数据：从 xLocal 中按偏移量提取出虚部到 xImagLocal 中
-        Gather(xImagLocal, xLocal, imagOffsetLocal, (uint32_t)0, this->processDataNum);
-
-        Muls(xRealLocal, xRealLocal, valueGm.GetValue(0), this->processDataNum);
-
-        Muls(xImagLocal, xImagLocal, valueGm.GetValue(0), this->processDataNum);
-        uint32_t COMPLEX_NUM_COMPONENTS = 2;  // Number of components (real + imaginary)
-        uint32_t COMPLEX_IMAG_INDEX = 1;     // Index offset for imaginary part
-        for (size_t i = 0; i < this->processDataNum; i++)
-        {
-            yLocal.SetValue(i * COMPLEX_NUM_COMPONENTS, xRealLocal.GetValue(i));
-            yLocal.SetValue(i * COMPLEX_NUM_COMPONENTS + COMPLEX_IMAG_INDEX, xImagLocal.GetValue(i));
-        }
+        Muls(yLocal, xLocal, valueGm.GetValue(0), this->processDataNum);
         outQueueY.EnQue<float>(yLocal);
         inQueueX.FreeTensor(xLocal);
     }
@@ -264,10 +234,6 @@ private:
     GlobalTensor<float> xGm;
     GlobalTensor<float> valueGm;
     GlobalTensor<float> yGm;
-    TBuf<QuePosition::VECCALC> tBufXReal;
-    TBuf<QuePosition::VECCALC> tBufXImag;
-    TBuf<QuePosition::VECCALC> tBufRealOffset;
-    TBuf<QuePosition::VECCALC> tBufImagOffset;
     uint32_t coreDataNum;
     uint32_t tileNum;
     uint32_t ubPartDataNum;
