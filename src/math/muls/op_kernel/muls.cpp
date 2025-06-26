@@ -55,7 +55,7 @@ public:
         }
         xGm.SetGlobalBuffer((__gm__ TYPE_X *)x + globalBufferIndex, this->coreDataNum);
         yGm.SetGlobalBuffer((__gm__ TYPE_X *)y + globalBufferIndex, this->coreDataNum);
-        valueGm.SetGlobalBuffer((__gm__ TYPE_X *)value);
+        valueGm.SetGlobalBuffer((__gm__ float *)value);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
@@ -92,13 +92,12 @@ private:
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         LocalTensor<TYPE_X> yLocal = outQueueY.AllocTensor<TYPE_X>();
-        AscendC::printf(" 2-> \n");
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
         {
             
             LocalTensor<float32_t> p1 = tmp1.Get<float32_t>();
             Cast(p1, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            Muls(p1, p1,ToFloat(valueGm.GetValue(0)) , this->processDataNum);
+            Muls(p1, p1,valueGm.GetValue(0) , this->processDataNum);
             Cast(yLocal, p1, RoundMode::CAST_RINT, this->processDataNum);
         }
         else if constexpr (std::is_same_v<TYPE_X, int64_t>)
@@ -110,19 +109,8 @@ private:
         }
         else
         {
-            AscendC::printf(" 1-> \n");
-            for(int32_t site =0 ;site<7;site++){
-                AscendC::printf(" site is %d  value is %f\n",site,xLocal.GetValue(site));
-            }
-            AscendC::printf("processDataNum is %d\n",this->processDataNum);
-            DumpTensor(xLocal,1,32);
-            AscendC::printf("valueGm1 is %d\n",valueGm.GetValue(0));
-            AscendC::printf("valueGm2 is %d\n",(TYPE_X)valueGm.GetValue(0));
-            Muls(yLocal, xLocal, (TYPE_X)valueGm.GetValue(0), this->processDataNum);
-            DumpTensor(yLocal,1,32);
-            for(int32_t site =0 ;site<7;site++){
-                AscendC::printf(" site is %d  value is %f\n",site,yLocal.GetValue(site));
-            }
+            TYPE_X tmp = (TYPE_X)valueGm.GetValue(0);;
+            Muls(yLocal, xLocal, tmp, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX.FreeTensor(xLocal);
@@ -141,7 +129,7 @@ private:
     TBuf<QuePosition::VECCALC> tmp1;
     TBuf<QuePosition::VECCALC> tmp2;
     GlobalTensor<TYPE_X> xGm;
-    GlobalTensor<TYPE_X> valueGm;
+    GlobalTensor<float> valueGm;
     GlobalTensor<TYPE_X> yGm;
     uint32_t coreDataNum;
     uint32_t tileNum;
@@ -274,7 +262,7 @@ private:
     TQue<QuePosition::VECIN, BUFFER_NUM> inQueueX;
     TQue<QuePosition::VECOUT, BUFFER_NUM> outQueueY;
     GlobalTensor<float> xGm;
-    GlobalTensor<TYPE_X> valueGm;
+    GlobalTensor<float> valueGm;
     GlobalTensor<float> yGm;
     TBuf<QuePosition::VECCALC> tBufXReal;
     TBuf<QuePosition::VECCALC> tBufXImag;
@@ -353,7 +341,6 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
             tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
         op.Process();
     }
-    AscendC::printf(" 4-> \n");
 }
 #ifndef ASCENDC_CPU_DEBUG
 // call of kernel function

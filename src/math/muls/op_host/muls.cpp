@@ -23,30 +23,29 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     MulsTilingData tiling;
     // 获取硬件信息（UB 内存大小、核心数、SOC版本）
     uint64_t ubLength = 0;
-    uint32_t bigCoreDataNum = 0;
-    uint32_t bigCoreLoopNum = 0;
-    uint32_t bigCoreTailDataNum = 0;
+    uint64_t bigCoreDataNum = 0;
+    uint64_t bigCoreLoopNum = 0;
+    uint64_t bigCoreTailDataNum = 0;
     
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
     auto coreNum = ascendcPlatform.GetCoreNum();
     
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
-    uint32_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+    uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
-    uint32_t inputLength = inputDataNum * dataTypeLength;
-    std::cout<<"is me New_muls "<<std::endl;
+    uint64_t inputLength = inputDataNum * dataTypeLength;
     // There are a total of 3 shared UB spaces in the input and output. If it's bf16 and int64, there are 2 more TBUFs
-    uint32_t dataType = context->GetInputDesc(0)->GetDataType();
-    uint32_t ubPartNum = (dataType == ge::DT_BF16 || dataType == ge::DT_INT64) ? 5 : 3;
-    uint32_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
+    uint64_t dataType = context->GetInputDesc(0)->GetDataType();
+    uint64_t ubPartNum = (dataType == ge::DT_BF16 || dataType == ge::DT_INT64) ? 5 : 3;
+    uint64_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
     // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
-    uint32_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
-    uint32_t ubPartDataNum = (ubPartBlockNum * BLOCK_SIZE) / dataTypeLength;
+    uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
+    uint64_t ubPartDataNum = (ubPartBlockNum * BLOCK_SIZE) / dataTypeLength;
 
     // Input data for 32B alignment
-    uint32_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+    uint64_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
     if(ubPartDataNum >= inputDataNum)
     {
         coreNum=1;
@@ -57,15 +56,15 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
     }
     
-    uint32_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
-    uint32_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
+    uint64_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
+    uint64_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
     
     // Small chunks are calculated and sliced several times using the number of data on each core
-    uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
-    uint32_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
+    uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
+    uint64_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
     smallCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum ) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
     // Tail block calculation for small chunks of data
-    uint32_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
+    uint64_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
     smallCoreTailDataNum = smallCoreTailDataNum == 0 ? ubPartDataNum : smallCoreTailDataNum;
     bool IsExistBigCore = true;
     if(0 != tailBlockNum)
@@ -100,16 +99,16 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
 
     
-    tiling.set_smallCoreDataNum(smallCoreDataNum);
-    tiling.set_bigCoreDataNum(bigCoreDataNum);
-    tiling.set_ubPartDataNum(ubPartDataNum);
-    tiling.set_smallCoreTailDataNum(smallCoreTailDataNum);
-    tiling.set_bigCoreTailDataNum(bigCoreTailDataNum);
-    tiling.set_smallCoreLoopNum(smallCoreLoopNum);
-    tiling.set_bigCoreLoopNum(bigCoreLoopNum);
-    tiling.set_tailBlockNum(tailBlockNum);
+    tiling.set_smallCoreDataNum((uint32_t)smallCoreDataNum);
+    tiling.set_bigCoreDataNum((uint32_t)bigCoreDataNum);
+    tiling.set_ubPartDataNum((uint32_t)ubPartDataNum);
+    tiling.set_smallCoreTailDataNum((uint32_t)smallCoreTailDataNum);
+    tiling.set_bigCoreTailDataNum((uint32_t)bigCoreTailDataNum);
+    tiling.set_smallCoreLoopNum((uint32_t)smallCoreLoopNum);
+    tiling.set_bigCoreLoopNum((uint32_t)bigCoreLoopNum);
+    tiling.set_tailBlockNum((uint32_t)tailBlockNum);
     tiling.set_tailBlockNum(IsExistBigCore);
-    context->SetBlockDim(coreNum);
+    context->SetBlockDim((uint32_t)coreNum);
     
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
