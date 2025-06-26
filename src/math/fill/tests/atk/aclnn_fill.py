@@ -8,12 +8,6 @@ from atk.configs.results_config import TaskResult
 @register("aclnn_cpu_fill")
 class FunctionApi(BaseApi):
     def __init__(self, task_result: TaskResult):
-        # self.task_result = task_result
-        # self.api_name = api_name  # API名称，为yaml文件中设置的name
-        # self.output = output      # 指定output返回值：e
-        # self.device = task_result.backend    # 当前执行的设备，['npu','gpu','cpu']
-        # self.device_id = task_result.device_id  # 当前的设备ID
-        # self.change_flag = False  # tensor_api方式使用的参数，不需要使用
         super().__init__(task_result)
         self.dims = None
         self.value = None
@@ -25,18 +19,14 @@ class FunctionApi(BaseApi):
         #3.执行,调用真正的标杆
         #4. return
         if self.device == "cpu":
-            # print("input_data", input_data.kwargs)
             dims = input_data.kwargs["dims"]
             dims_tensor = torch.zeros(dims).to(self.dtype)
             output = torch.fill_(dims_tensor, self.value)
-            # print("output", output)
 
         elif self.device == "npu":
-            # print("input_data", input_data.kwargs)
             dims = input_data.kwargs["dims"]
             dims_tensor = torch.zeros(dims).to(self.dtype)
             output = torch.fill_(dims_tensor.npu(), self.value)
-            # print("output", output)
             
         return output
     def init_by_input_data(self, input_data: InputDataset):
@@ -68,8 +58,6 @@ class FunctionApi(BaseApi):
         
         del input_data.kwargs["value_dtype"]
    
-        # dims = input_data.kwargs["dims"]
-        # self.dims = torch.zeros(dims).to(self.dtype)
         self.value = input_data.kwargs["value"]
         
     def get_cpp_func_signature_type(self):

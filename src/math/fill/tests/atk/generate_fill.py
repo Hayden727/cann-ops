@@ -13,5 +13,4 @@ class ReduceGenerator(CaseGenerator):
         '''
         case_config.inputs[2].range_values = case_config.inputs[1].dtype
         
-        # print(case_config.inputs)
         return case_config  # 返回修改和符合参数约束的用例

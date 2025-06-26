@@ -1,3 +1,12 @@
+/**
+* @file fill.h
+*
+* Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*/
 #ifndef __FILL_H_
 #define __FILL_H_
 
@@ -54,7 +63,6 @@ class KernelFill {
   }
   __aicore__ inline void Process()
     {
-      //  uint32_t loopCount = this->tileNum * BUFFER_NUM;
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->ubPartDataNum;
         for (int32_t i = 0; i < loopCount-1; i++) 

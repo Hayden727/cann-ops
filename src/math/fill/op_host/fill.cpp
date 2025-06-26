@@ -1,3 +1,13 @@
+/**
+* @file fill.cpp
+*
+* Copyright (C) 2024. Huawei Technologies Co., Ltd. All rights reserved.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*/
+
 #include "fill_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
@@ -114,7 +124,6 @@ return ge::GRAPH_SUCCESS;
 namespace ge {
 static ge::graphStatus InferShape(gert::InferShapeContext* context)
 {
-    // return GRAPH_SUCCESS;
     const gert::Shape* x1_shape = context->GetInputShape(0);
     gert::Shape* y_shape = context->GetOutputShape(0);
     *y_shape = *x1_shape;
@@ -127,7 +136,6 @@ class Fill : public OpDef {
 public:
     explicit Fill(const char* name) : OpDef(name)
     {
-     
     this->Input("dims")
         .ParamType(REQUIRED)
         .DataType({ge::DT_INT64, ge::DT_INT64, ge::DT_INT64, ge::DT_INT64, ge::DT_INT64, ge::DT_INT64,  ge::DT_INT64})
