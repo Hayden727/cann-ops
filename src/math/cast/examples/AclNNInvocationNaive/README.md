@@ -66,4 +66,4 @@ aclnnStatus aclnnCast(void* workspace, uint64_t workspaceSize, aclOpExecutor* ex
 
 | 时间       | 更新事项     |
 | ---------- | ------------ |
-| 2025/04/15 | 新增本readme |
+| 2025/06/25 | 新增本readme |

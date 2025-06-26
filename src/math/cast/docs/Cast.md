@@ -43,7 +43,7 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：depth、feat、ranks_depth、ranks_feat、ranks_bev、interval_starts、interval_lengths、out的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、dstType、out的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnBevPool
@@ -60,18 +60,56 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 
 ## 约束与限制
 
-- 无
+- dstType需要与out的数据类型一致，具体可以参考(https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha002/API/basicdataapi/atlasopapi_07_00514.html)
+- x，out的数据格式只支持ND
+- x，out具体支持的数据类型如下表所示
+
+    <table>
+    <tr>
+    <td></td><td></td><td colspan="9" align="center">目标数据类型(out)</td>
+    </tr>
+    <tr>
+    <td></td><td></td><td align="center">float16</td><td align="center">float32</td><td align="center">int32</td><td align="center">int8</td><td align="center">uint8</td><td align="center">bool</td><td align="center">int64</td><td align="center">bfloat16</td><td align="center">int16</td>
+    </tr>
+    <tr>
+    <td rowspan="9" align="center">源数据类型(x)</td><td align="center">float16</td><td align="center"></td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center">√</td>
+    </tr>
+    <tr>
+    <td align="center">float32</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td>
+    </tr>
+    <tr>
+    <td align="center">int32</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td>
+    </tr>
+    <tr>
+    <td align="center">int8</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td>
+    </tr>
+    <tr>
+    <td align="center">uint8</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center"></td><td align="center">√</td><td align="center">√</td><td align="center">√</td>
+    </tr>
+    <tr>
+    <td align="center">bool</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center">√</td><td align="center"></td>
+    </tr>
+    <tr>
+    <td align="center">int64</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center">√</td>
+    </tr>
+    <tr>
+    <td align="center">bfloat16</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center"></td><td align="center"></td>
+    </tr>
+    <tr>
+    <td align="center">int16</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center">√</td><td align="center"></td><td align="center">√</td><td align="center"></td><td align="center"></td>
+    </tr>
+    </table>
+
 
 ## 算子原型
 
 <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Cast</th></tr>
-</tr>
-<tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
-<tr><td align="center">x</td><td align="center">-</td><td align="center">int8, uint8, int16, int32, int64, float32, float16, bfloat16, bool</td><td align="center">ND</td><td align="center">\</td></tr>
-<tr><td align="center">dstType</td><td align="center">-</td><td align="center">int64</td><td align="center">\</td><td align="center">\</td></tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">int8, uint8, int16, int32, int64, float32, float16, bfloat16, bool</td><td align="center">ND</td><td align="center">\</td></tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">cast</td></td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Cast</td></tr>
+<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x</td><td align="center">-</td><td align="center">float16, float32, int32, int8, uint8, bool, int64, bfloat16, int16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">-</td><td align="center">float16, float32, int32, int8, uint8, bool, int64, bfloat16, int16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子属性</td><td align="center">dstType</td><td align="center">-</td><td align="center">int64</td><td align="center">\</td></tr>
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">cast</td></td></tr>
 </table>
 
 ## 调用示例
