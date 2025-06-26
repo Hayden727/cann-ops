@@ -5,19 +5,20 @@ from atk.tasks.api_execute import register
 from atk.tasks.api_execute.base_api import BaseApi
 from atk.configs.results_config import TaskResult
 
+
 @register("aclnn_cpu_fill")
 class FunctionApi(BaseApi):
     def __init__(self, task_result: TaskResult):
         super().__init__(task_result)
         self.dims = None
         self.value = None
-        self.dtype = None  
-        
+        self.dtype = None
+
     def __call__(self, input_data: InputDataset, with_output: bool = False):
-        #1.取参数
-        #2.封装
-        #3.执行,调用真正的标杆
-        #4. return
+        # 1.取参数
+        # 2.封装
+        # 3.执行,调用真正的标杆
+        # 4. return
         if self.device == "cpu":
             dims = input_data.kwargs["dims"]
             dims_tensor = torch.zeros(dims).to(self.dtype)
@@ -27,8 +28,9 @@ class FunctionApi(BaseApi):
             dims = input_data.kwargs["dims"]
             dims_tensor = torch.zeros(dims).to(self.dtype)
             output = torch.fill_(dims_tensor.npu(), self.value)
-            
+
         return output
+
     def init_by_input_data(self, input_data: InputDataset):
         """
         该接口可实现部门场景下api的初始化需要依赖于当前的输入数据，且不希望计入耗时，
@@ -37,7 +39,7 @@ class FunctionApi(BaseApi):
         value_dtype = input_data.kwargs["value_dtype"]
 
         if value_dtype == "fp16":
-            self.dtype =  torch.float16
+            self.dtype = torch.float16
         elif value_dtype == "fp32":
             self.dtype = torch.float32
         elif value_dtype == "int8":
@@ -54,10 +56,12 @@ class FunctionApi(BaseApi):
             self.dtype = torch.bool
         else:
             self.dtype = torch.int32
-        
+
         del input_data.kwargs["value_dtype"]
-   
+
         self.value = input_data.kwargs["value"]
-        
+
     def get_cpp_func_signature_type(self):
-        return "aclnnStatus aclnnFillGetWorkspaceSize(const aclIntArray *dims,const aclScalar *value, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **executor)"
+        return ("aclnnStatus aclnnFillGetWorkspaceSize(const aclIntArray *dims, "
+                "const aclScalar *value, const aclTensor *out, uint64_t *workspaceSize, "
+                "aclOpExecutor **executor)")

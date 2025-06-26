@@ -11,11 +11,10 @@
 /**
  * @file fill.cpp
  */
-
-#include "fill.h"
-
-#include "fillint64.h"
 #include "kernel_operator.h"
+#include "fill.h"
+#include "fillint64.h"
+
 // tensor num for each queue
 extern "C" __global__ __aicore__ void fill(GM_ADDR dims, GM_ADDR value, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
