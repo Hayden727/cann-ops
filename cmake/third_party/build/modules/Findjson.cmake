@@ -22,8 +22,7 @@ else ()
 endif ()
 
 ExternalProject_Add(json_build
-                    GIT_REPOSITORY https://gitee.com/mirrors/JSON-for-Modern-CPP.git
-		    GIT_TAG v3.11.2
+                    URL ${REQ_URL}
                     CONFIGURE_COMMAND ${CMAKE_COMMAND}
                         -DJSON_MultipleHeaders=ON
                         -DJSON_BuildTests=OFF

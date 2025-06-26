@@ -17,7 +17,6 @@ set(ASCEND_COMPUTE_UNIT           "ascend910b"                    CACHE   STRING
 set(ASCEND_OP_NAME                "ALL"                           CACHE   STRING   "operators that need to be compiled")
 set(VENDOR_NAME                   "customize"                     CACHE   STRING   "vendor name")
 
-add_compile_options(-w)
 include(cmake/config.cmake)
 include(cmake/func.cmake)
 include(cmake/intf.cmake)
