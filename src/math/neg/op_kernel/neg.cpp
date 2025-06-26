@@ -127,10 +127,8 @@ private:
             Cast(dstLocal, tmp1, RoundMode::CAST_RINT, this->processDataNum);
             QueueTmp.FreeTensor(tmp1);
         }       
-
         outQueue.EnQue<T>(dstLocal);
-        inQueueX.FreeTensor(srcLocal);
-        
+        inQueueX.FreeTensor(srcLocal);   
     }
 
     __aicore__ inline void CopyOut(uint32_t process)
@@ -154,7 +152,6 @@ private:
     uint32_t processDataNum;
 
 };
-
 
 extern "C" __global__ __aicore__ void neg(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling)
 {   
@@ -186,5 +183,4 @@ extern "C" __global__ __aicore__ void neg(GM_ADDR x, GM_ADDR y, GM_ADDR workspac
                 &pipe);
         op.Process();
     }
-    
 }

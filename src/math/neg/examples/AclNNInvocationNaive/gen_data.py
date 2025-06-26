@@ -14,8 +14,8 @@ import numpy as np
 
 def gen_golden_data_simple():
     dtype = np.float16
-    input_shape = [1,1]
-    output_shape = [1,1]
+    input_shape = [1, 1]
+    output_shape = [1, 1]
 
     x = np.random.uniform(-5, 5, input_shape).astype(dtype)
 
