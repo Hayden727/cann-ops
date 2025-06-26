@@ -22,7 +22,6 @@ class KernelFill1_INT64 {
       
     ASSERT(AscendC::GetBlockNum() != 0 && "block dim can not be zero!");
     uint32_t coreNum = AscendC::GetBlockIdx();
-
     uint32_t globalBufferIndex = bigCoreDataNum * AscendC::GetBlockIdx();
     this->ubPartDataNum = ubPartDataNum;
 
@@ -60,7 +59,6 @@ class KernelFill1_INT64 {
     pipe.InitBuffer(outQueueOUT, BUFFER_NUM, this->ubPartDataNum * sizeof(int32_t));
   }
   __aicore__ inline void Process() {
-    //  uint32_t loopCount = this->tileNum * BUFFER_NUM;
     int32_t loopCount = this->tileNum;
     this->processDataNum = this->ubPartDataNum;
     this->repeatTimes = (this->processDataNum + 63)/  64;

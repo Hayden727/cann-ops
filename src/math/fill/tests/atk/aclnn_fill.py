@@ -34,7 +34,6 @@ class FunctionApi(BaseApi):
         该接口可实现部门场景下api的初始化需要依赖于当前的输入数据，且不希望计入耗时，
         可以在此接口实现
         """
-        # print(input_data)
         value_dtype = input_data.kwargs["value_dtype"]
 
         if value_dtype == "fp16":

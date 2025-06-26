@@ -7,6 +7,8 @@
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
+#ifndef FILL_TILING_H 
+#define FILL_TILING_H 
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -22,3 +24,4 @@ BEGIN_TILING_DATA_DEF(FillTilingData)
 END_TILING_DATA_DEF; 
 REGISTER_TILING_DATA_CLASS(Fill, FillTilingData)
 }
+#endif

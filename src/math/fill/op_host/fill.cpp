@@ -7,12 +7,10 @@
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
-
+#include <iostream>
 #include "fill_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <iostream>
-
 #include "graph/utils/type_utils.h"
 //Length 所占字节
 //DataNum 个数
@@ -35,7 +33,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
   ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
 
 // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
-// uint32_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
 uint32_t inputDataNum = 1;
 const gert::StorageShape* x1_shape = context->GetInputShape(0);
 const gert::Tensor * dimsTensor = context->GetInputTensor(0);
