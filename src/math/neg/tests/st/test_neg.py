@@ -9,12 +9,8 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
-def neg_test(x_np):
-
-    # 使用 NumPy 接口进行计算
-    x = x_np
+def neg_test(x):
     golden = -x
-
     return golden
 
 def calc_expect_func(x, y):
