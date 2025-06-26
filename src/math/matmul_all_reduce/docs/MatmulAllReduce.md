@@ -33,7 +33,7 @@ MatmulAllReduce由Matmul和AllReduce操作组成，计算过程分为2步：
 
 每个算子分为[两段式接口](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E4%B8%A4%E6%AE%B5%E5%BC%8F%E6%8E%A5%E5%8F%A3.md)，必须先调用“aclnnMatmulAllReduceGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMatmulAllReduce”接口执行计算。
 
-* `aclnnStatus aclnnMatmulAllReduceGetWorkspaceSize(const aclTensor *x1, const aclTensor *x2, const aclTensor *biasOptional, char *group, char *reduceOpOptional, bool isTransA, bool isTransB, int64_t commTurn, const aclTensor *out, uint64_t *workspaceSize, aclOpExecutor **executor);`
+* `aclnnStatus aclnnMatmulAllReduceGetWorkspaceSize(const aclTensor *x1, const aclTensor *x2, const aclTensor *biasOptional, char *group, char *reduceOpOptional, bool isTransA, bool isTransB, int64_t commTurn, const aclTensor *y, uint64_t *workspaceSize, aclOpExecutor **executor);`
 * `aclnnStatus aclnnMatmulAllReduce(void *workspace, int64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream)`
 
 **说明**：
@@ -47,7 +47,7 @@ MatmulAllReduce由Matmul和AllReduce操作组成，计算过程分为2步：
   
   - x1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x1，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - x2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x2，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出z，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出z，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -57,7 +57,7 @@ MatmulAllReduce由Matmul和AllReduce操作组成，计算过程分为2步：
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
   - 返回161001（ACLNN_ERR_PARAM_NULLPTR）：如果传入参数是必选输入，输出或者必选属性，且是空指针，则返回161001。
-  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x1、x2、out的数据类型和数据格式不在支持的范围内。
+  - 返回161002（ACLNN_ERR_PARAM_INVALID）：x1、x2、y的数据类型和数据格式不在支持的范围内。
   ```
 
 ### aclnnMatmulAllReduce
@@ -74,12 +74,12 @@ MatmulAllReduce由Matmul和AllReduce操作组成，计算过程分为2步：
 
 ## 约束与限制
 
-- x1，x2，out的数据类型只支持FLOAT16，数据格式只支持ND
+- x1，x2，y的数据类型只支持FLOAT16，数据格式只支持ND
 
 ## 算子原型
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatmulAllReduceCustom</td></tr>
+<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatmulAllReduce</td></tr>
 </tr>
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x1</td><td align="center">16384 * 640</td><td align="center">float16</td><td align="center">ND</td></tr>
