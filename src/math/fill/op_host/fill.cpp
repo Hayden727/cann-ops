@@ -37,6 +37,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context) {
     uint32_t sizeofdatatype;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto coreNum = ascendcPlatform.GetCoreNum();  // 40
+    assert(coreNum != 0);
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
 
     // Based on the input length and the number of inputs, the number of bytes of
@@ -52,7 +53,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context) {
 
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(1)->GetDataType(), dataTypeLength);
-    uint32_t inputLength = inputDataNum * dataTypeLength;
+    uint32_t inputLength = static_cast<uint32_t>(inputDataNum * dataTypeLength);
 
     // If it's int8, there are 1 more half TBUFs
     uint32_t ubPartNum = (dataTypeLength == 1) ? 3 : 1;
@@ -61,7 +62,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context) {
     auto dt = context->GetInputDesc(1)->GetDataType();
     if (dt == ge::DT_INT64) {
         dataTypeLength = 4;
-        ubPartLength = 256 * 64;
+        ubPartLength = static_cast<uint32_t>(256U * 64U);
     }
 
     // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER
