@@ -140,11 +140,7 @@ private:
             inQueueX.FreeTensor(xLocal);
         } else {
             AscendC::LocalTensor<T> yTarget = outQueueY.AllocTensor<T>();
-#if __CCE_AICORE__ == 200
-            AscendC::Cast(yTarget, yLocal, AscendC::RoundMode::CAST_NONE, this->processDataNum);
-#else
             AscendC::Cast(yTarget, yLocal, AscendC::RoundMode::CAST_RINT, this->processDataNum);
-#endif
             outQueueY.EnQue(yTarget);
         }
     }

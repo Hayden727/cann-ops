@@ -15,8 +15,6 @@
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <algorithm>
-#include <cmath>
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 32;
@@ -39,12 +37,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint64_t inputLength = inputDataNum * dataTypeLength;
 
-    uint32_t ubPartNum;
-    if (ascendcPlatform.GetSocVersion() == platform_ascendc::SocVersion::ASCEND310P) {
-        ubPartNum = (dataTypeLength == 4) ? 7 : 14;
-    } else {
-        ubPartNum = (dataTypeLength == 4) ? 8 : 16;
-    }
+    uint32_t ubPartNum = (dataTypeLength == 4) ? 8 : 16;
     uint64_t ubPartLength = ubLength / ubPartNum;
     // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
     uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
