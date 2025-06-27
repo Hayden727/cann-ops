@@ -14,16 +14,12 @@ import tensorflow as tf
 import numpy as np
 
 
-def sqrt_test(x):
+def sin_test(x):
     tensor = tf.convert_to_tensor(x)
-    sqrt_tensor = tf.math.sqrt(tensor)
-    re = sqrt_tensor.numpy()
-    return re
+    sin_result = tf.math.sin(tensor)
+    return sin_result.numpy()
 
 
 def calc_expect_func(x, y):
-    """
-    calc_expect_func
-    """
-    res = sqrt_test(x['value'])
+    res = sin_test(x["value"])
     return [res]

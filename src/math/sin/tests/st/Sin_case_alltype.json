@@ -1,8 +1,8 @@
 [
     {
-        "case_name": "Test_Sqrt_001",
-        "op": "Sqrt",
-        "calc_expect_func_file": "./test_sqrt.py:calc_expect_func",
+        "case_name": "Test_Sin_001",
+        "op": "Sin",
+        "calc_expect_func_file": "./test_sin.py:calc_expect_func",
         "input_desc": [
             {
                 "format": [
@@ -19,8 +19,8 @@
                 ],
                 "value_range": [
                     [
-                        0.1,
-                        1.0
+                        -5.0,
+                        5.0
                     ]
                 ],
                 "name": "x"

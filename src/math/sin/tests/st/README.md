@@ -1,8 +1,8 @@
 ## 目录结构介绍
 ```
-├── msopst.ini                  // st测试配置文件 
-├── Sqrt_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
-└── test_sqrt.py               // 算子期望数据生成脚本
+├── msopst.ini                 // st测试配置文件 
+├── Sin_case_alltype.json      // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
+└── test_sin.py                // 算子期望数据生成脚本
 ```
 
 ## ST测试介绍
@@ -27,7 +27,7 @@
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/cann-ops/src/math/sqrt/tests/st
+    cd ${git_clone_path}/cann-ops/src/math/sin/tests/st
     ```
 
   - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH
@@ -42,10 +42,10 @@
   - 执行测试用例
 
     ```bash
-    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sqrt_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
+    ${INSTALL_DIR}/python/site-packages/bin/msopst run -i ./Sin_case_alltype.json -soc {Soc Version} -out ./output -conf msopst.ini
     ```
 
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/01/07 | 新增本readme |
+| 2025/06/25 | 新增本readme |
