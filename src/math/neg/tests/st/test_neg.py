@@ -10,8 +10,14 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 def neg_test(x):
+
     golden = -x
     return golden
+
+
 def calc_expect_func(x, y):
+    """
+    calc_expect_func
+    """
     res = neg_test(x["value"])
     return [res]
