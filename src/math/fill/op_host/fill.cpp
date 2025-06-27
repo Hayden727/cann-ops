@@ -59,8 +59,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context) {
 
     // If it's int8, there are 1 more half TBUFs
     uint32_t ubPartNum = (dataTypeLength == 1) ? 3 : 1;
-    uint32_t ubPartLength = static_cast<uint32_t>(ubLength) / static_cast<uint32_t>(ubPartNum) / static_cast<uint32_t>(BUFFER_NUM);
-
+    uint32_t ubPartLength =
+        static_cast<uint32_t>(ubLength) / static_cast<uint32_t>(ubPartNum) / static_cast<uint32_t>(BUFFER_NUM);
 
     auto dt = context->GetInputDesc(1)->GetDataType();
     if (dt == ge::DT_INT64) {

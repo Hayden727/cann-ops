@@ -105,7 +105,6 @@ class KernelFill {
     uint32_t processDataNum;
 };
 
-
 template <bool IsExistBigCore>
 class KernelFill1_INT64 {
    public:
