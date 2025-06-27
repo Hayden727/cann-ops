@@ -4,7 +4,8 @@
 
 | 贡献者 | 贡献方 | 贡献算子 | 贡献时间 | 贡献内容 |
 |----|----|----|------|------|
-| 陈辉 | CANN生态 | AddCustom | 2025/6/20 | 修改AddCustom算子支持非对齐shape。|
+| 章鹏飞 | CANN生态 | AddCustom | 2024/11/29 | 新增AddCustom算子。|
+| 陈辉| CANN生态 | AddCustom | 2025/6/20 | 修改AddCustom算子支持非对齐shape。|
 
 ## 支持的产品型号
 
