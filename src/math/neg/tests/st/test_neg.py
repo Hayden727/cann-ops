@@ -13,8 +13,5 @@ def neg_test(x):
     golden = -x
     return golden
 def calc_expect_func(x, y):
-    """
-    calc_expect_func
-    """
     res = neg_test(x["value"])
     return [res]
