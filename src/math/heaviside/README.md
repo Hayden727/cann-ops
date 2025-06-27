@@ -1,7 +1,19 @@
-## `Heaviside`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`Heaviside`算子。
+## Heaviside
+### 贡献说明
+
+| 贡献者 | 贡献方 | 贡献算子        | 贡献时间      | 贡献内容          |
+|-----|-----|-------------|-----------|---------------|
+| 摆渡人 | 算子赛 | Heaviside算子 | 2025/6/12 | 新增Heaviside算子 |
+
+### 支持的产品型号
+- Atlas 200/500 A2 推理产品
+- Atlas A2训练系列产品/Atlas 800I A2推理产品
+
+产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
 ### 算子描述
+- 功能描述
+
 计算输入张量 input 的每个元素的 Heaviside 阶跃函数值。Heaviside 阶跃函数的定义如下：
 $$
 \text{heaviside}(\text{input}, \text{values}) = 
@@ -18,7 +30,7 @@ $$
 
 详细功能参考链接：https://pytorch.org/docs/stable/generated/torch.heaviside.html
 
-### 算子规格描述
+- 原型信息
 
 <table>
     <tr>
@@ -49,11 +61,8 @@ $$
     </tr>
 </table>
 
-
-### 支持的产品型号
-本样例支持如下产品型号：
-- Atlas 200/500 A2 推理产品
-- Atlas A2训练系列产品/Atlas 800I A2推理产品
+### 约束与限制
+- input，values，out的数据类型仅支持float32, float16，数据格式仅支持ND
 
 ### 目录结构介绍
 ```
@@ -66,10 +75,10 @@ $$
 └── tests                       // 测试用例目录
 ```
 
-### 环境要求
-编译运行此样例前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
+### 算子使用
+使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
-### 算子包编译部署
+### 编译部署
   - 进入到仓库目录
 
     ```bash
@@ -87,7 +96,8 @@ $$
     ```bash
     bash build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
-### 算子调用
+### 运行验证
+跳转到对应调用方式目录，参考Readme进行算子运行验证。
 <table>
     <th>目录</th><th>描述</th>
     <tr>
@@ -100,4 +110,4 @@ $$
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/06/11 | 新增本readme |
+| 2025/06/27| 新增本readme |

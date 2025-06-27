@@ -1,7 +1,19 @@
-## `MseLoss`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`MseLoss`算子。
+## MseLoss
+### 贡献说明
+| 贡献者     | 贡献方  | 贡献算子    | 贡献时间     | 贡献内容        |
+|---------|------|---------|----------|-------------|
+| enkilee | 社区任务 | MseLoss | 2025/4/3 | 新增MseLoss算子 |
+
+### 支持的产品型号
+本样例支持如下产品型号：
+- Atlas A2 训练系列产品
+- Atlas 800I A2推理产品
+- Atlas 200I/500 A2推理产品
+
+产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
 ### 算子描述
+- 功能描述
 `MseLoss`算子是`PyTorch`中用于回归任务的一种常见损失函数。它计算预测值与目标值之间的均方误差（Mean Squared Error, MSE）。但是，在具体的应用中跟定义稍有不同。主要差别是参数的设置，在torch.nn.MSELoss中有一个`reduction`参数。`reduction`是维度要不要缩减以及如何缩减主要有三个选项：
 
 - 1、‘none’:不使用约简
@@ -22,8 +34,7 @@
   y = sum((predict - label)^2)
   $$
 
-
-### 算子规格描述
+- 原型信息
 
 <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLoss</th></tr>
@@ -47,12 +58,8 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss</td></tr>  
 </table>
 
-
-### 支持的产品型号
-本样例支持如下产品型号：
-- Atlas A2 训练系列产品
-- Atlas 800I A2推理产品
-- Atlas 200I/500 A2推理产品
+### 约束与限制
+- predict，label，y，out的数据类型只支持float32,float16，数据结构只支持ND
 
 
 ### 目录结构介绍
@@ -67,10 +74,10 @@
 ```
 
 
-### 环境要求
-编译运行此样例前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
+### 算子使用
+使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
-### 算子包编译部署
+### 编译部署
   - 进入到仓库目录
 
     ```bash
@@ -89,7 +96,8 @@
     bash build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
 
-### 算子调用
+### 运行验证
+跳转到对应调用方式目录，参考Readme进行算子运行验证。
 <table>
     <th>目录</th><th>描述</th>
     <tr>
@@ -100,4 +108,4 @@
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/04/02 | 新增本readme |
+| 2025/06/27 | 新增本readme |

@@ -1,10 +1,22 @@
-## `LessEqual`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`LessEqual`算子。
+## LessEqual
+### 贡献说明
+| 贡献者 | 贡献方  | 贡献算子      | 贡献时间     | 贡献内容          |
+|-----|------|-----------|----------|---------------|
+| 王琪  | 社区任务 | LessEqual | 2025/4/7 | 新增LessEqual算子 |
+
+### 支持的产品型号
+- Atlas 200/500 A2 推理产品
+- Atlas A2训练系列产品/Atlas 800I A2推理产品
+- Atlas 推理系列产品
+
+产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
 ### 算子描述
+- 功能描述
+
 `LessEqual`算子返回两个数据相加的结果。
 
-### 算子规格描述
+- 原型信息
 
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">LessEqual</td></tr>
@@ -19,11 +31,8 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">less_equal</td></tr>
 </table>
 
-### 支持的产品型号
-本样例支持如下产品型号：
-- Atlas 200/500 A2 推理产品
-- Atlas A2训练系列产品/Atlas 800I A2推理产品
-- Atlas 推理系列产品
+### 约束与限制
+- x,y,out的数据类型仅支持float16, float32, int8, int32，bool,数据格式仅支持ND
 
 ### 目录结构介绍
 ```
@@ -36,10 +45,10 @@
 └── tests                       // 测试用例目录
 ```
 
-### 环境要求
-编译运行此样例前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
+### 算子使用
+使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
-### 算子包编译部署
+### 编译部署
   - 进入到仓库目录
 
     ```bash
@@ -57,7 +66,9 @@
     ```bash
     bash build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
-### 算子调用
+### 运行验证
+跳转到对应调用方式目录，参考Readme进行算子运行验证。
+
 <table>
     <th>目录</th><th>描述</th>
     <tr>
@@ -68,4 +79,4 @@
 ### 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/04/07 | 新增本readme |
+| 2025/06/27 | 新增本readme |

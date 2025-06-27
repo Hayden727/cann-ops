@@ -1,7 +1,19 @@
-## `MseLossGradV1`自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`MseLossGradV1`算子。
+## MseLossGradV2
+### 贡献说明
+| 贡献者     | 贡献方  | 贡献算子        | 贡献时间     | 贡献内容            |
+|---------|------|-------------|----------|-----------------|
+| enkilee | 社区任务 | MseLossGrad | 2025/5/6 | 新增MseLossGrad算子 |
+
+### 支持的产品型号
+本样例支持如下产品型号：
+- Atlas A2 训练系列产品
+- Atlas 800I A2推理产品
+- Atlas 200I/500 A2推理产品
+
+产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
 ### 算子描述
+- 功能描述
 `MseLossGradV1`是计算均方误差损失（`MseLoss`）相对于输入的梯度的算子。在神经网络的反向传播过程中，梯度是用来更新模型参数的重要部分。通过计算`MSELoss`的梯度，优化器可以调整模型的权重，以最小化损失。其中传入的reduction参数有两个取值：
 
 - `mean`: 计算出的梯度会是均方误差平均值的梯度；
@@ -9,7 +21,7 @@
 - `sum`: 计算出的梯度会是均方误差总和的梯度。
 
 
-### 算子规格描述
+- 原型信息
 
 <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLossGradV1</th></tr>
@@ -36,13 +48,8 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss_grad_v1</td></tr>  
 </table>
 
-
-### 支持的产品型号
-本样例支持如下产品型号：
-- Atlas A2 训练系列产品
-- Atlas 800I A2推理产品
-- Atlas 200I/500 A2推理产品
-
+### 约束与限制
+predic，label，dout，y，out的数据类型只支持float32,float16，数据结构只支持ND
 
 ### 目录结构介绍
 ```
@@ -56,10 +63,10 @@
 ```
 
 
-### 环境要求
-编译运行此样例前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
+### 算子使用
+使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
-### 算子包编译部署
+### 编译部署
   - 进入到仓库目录
 
     ```bash
@@ -77,8 +84,8 @@
     ```bash
     bash build_out/CANN-custom_ops-<cann_version>-linux.<arch>.run
     ```
-
-### 算子调用
+### 运行验证
+跳转到对应调用方式目录，参考Readme进行算子运行验证。
 <table>
     <th>目录</th><th>描述</th>
     <tr>
@@ -89,4 +96,4 @@
 ## 更新说明
 | 时间 | 更新事项 |
 |----|------|
-| 2025/05/06 | 新增本readme |
+| 2025/06/27 | 新增本readme |
