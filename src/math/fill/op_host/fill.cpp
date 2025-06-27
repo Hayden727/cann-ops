@@ -37,7 +37,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context) {
     uint32_t sizeofdatatype;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     auto coreNum = ascendcPlatform.GetCoreNum();  // 40
-    assert(coreNum != 0);
+    if (coreNum == 0) {
+        throw std::runtime_error("coreNum must not be 0");
+    }
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
 
     // Based on the input length and the number of inputs, the number of bytes of
@@ -57,7 +59,8 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context) {
 
     // If it's int8, there are 1 more half TBUFs
     uint32_t ubPartNum = (dataTypeLength == 1) ? 3 : 1;
-    uint32_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
+    uint32_t ubPartLength = static_cast<uint32_t>(ubLength) / static_cast<uint32_t>(ubPartNum) / static_cast<uint32_t>(BUFFER_NUM);
+
 
     auto dt = context->GetInputDesc(1)->GetDataType();
     if (dt == ge::DT_INT64) {

@@ -81,7 +81,6 @@ class KernelFill {
             AscendC::Duplicate<half>(tmpLocal, (half)(this->value), this->processDataNum);
             Cast(outLocal, tmpLocal, AscendC::RoundMode::CAST_NONE, this->processDataNum);
             outQueueOUT.EnQue<int8_t>(outLocal);
-
         } else {
             AscendC::LocalTensor<T> outLocal = outQueueOUT.AllocTensor<T>();
             AscendC::Duplicate<T>(outLocal, this->value, this->processDataNum);
