@@ -52,7 +52,10 @@ namespace optiling
         // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
         uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
         uint64_t inputLength = inputDataNum * dataTypeLength;
-        
+        if (coreNum == 0 || BLOCK_SIZE == 0) 
+        {
+            return ge::GRAPH_FAILED;
+        } 
         uint64_t ubPartLength = ubLength / ubPartNum;
         // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
         uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
