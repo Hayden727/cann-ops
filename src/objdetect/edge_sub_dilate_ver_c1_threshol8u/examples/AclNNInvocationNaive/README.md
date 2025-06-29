@@ -66,4 +66,4 @@ aclnnStatus aclnnEdgeSubDilateVerC1Threshol8u(void *workspace, int64_t workspace
 
 | 时间       | 更新事项     |
 | ---------- | ------------ |
-| 2025/01/06 | 新增本readme |
+| 2025/06/29 | 新增本readme |
