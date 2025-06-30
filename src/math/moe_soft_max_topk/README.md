@@ -15,14 +15,14 @@
 ## 算子描述
 - 功能描述
 
-MoeSoftMaxTopk是softmax和topk的融合算子，其中softmax可以理解为对x计算最后一维每个数据的概率，在计算结果中筛选出k个最大结果，输出对应的y值和索引indices。  
-计算公式如下：
+  MoeSoftMaxTopk是softmax和topk的融合算子，其中softmax可以理解为对x计算最后一维每个数据的概率，在计算结果中筛选出k个最大结果，输出对应的y值和索引indices。  
+  计算公式如下：
 $$ softmax(x_{i} )=\frac{exp(x_{i} )}{\sum exp(x_{j} )} $$
-topk是对sofrmax的所有结果进行一维选择，获取最大的k个结果，并输出对应的值y和索引indices。
+  topk是对sofrmax的所有结果进行一维选择，获取最大的k个结果，并输出对应的值y和索引indices。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="5" align="center">MoeSoftMaxTopk</td></tr>
 </tr>
 <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr>
@@ -38,7 +38,7 @@ topk是对sofrmax的所有结果进行一维选择，获取最大的k个结果�
 <tr><td rowspan="1" align="center">attr属性</td><td align="center">k</td><td align="center">\</td><td align="center">int</td><td align="center">\</td><td align="center">4</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">moe_soft_max_topk</td></tr>
-</table>
+  </table>
 
 ## 约束与限制
 - x,y,indices的数据类型仅支持float，数据格式仅支持ND
