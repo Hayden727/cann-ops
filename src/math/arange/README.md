@@ -6,7 +6,7 @@
 
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas 200I/500 A2推理产品
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
@@ -17,16 +17,16 @@
 
 - 功能描述
 
-从start起始到end结束按照step的间隔取值，并返回大小为 $\frac{end-start}{step}+1$的1维张量。其中，步长step是张量中相邻两个值的间隔。
+  从start起始到end结束按照step的间隔取值，并返回大小为 $\frac{end-start}{step}+1$的1维张量。其中，步长step是张量中相邻两个值的间隔。
 
- 对应的数学表达式为：
+  对应的数学表达式为：
 $$
 out<sub>i+1</sub> = out<sub>i</sub> + step
 $$
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Arange</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>
@@ -39,7 +39,7 @@ $$
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">int32,int64,float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">arange</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - start，end，step，y，out的数据类型仅支持int32,int64,float32,float16,bfloat16，数据格式仅支持ND
