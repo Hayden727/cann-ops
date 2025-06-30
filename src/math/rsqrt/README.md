@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-`Rsqrt`算子将数据进行开方并取倒数运算。
+  `Rsqrt`算子将数据进行开方并取倒数运算。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Rsqrt</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
@@ -28,7 +28,7 @@
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">rsqrt</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 
