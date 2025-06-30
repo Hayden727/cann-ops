@@ -37,7 +37,7 @@
 
 ## 约束与限制
 
- 仅支持dropPadMode=0，expertTokensCountOrCumsumFlag场景下EP规则切分。 
+- 仅支持dropPadMode=0，expertTokensCountOrCumsumFlag场景下EP规则切分。 
 ### 目录结构介绍
 
 ```
