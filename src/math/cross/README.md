@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-计算 `x1` 和 `x2` 在 dim 维度上的向量积（叉积）。
+  计算 `x1` 和 `x2` 在 dim 维度上的向量积（叉积）。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Cross</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="3" align="center">算子输入</td>
@@ -31,7 +31,7 @@
 <tr><td rowspan="1" align="center">算子属性</td>
 <td align="center">dim</td><td align="center">scalar</td><td align="center">int</td><td align="center">-</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">cross</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - x,y,out的数据类型只支持float32,float16,int32,int8，数据格式只支持ND
