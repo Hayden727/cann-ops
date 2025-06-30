@@ -38,7 +38,7 @@
     <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">pre_layer_norm</td></tr>
   </table>
 
-### 约束与限制
+## 约束与限制
 - x,y,gamma,beta,z,out的数据类型仅支持float，数据格式仅支持ND
 
 ### 算子使用
