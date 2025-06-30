@@ -48,7 +48,7 @@ $$
 
 ## 约束与限制
 
-query，key，value，softmax_sum，attention_out的数据类型仅支持float32，float16，数据格式仅支持ND
+- query，key，value，softmax_sum，attention_out的数据类型仅支持float32，float16，数据格式仅支持ND
 
 
 ## 目录结构介绍
