@@ -1,16 +1,16 @@
 # Radius
-### 贡献说明
+## 贡献说明
 | 贡献者      | 贡献方  | 贡献算子   | 贡献时间      | 贡献内容       |
 |----------|------|--------|-----------|------------|
 | Nice_try | 社区任务 | Radius | 2025/5/21 | 新增Radius算子 |
 
-### 支持的产品型号
+## 支持的产品型号
 本样例支持如下产品型号：
 - Atlas A2训练系列产品
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
 
 `Radius`算子计算邻居点索引，并返回邻居点索引对。
@@ -44,10 +44,10 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">radius</td></tr>  
 </table>
 
-### 约束与限制
+## 约束与限制
 - x,y,per_x.per_y,out的数据类型仅支持float32,float16,int32，数据格式仅支持ND
 
-### 目录结构介绍
+## 目录结构介绍
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
@@ -58,7 +58,7 @@
 └── tests                       // 测试用例目录
 ```
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
@@ -88,8 +88,3 @@
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Radius算子。</td>
     </tr>
 </table>
-
-## 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27 | 新增本readme |
