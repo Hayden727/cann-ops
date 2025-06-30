@@ -43,7 +43,7 @@ var[indices[i, ..., j], ...] -= updates[i, ..., j, ...]
 </table>
 
 ## 约束与限制
-var，indices，uodates，out的数据类型只支持float32,float16,int32,int8，数据格式只支持ND
+- var，indices，uodates，out的数据类型只支持float32,float16,int32,int8，数据格式只支持ND
 
 ## 目录结构介绍
 ```
