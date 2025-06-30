@@ -19,26 +19,14 @@
 - 原型信息
 
   <table>  
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Dawsn</th></tr>  
-<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr></td><td align="center">x</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td><td align="center">\</td></tr>  
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td><td align="center">\</td></tr>  
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">dawsn</td></tr>  
+    <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Dawsn</th></tr>  
+    <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr></td><td align="center">x</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td><td align="center">\</td></tr>  
+    <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td><td align="center">\</td></tr>  
+    <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">dawsn</td></tr>  
   </table>
 
 ## 约束与限制
 - x，y的数据类型仅支持float32,float16，数据格式仅支持ND
-
-## 目录结构介绍
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-├── opp_kernel_aicpu            // aicpu目录
-└── tests                       // 测试用例目录
-```
-
 
 ## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
