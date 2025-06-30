@@ -15,68 +15,34 @@
 ## 算子描述
 - 功能描述
 
-  `MseLoss`算子是`PyTorch`中用于回归任务的一种常见损失函数。它计算预测值与目标值之间的均方误差（Mean Squared Error, MSE）。但是，在具体的应用中跟定义稍有不同。主要差别是参数的设置，在torch.nn.MSELoss中有一个`reduction`参数。`reduction`是维度要不要缩减以及如何缩减主要有三个选项：
-
-  1、‘none’:不使用约简
-
-     计算公式为：
-  $$
-  y = (predict - label)^2
-  $$
-
-  2、‘mean’: 返回 loss 的均值
-
-     计算公式为：
-  $$
-  y = mean((predict - label)^2)
-  $$
-
-   3、‘sum’: 返回 loss 的和
-
-     计算公式为：
-  $$
-  y = sum((predict - label)^2)
-  $$
+  `MseLoss`算子是`PyTorch`中用于回归任务的一种常见损失函数。它计算预测值与目标值之间的均方误差（Mean Squared Error, MSE）。
 
 - 原型信息
 
   <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLoss</th></tr>
-
-<tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
-<tr><td rowspan="3" align="center">算子输入</td>
- 
-<tr>
-<td align="center">predict</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>
-
-<tr>
-<td align="center">label</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td>
-</tr>  
-
-<tr><td rowspan="1" align="center">算子输出</td>
-<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>
-
-<tr><td rowspan="1" align="center">attr属性</td>
-<td align="center">reduction</td><td align="center">scalar</td><td align="center">string</td><td align="center">\</td></tr>
-
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss</td></tr>  
+    <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLoss</th></tr>
+    
+    <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
+    <tr><td rowspan="3" align="center">算子输入</td>
+     
+    <tr>
+    <td align="center">predict</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>
+    
+    <tr>
+    <td align="center">label</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td>
+    </tr>  
+    
+    <tr><td rowspan="1" align="center">算子输出</td>
+    <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>
+    
+    <tr><td rowspan="1" align="center">attr属性</td>
+    <td align="center">reduction</td><td align="center">scalar</td><td align="center">string</td><td align="center">\</td></tr>
+    
+    <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss</td></tr>  
   </table>
 
 ### 约束与限制
 - predict，label，y，out的数据类型只支持float32,float16，数据结构只支持ND
-
-
-## 目录结构介绍
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-├── opp_kernel_aicpu            // aicpu目录
-└── tests                       // 测试用例目录
-```
-
 
 ### 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
