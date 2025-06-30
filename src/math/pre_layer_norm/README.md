@@ -6,7 +6,7 @@
 | yuuki | 社区任务 | PreLayerNorm | 2025/4/30 | 新增PreLayerNorm算子 |
 
 ### 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
@@ -17,24 +17,22 @@
 
 - 功能描述
 
-PreLayerNorm是Add和LayerNorm的融合算子，Add算子的输出作为LayerNorm算子的第一个输入。对输入x, y先相加得到的数据，根据系数beta 和偏置gamma使其Add(x, y)的值收敛到固定区间。  
-Add对应的数学表达式为：
+  PreLayerNorm是Add和LayerNorm的融合算子，Add算子的输出作为LayerNorm算子的第一个输入。对输入x, y先相加得到的数据，根据系数beta 和偏置gamma使其Add(x, y)的值收敛到固定区间。  
+  Add对应的数学表达式为：
 $$add(x_{ijk}, y_{ijk})=x_{ijk}+ y_{ijk}$$
-LayerNorm对应的数学表达式为：
+  LayerNorm对应的数学表达式为：
 
 $$ layernorm(z_{i,j,k},\gamma_{k},\beta_{k})=\frac{z-E[z_{ij}] }{\sqrt{Var[z_{ij}]+\varepsilon} }*\gamma_{k}+\beta_{k} $$
-
-$E\left [ z_{ij}  \right ]$计算公式如下:
+  $E\left [ z_{ij}  \right ]$计算公式如下:
 
 $$ E\left [ z_{ij}  \right ]= \frac{{\textstyle \sum_{k=1}^{N}} z_{ijk}}{N} $$
-
-$Var[ z_{ij}]$计算公式如下:
+   $Var[ z_{ij}]$计算公式如下:
 
 $$ Var[ z_{ij}]= \frac{{\textstyle \sum_{k=1}^{N}}(  z_{ijk}-E[ z_{ij}])^{2}  }{N} $$
 
 - 原型信息
 
-<table>
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">PreLayerNorm</td></tr>
 </tr>
 <tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
@@ -49,7 +47,7 @@ $$ Var[ z_{ij}]= \frac{{\textstyle \sum_{k=1}^{N}}(  z_{ijk}-E[ z_{ij}])^{2}  }{
 <tr><td rowspan="1" align="center">attr属性</td><td align="center">epsilon</td><td align="center">\</td><td align="center">double</td><td align="center">\</td><td align="center">1e-5</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">pre_layer_norm</td></tr>
-</table>
+  </table>
 
 ### 约束与限制
 - x,y,gamma,beta,z,out的数据类型仅支持float，数据格式仅支持ND
