@@ -5,7 +5,7 @@
 | lie_heng | 社区任务 | GreaterEqual | 2025/5/23 |    新增GreaterEqual算子  |
 
 ### 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas 200/500 A2 推理产品
 - Atlas A2训练系列产品/Atlas 800I A2推理产品
 - Atlas 推理系列产品
@@ -15,11 +15,11 @@
 ## 算子描述
 - 功能描述
 
-`GreaterEqual`算子返回输入数据1是否大于大于输入数据2。
+  `GreaterEqual`算子返回输入数据1是否大于大于输入数据2。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">GreaterEqual</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
@@ -30,7 +30,7 @@
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">bool</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">greater_equal</td></tr>
-</table>
+  </table>
 
 ## 约束与限制
 
