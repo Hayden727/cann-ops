@@ -16,11 +16,11 @@
 ## 算子描述
 - 功能描述
 
-`SubFrameworklaunch`算子返回两个数据相减的结果。
+  `SubFrameworklaunch`算子返回两个数据相减的结果。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">SubFrameworklaunch</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
@@ -31,7 +31,7 @@
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">sub_frameworklaunch</td></tr>
-</table>
+  </table>
 
 ### 约束与限制
 - x,y,out的数据类型仅支持float16，数据格式仅支持ND
