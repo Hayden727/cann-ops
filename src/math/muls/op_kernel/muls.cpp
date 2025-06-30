@@ -58,6 +58,7 @@ public:
         valueGm.SetGlobalBuffer((__gm__ float *)value);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
+        this->value = valueGm.GetValue(0);
         //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>){
             pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(float32_t));
@@ -92,9 +93,6 @@ private:
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         LocalTensor<TYPE_X> yLocal = outQueueY.AllocTensor<TYPE_X>();
-        for(int32_t site =0 ;site<3;site++){
-            AscendC::printf(" site is %d  value is %f\n",site,xLocal.GetValue(site));
-        }
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
         {
             
@@ -107,13 +105,12 @@ private:
         {
             LocalTensor<int32_t> p2 = tmp1.Get<int32_t>();
             Cast(p2, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            Muls(p2, p2,(int32_t)valueGm.GetValue(0) , this->processDataNum);
+            Muls(p2, p2,(int32_t)this->value, this->processDataNum);
             Cast(yLocal, p2, RoundMode::CAST_NONE, this->processDataNum);
         }
         else
         {
-            TYPE_X tmp = (TYPE_X)valueGm.GetValue(0);
-            Muls(yLocal, xLocal, tmp, this->processDataNum);
+            Muls(yLocal, xLocal,(TYPE_X)this->value, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX.FreeTensor(xLocal);
@@ -140,6 +137,7 @@ private:
     bool IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
+    float value;
 };
 
 //在这里编写一个适配complex64类型的算子
@@ -187,6 +185,7 @@ public:
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         valueGm.SetGlobalBuffer((__gm__ float *)value);
+        this->value = valueGm.GetValue(0);
     }
     __aicore__ inline void Process()
     {
@@ -217,7 +216,7 @@ private:
     {
         LocalTensor<float> xLocal = inQueueX.DeQue<float>();
         LocalTensor<float> yLocal = outQueueY.AllocTensor<float>();
-        Muls(yLocal, xLocal, valueGm.GetValue(0), this->processDataNum);
+        Muls(yLocal, xLocal, this->value, this->processDataNum);
         outQueueY.EnQue<float>(yLocal);
         inQueueX.FreeTensor(xLocal);
     }
@@ -240,6 +239,7 @@ private:
     bool IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
+    float value;
 };
 extern "C" __global__ __aicore__ void muls( GM_ADDR x,
       GM_ADDR value,
