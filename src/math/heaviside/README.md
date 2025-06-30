@@ -14,7 +14,7 @@
 ## 算子描述
 - 功能描述
 
-计算输入张量 input 的每个元素的 Heaviside 阶跃函数值。Heaviside 阶跃函数的定义如下：
+  计算输入张量 input 的每个元素的 Heaviside 阶跃函数值。Heaviside 阶跃函数的定义如下：
 $$
 \text{heaviside}(\text{input}, \text{values}) = 
 \begin{cases}
@@ -24,15 +24,15 @@ $$
 \end{cases}
 $$
 
-+  当输入值小于 0 时，输出为 0。
-+ 当输入值等于 0 时，输出为 values 参数指定的值。
-+ 当输入值大于 0 时，输出为 1。
+  +  当输入值小于 0 时，输出为 0。
+  + 当输入值等于 0 时，输出为 values 参数指定的值。
+  + 当输入值大于 0 时，输出为 1。
 
-详细功能参考链接：https://pytorch.org/docs/stable/generated/torch.heaviside.html
+  详细功能参考链接：https://pytorch.org/docs/stable/generated/torch.heaviside.html
 
 - 原型信息
 
-<table>
+  <table>
     <tr>
         <th align="center">算子类型(OpType)</th><th colspan="5" align="center">Heaviside</th>
     </tr>
@@ -59,7 +59,7 @@ $$
     <tr>
         <td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">heaviside</td></td>
     </tr>
-</table>
+  </table>
 
 ## 约束与限制
 - input，values，out的数据类型仅支持float32, float16，数据格式仅支持ND
