@@ -15,20 +15,6 @@
 - 功能描述
 
   计算输入张量 input 的每个元素的 Heaviside 阶跃函数值。Heaviside 阶跃函数的定义如下：
-$$
-\text{heaviside}(\text{input}, \text{values}) = 
-\begin{cases}
-0, & \text{if } \text{input} < 0 \\
-\text{values}, & \text{if } \text{input} = 0 \\
-1, & \text{if } \text{input} > 0
-\end{cases}
-$$
-
-  +  当输入值小于 0 时，输出为 0。
-  + 当输入值等于 0 时，输出为 values 参数指定的值。
-  + 当输入值大于 0 时，输出为 1。
-
-  详细功能参考链接：https://pytorch.org/docs/stable/generated/torch.heaviside.html
 
 - 原型信息
 
@@ -63,17 +49,6 @@ $$
 
 ## 约束与限制
 - input，values，out的数据类型仅支持float32, float16，数据格式仅支持ND
-
-### 目录结构介绍
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-├── opp_kernel_aicpu            // aicpu目录
-└── tests                       // 测试用例目录
-```
 
 ## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
