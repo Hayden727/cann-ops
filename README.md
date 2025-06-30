@@ -40,7 +40,7 @@ cann-ops仓关键目录如下所示：
 - **直播平台**：[昇腾社区](https://www.hiascend.com/developer/activities/cann20251?tab=live)、【昇腾CANN】视频号、[B站【昇腾CANN】](https://space.bilibili.com/1190614918?spm_id_from=333.337.search-card.all.click)同步直播<br>
 - **回放地址**：https://space.bilibili.com/1190614918/lists/4997544?type=season <br>
 - **直播预告**：<br>
-![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/resouce/CANNCAMP_Advance_0530new.png)
+![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/resouce/CANNCAMP_Advance_06.png)
 
 #### **🏅️ 项目发放**
 - **众智任务**：[点击链接直达](https://www.hiascend.com/ecosystem/all-wisdom)
