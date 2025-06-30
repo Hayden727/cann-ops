@@ -5,7 +5,7 @@
 | Jerry | 社区任务 | UnalignAdd | 2025/4/10 | 新增UnalignAdd算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas 训练系列产品
 - Atlas 推理系列产品
 - Atlas A2训练系列产品
@@ -17,11 +17,10 @@
 ## 算子描述
 - 功能描述
 
-`UnalignAdd`算子返回两个数据相加的结果。
+  `UnalignAdd`算子返回两个数据相加的结果。
 
--原型信息
-
-<table>
+- 原型信息
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">UnalignAdd</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
@@ -32,9 +31,11 @@
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">z</td><td align="center">8 * 2048</td><td align="center">float16</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">unalign_add</td></tr>
-</table>
+  </table>
 
-x,y,z,out的数据类型只支持float16，数据格式只支持ND
+## 约束与限制
+
+- x,y,z,out的数据类型只支持float16，数据格式只支持ND
 
 ## 目录结构介绍
 ```
