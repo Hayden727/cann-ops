@@ -2,11 +2,12 @@
 ## 贡献说明
 | 贡献者       | 贡献方              | 贡献算子    | 贡献时间      | 贡献内容                                                          |
 |-----------|------------------|---------|-----------|---------------------------------------------------------------|
-| Bellyboom | 西北工业大学-智能感知交互实验室 | Addcdiv | 2025/1/10 | Addcdiv算子实现了向量x1除以向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。 |
+| Bellyboom | 西北工业大学-智能感知交互实验室 | Addcdiv | 2025/1/10 | 新增Addcdiv算子 |
 
 ## 支持的产品型号
 - Atlas A2训练系列产品
 - Atlas 200I/500 A2推理产品
+
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
 ## 算子描述
@@ -14,9 +15,9 @@
 `Addcdiv`算子实现了向量x1除以向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。
 
 对应的数学表达式为：
-
-      y = (input_data + (x1 / x2) * value)
-
+$$
+ y = (input_data + (x1 / x2) * value)
+$$
 - 原型信息
 
 <table>
