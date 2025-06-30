@@ -15,7 +15,7 @@
 
   `Addcmul`算子实现了向量x1乘向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。
 
-对应的数学表达式为：
+  对应的数学表达式为：
 $$
 y = (input_data + (x1 * x2) * value)
 $$
