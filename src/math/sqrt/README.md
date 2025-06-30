@@ -5,7 +5,7 @@
 | Nice_try | 西北工业大学-智能感知交互实验室 | Sqrt | 2024/12/24 | 新增Sqrt算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2训练系列产品
 - Atlas 200I/500 A2推理产品
 
@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-`Sqrt`算子返回输入数据经过开方运算的结果。
+  `Sqrt`算子返回输入数据经过开方运算的结果。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Sqrt</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
@@ -28,7 +28,7 @@
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">sqrt</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 
