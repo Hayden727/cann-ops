@@ -11,6 +11,9 @@
 /**
  * @file edge32_c3_tiling.cpp
  */
+#ifndef EDGE32_C3_TILING_H
+#define EDGE32_C3_TILING_H
+
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -27,3 +30,5 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(Edge32C3, Edge32C3TilingData)
 }
+
+#endif // EDGE32_C3_TILING_H

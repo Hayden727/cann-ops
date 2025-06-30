@@ -13,17 +13,16 @@ import os
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
 
-def edge_sub_dilate_ver_c1(Edge2tmp3, Edge2tmp4, width, height):
-    Edge2tmp4[:, :2] = 0
-    Edge2tmp4[:, -2:] = 0
+
+def edge_sub_dilate_ver_c1_threshol8u(input, out, width, height):
+    out[:, :2] = 0
+    out[:, -2:] = 0
 
     for y in range(height):
-        row = Edge2tmp3[y, :]
-        Edge2tmp4[y, 2:-2] = np.maximum.reduce([row[:-4], row[1:-3], row[2:-2], row[3:-1], row[4:]])
-    return Edge2tmp4
+        row = input[y, :]
+        out[y, 2:-2] = np.maximum.reduce([row[:-4], row[1:-3], row[2:-2], row[3:-1], row[4:]])
+    return np.where(out != 0, 1, 0).astype(np.uint8)
 
-def threshol8u(Edge2tmp4):
-    return np.where(Edge2tmp4 != 0, 1, 0)
 
 def gen_golden_data_simple():
     dtype = np.uint8
@@ -33,13 +32,13 @@ def gen_golden_data_simple():
     x = np.random.randint(0, 255, input_shape).astype(dtype)
     golden = np.zeros(output_shape).astype(dtype)
 
-    golden = edge_sub_dilate_ver_c1(x, golden, input_shape[1], input_shape[0])
-    golden = threshol8u(golden).astype(dtype)
+    golden = edge_sub_dilate_ver_c1_threshol8u(x, golden, input_shape[1], input_shape[0])
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     x.astype(dtype).tofile("./input/input.bin")
     golden.tofile("./output/golden.bin")
+
 
 if __name__ == "__main__":
     gen_golden_data_simple()

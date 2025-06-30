@@ -12,6 +12,7 @@
 import os
 import numpy as np
 
+
 def gen_golden_data_simple():
     dtype = np.uint8
     input_shape = [3440, 4887]
@@ -22,12 +23,12 @@ def gen_golden_data_simple():
     diff = input_y.astype(np.int16) - input_x.astype(np.int16) - 10
     golden = np.where(diff > 0, diff, 0).astype(dtype)
 
-
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     input_x.astype(dtype).tofile("./input/input_x.bin")
     input_y.astype(dtype).tofile("./input/input_y.bin")
     golden.tofile("./output/golden.bin")
+
 
 if __name__ == "__main__":
     gen_golden_data_simple()

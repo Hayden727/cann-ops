@@ -23,8 +23,7 @@ public:
     {
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = coreNum * 2101410;
-        // 262144
-        this->tileDataNum = 4896; // 11组
+        this->tileDataNum = 4896;
         this->processDataNum = 4896;
         this->pipe = pipeIn;
         x1Gm.SetGlobalBuffer((__gm__ uint8_t *)x1 + globalBufferIndex, 2101440);

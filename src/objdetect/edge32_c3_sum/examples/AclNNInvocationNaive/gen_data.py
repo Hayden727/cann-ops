@@ -14,22 +14,19 @@ import numpy as np
 from numpy.lib.stride_tricks import as_strided
 
 
-def Edge32C3Sum_CPU_Optimized(Img, Edge2temp1, width, height):
-    """
-    优化后的函数，使用NumPy向量化操作。
-    """
+def edge32_c3_sum(input, out):
     nR = 16
     half_win_start = 7
     half_win_end = 9
     window_size = half_win_start + half_win_end  # 7 + 9 = 16
 
-    img_int = Img.astype(np.int32)
-    h, w, c = img_int.shape
+    input_int = input.astype(np.int32)
+    h, w, c = input_int.shape
     
-    s_h, s_w, s_c = img_int.strides
+    s_h, s_w, s_c = input_int.strides
 
     windows = as_strided(
-        img_int,
+        input_int,
         shape=(h - window_size + 1, w, c, window_size),
         strides=(s_h, s_w, s_c, s_h)
     )
@@ -38,7 +35,9 @@ def Edge32C3Sum_CPU_Optimized(Img, Edge2temp1, width, height):
 
     output_slice = sums[0 : h - window_size, :, :]
     
-    Edge2temp1[half_win_start : h - half_win_end, :, :] = (output_slice // nR).astype(Edge2temp1.dtype)
+    out[half_win_start : h - half_win_end, :, :] = (output_slice // nR).astype(out.dtype)
+
+    return out
 
 def gen_golden_data_simple():
     dtype = np.uint8
@@ -48,7 +47,7 @@ def gen_golden_data_simple():
     x = np.random.randint(0, 255, input_shape).astype(dtype)
     golden = np.zeros(output_shape).astype(dtype)
 
-    Edge32C3Sum_CPU_Optimized(x, golden, input_shape[1], input_shape[0])
+    golden = edge32_c3_sum(x, golden)
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

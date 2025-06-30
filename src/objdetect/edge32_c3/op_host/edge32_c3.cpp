@@ -21,7 +21,6 @@ const uint32_t BLOCK_SIZE = 32;
 const uint32_t BUFFER_NUM = 1;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
   Edge32C3TilingData tiling;
   uint64_t ubSize;
   auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
@@ -119,7 +118,6 @@ public:
         this->AICore()
             .AddConfig("ascend910b")
             .AddConfig("ascend310p");
-
     }
 };
 

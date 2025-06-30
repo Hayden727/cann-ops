@@ -21,7 +21,6 @@ const uint32_t BLOCK_SIZE = 32;
 const uint32_t BUFFER_NUM = 2;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
   Edge32C3SumTilingData tiling;
   context->SetBlockDim(15);
   tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
@@ -72,7 +71,6 @@ public:
         this->AICore()
             .AddConfig("ascend910b")
             .AddConfig("ascend310p");
-
     }
 };
 

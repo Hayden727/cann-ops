@@ -11,6 +11,9 @@
 /**
  * @file edge_sub_dilate_ver_c1_threshol8u_tiling.cpp
  */
+#ifndef EDGE_SUB_DILATE_VER_C1_THRESHOL8U_TILING_H
+#define EDGE_SUB_DILATE_VER_C1_THRESHOL8U_TILING_H
+
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -21,3 +24,5 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(EdgeSubDilateVerC1Threshol8u, EdgeSubDilateVerC1Threshol8uTilingData)
 }
+
+#endif // EDGE_SUB_DILATE_VER_C1_THRESHOL8U_TILING_H

@@ -11,6 +11,9 @@
 /**
  * @file threshol8u_tiling.h
  */
+#ifndef THRESHOL8U_TILING_H
+#define THRESHOL8U_TILING_H
+
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -27,3 +30,5 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(Threshol8u, Threshol8uTilingData)
 }
+
+#endif // THRESHOL8U_TILING_H

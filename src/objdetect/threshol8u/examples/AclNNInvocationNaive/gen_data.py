@@ -12,6 +12,7 @@
 import os
 import numpy as np
 
+
 def gen_golden_data_simple():
     dtype = np.uint8
     input_shape = [3440, 4887]
@@ -20,11 +21,11 @@ def gen_golden_data_simple():
     x = np.random.randint(0, 256, input_shape).astype(dtype)
     golden = np.where(x != 0, 1, 0).astype(dtype)
 
-
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     x.astype(dtype).tofile("./input/input.bin")
     golden.tofile("./output/golden.bin")
+
 
 if __name__ == "__main__":
     gen_golden_data_simple()

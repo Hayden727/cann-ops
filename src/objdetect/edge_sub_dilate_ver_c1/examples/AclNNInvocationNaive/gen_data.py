@@ -12,13 +12,17 @@
 import os
 import numpy as np
 
-def EdgeSubDilateVerC1_CPU_fast(Img, Edge2temp1, width, height):
-    Edge2temp1[:, :2] = 0
-    Edge2temp1[:, -2:] = 0
+
+def edge_sub_dilate_ver_c1(input, out, width, height):
+    out[:, :2] = 0
+    out[:, -2:] = 0
 
     for y in range(height):
-        row = Img[y, :]
-        Edge2temp1[y, 2:-2] = np.maximum.reduce([row[:-4], row[1:-3], row[2:-2], row[3:-1], row[4:]])
+        row = input[y, :]
+        out[y, 2:-2] = np.maximum.reduce([row[:-4], row[1:-3], row[2:-2], row[3:-1], row[4:]])
+    
+    return out
+
 
 def gen_golden_data_simple():
     dtype = np.uint8
@@ -28,12 +32,13 @@ def gen_golden_data_simple():
     x = np.random.randint(0, 255, input_shape).astype(dtype)
     golden = np.zeros(output_shape).astype(dtype)
 
-    EdgeSubDilateVerC1_CPU_fast(x, golden, input_shape[1], input_shape[0])
+    golden = edge_sub_dilate_ver_c1(x, golden, input_shape[1], input_shape[0])
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     x.astype(dtype).tofile("./input/input.bin")
     golden.tofile("./output/golden.bin")
+
 
 if __name__ == "__main__":
     gen_golden_data_simple()

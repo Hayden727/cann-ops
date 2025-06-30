@@ -26,7 +26,6 @@ public:
         this->processDataNum = 14688;
         x1Gm.SetGlobalBuffer((__gm__ uint8_t *)x1);
         yGm.SetGlobalBuffer((__gm__ uint8_t *)y);
-        // pipe->InitBuffer(inQueueSum, BUFFER_NUM, this->tileDataNum * sizeof(float));
         pipe->InitBuffer(inQueueX1, BUFFER_NUM, this->tileDataNum * sizeof(uint8_t));
         pipe->InitBuffer(inQueueX2, BUFFER_NUM, this->tileDataNum * sizeof(uint8_t));
         pipe->InitBuffer(tmpBuf, this->tileDataNum * sizeof(half));

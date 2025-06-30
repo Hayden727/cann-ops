@@ -11,6 +11,8 @@
 /**
  * @file edge_sub_tiling.cpp
  */
+#ifndef EDGE_SUB_TILING_H
+#define EDGE_SUB_TILING_H
 #include "register/tilingdata_base.h"
 
 namespace optiling {
@@ -27,3 +29,5 @@ END_TILING_DATA_DEF;
 
 REGISTER_TILING_DATA_CLASS(EdgeSub, EdgeSubTilingData)
 }
+
+#endif // EDGE_SUB_TILING_H

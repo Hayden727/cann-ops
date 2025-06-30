@@ -21,7 +21,6 @@ const uint32_t BLOCK_SIZE = 32;
 const uint32_t BUFFER_NUM = 2;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
   EdgeSubTilingData tiling;
   uint64_t ubSize;
   auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
@@ -49,6 +48,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
   int64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
   coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
   coreNum = (coreNum >= 1) ? coreNum : 1;
+  if(coreNum == 0) {
+    return ge::GRAPH_FAILED;
+  }
   int64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
   int64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
   
