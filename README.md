@@ -40,7 +40,7 @@ cann-ops仓关键目录如下所示：
 - **直播平台**：[昇腾社区](https://www.hiascend.com/developer/activities/cann20251?tab=live)、【昇腾CANN】视频号、[B站【昇腾CANN】](https://space.bilibili.com/1190614918?spm_id_from=333.337.search-card.all.click)同步直播<br>
 - **回放地址**：https://space.bilibili.com/1190614918/lists/4997544?type=season <br>
 - **直播预告**：<br>
-![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/resouce/CANNCAMP_Advance_0530new.png)
+![直播预告](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/resouce/CANNCAMP_Advance_06.png)
 
 #### **🏅️ 项目发放**
 - **众智任务**：[点击链接直达](https://www.hiascend.com/ecosystem/all-wisdom)
@@ -59,7 +59,7 @@ cann-ops仓关键目录如下所示：
 
 ## ⭐️ 贡献者
 我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。<br>
-![贡献者榜单-0615](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/resouce/contributor-0615.png)
+![贡献者榜单-0630](https://obs-book.obs.cn-east-2.myhuaweicloud.com/cann-ops/resouce/contributor-0630.png)
 
 ## 📌 贡献指南
 cann-ops仓欢迎广大开发者体验并参与贡献，在参与社区贡献之前。请参见[Contributing](docs/Contributing.md)了解行为准则，进行CLA协议签署，以及参与源码仓贡献的详细流程。<br>
