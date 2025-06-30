@@ -41,10 +41,10 @@
     <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss</td></tr>  
   </table>
 
-### 约束与限制
+## 约束与限制
 - predict，label，y，out的数据类型只支持float32,float16，数据结构只支持ND
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
