@@ -5,7 +5,7 @@
 | Nice_try | 社区任务 | Radius | 2025/5/21 | 新增Radius算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2训练系列产品
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
@@ -13,11 +13,11 @@
 ## 算子描述
 - 功能描述
 
-`Radius`算子计算邻居点索引，并返回邻居点索引对。
+  `Radius`算子计算邻居点索引，并返回邻居点索引对。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Radius</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 
@@ -42,7 +42,7 @@
 <td align="center">ignore_same_index</td><td align="center">attr</td><td align="center">bool</td><td align="center">/</td></tr>  
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">radius</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - x,y,per_x.per_y,out的数据类型仅支持float32,float16,int32，数据格式仅支持ND
