@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-`LessEqual`算子返回两个数据相加的结果。
+  `LessEqual`算子返回两个数据相加的结果。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">LessEqual</td></tr>
 </tr>
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
@@ -29,7 +29,7 @@
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">bool</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">less_equal</td></tr>
-</table>
+  </table>
 
 ## 约束与限制
 
