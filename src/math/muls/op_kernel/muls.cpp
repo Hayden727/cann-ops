@@ -98,7 +98,7 @@ private:
             
             LocalTensor<float32_t> p1 = tmp1.Get<float32_t>();
             Cast(p1, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            Muls(p1, p1,valueGm.GetValue(0) , this->processDataNum);
+            Muls(p1, p1,this->value , this->processDataNum);
             Cast(yLocal, p1, RoundMode::CAST_RINT, this->processDataNum);
         }
         else if constexpr (std::is_same_v<TYPE_X, int64_t>)
