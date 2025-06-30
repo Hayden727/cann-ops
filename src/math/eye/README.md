@@ -13,11 +13,11 @@
 ## 算子描述
 - 功能描述
 
-创建一个二维矩阵  $m\times n$ ，对角元素全为1，其它元素都为0
+  创建一个二维矩阵  $m\times n$ ，对角元素全为1，其它元素都为0
 
 - 原型信息
 
-<table>
+  <table>
     <tr>
         <th align="center">算子类型(OpType)</th><th colspan="5" align="center">Eye</th>
     </tr>
@@ -43,7 +43,7 @@
     <tr>
         <td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">eye</td></td>
     </tr>
-</table>
+  </table>
 
 ## 约束与限制
 - y的数据类型仅支持float32, float16, int32，数据格式仅支持ND
