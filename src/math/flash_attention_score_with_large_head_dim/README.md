@@ -1,6 +1,6 @@
 # FlashAttentionScore
 
-### 贡献说明
+## 贡献说明
 | 贡献者    | 贡献方  | 贡献算子                | 贡献时间      | 贡献内容                    |
 |--------|------|---------------------|-----------|-------------------------|
 | ythqwq | 面壁智能 | FlashAttentionScore | 2025/3/25 | 新增FlashAttentionScore算子 |
@@ -17,6 +17,7 @@
 
 ## 算子描述
 - 功能描述
+
 训练场景下，使用FlashAttention算法实现self-attention（自注意力）的计算的功能，该算子实现了S2>1024条件下的算子功能，完成了该场景下算子的泛化实现。
 对应的数学表达式为：  
 $$
@@ -45,12 +46,12 @@ $$
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">flash_attention_score_with_large_head_dim</td></tr>
 </table>
 
-### 约束与限制
+## 约束与限制
 
 query，key，value，softmax_sum，attention_out的数据类型仅支持float32，float16，数据格式仅支持ND
 
 
-### 目录结构介绍
+## 目录结构介绍
 
 ```
 ├── docs                        // 算子文档目录
@@ -62,7 +63,7 @@ query，key，value，softmax_sum，attention_out的数据类型仅支持float32
 └── tests                       // 测试用例目录
 ```
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
@@ -94,9 +95,3 @@ query，key，value，softmax_sum，attention_out的数据类型仅支持float32
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用FlashAttentionScore算子。</td>
     </tr>
 </table>
-
-### 更新说明
-
-| 时间       | 更新事项   |
-| ---------- | ---------- |
-| 2025/06/27 | 修改readme |
