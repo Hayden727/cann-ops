@@ -1,10 +1,10 @@
 # FastGeluGrad
-### 贡献说明
+## 贡献说明
 | 贡献者     | 贡献方  | 贡献算子     | 贡献时间      | 贡献内容         |
 |---------|------|----------|-----------|--------------|
 | enkilee | 社区任务 | FastGelu | 2025/3/22 | 新增FastGelu算子 |
 
-### 支持的产品型号
+## 支持的产品型号
 本样例支持如下产品型号：
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
@@ -12,8 +12,9 @@
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
+
 ‌`FastGeluGrad‌`是一种在`FastGelu`基础上进行升级的算子，`FastGeluGrad`算子在`FastGelu`的基础上增加了一个输入`dy`，使得其有两个输入和一个输出，不需要进行大幅度的数据搬迁。其主要目的是优化计算过程，减少类型转换的需求。
 
 计算公式为：
@@ -36,7 +37,7 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">fast_gelu_grad</td></tr>  
 </table>
 
-### 约束与限制
+## 约束与限制
 - dy，x，z，out的数据类型仅支持float32,float16，数据格式只支持ND
 
 ### 目录结构介绍
@@ -51,10 +52,10 @@
 ```
 
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
-### 算子包编译部署
+### 编译部署
   - 进入到仓库目录
 
     ```bash
@@ -82,7 +83,3 @@
     </tr>
 </table>
 
-## 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27 | 新增本readme |
