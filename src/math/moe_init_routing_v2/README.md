@@ -1,8 +1,8 @@
-## Moe_init_routing_v2
+# MoeInitRoutingV2
 ### 贡献说明
 | 贡献者       | 贡献方                    | 贡献算子        | 贡献时间 | 贡献内容 |
 |-----------|------------------------|-------------|------|------|
-| chenmohua | IFLYTEK BITBRAIN（科大讯飞） | ClipByValue |  2025/3/26  |   新增MoeInitRoutingV2算子   |
+| chenmohua | IFLYTEK BITBRAIN（科大讯飞） | MoeInitRoutingV2 |  2025/3/26  |   新增MoeInitRoutingV2算子   |
 
 ### 支持的产品型号
 
