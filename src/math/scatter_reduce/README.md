@@ -35,7 +35,7 @@
 </table>
 
 ## 约束与限制
-x,index,src,y的数据类型仅支持fp32, fp16，int32，数据格式仅支持ND
+- x,index,src,y的数据类型仅支持fp32, fp16，int32，数据格式仅支持ND
 
 ## 目录结构介绍
 ```
