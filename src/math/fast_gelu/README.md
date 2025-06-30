@@ -4,7 +4,7 @@
 |---------|------|----------|-----------|--------------|
 | enkilee | 社区任务 | FastGelu | 2025/3/18 | 新增FastGelu算子 |
 
-### 支持的产品型号
+## 支持的产品型号
 本样例支持如下产品型号：
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
@@ -37,11 +37,11 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">fast_gelu</td></tr>  
 </table>
 
-### 约束与限制
+## 约束与限制
 - x,y,out的数据类型仅支持float32,float16，数据格式只支持ND
 
 
-### 目录结构介绍
+## 目录结构介绍
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
