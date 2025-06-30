@@ -14,8 +14,8 @@
 
 - 功能描述
 
-`GeluGrad`算子用于计算Gelu函数的梯度。
-- 计算公式：
+  `GeluGrad`算子用于计算Gelu函数的梯度。
+  计算公式为：
 
   - **Gelu函数**
 
@@ -53,7 +53,7 @@
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">GeluGrad</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
@@ -67,7 +67,7 @@
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">z</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>    
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">gelu_grad</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - dy，x,y,z,out的数据类型仅支持float32,float16,bfloat16，数据格式仅支持ND
