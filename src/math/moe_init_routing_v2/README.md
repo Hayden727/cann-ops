@@ -1,17 +1,17 @@
 # MoeInitRoutingV2
-### 贡献说明
+## 贡献说明
 | 贡献者       | 贡献方                    | 贡献算子        | 贡献时间 | 贡献内容 |
 |-----------|------------------------|-------------|------|------|
 | chenmohua | IFLYTEK BITBRAIN（科大讯飞） | MoeInitRoutingV2 |  2025/3/26  |   新增MoeInitRoutingV2算子   |
 
-### 支持的产品型号
+## 支持的产品型号
 
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
 
 `Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX 和 expandRowId按EP规则进行切分。
@@ -35,7 +35,7 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Moe_init_routing_v2</td></tr>  
 </table>
 
-### 约束与限制
+## 约束与限制
 
  仅支持dropPadMode=0，expertTokensCountOrCumsumFlag场景下EP规则切分。 
 ### 目录结构介绍
@@ -50,7 +50,7 @@
 └── tests                       // 测试用例目录
 ```
 
-### 算子使用
+## 算子使用
 
 使用此算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
@@ -86,11 +86,3 @@
         <td><a href="./examples/ATBInvocation"> ATBInvocation</td><td>通过ATB调用的方式调用Moe_init_routing_v2算子。</td>
     </tr>
 </table>
-
-
-### 更新说明
-
-| 时间       | 更新事项     |
-| ---------- | ------------ |
-| 2025/06/26 | 新增本readme |
-
