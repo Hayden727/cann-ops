@@ -16,18 +16,18 @@
 
 - 功能描述
 
-给定两个张量 x1、x2，如果x1等于0，返回0，如果x1不等于0, 返回x1*log(x2)。
+  给定两个张量 x1、x2，如果x1等于0，返回0，如果x1不等于0, 返回x1*log(x2)。
 
 - 原型信息
 
-<table>  
+  <table>  
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Xlogy</th></tr>  
 <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td align="center">x1</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 <tr><td align="center">x2</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">xlogy</td></tr>
-</table>
+  </table>
 
 ## 约束与限制
 
