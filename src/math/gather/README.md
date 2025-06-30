@@ -33,7 +33,7 @@
 </table>
 
 ## 约束与限制
-x,y,indices,out的数据类型仅支持uint8,int8,uint16,int16,float16,uint32,int32,float,uint64,int64，数据格式仅支持ND
+- x,y,indices,out的数据类型仅支持uint8,int8,uint16,int16,float16,uint32,int32,float,uint64,int64，数据格式仅支持ND
 
 ## 目录结构介绍
 ```
