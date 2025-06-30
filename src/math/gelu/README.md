@@ -5,7 +5,7 @@
 | Mrkey | 神州鲲泰 | Gelu | 2025/3/17 | 新增Gelu算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas 200/500 A2 推理产品
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
@@ -16,20 +16,25 @@
 
 - 功能描述
 
-Gelu（Gaussian Error Linear Unit）是神经网络中常用的激活函数。Gelu是基于高斯误差函数定义的，相较于ReLU等激活函数，Gelu更加平滑，有助于提高训练过程的收敛速度和性能。
+  Gelu（Gaussian Error Linear Unit）是神经网络中常用的激活函数。Gelu是基于高斯误差函数定义的，相较于ReLU等激活函数，Gelu更加平滑，有助于提高训练过程的收敛速度和性能。
 
-$$Gelu(x) = x\times \Phi(x)$$
+  其中$elf(x)$为高斯误差函数。但是高斯误差函数无法直接计算，学者们提出了一种近似计算高斯误差函数的方法，即：
 
-$$\Phi(x) = \frac{1}{2} \times (1+elf(\frac{x}{\sqrt{2} }))$$
-其中$elf(x)$为高斯误差函数。
+$$
+Gelu(x) = x\times \Phi(x)
+$$
 
-但是高斯误差函数无法直接计算，学者们提出了一种近似计算高斯误差函数的方法，即：
+$$
+\Phi(x) = \frac{1}{2} \times (1+elf(\frac{x}{\sqrt{2} }))
+$$
 
-$$\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 0.044715 \cdot x^3\right)\right)}$$
+$$
+\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 0.044715 \cdot x^3\right)\right)}
+$$
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Gelu</th></tr>
 <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
 
@@ -38,7 +43,7 @@ $$\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">gelu</td></td></tr>
-</table>
+  </table>
 
 ## 约束与限制
 - x,y，out的数据类型仅支持float32, float16, bfloat16，输出仅支持ND
