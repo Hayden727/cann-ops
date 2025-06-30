@@ -19,34 +19,23 @@
 - 原型信息
 
   <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ScatterReduce</th></tr>  
-<tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
-<tr><td rowspan="3" align="center">算子输入</td>
-    <td align="center">x</td><td align="center">tensor</td><td align="center">fp32, fp16</td><td align="center">ND</td></tr>  
-    <td align="center">index</td><td align="center">tensor</td><td align="center">int32</td><td align="center">ND</td></tr>  
-    <td align="center">src</td><td align="center">tensor</td><td align="center">fp32, fp16</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">算子输出</td>
-    <td align="center">y</td><td align="center">tensor</td><td align="center">fp32, fp16</td><td align="center">ND</td></tr>  
-<tr><td rowspan="3" align="center">attr属性</td>
-    <td align="center">dim</td><td align="center">int</td><td colspan="2" align="center">required</td></tr>
-    <td align="center">reduce</td><td align="center">str</td><td colspan="2" align="center">required</td></tr>
-    <td align="center">include_self</td><td align="center">bool</td><td colspan="2" align="center">default: TRUE</td></tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">scatter_reduce</td></tr>  
+    <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ScatterReduce</th></tr>  
+    <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
+    <tr><td rowspan="3" align="center">算子输入</td>
+        <td align="center">x</td><td align="center">tensor</td><td align="center">fp32, fp16</td><td align="center">ND</td></tr>  
+        <td align="center">index</td><td align="center">tensor</td><td align="center">int32</td><td align="center">ND</td></tr>  
+        <td align="center">src</td><td align="center">tensor</td><td align="center">fp32, fp16</td><td align="center">ND</td></tr>  
+    <tr><td rowspan="1" align="center">算子输出</td>
+        <td align="center">y</td><td align="center">tensor</td><td align="center">fp32, fp16</td><td align="center">ND</td></tr>  
+    <tr><td rowspan="3" align="center">attr属性</td>
+        <td align="center">dim</td><td align="center">int</td><td colspan="2" align="center">required</td></tr>
+        <td align="center">reduce</td><td align="center">str</td><td colspan="2" align="center">required</td></tr>
+        <td align="center">include_self</td><td align="center">bool</td><td colspan="2" align="center">default: TRUE</td></tr>
+    <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">scatter_reduce</td></tr>  
   </table>
 
 ## 约束与限制
 - x,index,src,y的数据类型仅支持fp32, fp16，int32，数据格式仅支持ND
-
-## 目录结构介绍
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-├── opp_kernel_aicpu            // aicpu目录
-└── tests                       // 测试用例目录
-```
 
 ## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
