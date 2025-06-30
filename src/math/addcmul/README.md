@@ -37,7 +37,7 @@ $$
 </table>
 
 ## 约束与限制
-input_data,x,y,value,out的数据类型只支持float32,float16,int32,bfloat16，数据格式只支持ND
+- input_data,x,y,value,out的数据类型只支持float32,float16,int32,bfloat16，数据格式只支持ND
 ## 目录结构介绍
 ```
 ├── docs                        // 算子文档目录
@@ -49,7 +49,7 @@ input_data,x,y,value,out的数据类型只支持float32,float16,int32,bfloat16�
 └── tests                       // 测试用例目录
 ```
 
-## 环境要求
+## 算子使用
 编译运行此样例前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
