@@ -1,18 +1,18 @@
 # MoeSoftMaxTopk
 
-### 贡献说明
+## 贡献说明
 | 贡献者   | 贡献方  | 贡献算子           | 贡献时间     | 贡献内容               |
 |-------|------|----------------|----------|--------------------|
 | yuuki | 社区任务 | MoeSoftMaxTopk | 2025/5/9 | 新增MoeSoftMaxTopk算子 |
 
-### 支持的产品型号
+## 支持的产品型号
 - Atlas A2训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
 
 MoeSoftMaxTopk是softmax和topk的融合算子，其中softmax可以理解为对x计算最后一维每个数据的概率，在计算结果中筛选出k个最大结果，输出对应的y值和索引indices。  
@@ -40,10 +40,10 @@ topk是对sofrmax的所有结果进行一维选择，获取最大的k个结果�
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">moe_soft_max_topk</td></tr>
 </table>
 
-### 约束与限制
+## 约束与限制
 - x,y,indices的数据类型仅支持float，数据格式仅支持ND
 
-### 目录结构介绍
+## 目录结构介绍
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
@@ -54,7 +54,7 @@ topk是对sofrmax的所有结果进行一维选择，获取最大的k个结果�
 └── tests                       // 测试用例目录
 ```
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
@@ -83,8 +83,3 @@ topk是对sofrmax的所有结果进行一维选择，获取最大的k个结果�
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用MoeSoftMaxTopk算子。</td>
     </tr>
 </table>
-
-### 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27 | 新增本readme |
