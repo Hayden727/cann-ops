@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-`Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX 和 expandRowId按EP规则进行切分。
+  `Moe_init_routing_v2`算子在aclnnMoeInitRoutingV2的基础上增加了对expandedX 和 expandRowId按EP规则进行切分。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Moe_init_routing_v2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">新增算子输入</td>
@@ -33,7 +33,7 @@
 <td align="center">localexpandedXOut</td><td align="center">NUM_ROWS * K, H</td><td align="center">float 16</td><td align="center">ND</td></tr> 
 <td align="center">localexpandedRowIdxOut</td><td align="center">NUM_ROWS * K, </td><td align="center">int32</td><td align="center">ND</td></tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Moe_init_routing_v2</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 
