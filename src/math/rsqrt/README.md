@@ -30,9 +30,9 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">rsqrt</td></tr>  
 </table>
 
-- 约束与限制
+## 约束与限制
 
-x，y，out的数据类型只支持	float32,float16,bfloat16，数据格式只支持ND
+- x，y，out的数据类型只支持	float32,float16,bfloat16，数据格式只支持ND
 
 ## 目录结构介绍
 ```
