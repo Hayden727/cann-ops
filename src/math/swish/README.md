@@ -35,7 +35,7 @@ $$y=x\cdot\mathrm{sigmoid}\left(s\cdot x\right)=x\cdot\frac{1}{1+e^{-s\cdot x}}$
 </table>
 
 ## 约束与限制
-x,y的数据类型仅支持float32,float16,bfloat1，数据格式仅支持ND
+- x,y的数据类型仅支持float32,float16,bfloat1，数据格式仅支持ND
 
 ## 目录结构介绍
 ```
