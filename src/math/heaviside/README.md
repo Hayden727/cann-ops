@@ -14,7 +14,7 @@
 ## 算子描述
 - 功能描述
 
-  计算输入张量 input 的每个元素的 Heaviside 阶跃函数值。Heaviside 阶跃函数的定义如下：
+  计算输入张量 input 的每个元素的 Heaviside 阶跃函数值。
 
 - 原型信息
 
