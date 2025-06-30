@@ -18,38 +18,27 @@
 - 原型信息
 
   <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">BevPool</td></tr>
-</tr>
-<tr><td rowspan="8" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">depth</td><td align="center">-</td><td align="center">float16、float32</td><td align="center">ND</td></tr>
-<tr><td align="center">feat</td><td align="center">-</td><td align="center">float16、float32</td><td align="center">ND</td></tr>
-<tr><td align="center">ranks_depth</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
-<tr><td align="center">ranks_feat</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
-<tr><td align="center">ranks_bev</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
-<tr><td align="center">interval_starts</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
-<tr><td align="center">interval_lengths</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
-</tr>
-</tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">-</td><td align="center">float16、float32</td><td align="center">ND</td></tr>
-</tr>
-<tr><td rowspan="1" align="center">算子属性</td><td align="center">bev_feat_shape</td><td align="center">\</td><td align="center">list_int</td><td align="center">\</td></tr>
-</tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">bev_pool</td></tr>
+    <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">BevPool</td></tr>
+    </tr>
+    <tr><td rowspan="8" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+    <tr><td align="center">depth</td><td align="center">-</td><td align="center">float16、float32</td><td align="center">ND</td></tr>
+    <tr><td align="center">feat</td><td align="center">-</td><td align="center">float16、float32</td><td align="center">ND</td></tr>
+    <tr><td align="center">ranks_depth</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
+    <tr><td align="center">ranks_feat</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
+    <tr><td align="center">ranks_bev</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
+    <tr><td align="center">interval_starts</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
+    <tr><td align="center">interval_lengths</td><td align="center">-</td><td align="center">int32</td><td align="center">ND</td></tr>
+    </tr>
+    </tr>
+    <tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">-</td><td align="center">float16、float32</td><td align="center">ND</td></tr>
+    </tr>
+    <tr><td rowspan="1" align="center">算子属性</td><td align="center">bev_feat_shape</td><td align="center">\</td><td align="center">list_int</td><td align="center">\</td></tr>
+    </tr>
+    <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">bev_pool</td></tr>
   </table>
 
 ## 约束与限制
 - depth，feat，ranks_depth，ranks_feat，ranks_bev，interval_start，interval_lengths，out的数据类型仅支持float16、float32，数据格式仅支持ND
-
-## 目录结构介绍
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-├── opp_kernel_aicpu            // aicpu目录
-└── tests                       // 测试用例目录
-```
 
 ## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
