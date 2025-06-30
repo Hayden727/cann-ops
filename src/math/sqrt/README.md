@@ -32,7 +32,7 @@
 
 ## 约束与限制
 
-- x,y，out的数据类型仅支持float32,float16,bfloat16，数据格式仅支持ND
+- x，y，out的数据类型仅支持float32,float16,bfloat16，数据格式仅支持ND
 
 ## 目录结构介绍
 ```
