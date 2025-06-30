@@ -41,7 +41,7 @@ $$\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 
 </table>
 
 ## 约束与限制
-x,y，out的数据类型仅支持float32, float16, bfloat16，输出仅支持ND
+- x,y，out的数据类型仅支持float32, float16, bfloat16，输出仅支持ND
 
 ## 目录结构介绍
 ```
