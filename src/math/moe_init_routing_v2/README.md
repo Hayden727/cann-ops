@@ -19,36 +19,25 @@
 - 原型信息
 
   <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Moe_init_routing_v2</th></tr> 
-<tr><td align="center"> </td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
-<tr><td rowspan="4" align="center">新增算子输入</td>
-<tr><td align="center">start_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr>  
-
-
-<tr><td align="center">end_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
-
-<tr><td align="center">device_id</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
-
-<tr><td rowspan="2" align="center">算子输出变更</td>
-<td align="center">localexpandedXOut</td><td align="center">NUM_ROWS * K, H</td><td align="center">float 16</td><td align="center">ND</td></tr> 
-<td align="center">localexpandedRowIdxOut</td><td align="center">NUM_ROWS * K, </td><td align="center">int32</td><td align="center">ND</td></tr>
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Moe_init_routing_v2</td></tr>  
+    <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Moe_init_routing_v2</th></tr> 
+    <tr><td align="center"> </td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>  
+    <tr><td rowspan="4" align="center">新增算子输入</td>
+    <tr><td align="center">start_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr>  
+    
+    
+    <tr><td align="center">end_expertId</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
+    
+    <tr><td align="center">device_id</td><td align="center">1</td><td align="center">int32</td><td align="center">-</td></tr> 
+    
+    <tr><td rowspan="2" align="center">算子输出变更</td>
+    <td align="center">localexpandedXOut</td><td align="center">NUM_ROWS * K, H</td><td align="center">float 16</td><td align="center">ND</td></tr> 
+    <td align="center">localexpandedRowIdxOut</td><td align="center">NUM_ROWS * K, </td><td align="center">int32</td><td align="center">ND</td></tr>
+    <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">Moe_init_routing_v2</td></tr>  
   </table>
 
 ## 约束与限制
 
 - 仅支持dropPadMode=0，expertTokensCountOrCumsumFlag场景下EP规则切分。 
-### 目录结构介绍
-
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-├── opp_kernel_aicpu            // aicpu目录
-└── tests                       // 测试用例目录
-```
 
 ## 算子使用
 
