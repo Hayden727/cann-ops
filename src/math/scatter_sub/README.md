@@ -16,18 +16,7 @@
 ## 算子描述
 - 功能描述
 
-  `ScatterSub`算子将`var`中的数据用`indices`进行索引，索引结果与`updates`进行减法操作。具体计算方式如下：
-
- ```
-# Scalar indices
-var[indices, ...] -= updates[...]
-
-# Vector indices (for each i)
-var[indices[i], ...] -= updates[i, ...]
-
-# High rank indices (for each i, ..., j)
-var[indices[i, ..., j], ...] -= updates[i, ..., j, ...]
-```
+  `ScatterSub`算子将`var`中的数据用`indices`进行索引，索引结果与`updates`进行减法操作。
 
 - 原型信息
 
