@@ -13,12 +13,12 @@ import os
 import numpy as np
 
 
-def edge_sub_dilate_ver_c1(input, out, width, height):
+def edge_sub_dilate_ver_c1(data, out, width, height):
     out[:, :2] = 0
     out[:, -2:] = 0
 
     for y in range(height):
-        row = input[y, :]
+        row = data[y, :]
         out[y, 2:-2] = np.maximum.reduce([row[:-4], row[1:-3], row[2:-2], row[3:-1], row[4:]])
     
     return out

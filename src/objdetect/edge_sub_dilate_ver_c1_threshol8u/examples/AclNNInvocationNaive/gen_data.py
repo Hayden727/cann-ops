@@ -14,12 +14,12 @@ import numpy as np
 from numpy.lib.stride_tricks import as_strided
 
 
-def edge_sub_dilate_ver_c1_threshol8u(input, out, width, height):
+def edge_sub_dilate_ver_c1_threshol8u(data, out, width, height):
     out[:, :2] = 0
     out[:, -2:] = 0
 
     for y in range(height):
-        row = input[y, :]
+        row = data[y, :]
         out[y, 2:-2] = np.maximum.reduce([row[:-4], row[1:-3], row[2:-2], row[3:-1], row[4:]])
     return np.where(out != 0, 1, 0).astype(np.uint8)
 

@@ -14,7 +14,7 @@ import torch
 import numpy as np
 
 
-def edge32_c3(input, out, width, height):
+def edge32_c3(data, out, width, height):
     out[:15, :] = 0
     out[-16:, :] = 0
     out[:, 0] = 0
@@ -25,8 +25,8 @@ def edge32_c3(input, out, width, height):
     core_y, core_x = np.meshgrid(core_y, core_x, indexing='ij')
 
     for i in range(3):
-        x0 = input[core_y, core_x - 1, i]
-        x2 = input[core_y, core_x + 1, i]
+        x0 = data[core_y, core_x - 1, i]
+        x2 = data[core_y, core_x + 1, i]
         g = np.abs(x2.astype(np.int32) - x0.astype(np.int32))
         g = np.minimum(g, 255)
         if i == 0:
