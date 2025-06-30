@@ -5,7 +5,7 @@
 | enkilee | 社区任务 | Lerp | 2025/3/13 | 新增Lerp算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
@@ -15,7 +15,7 @@
 ## 算子描述
 - 功能描述
 
-`Lerp`算子用对两个张量以`start`，`end`做线性插值，将结果返回到输出张量。
+  `Lerp`算子用对两个张量以`start`，`end`做线性插值，将结果返回到输出张量。
 
 计算公式为：
   $$
@@ -24,7 +24,7 @@
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Lerp</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>
@@ -37,7 +37,7 @@
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">lerp</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - start，end，weight，y，out的数据类型只支持float32,float16，数据格式只支持ND
