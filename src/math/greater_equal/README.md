@@ -1,5 +1,5 @@
 # GreaterEqual
-### 贡献说明
+## 贡献说明
 | 贡献者      | 贡献方  | 贡献算子         | 贡献时间      | 贡献内容 |
 |----------|------|--------------|-----------|------|
 | lie_heng | 社区任务 | GreaterEqual | 2025/5/23 |    新增GreaterEqual算子  |
@@ -12,8 +12,9 @@
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
+
 `GreaterEqual`算子返回输入数据1是否大于大于输入数据2。
 
 - 原型信息
@@ -31,7 +32,8 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">greater_equal</td></tr>
 </table>
 
-### 约束与限制
+## 约束与限制
+
 x,y,out的数据类型仅支持float16, float32, int32，数据格式只支持ND
 
 ### 目录结构介绍
@@ -45,7 +47,7 @@ x,y,out的数据类型仅支持float16, float32, int32，数据格式只支持ND
 └── tests                       // 测试用例目录
 ```
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
@@ -74,8 +76,3 @@ x,y,out的数据类型仅支持float16, float32, int32，数据格式只支持ND
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用GreaterEqual算子。</td>
     </tr>
 </table>
-
-### 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27| 新增本readme |
