@@ -5,7 +5,7 @@
 | wenyidylan | 社区任务 | Xlogy | 2025/6/3 | 新增Xlogy算子 |
 
 ### 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
