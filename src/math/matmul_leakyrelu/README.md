@@ -14,9 +14,17 @@
 ## 算子描述
 - 功能描述
 
-`MatmulLeakyrelu`算子使用了`MatmulLeakyrelu`高阶API，实现了快速的`MatmulLeakyrelu`矩阵乘法的运算操作。
+  `MatmulLeakyrelu`算子使用了`MatmulLeakyrelu`高阶API，实现了快速的`MatmulLeakyrelu`矩阵乘法的运算操作。
 
-`MatmulLeakyrelu`的计算公式为：
+  A、B为源操作数，A为左矩阵，形状为\[M, K]；
+
+  B为右矩阵，形状为\[K, N]。
+
+  C为目的操作数，存放矩阵乘结果的矩阵，形状为\[M, N]。
+
+  Bias为矩阵乘偏置，形状为\[N]。对A*B结果矩阵的每一行都采用该Bias进行偏置。
+
+  `MatmulLeakyrelu`的计算公式为：
 
 $$
 C = A * B + Bias
@@ -25,14 +33,9 @@ $$
 C = C > 0 ? C : C * 0.001
 $$
 
-- A、B为源操作数，A为左矩阵，形状为\[M, K]；B为右矩阵，形状为\[K, N]。
-- C为目的操作数，存放矩阵乘结果的矩阵，形状为\[M, N]。
-- Bias为矩阵乘偏置，形状为\[N]。对A*B结果矩阵的每一行都采用该Bias进行偏置。
-
-
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MatmulLeakyrelu</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
@@ -53,7 +56,7 @@ $$
 
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">matmul_leakyrelu</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 
