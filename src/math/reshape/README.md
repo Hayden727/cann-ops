@@ -5,7 +5,7 @@
 | LinuxKiller | 算子赛:Tangefly | Reshape | 2025/6/10 | 新增Reshape算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2训练系列产品
 - Atlas 200I/500 A2推理产品
 
@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-`Reshape`算子返回输入原数据的拷贝，但是形状是调整后的形状。
+  `Reshape`算子返回输入原数据的拷贝，但是形状是调整后的形状。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Reshape</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 
@@ -30,7 +30,7 @@
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">uint8,int8,uint16,int16,float16,uint32,int32,float,uint64,int64</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">reshape</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - x，shape，y，out数据类型仅支持uint8,int8,uint16,int16,float16,uint32,int32,float,uint64,int64，数据格式仅支持ND
