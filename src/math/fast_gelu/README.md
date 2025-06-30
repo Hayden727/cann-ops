@@ -5,7 +5,7 @@
 | enkilee | 社区任务 | FastGelu | 2025/3/18 | 新增FastGelu算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
@@ -15,16 +15,16 @@
 ## 算子描述
 - 功能描述
 
-`FastGelu`算子用于计算快速高斯误差线性单元激活函数。
+  `FastGelu`算子用于计算快速高斯误差线性单元激活函数。
 
-计算公式为：
+  计算公式为：
   $$
   y = \frac {x} {1 + \exp(-1.702 \left| x \right|)} \exp(0.851 (x - \left| x \right|))
   $$
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">FastGelu</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="2" align="center">算子输入</td>
@@ -35,7 +35,7 @@
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">fast_gelu</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - x,y,out的数据类型仅支持float32,float16，数据格式只支持ND
