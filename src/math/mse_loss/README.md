@@ -1,10 +1,10 @@
 # MseLoss
-### 贡献说明
+## 贡献说明
 | 贡献者     | 贡献方  | 贡献算子    | 贡献时间     | 贡献内容        |
 |---------|------|---------|----------|-------------|
 | enkilee | 社区任务 | MseLoss | 2025/4/3 | 新增MseLoss算子 |
 
-### 支持的产品型号
+## 支持的产品型号
 本样例支持如下产品型号：
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
@@ -12,8 +12,9 @@
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
+
 `MseLoss`算子是`PyTorch`中用于回归任务的一种常见损失函数。它计算预测值与目标值之间的均方误差（Mean Squared Error, MSE）。但是，在具体的应用中跟定义稍有不同。主要差别是参数的设置，在torch.nn.MSELoss中有一个`reduction`参数。`reduction`是维度要不要缩减以及如何缩减主要有三个选项：
 
 - 1、‘none’:不使用约简
@@ -62,7 +63,7 @@
 - predict，label，y，out的数据类型只支持float32,float16，数据结构只支持ND
 
 
-### 目录结构介绍
+## 目录结构介绍
 ```
 ├── docs                        // 算子文档目录
 ├── example                     // 调用示例目录
@@ -104,8 +105,3 @@
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用MseLoss算子。</td>
     </tr>
 </table>
-
-## 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27 | 新增本readme |
