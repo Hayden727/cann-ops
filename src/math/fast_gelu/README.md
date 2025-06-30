@@ -1,5 +1,5 @@
 # FastGelu
-### 贡献说明
+## 贡献说明
 | 贡献者     | 贡献方  | 贡献算子     | 贡献时间      | 贡献内容         |
 |---------|------|----------|-----------|--------------|
 | enkilee | 社区任务 | FastGelu | 2025/3/18 | 新增FastGelu算子 |
@@ -12,8 +12,9 @@
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 - 功能描述
+
 `FastGelu`算子用于计算快速高斯误差线性单元激活函数。
 
 计算公式为：
@@ -52,7 +53,7 @@
 ```
 
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
@@ -82,8 +83,3 @@
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用FastGelu算子。</td>
     </tr>
 </table>
-
-## 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27 | 新增本readme |
