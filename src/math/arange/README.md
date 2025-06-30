@@ -19,8 +19,10 @@
 
 从start起始到end结束按照step的间隔取值，并返回大小为 $\frac{end-start}{step}+1$的1维张量。其中，步长step是张量中相邻两个值的间隔。
 
- 对应的数学表达式为：out<sub>i+1</sub> = out<sub>i</sub> + step
-
+ 对应的数学表达式为：
+$$
+out<sub>i+1</sub> = out<sub>i</sub> + step
+$$
 
 - 原型信息
 
