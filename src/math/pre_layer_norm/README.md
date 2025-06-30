@@ -1,6 +1,6 @@
 # PreLayerNorm
 
-### 贡献说明
+## 贡献说明
 | 贡献者   | 贡献方  | 贡献算子         | 贡献时间      | 贡献内容             |
 |-------|------|--------------|-----------|------------------|
 | yuuki | 社区任务 | PreLayerNorm | 2025/4/30 | 新增PreLayerNorm算子 |
@@ -13,7 +13,7 @@
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
 
-### 算子描述
+## 算子描述
 
 - 功能描述
 
@@ -95,8 +95,3 @@ $$ Var[ z_{ij}]= \frac{{\textstyle \sum_{k=1}^{N}}(  z_{ijk}-E[ z_{ij}])^{2}  }{
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用PreLayerNorm算子。</td>
     </tr>
 </table>
-
-### 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/27 | 新增本readme |
