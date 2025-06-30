@@ -182,17 +182,17 @@ private:
     AscendC::TBuf<AscendC::QuePosition::VECCALC> tmpBuf1, tmpBuf2, tmpBuf3, tmpBuf4;
 };
 
-constexpr float PI_FOR_X_TODIV = 0.3183098733425140380859375;
+constexpr float PI_FOR_X_TODIV = 0.3183098733425140380859375f;
 
-constexpr float SIN_RES_MULIT_SCA = 2.604926501e-6;
-constexpr float SIN_RES_ADDICT_UP = -0.0001980894471;
-constexpr float SIN_2ADDS = 0.008333049340;
-constexpr float SIN_3ADDS = -0.1666665792;
+constexpr float SIN_RES_MULIT_SCA = 2.604926501e-6f;
+constexpr float SIN_RES_ADDICT_UP = -0.0001980894471f;
+constexpr float SIN_2ADDS = 0.008333049340f;
+constexpr float SIN_3ADDS = -0.1666665792f;
 
-constexpr float pi_0 = 3.14160156;
-constexpr float pi_1 = -8.9071691e-06;
-constexpr float pi_2 = -1.74122761e-09;
-constexpr float pi_3 = 1.24467439e-13;
+constexpr float pi_0 = 3.14160156f;
+constexpr float pi_1 = -8.9071691e-06f;
+constexpr float pi_2 = -1.74122761e-09f;
+constexpr float pi_3 = 1.24467439e-13f;
 
 __aicore__ inline void HighPerfStrategy::ComputeImpl(AscendC::LocalTensor<float>& xLocal,
                                                      AscendC::LocalTensor<float>& yLocal,
@@ -310,28 +310,28 @@ private:
     AscendC::TBuf<AscendC::QuePosition::VECCALC> tmpBuf1, tmpBuf2, tmpBuf3, tmpBuf4;
 };
 
-constexpr float PI_V4_0 = 1.5708008;
-constexpr float PI_V4_1 = -0.0000044535846;
-constexpr float PI_V4_2 = -8.706138e-10;
-constexpr float PI_V4_3 = 1.5703125;
-constexpr float PI_12 = 0.0004837513;
-constexpr float PI_22 = 0.000000075495336;
-constexpr float PI_32 = 2.5579538e-12;
-constexpr float PI_42 = 5.389786e-15;
-constexpr float PI_52 = 5.166901e-19;
-constexpr float PI_62 = 3.281839e-22;
+constexpr float PI_V4_0 = 1.5708008f;
+constexpr float PI_V4_1 = -0.0000044535846f;
+constexpr float PI_V4_2 = -8.706138e-10f;
+constexpr float PI_V4_3 = 1.5703125f;
+constexpr float PI_12 = 0.0004837513f;
+constexpr float PI_22 = 0.000000075495336f;
+constexpr float PI_32 = 2.5579538e-12f;
+constexpr float PI_42 = 5.389786e-15f;
+constexpr float PI_52 = 5.166901e-19f;
+constexpr float PI_62 = 3.281839e-22f;
 
-constexpr float INV_HALF_PI = 0.63661975;
+constexpr float INV_HALF_PI = 0.63661975f;
 
-constexpr float SCOEF_4 = 0.0000027183114939898219064;
-constexpr float SCOEF_3 = -0.000198393348360966317347;
-constexpr float SCOEF_2 = 0.0083333293858894631756;
-constexpr float SCOEF_1 = -0.166666666416265235595;
+constexpr float SCOEF_4 = 0.0000027183114939898219064f;
+constexpr float SCOEF_3 = -0.000198393348360966317347f;
+constexpr float SCOEF_2 = 0.0083333293858894631756f;
+constexpr float SCOEF_1 = -0.166666666416265235595f;
 
-constexpr float CCOEF_4 = 0.0000243904487962774090654;
-constexpr float CCOEF_3 = -0.00138867637746099294692;
-constexpr float CCOEF_2 = 0.0416666233237390631894;
-constexpr float CCOEF_1 = -0.499999997251031003120;
+constexpr float CCOEF_4 = 0.0000243904487962774090654f;
+constexpr float CCOEF_3 = -0.00138867637746099294692f;
+constexpr float CCOEF_2 = 0.0416666233237390631894f;
+constexpr float CCOEF_1 = -0.499999997251031003120f;
 
 __aicore__ inline void HighPrecStrategy::ComputeImpl(AscendC::LocalTensor<float>& xLocal,
                                                      AscendC::LocalTensor<float>& yLocal,
