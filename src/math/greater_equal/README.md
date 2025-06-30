@@ -34,7 +34,7 @@
 
 ## 约束与限制
 
-x,y,out的数据类型仅支持float16, float32, int32，数据格式只支持ND
+- x,y,out的数据类型仅支持float16, float32, int32，数据格式只支持ND
 
 ### 目录结构介绍
 ```
