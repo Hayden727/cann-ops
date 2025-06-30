@@ -30,7 +30,7 @@
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">sqrt</td></tr>  
 </table>
 
-约束与限制
+## 约束与限制
 
 - x,y，out的数据类型仅支持float32,float16,bfloat16，数据格式仅支持ND
 
