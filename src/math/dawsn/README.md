@@ -14,16 +14,16 @@
 ## 算子描述
 - 功能描述
 
-`Dawsn`算子用于计算张量每个元素的Dawson积分，使用泰勒展开式近似计算。
+  `Dawsn`算子用于计算张量每个元素的Dawson积分，使用泰勒展开式近似计算。
 
 - 原型信息
 
-<table>  
+  <table>  
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Dawsn</th></tr>  
 <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">default</td></tr></td><td align="center">x</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32,float16</td><td align="center">ND</td><td align="center">\</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">dawsn</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - x，y的数据类型仅支持float32,float16，数据格式仅支持ND
