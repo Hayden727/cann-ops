@@ -8,8 +8,6 @@
 
 ## 支持的产品型号
 
-本样例支持如下产品型号：
-
 - Atlas A2训练系列产品
 
 产品形态详细说明请参见[昇腾产品形态说明](http://www.hiascend.com/document/redirect/CannCommunityProductForm)
@@ -18,15 +16,15 @@
 ## 算子描述
 - 功能描述
 
-训练场景下，使用FlashAttention算法实现self-attention（自注意力）的计算的功能，该算子实现了S2>1024条件下的算子功能，完成了该场景下算子的泛化实现。
-对应的数学表达式为：  
+  训练场景下，使用FlashAttention算法实现self-attention（自注意力）的计算的功能，该算子实现了S2>1024条件下的算子功能，完成了该场景下算子的泛化实现。
+  对应的数学表达式为：  
 $$
 attention\_out = Softmax(scale*(query*key^T))*value
 $$
 
 - 原型信息
 
-<table>
+  <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">FlashAttentionWithLargeHeadDim</td></tr>
 </tr>
 <tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
@@ -44,7 +42,7 @@ $$
 <td align="center">head_num</td><td align="center">-</td><td align="center">int</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">flash_attention_score_with_large_head_dim</td></tr>
-</table>
+  </table>
 
 ## 约束与限制
 
