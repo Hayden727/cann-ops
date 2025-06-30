@@ -14,11 +14,11 @@
 ## 算子描述
 - 功能描述
 
-`ScatterReduce`算子将源张量（`src`）的值按照索引（`index`）规则归约到目标张量（`x`）的指定维度（`dim`），支持多种归约操作。
+  `ScatterReduce`算子将源张量（`src`）的值按照索引（`index`）规则归约到目标张量（`x`）的指定维度（`dim`），支持多种归约操作。
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ScatterReduce</th></tr>  
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="3" align="center">算子输入</td>
@@ -32,7 +32,7 @@
     <td align="center">reduce</td><td align="center">str</td><td colspan="2" align="center">required</td></tr>
     <td align="center">include_self</td><td align="center">bool</td><td colspan="2" align="center">default: TRUE</td></tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">scatter_reduce</td></tr>  
-</table>
+  </table>
 
 ## 约束与限制
 - x,index,src,y的数据类型仅支持fp32, fp16，int32，数据格式仅支持ND
