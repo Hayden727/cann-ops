@@ -17,7 +17,7 @@
 
   `Lerp`算子用对两个张量以`start`，`end`做线性插值，将结果返回到输出张量。
 
-计算公式为：
+  计算公式为：
   $$
   y=start+weight∗(end−start)
   $$
