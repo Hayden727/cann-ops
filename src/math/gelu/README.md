@@ -18,45 +18,21 @@
 
   Gelu（Gaussian Error Linear Unit）是神经网络中常用的激活函数。Gelu是基于高斯误差函数定义的，相较于ReLU等激活函数，Gelu更加平滑，有助于提高训练过程的收敛速度和性能。
 
-  其中$elf(x)$为高斯误差函数。但是高斯误差函数无法直接计算，学者们提出了一种近似计算高斯误差函数的方法，即：
-
-$$
-Gelu(x) = x\times \Phi(x)
-$$
-
-$$
-\Phi(x) = \frac{1}{2} \times (1+elf(\frac{x}{\sqrt{2} }))
-$$
-
-$$
-\text{GELU}(x) \approx \frac{x}{1 + \exp\left(-\sqrt{\frac{8}{\pi}} \left(x + 0.044715 \cdot x^3\right)\right)}
-$$
-
 - 原型信息
 
   <table>
-<tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Gelu</th></tr>
-<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
-
-<tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
-
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
-
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">gelu</td></td></tr>
+    <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">Gelu</th></tr>
+    <tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td><td align="center">默认值</td></tr>
+    
+    <tr><td align="center">x</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
+    
+    <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">-</td><td align="center">float32, float16, bfloat16</td><td align="center">ND</td><td align="center">\</td></tr>
+    
+    <tr><td rowspan="1" align="center">核函数名</td><td colspan="5" align="center">gelu</td></td></tr>
   </table>
 
 ## 约束与限制
 - x,y，out的数据类型仅支持float32, float16, bfloat16，输出仅支持ND
-
-## 目录结构介绍
-```
-├── docs                        // 算子文档目录
-├── example                     // 调用示例目录
-├── framework                   // 第三方框架适配目录
-├── op_host                     // host目录
-├── op_kernel                   // kernel目录
-└── opp_kernel_aicpu            // aicpu目录
-```
 
 ## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
