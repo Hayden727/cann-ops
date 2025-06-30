@@ -15,7 +15,7 @@
 
 对应的数学表达式为：
 
-y = (input_data + (x1 / x2) * value)
+      y = (input_data + (x1 / x2) * value)
 
 - 原型信息
 
@@ -35,7 +35,7 @@ y = (input_data + (x1 / x2) * value)
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcdiv</td></tr>  
 </table>
 
-### 约束与限制
+## 约束与限制
 - intput_data,x,y,value,out的数据类型仅支持float32,float16,bfloat16，数据格式仅支持ND
 ## 算子使用
 使用此算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
@@ -78,8 +78,3 @@ y = (input_data + (x1 / x2) * value)
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Addcdiv算子。</td>
     </tr>
 </table>
-
-## 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/6/26 | 新增本readme |
