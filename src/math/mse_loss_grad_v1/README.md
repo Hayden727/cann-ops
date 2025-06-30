@@ -5,7 +5,7 @@
 | enkilee | 社区任务 | MseLossGrad | 2025/5/6 | 新增MseLossGrad算子 |
 
 ## 支持的产品型号
-本样例支持如下产品型号：
+
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
 - Atlas 200I/500 A2推理产品
@@ -15,16 +15,16 @@
 ## 算子描述
 - 功能描述
 
-`MseLossGradV1`是计算均方误差损失（`MseLoss`）相对于输入的梯度的算子。在神经网络的反向传播过程中，梯度是用来更新模型参数的重要部分。通过计算`MSELoss`的梯度，优化器可以调整模型的权重，以最小化损失。其中传入的reduction参数有两个取值：
+  `MseLossGradV1`是计算均方误差损失（`MseLoss`）相对于输入的梯度的算子。在神经网络的反向传播过程中，梯度是用来更新模型参数的重要部分。通过计算`MSELoss`的梯度，优化器可以调整模型的权重，以最小化损失。其中传入的reduction参数有两个取值：
 
-- `mean`: 计算出的梯度会是均方误差平均值的梯度；
+  1.  `mean`: 计算出的梯度会是均方误差平均值的梯度；
 
-- `sum`: 计算出的梯度会是均方误差总和的梯度。
+  2.  `sum`: 计算出的梯度会是均方误差总和的梯度。
 
 
 - 原型信息
 
-<table>
+  <table>
 <tr><th align="center">算子类型(OpType)</th><th colspan="5" align="center">MseLossGradV1</th></tr>
 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
@@ -47,10 +47,10 @@
 <td align="center">reduction</td><td align="center">scalar</td><td align="center">string</td><td align="center">\</td></tr>
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">mse_loss_grad_v1</td></tr>  
-</table>
-
+  </table>
+ 
 ## 约束与限制
-predic，label，dout，y，out的数据类型只支持float32,float16，数据结构只支持ND
+- predic，label，dout，y，out的数据类型只支持float32,float16，数据结构只支持ND
 
 ### 目录结构介绍
 ```
