@@ -1,5 +1,5 @@
 # Addcmul
-### 贡献说明
+## 贡献说明
 | 贡献者       | 贡献方              | 贡献算子      | 贡献时间 | 贡献内容 |
 |-----------|------------------|-----------|------|------|
 | Bellyboom | 西北工业大学-智能感知交互实验室 | Addcmul算子 | 2025/01/10 |    新增Addcmul算子，实现了向量x1乘向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。  |
@@ -14,9 +14,7 @@
 - 功能描述
 `Addcmul`算子实现了向量x1乘向量x2，乘标量value后的结果再加上向量input_data，返回计算结果的功能。
 
-对应的数学表达式为：
-
-y = (input_data + (x1 * x2) * value)
+对应的数学表达式为：y = (input_data + (x1 * x2) * value)
 
 - 原型信息
 
@@ -35,7 +33,7 @@ y = (input_data + (x1 * x2) * value)
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">addcmul</td></tr>  
 </table>
 
-### 约束与限制
+## 约束与限制
 input_data,x,y,value,out的数据类型只支持float32,float16,int32,bfloat16，数据格式只支持ND
 ## 目录结构介绍
 ```
@@ -77,8 +75,3 @@ input_data,x,y,value,out的数据类型只支持float32,float16,int32,bfloat16�
         <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Addcmul算子。</td>
     </tr>
 </table>
-
-## 更新说明
-| 时间 | 更新事项 |
-|----|------|
-| 2025/06/26| 新增本readme |
