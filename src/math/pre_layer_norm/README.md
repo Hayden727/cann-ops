@@ -41,7 +41,7 @@
 ## 约束与限制
 - x,y,gamma,beta,z,out的数据类型仅支持float，数据格式仅支持ND
 
-### 算子使用
+## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
 
 ### 编译部署
