@@ -239,6 +239,7 @@ public:
         LocalTensor<float> rstdLocal = inQueRstd_.DeQue<float>();
         LocalTensor<float> meanLocal = meanBuf_.Get<float>();
         Duplicate(meanLocal, 0.0f, calcRow);
+        PipeBarrier<PIPE_V>();
         for (uint32_t j = 0; j < loopMainCol_; j++) {
             loopColProcessBeforeReduce(iOuter, j, calcRow, ubFactor_, rstdLocal);
         }
@@ -525,6 +526,7 @@ public:
         uint32_t calcCol_align = ROUND_UP(calcCol, ALIGN_32);
         LocalTensor<float> dgamma = outQueDgamma2_.AllocTensor<float>();
         Duplicate(dgamma, 0.0f, calcCol_align);
+        PipeBarrier<PIPE_V>();
         DataCopyExtParams dataCopyParams{1, (uint32_t)(calcCol * sizeof(float)), 0, 0, 0};
         DataCopyPadExtParams<float> padParams{true, 0, 0, 0};
         for (uint32_t blockidx = 0; blockidx < blockDim_; blockidx++) {
