@@ -41,7 +41,7 @@ cmake -B build
 cmake --build build -j
 (
     cd build
-    ./execute_matmul_all_reduce_op
+    ./execute_matmul_reduce_scatter_op
 )
 
 python3 verify_result.py output
