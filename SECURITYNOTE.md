@@ -35,8 +35,8 @@
 
 |      类型      |                                           开源代码地址                                           |                            文件名                             |             公网IP地址/公网URL地址/域名/邮箱地址             |                   用途说明                    |
 | :------------: |:------------------------------------------------------------------------------------------:|:----------------------------------------------------------:| :----------------------------------------------------------: |:-----------------------------------------:|
-|  自研  | 不涉及  | cmake/third_party/build/modules/Findjson.cmake | https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip | 下载链接，用于下载nlohmann_json github Relase包，作用编译依赖 |
-|  自研  | 不涉及  | cmake/third_party/build/modules/Findjson.cmake | https://gitee.com/mirrors/JSON-for-Modern-CPP/repository/archive/v3.11.3.zip | 下载链接，用于下载nlohmann_json gitee Relase包，作用编译依赖 |
+|  自研  | 不涉及  | cmake/third_party/build/modules/Findjson.cmake | https://github.com/nlohmann/json.git | 用于从github克隆nlohmann_json仓库，作用编译依赖 |
+|  自研  | 不涉及  | cmake/third_party/build/modules/Findjson.cmake | https://gitee.com/mirrors/JSON-for-Modern-CPP.git | 用于从gitee克隆nlohmann_json仓库，作用编译依赖 |
 |  自研  | 不涉及  | src/math/add_custom/examples/PytorchInvocation/run_op_plugin.sh | https://gitee.com/ascend/pytorch.git | 用于克隆pytorch仓库并安装使用 |
 |  自研  | 不涉及  | src/math/kl_div_target_backward/examples/PytorchInvocation/run_op_plugin.sh | https://gitee.com/ascend/pytorch.git | 用于克隆pytorch仓库并安装使用 |
 

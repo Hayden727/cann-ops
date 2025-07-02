@@ -13,16 +13,17 @@ endif ()
 
 include(ExternalProject)
 
-if (CANN_PKG)
-    set(REQ_URL "${CANN_PKG}/libs/ge_nlohmann_json/v3.11.3/include.zip")
-elseif (ENABLE_GITHUB)
-    set(REQ_URL "https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip")
+if (ENABLE_GITHUB)
+    set(REQ_URL "https://github.com/nlohmann/json.git")
 else ()
-    set(REQ_URL "https://gitee.com/mirrors/JSON-for-Modern-CPP/repository/archive/v3.11.3.zip")
+    set(REQ_URL "https://gitee.com/mirrors/JSON-for-Modern-CPP.git")
 endif ()
 
 ExternalProject_Add(json_build
-                    URL ${REQ_URL}
+                    GIT_REPOSITORY ${REQ_URL}
+                    GIT_TAG tags/v3.11.3
+                    GIT_SHALLOW TRUE
+                    GIT_PROGRESS TRUE
                     CONFIGURE_COMMAND ${CMAKE_COMMAND}
                         -DJSON_MultipleHeaders=ON
                         -DJSON_BuildTests=OFF
