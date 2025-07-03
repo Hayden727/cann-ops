@@ -34,7 +34,7 @@ aclnnStatus aclnnMatmulReduceScatter(void *workspace, uint64_t workspaceSize, ac
   - 进入样例代码所在路径
   
     ```bash
-    cd ${git_clone_path}/cann-ops/src/math/matmul_all_reduce/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/cann-ops/src/math/matmul_reduce_scatter/examples/AclNNInvocationNaive
     ```
   
   - 环境变量配置

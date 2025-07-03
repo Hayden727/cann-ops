@@ -31,7 +31,7 @@
 #include "acl/acl.h"
 #include "acl/acl_op_compiler.h"
 #include "aclnn/acl_meta.h"
-#include "aclnn_matmul_all_reduce.h"
+#include "aclnn_matmul_reduce_scatter.h"
 
 #ifndef MATMUL_REDUCE_SCATTER_DEMO_DEF_H
 #define MATMUL_REDUCE_SCATTER_DEMO_DEF_H
@@ -518,13 +518,13 @@ bool OpRunner::RunOp(std::string group, aclrtStream stream)
     aclTensor *bias = nullptr;
     size_t workspaceSize = 0;
     aclOpExecutor *handle = nullptr;
-    auto ret = aclnnMatmulAllReduceGetWorkspaceSize(inputTensor_[0], inputTensor_[1], bias, (char*)group.c_str(),
+    auto ret = aclnnMatmulReduceScatterGetWorkspaceSize(inputTensor_[0], inputTensor_[1], bias, (char*)group.c_str(),
         const_cast<char*>(REDUCE_OP), IS_TRANS_A, IS_TRANS_B, COMM_TURN, outputTensor_[0], &workspaceSize, &handle);
     if (ret != ACL_SUCCESS) {
         ERROR_LOG("Get Operator Workspace failed. error code is %d", static_cast<int32_t>(ret));
         return false;
     }
-    INFO_LOG("Execute aclnnMatmulAllReduceGetWorkspaceSize success, workspace size %lu", workspaceSize);
+    INFO_LOG("Execute aclnnMatmulReduceScatterGetWorkspaceSize success, workspace size %lu", workspaceSize);
     
     void *workspace = nullptr;
     if (workspaceSize != 0) {
@@ -533,12 +533,12 @@ bool OpRunner::RunOp(std::string group, aclrtStream stream)
         }
     }
 
-    ret = aclnnMatmulAllReduce(workspace, workspaceSize, handle, stream);
+    ret = aclnnMatmulReduceScatter(workspace, workspaceSize, handle, stream);
     if (ret != ACL_SUCCESS) {
         ERROR_LOG("Execute Operator failed. error code is %d", static_cast<int32_t>(ret));
         return false;
     }
-    INFO_LOG("Execute aclnnMatmulAllReduce success");
+    INFO_LOG("Execute aclnnMatmulReduceScatter success");
 
     ret = aclrtSynchronizeStreamWithTimeout(stream, 10000); // 流同步超时10000 
     if (ret != SUCCESS) {
