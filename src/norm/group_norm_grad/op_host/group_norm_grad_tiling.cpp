@@ -15,8 +15,8 @@
 #include <cstdint>
 #include <memory>
 #include "register/op_def_registry.h"
-#include "group_norm_grad_tiling.h"
 #include "tiling/tiling_api.h"
+#include "group_norm_grad_tiling.h"
 
 using namespace ge;
 
@@ -628,116 +628,3 @@ IMPL_OP_OPTILING(GroupNormGrad)
     .Tiling(TilingGroupNormGrad)
     .TilingParse<GroupNormGradCompileInfo>(TilingPrepareForGroupNormGrad);
 }  // namespace optiling
-
-namespace ops {
-
-static constexpr size_t GROUPNORMGRAD_IDX_IN_DY = 0;
-static constexpr size_t GROUPNORMGRAD_IDX_IN_GAMMA = 4;
-static constexpr size_t GROUPNORMGRAD_IDX_OUT_DX = 0;
-static constexpr size_t GROUPNORMGRAD_IDX_OUT_DGAMMA = 1;
-static constexpr size_t GROUPNORMGRAD_IDX_OUT_DBETA = 2;
-
-static ge::graphStatus GroupNormGradInferShape(gert::InferShapeContext *context)
-{
-    OP_LOGD(context->GetNodeName(), "Begin to do GroupNormGradInferShape");
-
-    // get input shapes
-    const gert::Shape *dy_shape = context->GetInputShape(GROUPNORMGRAD_IDX_IN_DY);
-    OPS_CHECK_NULL_WITH_CONTEXT(context, dy_shape);
-    const gert::Shape *gamma_shape = context->GetInputShape(GROUPNORMGRAD_IDX_IN_GAMMA);
-    OPS_CHECK_NULL_WITH_CONTEXT(context, gamma_shape);
-    // get output shapes
-    gert::Shape *dx_shape = context->GetOutputShape(GROUPNORMGRAD_IDX_OUT_DX);
-    OPS_CHECK_NULL_WITH_CONTEXT(context, dx_shape);
-    gert::Shape *dgamma_shape = context->GetOutputShape(GROUPNORMGRAD_IDX_OUT_DGAMMA);
-    OPS_CHECK_NULL_WITH_CONTEXT(context, dgamma_shape);
-    gert::Shape *dbeta_shape = context->GetOutputShape(GROUPNORMGRAD_IDX_OUT_DBETA);
-    OPS_CHECK_NULL_WITH_CONTEXT(context, dbeta_shape);
-
-    *dx_shape = *dy_shape;
-    *dgamma_shape = *gamma_shape;
-    *dbeta_shape = *gamma_shape;
-
-    OP_LOGD(context->GetNodeName(), "End to do GroupNormGradInferShape");
-    return ge::GRAPH_SUCCESS;
-}
-
-static graphStatus GroupNormGradInferDtype(gert::InferDataTypeContext *context)
-{
-    OP_LOGD(context->GetNodeName(), "GroupNormGradInferDtype enter");
-    // Get input tout
-    auto attrs = context->GetAttrs();
-    OPS_CHECK_NULL_WITH_CONTEXT(context, attrs);
-    auto inputDtype = context->GetInputDataType(GROUPNORMGRAD_IDX_IN_DY);
-    context->SetOutputDataType(GROUPNORMGRAD_IDX_OUT_DX, inputDtype);
-    context->SetOutputDataType(GROUPNORMGRAD_IDX_OUT_DGAMMA, inputDtype);
-    context->SetOutputDataType(GROUPNORMGRAD_IDX_OUT_DBETA, inputDtype);
-
-    OP_LOGD(context->GetNodeName(), "GroupNormGradInferDtype end");
-
-    return GRAPH_SUCCESS;
-}
-
-IMPL_OP_INFERSHAPE(GroupNormGrad).InferShape(GroupNormGradInferShape).InferDataType(GroupNormGradInferDtype);
-
-class GroupNormGrad : public OpDef {
-public:
-    explicit GroupNormGrad(const char *name) : OpDef(name)
-    {
-        this->Input("dy")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Input("mean")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Input("rstd")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Input("x")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Input("gamma")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Output("dx")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Output("dgamma")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Output("dbeta")
-            .ParamType(REQUIRED)
-            .DataType({ge::DT_FLOAT, ge::DT_FLOAT16, ge::DT_BF16})
-            .Format({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND})
-            .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND});
-        this->Attr("num_groups").AttrType(REQUIRED).Int();
-        this->Attr("data_format").AttrType(OPTIONAL).String("NCHW");
-        this->Attr("dx_is_require").AttrType(OPTIONAL).Bool(true);
-        this->Attr("dgamma_is_require").AttrType(OPTIONAL).Bool(true);
-        this->Attr("dbeta_is_require").AttrType(OPTIONAL).Bool(true);
-        OpAICoreConfig aicore_config;
-        aicore_config.DynamicCompileStaticFlag(true)
-            .DynamicFormatFlag(true)
-            .DynamicRankSupportFlag(true)
-            .DynamicShapeSupportFlag(true);
-        this->AICore().AddConfig("ascend910b", aicore_config);
-        this->AICore().AddConfig("ascend910_93", aicore_config);
-    }
-};
-
-OP_ADD(GroupNormGrad);
-}  // namespace ops

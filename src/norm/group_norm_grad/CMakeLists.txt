@@ -10,7 +10,7 @@ add_ops_compile_options(
 # )
 
 target_sources(optiling PRIVATE
-        op_host/group_norm_grad.cpp
+        op_host/group_norm_grad_tiling.cpp
 )
 
 target_include_directories(optiling PRIVATE
@@ -31,7 +31,7 @@ target_compile_options(optiling PRIVATE
 
 
 target_sources(opsproto PRIVATE
-         op_host/group_norm_grad.cpp
+         op_host/group_norm_grad_proto.cpp
 )
 target_include_directories(opsproto PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
@@ -51,7 +51,7 @@ target_compile_options(opsproto PRIVATE
 
 # 手动实现的aclnn
 target_sources(op_host_aclnnInner PRIVATE
-        op_host/group_norm_grad.cpp
+        op_host/group_norm_grad_def.cpp
 )
 target_include_directories(op_host_aclnnInner PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/op_host
