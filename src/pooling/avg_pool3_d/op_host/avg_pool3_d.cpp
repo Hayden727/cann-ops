@@ -288,6 +288,7 @@ static ge::graphStatus TilingFuncForAvgPool3d(gert::TilingContext* context)
 
   auto dataType = context->GetInputDesc(X_INDEX)->GetDataType();
   int32_t dataTypeKey = FP32_DTYPE_KEY;
+  GetDataTypeKey(dataType, dataTypeKey);
 
   const gert::Shape yShape = context->GetOutputShape(Y_INDEX)->GetStorageShape();
   
