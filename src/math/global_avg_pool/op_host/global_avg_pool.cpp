@@ -1,8 +1,11 @@
-/**
+/*
 * @file global_avg_pool.cpp
 *
-* Copyright (C) 2023. Huawei Technologies Co., Ltd. All rights reserved.
-*
+* Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the Apache License Version 2.0.
+* You may not use this file except in compliance with the License.
+* 
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -73,9 +76,8 @@ namespace optiling {
             uint32_t blockLength = 0;
             uint32_t tileLength = 0;
             uint32_t lasttileLength = 0;
-            uint32_t tile_num;
             blockLength = totalLengthAligned / block_dim;
-            tile_num = blockLength / ALIGN_NUM / ub_block_num;
+            uint32_t tile_num = blockLength / ALIGN_NUM / ub_block_num;
 
             if (tile_num == 0) {    // 不足一个ub的情况
                 tile_num = 1;

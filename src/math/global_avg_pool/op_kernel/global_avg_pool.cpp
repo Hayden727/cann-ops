@@ -1,8 +1,11 @@
-/**
+/*
 * @file global_avg_pool.cpp
 *
-* Copyright (C) 2023. Huawei Technologies Co., Ltd. All rights reserved.
-*
+* Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the Apache License Version 2.0.
+* You may not use this file except in compliance with the License.
+* 
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -187,7 +190,7 @@ private:
     uint32_t lasttileLength;
     uint32_t actLastLen;
     uint32_t typeKey, stride;
-    __gm__ DTYPE_X * px;
+    __gm__ DTYPE_X *px;
 };
 extern "C" __global__ __aicore__ void global_avg_pool(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);

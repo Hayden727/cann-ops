@@ -18,7 +18,7 @@ import onnxruntime as ort
 import numpy as np
 
 
-def gen_onnx_model(shape_x, shape_y):
+def gen_onnx_model_fp32(shape_x, shape_y):
     x = helper.make_tensor_value_info("x", TensorProto.FLOAT, shape_x)
     y = helper.make_tensor_value_info("y", TensorProto.FLOAT, shape_y)
     node_def = helper.make_node('GlobalAveragePool',
@@ -53,12 +53,15 @@ def gen_onnx_model_fp16(shape_x, shape_y):
 
     model = helper.make_model(graph, producer_name="onnx-GlobalAveragePool_test")
     model.opset_import[0].version = 11
-    onnx.save(model, "./test_GlobalAveragePool_v11.onnx")
+    onnx.save(model, "./test_GlobalAveragePool_v11_fp16.onnx")
 
 
 def run_mode(x):
     # 加载ONNX模型
-    model_path = 'test_GlobalAveragePool_v11.onnx'  # 替换为你的ONNX模型路径
+    if x.dtype == np.float32:
+        model_path = 'test_GlobalAveragePool_v11.onnx'  
+    else:
+        model_path = 'test_GlobalAveragePool_v11_fp16.onnx'        
     sess = ort.InferenceSession(model_path)
 
     input_name = sess.get_inputs()[0].name
@@ -75,7 +78,7 @@ def global_avg_pool_test(x):
     shape_x = [3, 4, 64, 32]
     shape_y = [3, 4, 1, 1]
     if x.dtype == np.float32:
-        gen_onnx_model(shape_x, shape_y)
+        gen_onnx_model_fp32(shape_x, shape_y)
     else: 
         gen_onnx_model_fp16(shape_x, shape_y)  
     golden = run_mode(x)    
@@ -86,4 +89,4 @@ def global_avg_pool_test(x):
 def calc_expect_func(x, y):
 
     y = global_avg_pool_test(x["value"])
-    return [y,]
+    return [y, ]
