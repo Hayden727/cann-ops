@@ -678,7 +678,7 @@ OperatorDesc CreateOpDesc()
     std::vector<int64_t> shapeA { RANK_M, RANK_K };
     std::vector<int64_t> shapeB { RANK_K, RANK_N };
     std::vector<int64_t> shapeBias {};
-    std::vector<int64_t> shapeC { RANK_M, RANK_N };
+    std::vector<int64_t> shapeC { RANK_M / RANK_DIM, RANK_N };
     aclDataType dataTypeA = ACL_FLOAT16;
     aclDataType dataTypeB = ACL_FLOAT16;
     aclDataType dataTypeBias = ACL_FLOAT16;

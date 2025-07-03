@@ -1,26 +1,33 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-# Copyright 2022-2024 Huawei Technologies Co., Ltd
-import numpy as np
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
+
 import os
 import random
+import numpy as np
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
-from torch.distributed.distributed_c10d import ReduceOp
 
-rank_dim = 1
-rank_m = 16384
-rank_k = 640
-rank_n = 5120
+RANK_DIM = 1
+RANK_M = 16384
+RANK_K = 640
+RANK_N = 5120
 
 
-# fp16
 def gen_cpu_data(rank, port):
-    input_x1 = torch.tensor(np.fromfile("./input/input_x1_{}.bin".format(rank), np.float16).reshape([rank_m, rank_k]))
-    input_x2 = torch.tensor(np.fromfile("./input/input_x2_{}.bin".format(rank), np.float16).reshape([rank_k, rank_n]))
-    # torch_npu.npu.set_device(rank)
-    dist.init_process_group(backend='gloo', rank=rank, world_size=rank_dim, init_method=f'tcp://127.0.0.1:{port}')
+    input_x1 = torch.tensor(np.fromfile("./input/input_x1_{}.bin".format(rank), np.float16)
+        .reshape([RANK_M, RANK_K]))
+    input_x2 = torch.tensor(np.fromfile("./input/input_x2_{}.bin".format(rank), np.float16)
+        .reshape([RANK_K, RANK_N]))
+    dist.init_process_group(backend='gloo', rank=rank, world_size=RANK_DIM, init_method=f'tcp://127.0.0.1:{port}')
     print('[INFO] device_{} 构造cpu_out数据'.format(rank))
     cpu_input = input_x1.to(torch.float32)
     cpu_weight = input_x2.to(torch.float32)
@@ -35,7 +42,7 @@ def gen_cpu():
     p_list = []
     port = 29500 + random.randint(0, 10000)
     mp.set_start_method("forkserver", force=True)
-    for rank in range(rank_dim):
+    for rank in range(RANK_DIM):
         p = Process(target=gen_cpu_data, args=(rank, port))
         p.start()
         p_list.append(p)
@@ -50,10 +57,10 @@ if __name__ == "__main__":
         os.mkdir("output")
 
     # get x1 x2
-    for rank in range(rank_dim):
+    for rank in range(RANK_DIM):
         np.random.seed(rank)
-        x1 = np.random.uniform(-3, 3, [rank_m, rank_k]).astype(np.float16)
-        x2 = np.random.uniform(-3, 3, [rank_k, rank_n]).astype(np.float16)
+        x1 = np.random.uniform(-3, 3, [RANK_M, RANK_K]).astype(np.float16)
+        x2 = np.random.uniform(-3, 3, [RANK_K, RANK_N]).astype(np.float16)
         x1.tofile("./input/input_x1_{}.bin".format(rank))
         x2.tofile("./input/input_x2_{}.bin".format(rank))
 

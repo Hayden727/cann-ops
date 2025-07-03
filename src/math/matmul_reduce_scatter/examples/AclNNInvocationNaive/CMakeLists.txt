@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # project information
-project(acl_execute_matmul_reduce_scatter)
+project(acl_execute_matmul_all_reduce)
 
 # Compile options
 add_compile_options(-std=c++11)
@@ -33,7 +33,6 @@ endif()
 
 # Header path
 include_directories(
-    inc
     ${INC_PATH}/runtime/include
     ${INC_PATH}/atc/include
     ${CUST_PKG_PATH}/include
@@ -46,14 +45,11 @@ link_directories(
     ${CUST_PKG_PATH}/lib
 )
 
-add_executable(execute_matmul_reduce_scatter_op
-    src/common.cpp
-    src/operator_desc.cpp
-    src/op_runner.cpp
-    src/main.cpp
+add_executable(execute_matmul_all_reduce_op
+    main.cpp
 )
 
-target_link_libraries(execute_matmul_reduce_scatter_op
+target_link_libraries(execute_matmul_all_reduce_op
     ascendalog
     ascendcl
     acl_op_compiler
@@ -65,6 +61,6 @@ target_link_libraries(execute_matmul_reduce_scatter_op
     pthread
 )
 
-install(TARGETS execute_matmul_reduce_scatter_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+install(TARGETS execute_matmul_all_reduce_op DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 
