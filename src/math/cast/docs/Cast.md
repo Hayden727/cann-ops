@@ -4,7 +4,7 @@
 
 ## 支持的产品型号
 
-Atlas A2训练系列产品/Atlas 800I A2推理产品
+Atlas A2训练系列产品 / Atlas 800I A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -12,8 +12,15 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 
 - 算子功能：将tensor从源数据类型转换为指定的目标数据类型。
 
-  **说明：**
-  无。
+## 实现原理
+
+调用`Ascend C`的`API`接口`Cast`进行实现。
+
+- 对于`Cast`API直接支持的数据类型，直接调用`Cast`API即可。
+- 对于部分无法直接使用`Cast`API直接转换的数据类型，如float16->bfloat16，需要利用中间数据进行转换，如float16先转换为float32，再将float32转换为bfloat16。
+- 对于部分数据转换后会出现数据上溢的情况，如float16->int8，需要对原始float16数据进行处理（float16->int8的计算流程为：float16先转换为int16，int16对256取模，将结果+128，再对256取模，再-128，最后将其转为int8），其他数据类型的处理方式类似。
+- 对于`int8`，`uint8`，`bool`，这三种数据之间的转换，直接利用TQueBind搬运即可，无需进行计算处理。
+- 对于其他数据类型转换为`bool`数据类型的转换，如float16->bool，需要先利用`Abs`API取绝对值，然后利用`Mins`与1比较，最后利用`Cast`向上取整为int8，其他数据类型的处理方式类似。
 
 ## 算子执行接口
 
@@ -46,12 +53,12 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
   - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、dstType、out的数据类型和数据格式不在支持的范围内。
   ```
 
-### aclnnBevPool
+### aclnnCast
 
 - **参数说明：**
   
   - workspace（void\*，入参）：在Device侧申请的workspace内存起址。
-  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnBevPoolGetWorkspaceSize获取。
+  - workspaceSize（uint64\_t，入参）：在Device侧申请的workspace大小，由第一段接口aclnnCastGetWorkspaceSize获取。
   - executor（aclOpExecutor\*，入参）：op执行器，包含了算子计算流程。
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**
@@ -104,11 +111,11 @@ Atlas A2训练系列产品/Atlas 800I A2推理产品
 ## 算子原型
 
 <table>
-<tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">Cast</td></tr>
-<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-<tr><td align="center">x</td><td align="center">-</td><td align="center">float16, float32, int32, int8, uint8, bool, int64, bfloat16, int16</td><td align="center">ND</td></tr>
-<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">-</td><td align="center">float16, float32, int32, int8, uint8, bool, int64, bfloat16, int16</td><td align="center">ND</td></tr>
-<tr><td rowspan="1" align="center">算子属性</td><td align="center">dstType</td><td align="center">-</td><td align="center">int64</td><td align="center">\</td></tr>
+<tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Cast</th></tr>
+<tr><td rowspan="2" align="center">算子输入</td><td align="center">name</td><td align="center">type</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float16, float32, int32, int8, uint8, bool, int64, bfloat16, int16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子输出</td><td align="center">out</td><td align="center">tensor</td><td align="center">float16, float32, int32, int8, uint8, bool, int64, bfloat16, int16</td><td align="center">ND</td></tr>
+<tr><td rowspan="1" align="center">算子属性</td><td align="center">dstType</td><td align="center">attr</td><td align="center">int64</td><td align="center">-</td></tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">cast</td></td></tr>
 </table>
 

@@ -1,0 +1,49 @@
+# torch.cast.yaml
+api: pytorch
+api_type: aclnn_cast
+version: v1.0
+aclnn_name: Cast
+dtype_numbers: 200
+extra_numbers: all
+generate: reduce
+standard:
+    acc: default
+    perf: not_key
+inputs:
+  - name: input
+    type: tensor
+    required: true
+    dtypes:
+      values: [ int64, fp32, int32, bf16, fp16, int16, int8, uint8, bool]
+    ranges:
+      valid:
+        values: [ [-5, 5] ]
+      invalid:
+        values: [ [-5, 5] ]
+    shapes:
+      dim_numbers:
+        values: [1,2,3,4,5,6,7,8]
+      max_length: 4294967295
+    boundary:
+      has_empty: true
+      has_infnan: true
+      has_scalar: true
+      has_upper_border: true
+      has_lower_border: true
+  - name: dst_type
+    type: attr
+    required: true
+    dtypes:
+      values: [ int ]
+    ranges:
+      valid:
+        values: [ 0, 1, 2, 3, 4, 6, 9, 12, 27 ]
+      invalid:
+        values: [ ]
+    shapes:
+      dim_numbers:
+        values: [1]
+        max_length: 1 
+      dim_values:
+        values: [1]
+        max_length: 1 

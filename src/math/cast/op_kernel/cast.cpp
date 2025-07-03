@@ -505,11 +505,6 @@ private:
             {
                 Cast(tmp1, xLocal, RoundMode::CAST_NONE, this->processDataNum);
             }
-            // else if constexpr (std::is_same_v<DTYPE_X, uint8_t>)
-            // {
-            //     Cast(tmp3, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            //     Cast(tmp1, tmp3, RoundMode::CAST_TRUNC, this->processDataNum);
-            // }
             Duplicate(tmp2, CONST_255, this->processDataNum);
             And(tmp1, tmp1, tmp2, this->processDataNum);
             if constexpr (std::is_same_v<DTYPE_Y, int8_t>)
