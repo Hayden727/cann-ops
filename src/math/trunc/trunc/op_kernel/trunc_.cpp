@@ -1,7 +1,14 @@
-/* 
+/**
  * Copyright (C) Henan KunLun Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the
+ * "License"). Please refer to the License for details. You may not use this
+ * file except in compliance with the License. THIS SOFTWARE IS PROVIDED ON AN
+ * "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS
+ * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
+ * for the full text of the License.
  */
-// IO LengthWeight 长度比重
 #undef INPUT_X_LW
 #define INPUT_X_LW 1
 #undef OUTPUT_Y_LW
@@ -69,14 +76,17 @@ private:
         {
             
             if constexpr(IS_TYPE(TYPE_INPUT_X, int8_t) ){
+                // auto x = input_x.template ReinterpretCast<int8_t>();
 
                 Sync(MTE2, MTE3)
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, uint8_t)){
+                // auto x = input_x.template ReinterpretCast<uint8_t>();
 
                 Sync(MTE2, MTE3)
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, int32_t)){
+                // auto x = input_x.template ReinterpretCast<int32_t>();
 
                 Sync(MTE2, MTE3)
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
@@ -128,6 +138,7 @@ private:
             }
         }
         
+         // Free&Post Tensor
         input_xQue.FreeTensor(input_x);
         output_yQue.FreeTensor(output_y);
     }
@@ -138,6 +149,7 @@ private:
     
     TQueBind<QuePosition::GM, QuePosition::VECIN, 2> input_xQue;
     TQueBind<QuePosition::VECOUT, QuePosition::GM, 2> output_yQue;
+    // TBuf<QuePosition::VECCALC> bf16Tmp;
 
     uint32_t formerLen, formerNum, tailLen;
 };

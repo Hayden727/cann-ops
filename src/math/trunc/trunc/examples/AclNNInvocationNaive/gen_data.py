@@ -14,7 +14,6 @@ import numpy as np
 import torch
 
 def gen_golden_data_simple():
-
     x1 = np.random.uniform(-100, 100, [512]).astype(np.float16)
     golden = torch.trunc(torch.from_numpy(x1))
 

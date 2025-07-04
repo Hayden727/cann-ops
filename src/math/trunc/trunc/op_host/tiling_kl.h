@@ -1,5 +1,13 @@
-/* 
+/**
  * Copyright (C) Henan KunLun Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the
+ * "License"). Please refer to the License for details. You may not use this
+ * file except in compliance with the License. THIS SOFTWARE IS PROVIDED ON AN
+ * "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS
+ * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
+ * for the full text of the License.
  */
 #ifndef TILING_KUNLUN_H
 #define TILING_KUNLUN_H
@@ -11,6 +19,7 @@
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
 
+#include "base_kl.h"
 #include "tiling_algorithm.h"
 
 
@@ -19,7 +28,7 @@ namespace tiling{
     using ExSpaceConsumer = std::function<Int(Int)>;
 
     // 所在位置
-    enum Position {
+    enum class Position : std::uint8_t {
         INPUT = 0,   // 输入位置
         OUTPUT = 1,  // 输出位置
         CALC = 2     // 计算位置
@@ -49,16 +58,15 @@ namespace tiling{
     class QueuePool {
     public:
         // 设置可用空间
-        void setTotalSize(Int totalSize) {
-            this->totalSize = totalSize;
+        void setTotalSize(Int newTotalSize) {
+            this->totalSize = newTotalSize;
         }
 
         // 添加队列
         void add(const Queue& que) {
             pool.emplace_back(que);
-            if (que.dtSize < alignSize){
+            if (que.dtSize < alignSize)
                 alignSize = que.dtSize;
-            }
         }
 
         // 清空队列池
@@ -72,8 +80,8 @@ namespace tiling{
         }
 
         // 开/关 DoubleBuffer
-        void setDoubleBufferEnable(const bool& doubleBufferEnabled) {
-            this->doubleBufferEnabled = doubleBufferEnabled;
+        void setDoubleBufferEnable(const bool& newDoubleBufferEnabled) {
+            this->doubleBufferEnabled = newDoubleBufferEnabled;
         }
 
         // 获取Queue总比重 (数据类型大小*长度比重*DoubleBuffer)
@@ -96,6 +104,9 @@ namespace tiling{
         Int partionLength_AF_N() const {
             const Int weight = this->totalWeight();
             const Int nLength = N / alignSize;
+            if(weight == 0 || nLength == 0){
+                return 0;
+            }
             Int partionLength_AF_N = totalSize / weight / nLength * nLength;
             Int remainSize;
 
@@ -126,7 +137,7 @@ namespace tiling{
     private:
         List<Queue> pool;                     // 队列池
         List<ExSpaceConsumer> exConsumerList; // 空间分配器列表
-        Int alignSize = (uint32_t)0xffffffff; // 分区时要对齐的字节数
+        Int alignSize = static_cast<uint32_t>0xffffffff; // 分区时要对齐的字节数
         Int totalSize;                        // 可用空间
         bool doubleBufferEnabled = false;     // 计算DoubleBuffer与否
     };
@@ -195,6 +206,7 @@ namespace tiling{
         }
 
         // 注册一个工作量估算函数；如果未指定，则使用默认估算方式（字节最长的IO，每32B数据为一单位工作量）
+        // workload: A Int(Int) function, pass an integer X as data-length, return workload of X.
         void registerWorkloadFunc(WorkloadFunc workload) { 
             this->workload = workload; 
         }
@@ -202,10 +214,16 @@ namespace tiling{
         // 重新切分 (默认32B对齐，可手动指定对齐值)
         template<bool DoubleBufferEnable, Int AlignWith = 32> 
         void reTiling() {
+            // 入口 检查
+            CHECK(checkIOQueueWeight(), "SimpleTilingStrategy::reTiling", "At least one of IO-Queues' lengthWeight is not set.");
+            CHECK(this->coreDetail.coreNum > 0, "SimpleTilingStrategy::reTiling", "Core num should be greater than 0.");
+
             this->QueueInfered  =false;
 
             // 查找 被切糕的指标 (这是存在风险的一步, 当不满足使用该 Tiling切分策略类 的约束时)
             auto stdLenDetail = getStdLength_max();
+            // auto stdLenDetail = getStdLength_first();
+            // std::cout << "stdLength: " << std::get<0>(stdLenDetail) << ", powad: " << std::get<1>(stdLenDetail) << ", dtSizeMin: " << std::get<2>(stdLenDetail) << std::endl;
             auto& stdLength = std::get<0>(stdLenDetail);
             auto& powad = std::get<1>(stdLenDetail);
             auto& dtSizeMin = std::get<2>(stdLenDetail);
@@ -293,6 +311,10 @@ namespace tiling{
         // 带指定Batch和BatchLength的重新切分 (Warning: 仅支持IO长度相等(lengthWeight相同)，且均满足Batch和BatchLength的约束)
         template<bool DoubleBufferEnable, Int AlignWith = 1> 
         void reTilingWithBatch(const Int& batchNum, const Int& batchLength) {
+            // 入口 检查
+            CHECK(checkIOQueueWeightWithBatch(), "SimpleTilingStrategy::reTilingWithBatch", "At least one of IO-Queues' lengthWeight is not same as others'.");
+            CHECK(this->coreDetail.coreNum > 0, "SimpleTilingStrategy::reTilingWithBatch", "Core num should be greater than 0.");
+
             this->QueueInfered  =false;
 
             // 寻找 dtsize的最值
@@ -434,6 +456,7 @@ namespace tiling{
                 inputs.emplace_back(que);
             }
             for(auto i = 0; i < outputsNum; ++i) {
+                // const auto& shape = context->GetOutputShape(i)->GetStorageShape();
                 Int dtSize;
                 ge::TypeUtils::GetDataTypeLength(context->GetOutputDesc(i)->GetDataType(), dtSize);
                 Queue que = { Position::OUTPUT, 1, dtSize, INT_MAX, 0, 0, 0, 0, 0, 0};
@@ -482,6 +505,8 @@ namespace tiling{
         }
 
         // 查找 被切糕的指标
+        // Exist [totalLength, dtSize] for x in [inque1,inque2...] meet max of 
+        // weight = max( x.lengthWeight , stdLen ) 
         std::tuple<Int, Int, Int> getStdLength_max() const {
             Int stdLenPerWeightMax = 0;
             Int powadMax = 0; // Max product of weight and dtSize.
@@ -494,6 +519,13 @@ namespace tiling{
             return std::make_tuple(stdLenPerWeightMax, powadMax, dtSizeMin);
         }
         
+        // // x0 = arr([inque1,que2...]).get(0)
+        // // stdLen = x.totalLength 
+        // std::tuple<Int, Int> getStdLength_first() const{
+        //     auto& x0 = this->inputs[0];
+        //     return std::make_tuple(x0.totalLength/x0.lengthWeight, x0.lengthWeight);
+        // }
+
         // 根据标准长度更新输出队列总长
         void updateOutputQueueWithStdLength(Int stdLength) {
             for (auto& output : outputs) {
