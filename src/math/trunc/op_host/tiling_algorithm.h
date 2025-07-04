@@ -28,9 +28,13 @@ namespace kunlun {
          * @param tailLen
          * @return
          */
-        static std::tuple<uint64_t, uint64_t, uint64_t>
+        std::tuple<uint64_t, uint64_t, uint64_t> //static std::tuple<uint64_t, uint64_t, uint64_t>
         sokmak(uint64_t totalLen, uint64_t coreNum, uint64_t factor, uint64_t align)
         {
+            if (coreNum == 0 || factor == 0 || align == 0){
+                return {0, 0, totalLen};
+            }
+
             uint64_t formerLen = 0;
             uint64_t formerNum = 0;
             uint64_t tailLen = totalLen;
@@ -109,7 +113,7 @@ namespace kunlun {
             [x, 39, x]   obj: max{x, x} = x     [x, 40, 0]   obj : max{x, 0} = x   [x, 39, x] -> [x, 40, 0]
             [0, 0, x]   obj: max{0, x} = x      [x, 1, 0]   obj: max{x, 0} = x    [0, 0, x] ->  [x, 1, 0]  if x 满足对齐要求
          */
-        static std::tuple<uint64_t, uint64_t, uint64_t, uint32_t, uint32_t>
+        std::tuple<uint64_t, uint64_t, uint64_t, uint32_t, uint32_t> //static std::tuple<uint64_t, uint64_t, uint64_t, uint32_t, uint32_t>
         sokmakWithWorkload(uint64_t totalLen, uint64_t coreNum, uint64_t factor, uint64_t align, WorkloadFunc workload){
             uint64_t formerLen = 0;
             uint64_t formerNum = 0;

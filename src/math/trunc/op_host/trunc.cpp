@@ -60,12 +60,12 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     const auto& coreDetail = tilingStrategy.formerCore;
     {
          // 获取&设置 切分信息
-        const auto& coreDetail = tilingStrategy.formerCore;
+        const auto& strategyCoreDetail = tilingStrategy.formerCore;//const auto& coreDetail = tilingStrategy.formerCore;
          // 核内切分数据
-        tiling.set_Len(coreDetail.batchPartitionLength); // length
-        tiling.set_fLen(coreDetail.formerTilePartitionLength); // former_tile-length <=> ub-partion-length
-        tiling.set_fNum(coreDetail.formerTileNum); // former_tile-num
-        tiling.set_tLen(coreDetail.tailTilePartitionLength); // tail_tile-length
+        tiling.set_Len(strategyCoreDetail.batchPartitionLength); // length
+        tiling.set_fLen(strategyCoreDetail.formerTilePartitionLength); // former_tile-length <=> ub-partion-length
+        tiling.set_fNum(strategyCoreDetail.formerTileNum); // former_tile-num
+        tiling.set_tLen(strategyCoreDetail.tailTilePartitionLength); // tail_tile-length
     }
      // 保存Tiling数据
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());

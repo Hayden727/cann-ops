@@ -74,5 +74,3 @@ private:
     TQueBind<QuePosition::GM, QuePosition::VECIN, 2> input_xQue;
     uint32_t formerLen, formerNum, tailLen;
 };
-
-

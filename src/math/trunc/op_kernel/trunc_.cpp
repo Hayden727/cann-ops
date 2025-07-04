@@ -65,13 +65,11 @@ private:
         LocalTensor<TYPE_INPUT_X> input_x = input_xQue.AllocTensor<TYPE_INPUT_X>();
         {
             DataCopySafe(input_x, input_xGM[_offset_*INPUT_X_LW], _len_*INPUT_X_LW);
-
         }
 
          // Compute
         LocalTensor<TYPE_OUTPUT_Y> output_y = output_yQue.AllocTensor<TYPE_OUTPUT_Y>();
-        {
-            
+        {  
             if constexpr(IS_TYPE(TYPE_INPUT_X, int8_t) ){
                 // auto x = input_x.template ReinterpretCast<int8_t>();
 
@@ -88,7 +86,6 @@ private:
                 Sync(MTE2, MTE3)
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, float)){
-
                 auto x = input_x.template ReinterpretCast<float>();
                 auto y = output_y.template ReinterpretCast<float>();
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
@@ -98,7 +95,6 @@ private:
 
                 AscendC::Cast(y, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (float)1, _len_);
-
                 Sync(V, MTE3)
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
                 
@@ -116,9 +112,7 @@ private:
 
                 Sync(V, MTE3)
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
-
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, bfloat16_t)){
-
                 auto x = input_x.template ReinterpretCast<bfloat16_t>();
                 auto y = output_y.template ReinterpretCast<bfloat16_t>();
                 Sync(MTE2, S)
@@ -150,5 +144,3 @@ private:
 
     uint32_t formerLen, formerNum, tailLen;
 };
-
-

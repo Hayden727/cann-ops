@@ -257,6 +257,9 @@ namespace tiling{
             // 大核
             {
                 // 更新相关数据
+                if (f1 == 0){
+                    throw std::runtime_error("f1 cannot bo zero");
+                }
                 auto& core = this->formerCore;
                 core.num = fn;
                 core.batchNum = 1;
@@ -303,7 +306,6 @@ namespace tiling{
                 core.tailTilePartitionLength = 0;
                 core.workload = 0;
             }
-
         }
 
         // 带指定Batch和BatchLength的重新切分 (Warning: 仅支持IO长度相等(lengthWeight相同)，且均满足Batch和BatchLength的约束)

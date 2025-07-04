@@ -15,9 +15,9 @@
 
 
 #ifdef TRACE_DCS_ENABLE
-#define DataCopySafe(dstTensor, srcTensor, calCount) kunlun::DataCopySafeImpl(dstTensor, srcTensor, calCount, __LINE__);
+#define DataCopySafe(dstTensor, srcTensor, calCount) kunlun::DataCopySafeImpl(dstTensor, srcTensor, calCount, __LINE__)
 #else 
-#define DataCopySafe(dstTensor, srcTensor, calCount) kunlun::DataCopySafeImpl(dstTensor, srcTensor, calCount);
+#define DataCopySafe(dstTensor, srcTensor, calCount) kunlun::DataCopySafeImpl(dstTensor, srcTensor, calCount)
 #endif
 
 namespace kunlun{
