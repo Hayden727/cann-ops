@@ -47,6 +47,12 @@ MatmulReduceScatter由Matmul和ReduceScatter操作组成，计算过程分为2�
   
   - x1（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x1，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - x2（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x2，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - biasOptional （aclTensor*，偏置） 可选参数，偏置项。
+  - group （char*，通信组） 必选参数，指定ReduceScatter操作的通信组名称。
+  - reduceOpOptional （char*，规约操作） 可选参数，指定ReduceScatter的规约操作类型，默认为"sum"。
+  - isTransA （bool，转置标志） 可选参数，指定x1是否需要转置，true表示需要转置，false表示不转置。默认为false。
+  - isTransB （bool，转置标志） 可选参数，指定x2是否需要转置，true表示需要转置，false表示不转置。默认为false。
+  - commTurn （int64_t，通信轮次） 可选参数，指定通信的优先级。默认为0。
   - y（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出z，数据类型支持FLOAT16，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
@@ -81,10 +87,15 @@ MatmulReduceScatter由Matmul和ReduceScatter操作组成，计算过程分为2�
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatmulReduceScatter</td></tr>
 </tr>
-<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x1</td><td align="center">16384 * 640</td><td align="center">float16</td><td align="center">ND</td></tr>
 <tr><td align="center">x2</td><td align="center">640 * 5120</td><td align="center">float16</td><td align="center">ND</td></tr>
 <tr><td align="center">bias</td><td align="center">/</td><td align="center">/</td><td align="center">/</td></tr>
+<tr><td align="center">group</td><td align="center">/</td><td align="center">char *</td><td align="center">/</td></tr>
+<tr><td align="center">reduceOpOptional</td><td align="center">/</td><td align="center">char *  </td><td align="center">/</td></tr>
+<tr><td align="center">isTransA</td><td align="center">/</td><td align="center">bool </td><td align="center">/</td></tr>
+<tr><td align="center">isTransB</td><td align="center">/</td><td align="center">bool </td><td align="center">/</td></tr>
+<tr><td align="center">commTurn</td><td align="center">/</td><td align="center">int64_t </td><td align="center">/</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">16384 * 5120</td><td align="center">float16</td><td align="center">ND</td></tr>

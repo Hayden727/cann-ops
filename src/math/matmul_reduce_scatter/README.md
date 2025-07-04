@@ -9,10 +9,15 @@
 <table>
 <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">MatmulReduceScatter</td></tr>
 </tr>
-<tr><td rowspan="4" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
+<tr><td rowspan="9" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">x1</td><td align="center">16384 * 640</td><td align="center">float16</td><td align="center">ND</td></tr>
 <tr><td align="center">x2</td><td align="center">640 * 5120</td><td align="center">float16</td><td align="center">ND</td></tr>
 <tr><td align="center">bias</td><td align="center">/</td><td align="center">/</td><td align="center">/</td></tr>
+<tr><td align="center">group</td><td align="center">/</td><td align="center">char *</td><td align="center">/</td></tr>
+<tr><td align="center">reduceOpOptional</td><td align="center">/</td><td align="center">char *  </td><td align="center">/</td></tr>
+<tr><td align="center">isTransA</td><td align="center">/</td><td align="center">bool </td><td align="center">/</td></tr>
+<tr><td align="center">isTransB</td><td align="center">/</td><td align="center">bool </td><td align="center">/</td></tr>
+<tr><td align="center">commTurn</td><td align="center">/</td><td align="center">int64_t </td><td align="center">/</td></tr>
 </tr>
 </tr>
 <tr><td rowspan="1" align="center">算子输出</td><td align="center">y</td><td align="center">16384 * 5120</td><td align="center">float16</td><td align="center">ND</td></tr>
