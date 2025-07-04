@@ -31,10 +31,10 @@
 
 - **参数说明：**
   
-  - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、FLOAT32、INT32、INT64、BFLOAT16，数据格式支持ND。
-  - clipValueMin（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入clipValueMin，数据类型支持FLOAT16、FLOAT32、INT32、INT64、BFLOAT16，数据格式支持ND。
-  - clipValueMax（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入clipValueMax，数据类型支持FLOAT16、FLOAT32、INT32、INT64、BFLOAT16，数据格式支持ND。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16，FLOAT，INT32、INT64、BFLOAT16，数据格式支持ND。
+  - x（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入x，数据类型支持FLOAT16、FLOAT32、INT32、BFLOAT16，数据格式支持ND。
+  - clipValueMin（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入clipValueMin，数据类型支持FLOAT16、FLOAT32、INT32、BFLOAT16，数据格式支持ND。
+  - clipValueMax（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入clipValueMax，数据类型支持FLOAT16、FLOAT32、INT32、BFLOAT16，数据格式支持ND。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16，FLOAT，INT32、BFLOAT16，数据格式支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -61,7 +61,7 @@
 
 ## 约束与限制
 
-- x，clipValueMin，clipValueMax，out的数据类型支持FLOAT16、FLOAT、INT32、INT64、BFLOAT16，数据格式只支持ND
+- x，clipValueMin，clipValueMax，out的数据类型支持FLOAT16、FLOAT、INT32、BFLOAT16，数据格式只支持ND
 
 ## 算子原型
 
@@ -69,11 +69,11 @@
 <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">ClipByValueV2</th></tr> 
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td rowspan="4" align="center">算子输入</td>
-<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32,float16,int32,int64,bfloat16</td><td align="center">ND</td></tr>  
-<tr><td align="center">clipValueMin</td><td align="center">tensor</td><td align="center">float32,float16,int32,int64,bfloat16</td><td align="center">ND</td></tr> 
-<tr><td align="center">clipValueMax</td><td align="center">tensor</td><td align="center">float32,float16,int32,int64,bfloat16</td><td align="center">ND</td></tr>
+<tr><td align="center">x</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>  
+<tr><td align="center">clipValueMin</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr> 
+<tr><td align="center">clipValueMax</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>
 <tr><td rowspan="1" align="center">算子输出</td>
-<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int32,int64,bfloat16</td><td align="center">ND</td></tr>  
+<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>  
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">clipbyvaluev2</td></tr>  
 </table>
 

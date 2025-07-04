@@ -90,29 +90,12 @@ private:
     __aicore__ inline void Compute(uint64_t progress) {
         AscendC::LocalTensor<TYPE_X> x = Q_x.DeQue<TYPE_X>();
         AscendC::LocalTensor<TYPE_Y> y = Q_y.AllocTensor<TYPE_Y>();
-        // 对int64的实现进行Get、Set
-        if constexpr (std::is_same_v<DTYPE_Y, int64_t>) 
-        {
-            for (uint64_t i = 0; i < this->processDataNum; i++) {
-                int64_t element_x = x.GetValue(i);
-                if(element_x < this->clip_value_min) {
-                    element_x = this->clip_value_min;
-                }
-                if(element_x > this->clip_value_max){
-                    element_x = this->clip_value_max;
-                }
-                y.SetValue(i, element_x); 
-            }
-        }
-        else
-        {
-            AscendC::LocalTensor<TYPE_CLIP_VALUE_MIN> min = Q_min.Get<TYPE_CLIP_VALUE_MIN>();
-            AscendC::LocalTensor<TYPE_CLIP_VALUE_MAX> max = Q_max.Get<TYPE_CLIP_VALUE_MAX>();
-            AscendC::Duplicate(min, this->clip_value_min, this->processDataNum);
-            AscendC::Duplicate(max, this->clip_value_max, this->processDataNum);
-            AscendC::Max(y, x, min, this->processDataNum);
-            AscendC::Min(y, y, max, this->processDataNum);
-        }
+        AscendC::LocalTensor<TYPE_CLIP_VALUE_MIN> min = Q_min.Get<TYPE_CLIP_VALUE_MIN>();
+        AscendC::LocalTensor<TYPE_CLIP_VALUE_MAX> max = Q_max.Get<TYPE_CLIP_VALUE_MAX>();
+        AscendC::Duplicate(min, this->clip_value_min, this->processDataNum);
+        AscendC::Duplicate(max, this->clip_value_max, this->processDataNum);
+        AscendC::Max(y, x, min, this->processDataNum);
+        AscendC::Min(y, y, max, this->processDataNum);
         Q_x.FreeTensor(x);
         Q_y.EnQue<TYPE_Y>(y);
     }

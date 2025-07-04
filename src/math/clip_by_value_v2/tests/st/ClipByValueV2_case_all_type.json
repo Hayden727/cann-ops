@@ -12,7 +12,6 @@
                     "float16",
                     "float",
                     "int32",
-                    "int64",
                     "bfloat16"
                 ],
                 "shape":[7, 2045],
@@ -35,7 +34,6 @@
                     "float16",
                     "float",
                     "int32",
-                    "int64",
                     "bfloat16"
                 ],
                 "shape": [1],
@@ -58,7 +56,6 @@
                     "float16",
                     "float",
                     "int32",
-                    "int64",
                     "bfloat16"
                 ],
                 "shape": [1],
@@ -83,7 +80,6 @@
                     "float16",
                     "float",
                     "int32",
-                    "int64",
                     "bfloat16"
                 ],
                 "shape": [7, 2045],
