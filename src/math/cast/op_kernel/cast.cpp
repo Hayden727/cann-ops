@@ -57,27 +57,27 @@ class KernelCast0TBuf : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     无临时变量
-    910b:   half -> float
-            half -> int32       (TRUNC)
-            half -> bool        (Abs)
-            half -> int16       (TRUNC)
-            float -> half
-            float -> bfloat16   (RINT)
-            float -> int32      (TRUNC)
-            float -> int64      (TRUNC)
-            float -> int16      (TRUNC)
-            int32 -> float
-            int32 -> int64
-            int32 -> int16
-            int8 -> half
-            uint8 -> half
-            bool -> half
-            int64 -> float      (ROUND)
-            int64 -> int32
-            bfloat16 -> float
-            bfloat16 -> int32   (TRUNC)
-            int16 -> float
-            int16 -> half
+    half -> float
+    half -> int32       (TRUNC)
+    half -> bool        (Abs)
+    half -> int16       (TRUNC)
+    float -> half
+    float -> bfloat16   (RINT)
+    float -> int32      (TRUNC)
+    float -> int64      (TRUNC)
+    float -> int16      (TRUNC)
+    int32 -> float
+    int32 -> int64
+    int32 -> int16
+    int8 -> half
+    uint8 -> half
+    bool -> half
+    int64 -> float      (ROUND)
+    int64 -> int32
+    bfloat16 -> float
+    bfloat16 -> int32   (TRUNC)
+    int16 -> float
+    int16 -> half
     */
 public:
     __aicore__ inline KernelCast0TBuf() {}
@@ -183,15 +183,15 @@ class KernelCast1TBuf4B : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     1个4Bytes的临时变量
-    910b:   half -> float ->(RINT) bfloat16
-            int32 -> float ->(RINT) bfloat16
-            int32 -> float -> half
-            int64 ->(ROUND) float -> half
-            int64 ->(ROUND) float ->(RINT) bfloat16
-            int64 -> int32 -> int16
-            bfloat16 -> float -> half
-            int16 -> float ->(ROUND) int32
-            int16 -> float ->(ROUND) int64
+    half -> float ->(RINT) bfloat16
+    int32 -> float ->(RINT) bfloat16
+    int32 -> float -> half
+    int64 ->(ROUND) float -> half
+    int64 ->(ROUND) float ->(RINT) bfloat16
+    int64 -> int32 -> int16
+    bfloat16 -> float -> half
+    int16 -> float ->(ROUND) int32
+    int16 -> float ->(ROUND) int64
     */
 public:
     __aicore__ inline KernelCast1TBuf4B() {}
@@ -306,12 +306,12 @@ class KernelCast2TBuf2B : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     2个2Bytes的临时变量
-    910b:   half -> int8
-            half -> uint8
-            float -> bool
-            int32 -> bool
-            int16 -> int8
-            int16 -> uint8
+    half -> int8
+    half -> uint8
+    float -> bool
+    int32 -> bool
+    int16 -> int8
+    int16 -> uint8
     */
 public:
     __aicore__ inline KernelCast2TBuf2B() {}
@@ -438,10 +438,10 @@ class KernelCast3TBuf2B : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     3个2Bytes的临时变量
-    910b:   float -> int8
-            float -> uint8
-            int32 -> int8
-            int32 -> uint8
+    float -> int8
+    float -> uint8
+    int32 -> int8
+    int32 -> uint8
     */
 public:
     __aicore__ inline KernelCast3TBuf2B() {}
@@ -544,10 +544,10 @@ class KernelCast1TBuf2B : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     1个2Bytes的临时变量
-    910b:   int8/uint8/bool -> float
-            int8/uint8/bool -> int32
-            int8/uint8 -> int16
-            int8 -> bool
+    int8/uint8/bool -> float
+    int8/uint8/bool -> int32
+    int8/uint8 -> int16
+    int8 -> bool
     */
 public:
     __aicore__ inline KernelCast1TBuf2B() {}
@@ -648,10 +648,10 @@ class KernelCast1TBuf2B1TBuf4B : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     1个2Bytes,1个4Bytes的临时变量
-    910b:   int8/uint8/bool -> half ->(TRUNC) int32 -> int64
-            int8/uint8/bool -> half -> float -> bfloat16
-            int64 -> bool
-            bfloat16 -> bool
+    int8/uint8/bool -> half ->(TRUNC) int32 -> int64
+    int8/uint8/bool -> half -> float -> bfloat16
+    int64 -> bool
+    bfloat16 -> bool
     */
 public:
     __aicore__ inline KernelCast1TBuf2B1TBuf4B() {}
@@ -763,10 +763,10 @@ class KernelCast3TBuf2B1TBuf4B : public BaseKernelCast<TYPE_X, TYPE_Y>
 {
     /*
     3个2Bytes,1个4Bytes的临时变量
-    910b:   int64 -> int8
-            int64 -> uint8
-            bfloat16 -> int8
-            bfloat16 -> uint8
+    int64 -> int8
+    int64 -> uint8
+    bfloat16 -> int8
+    bfloat16 -> uint8
     */
 public:
     __aicore__ inline KernelCast3TBuf2B1TBuf4B() {}
