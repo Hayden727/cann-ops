@@ -17,23 +17,28 @@
 
 算子功能：如果input是向量（一维向量），则返回二维矩阵张量，其中input元素为对角线；如果input是二维及以上的张量，则先进行扁平化，化简为一维向量，在转化为第一种场景进行出处理。
 
+其中输出shape计算公式如下:
+$$
+outShape =\{N+|K|,N+|K|\}\\
+N=self.numel(),\ K=diagonal
+$$
+
 ## aclnnDiagFlatGetWorkspaceSize
 
 - **参数说明：**
-
-  - self（aclTensor*, 计算输入）：表示填充到对角线的向量，Device侧的aclTensor，self的最大维度支持8维，支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式]（common/数据格式.md）支持ND。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64、BFLOAT16。
-
-  - diagonal（int64, 计算输入）：数据类型支持INT64，用来指定对角线，diagonal = 0表示主对角线，diagonal > 0表示主对角线上方的对角线，diagonal < 0表示主对角线下方的对角线。
-
-  - out（aclTensor*, 计算输出）：支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
-    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64。
-    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、BOOL、COMPLEX64、BFLOAT16  
-
-  - workspaceSize（uint64_t*, 出参）：返回需要在Device侧申请的workspace大小。
-
-  - executor（aclOpExecutor**, 出参）：返回op执行器，包含了算子计算流程。
+- self（aclTensor*, 计算输入）：表示填充到对角线的向量，Device侧的aclTensor，self的最大维度支持8维，支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式]（common/数据格式.md）支持ND。
+    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、COMPLEX64。
+    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、COMPLEX64、BFLOAT16。
+  
+- diagonal（int64, 计算输入）：数据类型支持INT64，用来指定对角线，diagonal = 0表示主对角线，diagonal > 0表示主对角线上方的对角线，diagonal < 0表示主对角线下方的对角线。
+  
+- out（aclTensor*, 计算输出）：支持[非连续的Tensor](common/非连续的Tensor.md)，[数据格式](common/数据格式.md)支持ND。
+    - 昇腾910 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、COMPLEX64。
+    - 昇腾910B AI处理器、昇腾910_93 AI处理器：数据类型支持FLOAT、FLOAT16、DOUBLE、INT32、INT64、INT16、INT8、UINT8、COMPLEX64、BFLOAT16  
+  
+- workspaceSize（uint64_t*, 出参）：返回需要在Device侧申请的workspace大小。
+  
+- executor（aclOpExecutor**, 出参）：返回op执行器，包含了算子计算流程。
 
 
 - **返回值：**
