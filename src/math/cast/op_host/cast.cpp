@@ -273,7 +273,10 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     {
         coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
     }
-    
+    if (coreNum == 0 || BLOCK_SIZE == 0) 
+    {
+        return ge::GRAPH_FAILED;
+    } 
     uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
     uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
     

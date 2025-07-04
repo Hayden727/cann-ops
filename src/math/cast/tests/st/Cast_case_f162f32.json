@@ -37,11 +37,11 @@
             }
         ],
         "attr":[
-	    {
-		    "name":"dstType",
-		    "type":"int",
-		    "value":"0"
-	    }
+            {
+                "name": "dstType",
+                "type": "int",
+                "value": 0
+            }
 	    ]
     }
 ]
