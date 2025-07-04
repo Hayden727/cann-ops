@@ -222,8 +222,6 @@ namespace tiling{
 
             // 查找 被切糕的指标 (这是存在风险的一步, 当不满足使用该 Tiling切分策略类 的约束时)
             auto stdLenDetail = getStdLength_max();
-            // auto stdLenDetail = getStdLength_first();
-            // std::cout << "stdLength: " << std::get<0>(stdLenDetail) << ", powad: " << std::get<1>(stdLenDetail) << ", dtSizeMin: " << std::get<2>(stdLenDetail) << std::endl;
             auto& stdLength = std::get<0>(stdLenDetail);
             auto& powad = std::get<1>(stdLenDetail);
             auto& dtSizeMin = std::get<2>(stdLenDetail);
@@ -437,7 +435,6 @@ namespace tiling{
             this->QueueInfered  =true;
         }
 
-        friend std::ostream& operator<<(std::ostream& out, const SimpleTilingStrategy& o);
     protected:
         const gert::TilingContext* context; // Tiling上下文
         QueuePool queuePool;                // 队列池
@@ -456,7 +453,6 @@ namespace tiling{
                 inputs.emplace_back(que);
             }
             for(auto i = 0; i < outputsNum; ++i) {
-                // const auto& shape = context->GetOutputShape(i)->GetStorageShape();
                 Int dtSize;
                 ge::TypeUtils::GetDataTypeLength(context->GetOutputDesc(i)->GetDataType(), dtSize);
                 Queue que = { Position::OUTPUT, 1, dtSize, INT_MAX, 0, 0, 0, 0, 0, 0};
@@ -505,8 +501,6 @@ namespace tiling{
         }
 
         // 查找 被切糕的指标
-        // Exist [totalLength, dtSize] for x in [inque1,inque2...] meet max of 
-        // weight = max( x.lengthWeight , stdLen ) 
         std::tuple<Int, Int, Int> getStdLength_max() const {
             Int stdLenPerWeightMax = 0;
             Int powadMax = 0; // Max product of weight and dtSize.
@@ -518,14 +512,6 @@ namespace tiling{
             }
             return std::make_tuple(stdLenPerWeightMax, powadMax, dtSizeMin);
         }
-        
-        // // x0 = arr([inque1,que2...]).get(0)
-        // // stdLen = x.totalLength 
-        // std::tuple<Int, Int> getStdLength_first() const{
-        //     auto& x0 = this->inputs[0];
-        //     return std::make_tuple(x0.totalLength/x0.lengthWeight, x0.lengthWeight);
-        // }
-
         // 根据标准长度更新输出队列总长
         void updateOutputQueueWithStdLength(Int stdLength) {
             for (auto& output : outputs) {
@@ -544,85 +530,6 @@ namespace tiling{
             for (auto& O : this->outputs) pool.add(O);
         }
     };
-
-    // 允许标准化输出到std
-    std::ostream& operator<<(std::ostream& out, const SimpleTilingStrategy& o){
-        out << "SimpleTilingStrategy: {\n";
-            out << "\tCore Detail: {\n\t\tcoreNum: " << o.coreDetail.coreNum << ",\n\t\tmemSize: " << o.coreDetail.memSize << "\n\t}\n";
-            out << "\tFormer Core: {\n\t\tnum: " << o.formerCore.num 
-                << ",\n\t\tbatchNum: " << o.formerCore.batchNum 
-                << ",\n\t\tbatchPartitionLength: " << o.formerCore.batchPartitionLength 
-                << ",\n\t\tformerTileNum: " << o.formerCore.formerTileNum 
-                << ",\n\t\tformerTilePartitionLength: " << o.formerCore.formerTilePartitionLength 
-                << ",\n\t\ttailTilePartitionLength: " << o.formerCore.tailTilePartitionLength 
-                << ",\n\t\tworkload: " << o.formerCore.workload 
-                << "\n\t}\n";
-            out << "\tTail Core: {\n\t\tnum: " << o.tailCore.num 
-                << ",\n\t\tbatchNum: " << o.tailCore.batchNum 
-                << ",\n\t\tbatchPartitionLength: " << o.tailCore.batchPartitionLength 
-                << ",\n\t\tformerTileNum: " << o.tailCore.formerTileNum 
-                << ",\n\t\tformerTilePartitionLength: " << o.tailCore.formerTilePartitionLength 
-                << ",\n\t\ttailTilePartitionLength: " << o.tailCore.tailTilePartitionLength 
-                << ",\n\t\tworkload: " << o.tailCore.workload 
-                << "\n\t}\n";
-            out << "\tInputs: [\n";
-            for (auto i = 0 ; i < o.inputs.size(); ++i) {
-                const auto& input = o.inputs[i];
-                out << "\t\tId-"<<i
-                    <<":{\n\t\t\tlengthWeight: " << input.lengthWeight 
-                    << ",\n\t\t\tdtSize: " << input.dtSize 
-                    << ",\n\t\t\ttotalLength: " << input.totalLength ;
-                if(o.QueueInfered){
-                    out << "\n\t\t\tformerCore:{" 
-                    << "\n\t\t\t\tprocessLength: " << input.formercoreLen
-                    << "\n\t\t\t\tformerLength: " << input.fc_formerTileLen
-                    << "\n\t\t\t\ttailLength: " << input.fc_tailTileLen
-                    << "\n\t\t\t}"
-                    << "\n\t\t\ttailCore:{" 
-                    << "\n\t\t\t\tprocessLength: " << input.tailcoreLen
-                    << "\n\t\t\t\tformerLength: " << input.tc_formerTileLen
-                    << "\n\t\t\t\ttailLength: " << input.tc_tailTileLen
-                    << "\n\t\t\t}\n\t\t";
-                }
-                out << " },\n";
-            }
-            out << "\t]\n";
-            out << "\tOutputs: [\n";
-            for (auto i = 0 ; i < o.outputs.size(); ++i) {
-                const auto& output = o.outputs[i];
-                out << "\t\tId-"<<i
-                    <<":{\n\t\t\tlengthWeight: " << output.lengthWeight 
-                    << ",\n\t\t\tdtSize: " << output.dtSize 
-                    << ",\n\t\t\ttotalLength: " << output.totalLength ;
-                if(o.QueueInfered){
-                    out << "\n\t\t\tformerCore:{" 
-                    << "\n\t\t\t\tprocessLength: " << output.formercoreLen
-                    << "\n\t\t\t\tformerLength: " << output.fc_formerTileLen
-                    << "\n\t\t\t\ttailLength: " << output.fc_tailTileLen
-                    << "\n\t\t\t}"
-                    << "\n\t\t\ttailCore:{" 
-                    << "\n\t\t\t\tprocessLength: " << output.tailcoreLen
-                    << "\n\t\t\t\tformerLength: " << output.tc_formerTileLen
-                    << "\n\t\t\t\ttailLength: " << output.tc_tailTileLen
-                    << "\n\t\t\t}\n\t\t";
-                }
-                out << " },\n";
-            }
-            out << "\t]\n";
-            out << "\tCalcs: [\n";
-            for (auto i = 0 ; i < o.calcs.size(); ++i) {
-                const auto& calc = o.calcs[i];
-                out << "\t\tId-"<<i
-                    <<":{\n\t\t\tlengthWeight: " << calc.lengthWeight 
-                    << ",\n\t\t\tdtSize: " << calc.dtSize 
-                    << ",\n\t\t\tformerCoreLength: " << calc.formercoreLen 
-                    << ",\n\t\t\ttailCoreLength: " << calc.tailcoreLen ;
-                out << " },\n";
-            }
-            out << "\t]\n";
-        out << "}\n";
-        return out;
-    }
 } // namespace tiling
 } // namespace kunlun
 

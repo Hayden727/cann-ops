@@ -66,9 +66,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         tiling.set_fLen(coreDetail.formerTilePartitionLength); // former_tile-length <=> ub-partion-length
         tiling.set_fNum(coreDetail.formerTileNum); // former_tile-num
         tiling.set_tLen(coreDetail.tailTilePartitionLength); // tail_tile-length
-        
     }
-
      // 保存Tiling数据
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());

@@ -31,7 +31,8 @@ def verify_result(real_result, golden):
     result_atol = np.less_equal(result, loss)  # 计算绝对误差
     result_rtol = np.less_equal(result / np.add(deno, minimum), loss)  # 计算相对误差
     if not result_rtol.all() and not result_atol.all():
-        if np.sum(result_rtol == False) > real_result.element_size() * loss and np.sum(result_atol == False) > real_result.element_size() * loss:  # 误差超出预期时返回打印错误，返回对比失败
+        if np.sum(result_rtol == False) > real_result.element_size() * \
+              loss and np.sum(result_atol == False) > real_result.element_size() * loss:  # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
             return False
     print("test pass")

@@ -24,7 +24,7 @@
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
 
-#define CHECK(BOOL_CONDITION, TAG, MSG){                                                        \
+inline void CHECK(bool BOOL_CONDITION, const char* TAG, const char* MSG){                                                        \
     if(!(BOOL_CONDITION)){                                                                        \
         exit(-1);                                                                               \
     }                                                                                           \
@@ -42,7 +42,7 @@ namespace kunlun{
 
     using gert::TilingContext;
     
-    static constexpr Int INT_MAX = Int(0) - 1;
+    inline constexpr Int INT_MAX = Int(0) - 1;
 
 } // namespace kunlun
 

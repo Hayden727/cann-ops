@@ -59,28 +59,19 @@ private:
         {
             DataCopySafe(input_x, input_xGM[_offset_], _len_);
         }
-
-
-                auto x = input_x.template ReinterpretCast<float>();
-                auto x_i32 = input_x.template ReinterpretCast<int32_t>();
-                Sync(MTE2, S)
-
-                AscendC::Cast(x_i32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
-
-                AscendC::Cast(x, x_i32, AscendC::RoundMode::CAST_NONE, _len_);
-                Sync(V, MTE3)
-                DataCopySafe(output_yGM[_offset_], x, _len_);
-
+        auto x = input_x.template ReinterpretCast<float>();
+        auto x_i32 = input_x.template ReinterpretCast<int32_t>();
+        Sync(MTE2, S)
+        AscendC::Cast(x_i32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
+        AscendC::Cast(x, x_i32, AscendC::RoundMode::CAST_NONE, _len_);
+        Sync(V, MTE3)
+        DataCopySafe(output_yGM[_offset_], x, _len_);
         input_xQue.FreeTensor(input_x);
     }
-
 private:
     GlobalTensor<float> input_xGM;
     GlobalTensor<float> output_yGM;
-    
     TQueBind<QuePosition::GM, QuePosition::VECIN, 2> input_xQue;
-    // TBuf<QuePosition::VECCALC> bf16Tmp;
-
     uint32_t formerLen, formerNum, tailLen;
 };
 

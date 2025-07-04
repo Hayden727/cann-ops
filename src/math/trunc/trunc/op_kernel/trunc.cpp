@@ -13,11 +13,9 @@
 #include "copy_kl.h"
 #include "type_kl.h"
 #include "sync_kl.h"
-using namespace AscendC;
-
 #include "trunc_.cpp"
 #include "trunc_f32.cpp"
-
+using namespace AscendC;
 extern "C" __global__ __aicore__ void trunc(GM_ADDR input_x, GM_ADDR output_y, GM_ADDR workspace, GM_ADDR tiling) {
     TPipe pipe; // Pipeline
     GET_TILING_DATA(tiling_data, tiling); // Tiling data

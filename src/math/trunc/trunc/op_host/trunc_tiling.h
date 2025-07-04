@@ -9,6 +9,7 @@
  * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
  * for the full text of the License.
  */
+#ifndef TRUNC_TILING_H
 #include "register/tilingdata_base.h"
 
 #define MAX_INPUT_DIM 8
@@ -27,3 +28,4 @@ END_TILING_DATA_DEF;
 REGISTER_TILING_DATA_CLASS(Trunc, TruncTilingData)
 
 }
+#endif

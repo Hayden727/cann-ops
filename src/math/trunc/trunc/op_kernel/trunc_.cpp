@@ -9,11 +9,8 @@
  * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
  * for the full text of the License.
  */
-#undef INPUT_X_LW
-#define INPUT_X_LW 1
-#undef OUTPUT_Y_LW
-#define OUTPUT_Y_LW 1
-
+constexpr uint32_t INPUT_X_LW = 1;
+constexpr uint32_t OUTPUT_Y_LW = 1;
 template<typename TYPE_INPUT_X, typename TYPE_OUTPUT_Y> class KernelTrunc {
 public:
     __aicore__ inline KernelTrunc() {}

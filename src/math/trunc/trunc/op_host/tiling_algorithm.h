@@ -19,6 +19,7 @@
 
 namespace kunlun {
     namespace tiling {
+        /*
          * @tparam T
          * @param totalLen
          * @param coreNum
@@ -30,12 +31,6 @@ namespace kunlun {
         static std::tuple<uint64_t, uint64_t, uint64_t>
         sokmak(uint64_t totalLen, uint64_t coreNum, uint64_t factor, uint64_t align)
         {
-            // TODO: uint64_t overflow should be considered
-            assert(totalLen > 0 && "require totalLen > 0");
-            assert(coreNum > 0 && "require coreNum > 0");
-            assert(factor > 0 && "require factor > 0");
-            assert(align > 0 && "require align > 0");
-
             uint64_t formerLen = 0;
             uint64_t formerNum = 0;
             uint64_t tailLen = totalLen;
@@ -116,11 +111,6 @@ namespace kunlun {
          */
         static std::tuple<uint64_t, uint64_t, uint64_t, uint32_t, uint32_t>
         sokmakWithWorkload(uint64_t totalLen, uint64_t coreNum, uint64_t factor, uint64_t align, WorkloadFunc workload){
-            assert(totalLen > 0 && "require totalLen > 0");
-            assert(coreNum > 0 && "require coreNum > 0");
-            assert(factor > 0 && "require factor > 0");
-            assert(align > 0 && "require align > 0");
-
             uint64_t formerLen = 0;
             uint64_t formerNum = 0;
             uint64_t tailLen = totalLen;
