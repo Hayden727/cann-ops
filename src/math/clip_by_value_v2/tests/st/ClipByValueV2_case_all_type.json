@@ -22,7 +22,7 @@
                 "value_range": [
                     [
                         0.1,
-                        1.0
+                        10.0
                     ]
                 ],
                 "name": "x"
@@ -45,7 +45,7 @@
                 "value_range": [
                     [
                         0.1,
-                        1.0
+                        5.0
                     ]
                 ],
                 "name": "clip_value_min"
@@ -67,8 +67,8 @@
                 ],
                 "value_range": [
                     [
-                        0.1,
-                        1.0
+                        5.1,
+                        10.0
                     ]
                 ],
                 "name": "clip_value_max"

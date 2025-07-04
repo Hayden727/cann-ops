@@ -1,3 +1,14 @@
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the
+ * "License"). Please refer to the License for details. You may not use this
+ * file except in compliance with the License. THIS SOFTWARE IS PROVIDED ON AN
+ * "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS
+ * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
+ * for the full text of the License.
+ */
 #include "clip_by_value_v2_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
@@ -41,7 +52,10 @@ namespace optiling {
         // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
         uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
         uint64_t inputLength = inputDataNum * dataTypeLength;
-        
+        if (coreNum == 0 || BLOCK_SIZE == 0) 
+        {
+            return ge::GRAPH_FAILED;
+        } 
         uint64_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
         // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
         uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
@@ -147,7 +161,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 
