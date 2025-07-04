@@ -13,6 +13,7 @@
 import tensorflow as tf
 import numpy as np
 
+
 def cast_test(x):
     tensor = tf.convert_to_tensor(x)
     cast_tensor = tf.cast(tensor, dtype=tf.float32)
@@ -20,7 +21,7 @@ def cast_test(x):
     return re
 
 
-def calc_expect_func(x, y, dstType):
+def calc_expect_func(x, y, dsttype):
     """
     calc_expect_func
     """

@@ -172,7 +172,7 @@ int main() {
   std::vector<outDtype> outHostData(100, 0);
   void ** inputX = (void **)(&xHostData);
   
-  int64_t dstType = 3;
+  const aclDataType dstType = aclDataType::ACL_INT32;
 
   // 设定数据
   size_t fileSize;

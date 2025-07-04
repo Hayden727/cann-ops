@@ -236,7 +236,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     auto coreNum = ascendcPlatform.GetCoreNum();
     auto socVersion = ascendcPlatform.GetSocVersion();
-
     if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310P && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
         return ge::GRAPH_FAILED;
     }
@@ -265,12 +264,16 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint64_t tileDataNum =  (tileBlockNum * BLOCK_SIZE) / inputBytes;
     
     uint64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
-    coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
-    coreNum = (coreNum >= 1) ? coreNum : 1;
+
     if (inputNum <= tileDataNum)
     {
         coreNum = 1;
+    } 
+    else 
+    {
+        coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
     }
+    
     uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
     uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
     
@@ -287,7 +290,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint64_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
     bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum; 
 
-
     tiling.set_smallCoreDataNum(smallCoreDataNum);
     tiling.set_bigCoreDataNum(bigCoreDataNum);
     tiling.set_tileDataNum(tileDataNum);
@@ -297,7 +299,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_finalBigTileNum(finalBigTileNum);
     tiling.set_tailBlockNum(tailBlockNum);
 
-    
     context->SetBlockDim(coreNum);
     context->SetTilingKey(tilingKey);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
@@ -343,7 +344,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 
