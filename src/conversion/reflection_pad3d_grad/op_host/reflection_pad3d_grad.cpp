@@ -80,16 +80,22 @@ constexpr uint32_t ALIGN_16 = 16;
 constexpr uint32_t WORK_SPACE_PART = 32;
 constexpr uint32_t MIN_ALIGN_HEIGHT = 32;
 constexpr uint32_t MIN_ALIGN_WIDTH  = 32;
-constexpr uint32_t FLOAT_SMALL_REFLECTION = 0;
-constexpr uint32_t FLOAT_MID_REFLECTION = 1;
-constexpr uint32_t FLOAT16_SMALL_REFLECTION = 2;
-constexpr uint32_t FLOAT16_MID_REFLECTION = 3;
-constexpr uint32_t BF16_SMALL_REFLECTION = 4;
-constexpr uint32_t BF16_MID_REFLECTION = 5;
+constexpr uint32_t FLOAT_SMALL_REFLECTION = 100;
+constexpr uint32_t FLOAT_MID_REFLECTION = 101;
+constexpr uint32_t FLOAT_FLAT_REFLECTION = 102;
+constexpr uint32_t FLOAT_BIG_REFLECTION = 103;
+constexpr uint32_t FLOAT16_SMALL_REFLECTION = 200;
+constexpr uint32_t FLOAT16_FLAT_REFLECTION = 202;
+constexpr uint32_t FLOAT16_BIG_REFLECTION = 203;
+constexpr uint32_t BF16_SMALL_REFLECTION = 300;
+constexpr uint32_t BF16_FLAT_REFLECTION = 302;
+constexpr uint32_t BF16_BIG_REFLECTION = 303;
 const static uint32_t MAX_LINE = 16;
 
 static std::map<ge::DataType, int32_t> DATATYPE_LEN_MAP = {{ge::DT_FLOAT16, 2}, {ge::DT_BF16, 2}, {ge::DT_FLOAT, 4}};
-static std::map<std::string, int> PADDING_MODE_MAP = {{"reflect", 0}, {"edge", 1}, {"constant", 2}};
+static std::map<ge::DataType, uint32_t> SMALL_TILING_MAP = {{ge::DT_FLOAT, FLOAT_SMALL_REFLECTION}, {ge::DT_FLOAT16, FLOAT16_SMALL_REFLECTION}, {ge::DT_BF16, BF16_SMALL_REFLECTION}};
+static std::map<ge::DataType, uint32_t> BIG_TILING_MAP = {{ge::DT_FLOAT, FLOAT_BIG_REFLECTION}, {ge::DT_FLOAT16, FLOAT16_BIG_REFLECTION}, {ge::DT_BF16, BF16_BIG_REFLECTION}};
+static std::map<ge::DataType, uint32_t> FLAT_TILING_MAP = {{ge::DT_FLOAT, FLOAT_FLAT_REFLECTION}, {ge::DT_FLOAT16, FLOAT16_FLAT_REFLECTION}, {ge::DT_BF16, BF16_FLAT_REFLECTION}};
 
 template <typename T1, typename T2>
 inline T1 CeilAlign(T1 a, T2 b) {
@@ -186,6 +192,8 @@ void PadV3GradV2Tiling<TilingData, dataTypeLen>::GetUsedCore() {
     if (nMulC <= coreNum) {
         ncPerCore = 1;
         usedCoreNum = nMulC;
+        tailNC = 0;
+        return;
     }
     ncPerCore = nMulC / coreNum;
     tailNC = nMulC % coreNum;
@@ -285,22 +293,16 @@ static ge::graphStatus GetInputInfo(gert::TilingContext* tilingContext, InputPar
 static void FillTilingKey(ReflectionPad3dGradTilingData* tilingData, ge::DataType inputDatatype) {
     int64_t alignHeight = tilingData->get_alignHeight();
     int64_t alignWidth= tilingData->get_alignWidth();
+    int64_t height= tilingData->get_height();
+    int64_t width= tilingData->get_width();
     if (alignHeight * alignWidth <= tilingData->get_ubFactorElement()) {
-        if (inputDatatype == ge::DT_FLOAT) {
-            tilingData->set_tilingKey(FLOAT_SMALL_REFLECTION);
-        } else if (inputDatatype == ge::DT_FLOAT16) {
-            tilingData->set_tilingKey(FLOAT16_SMALL_REFLECTION);
-        } else if (inputDatatype == ge::DT_BF16) {
-            tilingData->set_tilingKey(BF16_SMALL_REFLECTION);
-        }
-    } else if (MAX_LINE * Mymax(alignHeight, alignWidth) <= tilingData->get_ubFactorElement()){
-        if (inputDatatype == ge::DT_FLOAT) {
-            tilingData->set_tilingKey(FLOAT_MID_REFLECTION);
-        } else if (inputDatatype == ge::DT_FLOAT16) {
-            tilingData->set_tilingKey(FLOAT16_MID_REFLECTION);
-        } else if (inputDatatype == ge::DT_BF16) {
-            tilingData->set_tilingKey(BF16_MID_REFLECTION);
-        }
+        tilingData->set_tilingKey(SMALL_TILING_MAP[inputDatatype]);
+    } else if (width <= MAX_LINE + MAX_LINE || height <= MAX_LINE + MAX_LINE){
+        tilingData->set_tilingKey(FLAT_TILING_MAP[inputDatatype]);
+    } else if (MAX_LINE * Mymax(alignHeight, alignWidth) <= tilingData->get_ubFactorElement() && inputDatatype == ge::DT_FLOAT){
+        tilingData->set_tilingKey(FLOAT_MID_REFLECTION);
+    } else {
+        tilingData->set_tilingKey(BIG_TILING_MAP[inputDatatype]);
     }
 }
 
@@ -329,7 +331,7 @@ static ge::graphStatus Tiling4PadV3GradV2(gert::TilingContext* tilingContext) {
     if (inputDatatype == ge::DT_FLOAT) {
         GetPadV3GradV2Tiling<ReflectionPad3dGradTilingData, FLOAT_BYTES>(&tilingData, params, coreNum, availableUb, false);
     } else if (inputDatatype == ge::DT_FLOAT16) {
-        GetPadV3GradV2Tiling<ReflectionPad3dGradTilingData, FLOAT16_BYTES>(&tilingData, params, coreNum, availableUb, false);
+        GetPadV3GradV2Tiling<ReflectionPad3dGradTilingData, FLOAT16_BYTES>(&tilingData, params, coreNum, availableUb, true);
     } else {
         GetPadV3GradV2Tiling<ReflectionPad3dGradTilingData, BFLOAT16_BYTES>(&tilingData, params, coreNum, availableUb, true);
     }
@@ -339,10 +341,14 @@ static ge::graphStatus Tiling4PadV3GradV2(gert::TilingContext* tilingContext) {
         return ge::GRAPH_FAILED); 
     FillTilingKey(&tilingData, inputDatatype);
     tilingContext->SetTilingKey(tilingData.get_tilingKey());
+    tilingContext->SetNeedAtomic(true);
     tilingContext->SetBlockDim(tilingData.get_blockNum());
     size_t* workspaces = tilingContext->GetWorkspaceSizes(1);
     size_t usrWorkspace = Mymax(tilingData.get_alignHeight(), tilingData.get_alignWidth()) 
               * WORK_SPACE_PART * tilingData.get_blockNum() * DATATYPE_LEN_MAP[inputDatatype];
+    if (inputDatatype != ge::DT_FLOAT) {
+        usrWorkspace = tilingData.get_alignHeight() * tilingData.get_alignWidth() * tilingData.get_blockNum() * DATATYPE_LEN_MAP[ge::DT_FLOAT];
+    }
     workspaces[0] = usrWorkspace + sysWorkspaceSize;
     tilingData.SaveToBuffer(tilingContext->GetRawTilingData()->GetData(),
                           tilingContext->GetRawTilingData()->GetCapacity());

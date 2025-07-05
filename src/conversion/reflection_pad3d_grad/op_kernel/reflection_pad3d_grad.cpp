@@ -13,6 +13,9 @@
  */
 #include "reflection_pad3d_grad_mid.h"
 #include "reflection_pad3d_grad_small.h"
+#include "reflection_pad3d_grad_big.h"
+#include "reflection_pad3d_grad_flat.h"
+#include "reflection_pad3d_grad_f16.h"
 
 extern "C" __global__ __aicore__ void reflection_pad3d_grad(GM_ADDR x, GM_ADDR paddings, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     GET_TILING_DATA(tiling_data, tiling);
@@ -21,29 +24,45 @@ extern "C" __global__ __aicore__ void reflection_pad3d_grad(GM_ADDR x, GM_ADDR p
         return;
     }
 
-    if (TILING_KEY_IS(0)) {
+    if (TILING_KEY_IS(100)) {
         ReflectionPad3dGrad<float> op;
         op.Init(tiling_data, x, paddings, y, userWS);
         op.SmallProcess();
-    } else if(TILING_KEY_IS(1)) {
+    } else if(TILING_KEY_IS(101)) {
         ReflectionPad3dGrad<float> op;
         op.Init(tiling_data, x, paddings, y, userWS);
         op.MidProcess();
-    } else if(TILING_KEY_IS(2)) {
-        ReflectionPad3dGrad<half> op;
+    } else if(TILING_KEY_IS(102)) {
+        ReflectionPad3dGrad<float> op;
+        op.Init(tiling_data, x, paddings, y, userWS);
+        op.FlatProcess();
+    } else if(TILING_KEY_IS(103)) {
+        ReflectionPad3dGrad<float> op;
+        op.Init(tiling_data, x, paddings, y, userWS);
+        op.BigProcess();
+    } else if(TILING_KEY_IS(200)) {
+        ReflectionPad3dGradF16<half> op;
         op.Init(tiling_data, x, paddings, y, userWS);
         op.SmallProcess();
-    } else if(TILING_KEY_IS(3)) {
-        ReflectionPad3dGrad<half> op;
+    } else if(TILING_KEY_IS(202)) {
+        ReflectionPad3dGradF16<half> op;
         op.Init(tiling_data, x, paddings, y, userWS);
-        op.MidProcess();
-    } else if(TILING_KEY_IS(4)) {
-        ReflectionPad3dGrad<bfloat16_t> op;
+        op.FlatProcess();
+    } else if(TILING_KEY_IS(203)) {
+        ReflectionPad3dGradF16<half> op;
+        op.Init(tiling_data, x, paddings, y, userWS);
+        op.BigProcess();
+    } else if(TILING_KEY_IS(300)) {
+        ReflectionPad3dGradF16<bfloat16_t> op;
         op.Init(tiling_data, x, paddings, y, userWS);
         op.SmallProcess();
-    } else if(TILING_KEY_IS(5)) {
-        ReflectionPad3dGrad<bfloat16_t> op;
+    } else if(TILING_KEY_IS(302)) {
+        ReflectionPad3dGradF16<bfloat16_t> op;
         op.Init(tiling_data, x, paddings, y, userWS);
-        op.MidProcess();
+        op.FlatProcess();
+    } else if(TILING_KEY_IS(303)) {
+        ReflectionPad3dGradF16<bfloat16_t> op;
+        op.Init(tiling_data, x, paddings, y, userWS);
+        op.BigProcess();
     }
 }
