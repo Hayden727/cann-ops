@@ -12,11 +12,11 @@
 <tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">unique_len</td><td align="center">1D</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
 <tr><td align="center">unique_indices</td><td align="center">1D</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
-<tr><td align="center">indices</td><td align="center">2D, [m, n]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
+<tr><td align="center">indices</td><td align="center">2D, [n, m]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
 <tr><td align="center">values</td><td align="center">1D-8D, [n, a0, ...]</td><td align="center">float, float16, int32</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="2" align="center">算子输出</td><td align="center">new_indices</td><td align="center">2D, [m, unique_len.shape[0]]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
+<tr><td rowspan="2" align="center">算子输出</td><td align="center">new_indices</td><td align="center">2D, [unique_len.shape[0], m]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
 <tr><td align="center">new_values</td><td align="center">1D-8D, [unique_len.shape[0], a0, ...]</td><td align="center">float, float16, int32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">coalesce_sparse</td></tr>

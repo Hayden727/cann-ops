@@ -143,6 +143,7 @@ ge::graphStatus CoalesceSparseTiling::RunKernelTiling(){
     TilingContext->SetTilingKey(tiling_key);
     TilingData.set_usedCoreNum(usedCoreNum);
     TilingData.set_m(m);
+    TilingData.set_n(n);
     TilingData.set_valueSize(valueSize);
     TilingData.set_taskNum(taskNum);
     TilingData.set_taskTail(taskTail);
@@ -165,6 +166,7 @@ ge::graphStatus CoalesceSparseTiling::RunKernelTiling(){
 void CoalesceSparseTiling::TilingDataPrint() const {
     OP_LOGD(TilingContext->GetNodeName(), "usedCoreNum: %lu.", usedCoreNum);
     OP_LOGD(TilingContext->GetNodeName(), "m: %lu.", m);
+    OP_LOGD(TilingContext->GetNodeName(), "n: %lu.", n);
     OP_LOGD(TilingContext->GetNodeName(), "valueSize: %lu.", valueSize);
     OP_LOGD(TilingContext->GetNodeName(), "taskNum: %lu.", taskNum);
     OP_LOGD(TilingContext->GetNodeName(), "taskTail: %lu.", taskTail);
@@ -226,8 +228,8 @@ static graphStatus CoalesceSparseInferShape(gert::InferShapeContext *context)
 
     uint64_t len = uniqueLenShape->GetDim(0);
     OPS_CHECK_NULL_WITH_CONTEXT(context, newIndicesShape);
-    newIndicesShape->AppendDim(indicesShape->GetDim(0));
     newIndicesShape->AppendDim(len);
+    newIndicesShape->AppendDim(indicesShape->GetDim(1));
 
     uint64_t valueShapeSize = valueShape->GetDimNum();
     OPS_CHECK_NULL_WITH_CONTEXT(context, newValueShape);

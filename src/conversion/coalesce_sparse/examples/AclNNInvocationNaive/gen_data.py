@@ -28,10 +28,13 @@ def sparse_flatten_indices(indices, size):
         slice_size = [i for i in size][0:sparse_dim][::-1]
         slice_size = torch.cumprod(torch.tensor(slice_size), 0)
         slice_size = torch.flip(torch.cat((torch.tensor([1]), slice_size)), dims=[0])
-        for i in range(indices.shape[1]):
+        start_idx = slice_size.shape[0] - sparse_dim
+        end_idx = slice_size.shape[0]
+        slice_size = slice_size[start_idx:end_idx]
+        for n in range(indices.shape[1]):
             tmp = 0
-            for s in range(sparse_dim):
-                tmp += indices[s][i].item() * slice_size[s]
+            for m in range(sparse_dim):
+                tmp += indices[m][n].item() * slice_size[m]
             flatten_indices.append(tmp)
         return torch.tensor(flatten_indices, dtype=indices.dtype)
 
