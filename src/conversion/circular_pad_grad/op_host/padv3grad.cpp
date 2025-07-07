@@ -108,13 +108,20 @@ inline static bool IsAiCoreSupportReplication3D(const aclTensor *gradOutput, con
 inline static bool IsAiCoreSupportReflection3D(const aclTensor *gradOutput, const std::string &mode)
 {
     // AscendC仅支持Pad3d的部分场景，其余需要走AiCpu分支
-    if (gradOutput->GetViewShape().GetDimNum() != AI_CORE_DIM_3D) {
+    if (gradOutput->GetViewShape().GetDimNum() != AI_CORE_DIM_3D || mode != "reflect") {
+        OP_LOGD("[PadV3Grad] IsAiCoreSupportReflection3D: false, The input dimension is not a 3d scene or the mode is not reflect");
         return false;
     }
     if (GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910B) {
+        OP_LOGD("[PadV3Grad] IsAiCoreSupportReflection3D: false, The device is not support");
         return false;
     }
-    return mode == "reflect" && CheckType(gradOutput->GetDataType(), REFLECT_3D_AICORE_DTYPE_SUPPORT_LIST);
+    if (CheckType(gradOutput->GetDataType(), REFLECT_3D_AICORE_DTYPE_SUPPORT_LIST) == false) {
+        OP_LOGD("[PadV3Grad] IsAiCoreSupportReflection3D: false, The data type does not support aicore");
+        return false;
+    } 
+    OP_LOGD("[PadV3Grad] IsAiCoreSupportReflection3D: ture");
+    return true;
 }
 
 inline const aclTensor *PadV3GradAiCore(const aclTensor *gradOutput, const aclTensor *paddings,

@@ -23,7 +23,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcess() {
             bool isAtomicAdd = true;
             MidProcessTopBottom(i, loop, curDim, isAtomicAdd);
             MidProcessLeftRight(i, loop, curDim, isAtomicAdd);
-            MidProcessMid(i, loop, curDim, isAtomicAdd);  
+            MidProcessMid(i, loop, curDim, isAtomicAdd);
         }
     }
 }
@@ -36,11 +36,15 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessTopBottom(size_t i,  si
                         + i * height * width);
     int64_t gmYOffset = (loop * curOutDepth * outHeight * outWidth 
                         + curDim * outHeight * outWidth
-                        +  MAX_LINE - wPad1);
+                        + MAX_LINE - wPad1);
     //xGm -> ub
     CopyIn(xGm, gmXOffset, MAX_LINE, width);
     // ub计算
-    ComputeTopGrad(width);
+    if (hPad1 > 0) {
+        ComputeTopGrad(width);
+    } else {
+        ComputeCopy((MAX_LINE) * CeilAlign(width, perBlockCount));
+    }
     //ub -> yGm、wGm
     LocalTensor<T> yTopLocal = outQueueY.DeQue<T>();
     CopyOutBasic(yGm, yTopLocal, CopyOutParam(gmYOffset, hPad1 * (CeilAlign(width, perBlockCount)) + MAX_LINE, MAX_LINE - hPad1, width - MAX_LINE -MAX_LINE, outWidth, isAtomicAdd, MAX_LINE + MAX_LINE));
@@ -61,7 +65,11 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessTopBottom(size_t i,  si
     //xGm -> ub
     CopyIn(xGm, gmXOffset, MAX_LINE, width);
     //ub 计算
-    ComputeBottomGrad(width);
+    if (hPad2 > 0) {
+        ComputeBottomGrad(width);
+    } else {
+        ComputeCopy((MAX_LINE) * CeilAlign(width, perBlockCount));
+    }
     //ub -> yGm、wGm
     LocalTensor<T> yBottomLocal = outQueueY.DeQue<T>();
     CopyOutBasic(yGm, yBottomLocal, CopyOutParam(gmYOffset, MAX_LINE, MAX_LINE - hPad2, width - MAX_LINE -MAX_LINE, outWidth, isAtomicAdd, MAX_LINE + MAX_LINE));
@@ -90,7 +98,11 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  si
     CopyInBasic(xLeftLocal, workspaceGm, CopyInParam((height - MAX_LINE) *  MAX_LINE, gmWorkSpaceOffsetBottom, alignHeight - (height - MAX_LINE), MAX_LINE));
     inQueueX.EnQue(xLeftLocal);
     //ub 计算
-    ComputeLeftGrad(alignHeight);
+    if (wPad1 > 0) {
+        ComputeLeftGrad(alignHeight);
+    } else {
+        ComputeCopy(MAX_LINE * alignHeight);
+    }
     //ub -> yGm
     LocalTensor<T> yLeftLocal = outQueueY.DeQue<T>();
     CopyOutBasic(yGm, yLeftLocal, CopyOutParam(gmYOffset, hPad1 * MAX_LINE, outHeight, MAX_LINE - wPad1, outWidth, isAtomicAdd));
@@ -116,7 +128,11 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  si
     CopyInBasic(xRightLocal, workspaceGm, CopyInParam((height - MAX_LINE) *  MAX_LINE, gmWorkSpaceOffsetBottom, alignHeight - (height - MAX_LINE), MAX_LINE));
     inQueueX.EnQue(xRightLocal);
     //ub 计算
-    ComputeRightGrad(alignHeight);
+    if (wPad2 > 0) {
+        ComputeRightGrad(alignHeight);
+    } else {
+        ComputeCopy(MAX_LINE * alignHeight);
+    }
     //ub -> yGm
     LocalTensor<T> yRightLocal = outQueueY.DeQue<T>();
     CopyOutBasic(yGm, yRightLocal, CopyOutParam(gmYOffset, hPad1 * MAX_LINE, outHeight, MAX_LINE - wPad2, outWidth, isAtomicAdd));
@@ -128,35 +144,42 @@ __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessLeftRight(size_t i,  si
 
 template <typename T>
 __aicore__ inline void ReflectionPad3dGrad<T>::MidProcessMid(size_t i,  size_t loop, uint32_t curDim, bool isAtomicAdd) {
+    int64_t blockHeight = FloorDiv(ubFactorElement, CeilAlign(width - MAX_LINE -MAX_LINE, 16));
+    int64_t gmLoop = CeilDiv(height - MAX_LINE -MAX_LINE, blockHeight);
     event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
     //输入GM搬运
-    for (size_t j = 0; j < gmLoop; j++) {
-        int64_t gmXOffset = (loop * curDepth * height * width
-                            + i * height * width
-                            + MAX_LINE * width
-                            + MAX_LINE
-                            + j * blockHeight * width);
-        int64_t gmYOffset = (loop * curOutDepth * outHeight * outWidth 
-                            + curDim * outHeight * outWidth 
-                            + (MAX_LINE - hPad1) * outWidth 
-                            + MAX_LINE - wPad1
-                            + j * blockHeight * outWidth);
-        int64_t calHeight = blockHeight;
-        if (j == gmLoop - 1) {
-            calHeight = height - MAX_LINE -MAX_LINE - j * blockHeight;
+    if (gmLoop > 0) {
+        for (size_t j = 0; j < gmLoop; j++) {
+            int64_t gmXOffset = (loop * curDepth * height * width
+                                + i * height * width
+                                + MAX_LINE * width
+                                + MAX_LINE
+                                + j * blockHeight * width);
+            int64_t gmYOffset = (loop * curOutDepth * outHeight * outWidth 
+                                + curDim * outHeight * outWidth 
+                                + (MAX_LINE - hPad1) * outWidth 
+                                + MAX_LINE - wPad1
+                                + j * blockHeight * outWidth);
+            int64_t calHeight = blockHeight;
+            if (j == gmLoop - 1) {
+                calHeight = height - MAX_LINE -MAX_LINE - j * blockHeight;
+            }
+            //xGm -> ub
+            if (width - MAX_LINE - MAX_LINE > 0 && calHeight > 0) {
+                CopyIn(xGm, gmXOffset, calHeight, width - MAX_LINE - MAX_LINE);
+                //ub计算
+                ComputeCopy((calHeight) * CeilAlign(width - MAX_LINE -MAX_LINE, perBlockCount));
+                //ub -> yGm
+                CopyOut(yGm, CopyOutParam(gmYOffset, 0, calHeight, width - MAX_LINE -MAX_LINE, outWidth, isAtomicAdd));
+            }
+
+            //同步
+            SetFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
+            WaitFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
         }
-        //xGm -> ub
-        CopyIn(xGm, gmXOffset, calHeight, width - MAX_LINE - MAX_LINE);
-        //ub计算
-        ComputeCopy((calHeight) * CeilAlign(width - MAX_LINE -MAX_LINE, perBlockCount));
-        //ub -> yGm
-        CopyOut(yGm, CopyOutParam(gmYOffset, 0, calHeight, width - MAX_LINE -MAX_LINE, outWidth, isAtomicAdd));
-        //同步
         SetFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
         WaitFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
     }
-    SetFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
-    WaitFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
 }
 
 template <typename T>
@@ -169,15 +192,17 @@ __aicore__ inline void ReflectionPad3dGrad<T>::CopyIn(GlobalTensor<T>& srcGm, co
 template <typename T>
 __aicore__ inline void ReflectionPad3dGrad<T>::CopyInBasic(LocalTensor<T>& dstLocal, GlobalTensor<T>& srcGm, CopyInParam param) {
     int32_t alignCalW = CeilAlign(param.calW, perBlockCount);
-    DataCopyParams copyParams = {1, 0, 0, 0};
-    DataCopyPadParams padParams = {true, 0, 0, 0};
+    if (param.calH <= 0 || param.calW <= 0) {
+        return;
+    }
+    DataCopyExtParams copyParams = {1, 0, 0, 0, 0};
+    DataCopyPadExtParams<T> padParams = {true, 0, 0, 0};
     copyParams.blockCount = param.calH;
     copyParams.blockLen = param.calW * sizeof(T);
     copyParams.srcStride = (width - param.calW)  * sizeof(T);
     copyParams.dstStride = 0;
     padParams.isPad = true;
     padParams.rightPadding = alignCalW - param.calW;
-    padParams.paddingValue = GetScalarBitcodeValue((T)0);
     DataCopyPad(dstLocal[param.dstOffset], srcGm[param.srcOffset], copyParams, padParams);
 }
 
@@ -190,7 +215,10 @@ __aicore__ inline void ReflectionPad3dGrad<T>::CopyOut(GlobalTensor<T>& dstGm, C
 
 template <typename T>
 __aicore__ inline void ReflectionPad3dGrad<T>::CopyOutBasic(GlobalTensor<T>& dstGm, LocalTensor<T>& srcLocal, CopyOutParam param) {
-    DataCopyParams copyParams = {1, 0, 0, 0};
+    DataCopyExtParams copyParams = {1, 0, 0, 0, 0};
+    if (param.calH <= 0 || param.calW <=0) {
+        return;
+    }
     copyParams.blockCount = param.calH ;
     copyParams.blockLen = param.calW * sizeof(T);
     //copyOut 分ub->wGm, yGm 
@@ -212,7 +240,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeTopGrad(const int32_t calW
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         int32_t alignCalW = CeilAlign(calW, perBlockCount);  // calCount % 16 可以不为0
         int32_t totalData = alignCalW * MAX_LINE; 
-        if constexpr (std::is_same<T, bfloat16_t>::value) {
+        if constexpr (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
             LocalTensor<float> float32Tensor = float32Buf.Get<float>();
             Cast(float32Tensor, xLocal, RoundMode::CAST_NONE, totalData);
             for(uint32_t i = 0; i < hPad1; i++) {
@@ -241,7 +269,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeBottomGrad(const int32_t c
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         int32_t alignCalW = CeilAlign(calW, perBlockCount);  // calCount % 16 可以不为0
         int32_t totalData = alignCalW * MAX_LINE; 
-        if constexpr (std::is_same<T, bfloat16_t>::value){
+        if constexpr (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
             LocalTensor<float> float32Tensor = float32Buf.Get<float>();
             Cast(float32Tensor, xLocal, RoundMode::CAST_NONE, totalData);
             // ComputeBottomGradBasic<float>(float32Tensor, calW);
@@ -366,7 +394,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeLeftGrad(const int32_t cal
         LocalTensor<T> xLocal = inQueueX.DeQue<T>();
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         int32_t totalData = calH * MAX_LINE; 
-        if constexpr (std::is_same<T, bfloat16_t>::value) {
+        if constexpr (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
             LocalTensor<float> tLocal = transposeBuf.Get<float>();
             LocalTensor<float> float32Tensor = float32Buf.Get<float>();
             Cast(float32Tensor, xLocal, RoundMode::CAST_NONE, totalData);
@@ -401,7 +429,7 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeRightGrad(const int32_t ca
         LocalTensor<T> xLocal = inQueueX.DeQue<T>();
         LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
         int32_t totalData = calH * MAX_LINE; 
-        if constexpr (std::is_same<T, bfloat16_t>::value) {
+        if constexpr (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
             LocalTensor<float> tLocal = transposeBuf.Get<float>();
             LocalTensor<float> float32Tensor = float32Buf.Get<float>();
             Cast(float32Tensor, xLocal, RoundMode::CAST_NONE, totalData);

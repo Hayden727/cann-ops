@@ -19,7 +19,6 @@ template <typename T>
 __aicore__ inline void ReflectionPad3dGrad<T>::SmallProcess() {
     int64_t gmXOffset = 0; 
     int64_t gmYOffset = 0; 
-    event_t eventIDMTE3ToMTE2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE3_MTE2));
     for ( size_t loop = 0; loop < loopNC; loop++ ) {
         for ( size_t i = 0; i < curDepth; i++ ) {
             size_t curDim = GetCurD(i); 
@@ -29,47 +28,48 @@ __aicore__ inline void ReflectionPad3dGrad<T>::SmallProcess() {
                         + i * height * width);
             gmYOffset = (loop * curOutDepth * outHeight * outWidth 
                         + curDim * outHeight * outWidth);
-            CopyInSmall(gmXOffset);
-            ComputeSmall();
-            CopyOutSmall(gmYOffset, isAtomicAdd);
-            SetFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
-            WaitFlag<HardEvent::MTE3_MTE2>(eventIDMTE3ToMTE2);
+            CopyInSmall(gmXOffset, height, width, 0);
+            ComputeSmall(0, 0, 0, 0, height, width);
+            CopyOutSmall(gmYOffset, hPad1 * alignWidth, isAtomicAdd, outHeight, outWidth, alignWidth, 0);
+            pipe_barrier(PIPE_MTE3);
         }
     } 
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::CopyInSmall(const int64_t offset) {
+__aicore__ inline void ReflectionPad3dGrad<T>::CopyInSmall(const int64_t offset, const int64_t calH, const int64_t calW, const int64_t srcStride) {
     LocalTensor<T> dstLocal = inQueueX.AllocTensor<T>();
-    int64_t alignCalW = CeilAlign(width, perBlockCount);
-    DataCopyParams copyParams = {1, 0, 0, 0};
-    DataCopyPadParams padParams = {true, 0, 0, 0};
-    copyParams.blockCount = height;
-    copyParams.blockLen = width * sizeof(T);
-    copyParams.srcStride = 0;
-    copyParams.dstStride = ((alignWidth - alignCalW)) *sizeof(T) / 32;
+    int64_t alignCalW = CeilAlign(calW, perBlockCount);
+    int64_t alignTransCalW = CeilAlign(calW, 16);
+    DataCopyExtParams copyParams = {1, 0, 0, 0, 0};
+    DataCopyPadExtParams<T> padParams = {true, 0, 0, 0};
+    copyParams.blockCount = calH;
+    copyParams.blockLen = calW * sizeof(T);
+    copyParams.srcStride = srcStride;
+    copyParams.dstStride = ((alignTransCalW - alignCalW)) *sizeof(T) / 32; //((alignWidth - alignCalW)) *sizeof(T) / 32;
     padParams.isPad = true;
-    padParams.rightPadding =  alignCalW - width;
-    padParams.paddingValue = GetScalarBitcodeValue((T)0);
+    padParams.rightPadding =  alignCalW - calW;
     DataCopyPad(dstLocal, xGm[offset], copyParams, padParams);
     inQueueX.EnQue(dstLocal);
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmall() {
+__aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmall(size_t hPad1Mask, size_t hPad2Mask, size_t wPad1Mask, size_t wPad2Mask, const int32_t calH, const int32_t calW) {
     LocalTensor<T> xLocal = inQueueX.DeQue<T>();
     LocalTensor<T> yLocal = outQueueY.AllocTensor<T>();
-    if constexpr (std::is_same<T, bfloat16_t>::value){
+    int32_t alignHeight = CeilAlign(calH, 16);
+    int32_t alignWidth = CeilAlign(calW, 16);
+    if constexpr (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value){
         LocalTensor<float> tLocal = transposeBuf.Get<float>();
         LocalTensor<float> float32Tensor = float32Buf.Get<float>();
         int32_t totalData = alignHeight * alignWidth; 
         Cast(float32Tensor, xLocal, RoundMode::CAST_NONE, totalData);
-        ComputeSmallBasic<float>(tLocal, float32Tensor);
+        ComputeSmallBasic<float>(tLocal, float32Tensor, hPad1Mask, hPad2Mask, wPad1Mask, wPad2Mask, calH, calW);
         TransoseSmall<float>(float32Tensor, tLocal, alignWidth, alignHeight);
         Cast(yLocal, float32Tensor, RoundMode::CAST_RINT, totalData);
     } else {
         LocalTensor<T> tLocal = transposeBuf.Get<T>();
-        ComputeSmallBasic<T>(tLocal, xLocal);
+        ComputeSmallBasic<T>(tLocal, xLocal, hPad1Mask, hPad2Mask, wPad1Mask, wPad2Mask, calH, calW);
         TransoseSmall<T>(yLocal, tLocal, alignWidth, alignHeight);
     }
     outQueueY.EnQue(yLocal);
@@ -77,20 +77,19 @@ __aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmall() {
 }
 
 template <typename T>
-__aicore__ inline void ReflectionPad3dGrad<T>::CopyOutSmall(const int64_t offset, const bool isAtomicAdd) {
+__aicore__ inline void ReflectionPad3dGrad<T>::CopyOutSmall(const int64_t offset, const int64_t srcOffset, const bool isAtomicAdd, const int32_t calH, const int32_t calW, const int32_t alignTransCalW, const int32_t dstStride) {
     LocalTensor<T> yLocal = outQueueY.DeQue<T>();
-    DataCopyParams copyParams = {1, 0, 0, 0};
-    copyParams.blockCount = outHeight ;
-    copyParams.blockLen = outWidth * sizeof(T);
-    copyParams.srcStride = (alignWidth - outWidth) * sizeof(T) / 32;
-    copyParams.dstStride = 0;
-    int64_t localOffset = hPad1 * alignWidth;
+    DataCopyExtParams copyParams = {1, 0, 0, 0, 0};
+    copyParams.blockCount = calH ;
+    copyParams.blockLen = calW * sizeof(T);
+    copyParams.srcStride = (alignTransCalW - calW) * sizeof(T) / 32;   //srcStride 为啥不用设置？ ub里面存储的是 alignCalW = 208， calW = 200， （208 - 200）* sizeof(half) / 32 = 0
+    copyParams.dstStride = dstStride;
     if (isAtomicAdd) {
         SetAtomicAdd<T>();
-        DataCopyPad(yGm[offset], yLocal[localOffset], copyParams);
+        DataCopyPad(yGm[offset], yLocal[srcOffset], copyParams);
         SetAtomicNone();
     } else {
-        DataCopyPad(yGm[offset], yLocal[localOffset], copyParams);
+        DataCopyPad(yGm[offset], yLocal[srcOffset], copyParams);
     }  
     outQueueY.FreeTensor(yLocal);
 }
@@ -141,45 +140,47 @@ __aicore__ inline void ReflectionPad3dGrad<T>::TransoseSmall(LocalTensor<T1>& ds
 }
 
 template<typename T> template<typename T1>
-__aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>& tLocal, LocalTensor<T1>& xLocal) {
-    if (hPad1 > 0) {
+__aicore__ inline void ReflectionPad3dGrad<T>::ComputeSmallBasic(LocalTensor<T1>& tLocal, LocalTensor<T1>& xLocal, size_t hPad1Mask, size_t hPad2Mask, size_t wPad1Mask, size_t wPad2Mask, const int32_t calH, const int32_t calW) {
+    int64_t alignTransCalW = CeilAlign(calW, 16);
+    int64_t alignTransCalH = CeilAlign(calH, 16);
+    if (hPad1Mask == 0 && hPad1 > 0) {
         for (uint32_t i = 0; i < hPad1; i++) {
-            auto srcLocal_1 = xLocal[i * alignWidth];
-            auto srcLocal_2 = xLocal[(2 * hPad1 - i)  * alignWidth];
-            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignWidth);
+            auto srcLocal_1 = xLocal[i * alignTransCalW];
+            auto srcLocal_2 = xLocal[(2 * hPad1 - i)  * alignTransCalW];
+            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignTransCalW);
         }
     }
 
-    if (hPad2 > 0) {
+    if (hPad2Mask == 0 && hPad2 > 0) {
         for (uint32_t i = 0; i < hPad2; i++) {
-            auto srcLocal_1 = xLocal[(height - 1 - i) * alignWidth];
-            auto srcLocal_2 = xLocal[(height - 2*hPad2 - 1 + i)  * alignWidth];
-            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignWidth);
+            auto srcLocal_1 = xLocal[(calH - 1 - i) * alignTransCalW];
+            auto srcLocal_2 = xLocal[(calH - 2*hPad2 - 1 + i)  * alignTransCalW];
+            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignTransCalW);
         }
     }
-    TransoseSmall<T1>(tLocal, xLocal, alignHeight, alignWidth);
-    if (wPad1 > 0) {
+    TransoseSmall<T1>(tLocal, xLocal, alignTransCalH, alignTransCalW);
+    if (wPad1Mask == 0 &&wPad1 > 0) {
         for (uint32_t i = 0; i < wPad1; i++) {
-            auto srcLocal_1 = tLocal[i * alignHeight];
-            auto srcLocal_2 = tLocal[(2 * wPad1 - i) * alignHeight];
-            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignHeight); 
+            auto srcLocal_1 = tLocal[i * alignTransCalH];
+            auto srcLocal_2 = tLocal[(2 * wPad1 - i) * alignTransCalH];
+            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignTransCalH); 
         } 
     }
 
-    if (wPad2 > 0) {
+    if (wPad2Mask == 0 && wPad2 > 0) {
         for (uint32_t i = 0; i < wPad2; i++) {
-            auto srcLocal_1 = tLocal[(width - 1 - i) * alignHeight];
-            auto srcLocal_2 = tLocal[(width - 2 * wPad2 - 1 + i) * alignHeight];
-            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignHeight); 
+            auto srcLocal_1 = tLocal[(calW - 1 - i) * alignTransCalH];
+            auto srcLocal_2 = tLocal[(calW - 2 * wPad2 - 1 + i) * alignTransCalH];
+            Add(srcLocal_2, srcLocal_2, srcLocal_1, alignTransCalH); 
         } 
     }
 
     // 平移
-    if (wPad1 > 0) {
-        for (uint32_t i = 0; i < width - wPad1; i++) {
-            auto srcLocal_1 = tLocal[i * alignHeight];
-            auto srcLocal_2 = tLocal[(i + wPad1) * alignHeight];
-            Muls(srcLocal_1, srcLocal_2, (T1)1.0, alignHeight);
+    if (wPad1Mask == 0 && wPad1 > 0) {
+        for (uint32_t i = 0; i < calW - wPad1; i++) {
+            auto srcLocal_1 = tLocal[i * alignTransCalH];
+            auto srcLocal_2 = tLocal[(i + wPad1) * alignTransCalH];
+            Muls(srcLocal_1, srcLocal_2, (T1)1.0, alignTransCalH);
         }
     }
 } 

@@ -59,8 +59,6 @@ private:
     int64_t gmWorkSpaceOffset1 = 0;
     int64_t gmWorkSpaceOffset2 = 0;
     uint32_t workSpacePart = 32;
-    int64_t blockHeight;
-    int64_t gmLoop;
     uint32_t loopNC = 0;
     int64_t ncOffset = 0; 
     uint32_t curDepth;
@@ -97,8 +95,6 @@ public:
 
         gmWorkSpaceOffset1 = 0;
         gmWorkSpaceOffset2 = Mymax(alignHeight, alignWidth) * MAX_LINE;
-        blockHeight = FloorDiv(ubFactorElement, width - MAX_LINE -MAX_LINE);
-        gmLoop = CeilDiv(height - MAX_LINE -MAX_LINE,blockHeight);
         if (blockIdx < tailNC) {
             loopNC = ncPerCore + 1;
             ncOffset = blockIdx * loopNC;
@@ -115,16 +111,32 @@ public:
         InitBuff(x, y, userWS);
     }
 
-    __aicore__ inline void InitBuff(GM_ADDR x, GM_ADDR y, GM_ADDR userWS) { 
+    __aicore__ inline void ClearOutput(GM_ADDR y) {
+        int64_t totaldata = batch * channel * outDepth * outHeight * outWidth;
+        int64_t preLen = totaldata / blockNum;
+        int64_t tailLen = totaldata % blockNum;
+        int64_t curLen = preLen;
+        int64_t curOffset = blockIdx * preLen;
+        if (blockIdx < tailLen) {
+            curLen = preLen + 1;
+            curOffset = blockIdx * curLen;
+        } else {
+            curLen = preLen;
+            curOffset = blockIdx * preLen + tailLen;
+        }
+        yGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(y) + curOffset);
+        InitGlobalMemory<T>(yGm, curLen, 0);
+        SyncAll();
+    }
+
+    __aicore__ inline void InitBuff(GM_ADDR x, GM_ADDR y, GM_ADDR userWS) {
+        ClearOutput(y); 
         xGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(x) + ncOffset * curDepth * height * width );
         yGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(y) + ncOffset * curOutDepth * outHeight * outWidth);
         workspaceGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(userWS) + Mymax(alignHeight, alignWidth) * workSpacePart * blockIdx);
-        InitGlobalMemory<T>(yGm, loopNC * curOutDepth * outHeight * outWidth, 0);
-        InitGlobalMemory<T>(workspaceGm, Mymax(alignHeight, alignWidth) * workSpacePart, 0);
-        SyncAll();
         pipe.InitBuffer(inQueueX, BUFFER_NUM, (ubFactorElement * sizeof(T)));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, (ubFactorElement * sizeof(T)));
-        if constexpr (std::is_same<T, bfloat16_t>::value){
+        if constexpr (std::is_same<T, bfloat16_t>::value || std::is_same<T, half>::value) {
             pipe.InitBuffer(transposeBuf, (ubFactorElement * sizeof(float)) );
             pipe.InitBuffer(float32Buf, (ubFactorElement * sizeof(float)) );
         } else {
@@ -139,23 +151,27 @@ public:
         } else if (i > dPad1 && i <depth - dPad2) { 
             curDim = i - dPad1;  
         } else if (i >= depth - dPad2) {     
-            curDim = (depth - dPad2 - 1) - ( i - (depth - dPad2) + 1 ) - dPad1;   
+            curDim = (depth - dPad2 - 1) - (i - (depth - dPad2) + 1) - dPad1;   
         }
         return curDim;
     }
 
     __aicore__ inline void MidProcess();
 
+    __aicore__ inline void FlatProcess();
+
     __aicore__ inline void SmallProcess();
 
+    __aicore__ inline void BigProcess();
+
 private:
-    __aicore__ inline void CopyInSmall(const int64_t offset);
+    __aicore__ inline void CopyInSmall(const int64_t offset, const int64_t calH, const int64_t calW, const int64_t srcStride);
 
-    __aicore__ inline void ComputeSmall();
+    __aicore__ inline void ComputeSmall(size_t hPad1Mask, size_t hPad2Mask, size_t wPad1Mask, size_t wPad2Mask, const int32_t calH, const int32_t calW);
     template<typename T1>
-    __aicore__ inline void ComputeSmallBasic(LocalTensor<T1>& tLocal, LocalTensor<T1>& xLocal);
+    __aicore__ inline void ComputeSmallBasic(LocalTensor<T1>& tLocal, LocalTensor<T1>& xLocal, size_t hPad1Mask, size_t hPad2Mask, size_t wPad1Mask, size_t wPad2Mask, const int32_t calH, const int32_t calW);
 
-    __aicore__ inline void CopyOutSmall(const int64_t offset, const bool isAtomicAdd);
+    __aicore__ inline void CopyOutSmall(const int64_t offset, const int64_t srcOffset, const bool isAtomicAdd, const int32_t calH, const int32_t calW, const int32_t alignTransCalW, const int32_t dstStride);
     template<typename T1>
     __aicore__ inline void TransoseSmall(LocalTensor<T1>& dstLocal, LocalTensor<T1>& srcLocal, const int32_t calH, const int32_t calW);
    
@@ -195,6 +211,20 @@ private:
     __aicore__ inline void ComputeRightGradBasic(LocalTensor<T1>& tLocal, LocalTensor<T1>& xLocal, const int32_t calH);
 
     __aicore__ inline void ComputeRightGrad(const int32_t calH);
+
+    __aicore__ inline void WidthFlatProcess();
+
+    __aicore__ inline void HeightFlatProcess();
+
+    __aicore__ inline void BigProcessTop(size_t loop,  size_t i, uint32_t cur_D, bool isAtomicAdd);
+
+    __aicore__ inline void BigProcessBottom(size_t loop,  size_t i, uint32_t cur_D, bool isAtomicAdd);
+
+    __aicore__ inline void BigProcessLeft(size_t loop,  size_t i, uint32_t cur_D, bool isAtomicAdd);
+
+    __aicore__ inline void BigProcessRight(size_t loop,  size_t i, uint32_t cur_D, bool isAtomicAdd);
+
+    __aicore__ inline void BigProcessMid(size_t loop,  size_t i, uint32_t cur_D, bool isAtomicAdd);
 };
 
 #endif  // REFLECTION_PAD3D_GRAD_INIT_H

@@ -30,9 +30,10 @@ static const string REPLICATION_PAD_MODE = "edge";
 // 根据API定义，需要列出所能支持的所有dtype
 static const std::initializer_list<op::DataType> dtypeSupportList = {
     op::DataType::DT_FLOAT, op::DataType::DT_FLOAT16, op::DataType::DT_BF16,
-    op::DataType::DT_DOUBLE, op::DataType::DT_COMPLEX64, op::DataType::DT_COMPLEX128};
+    op::DataType::DT_DOUBLE, op::DataType::DT_COMPLEX64, op::DataType::DT_COMPLEX128
+};
 
-inline static bool isPadSupport(const aclIntArray * padding ) {
+inline static bool isPadSupport(const aclIntArray * padding) {
     int MAX_PADDING_VALUE = 7;
     for (size_t i = 0; i < padding->Size(); i++){
         if ((*padding)[i] > MAX_PADDING_VALUE){
