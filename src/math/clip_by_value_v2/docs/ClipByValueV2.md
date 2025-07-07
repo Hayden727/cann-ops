@@ -74,7 +74,7 @@
 <tr><td align="center">clipValueMax</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>
 <tr><td rowspan="1" align="center">算子输出</td>
 <td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,int32,bfloat16</td><td align="center">ND</td></tr>  
-<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">clipbyvaluev2</td></tr>  
+<tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">ClipByValueV2</td></tr>  
 </table>
 
 ## 调用示例
