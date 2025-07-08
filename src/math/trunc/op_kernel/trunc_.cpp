@@ -70,46 +70,44 @@ private:
         LocalTensor<TYPE_OUTPUT_Y> output_y = output_yQue.AllocTensor<TYPE_OUTPUT_Y>();
         {  
             if constexpr(IS_TYPE(TYPE_INPUT_X, int8_t) ){
-                Sync(MTE2, MTE3);
+                SyncMTE2MTE3();
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, uint8_t)){
-                Sync(MTE2, MTE3);
+                SyncMTE2MTE3();
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, int32_t)){
-                Sync(MTE2, MTE3);
+                SyncMTE2MTE3();
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, float)){
                 auto x = input_x.template ReinterpretCast<float>();
                 auto y = output_y.template ReinterpretCast<float>();
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
-                Sync(MTE2, S);
-
+                SyncMTE2S();
                 AscendC::Cast(y_int32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
-
                 AscendC::Cast(y, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (float)1, _len_);
-                Sync(V, MTE3);
+                SyncVMTE3();
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, half)){
                 auto x = input_x.template ReinterpretCast<half>();
                 auto y = output_y.template ReinterpretCast<half>();
                 auto y_int16 = output_y.template ReinterpretCast<int16_t>();
-                Sync(MTE2, S);
+                SyncMTE2S();
                 AscendC::Cast(y_int16, x, AscendC::RoundMode::CAST_TRUNC, _len_);
                 AscendC::Cast(y, y_int16, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (half)1, _len_);
-                Sync(V, MTE3);
+                SyncVMTE3();
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, bfloat16_t)){
                 auto x = input_x.template ReinterpretCast<bfloat16_t>();
                 auto y = output_y.template ReinterpretCast<bfloat16_t>();
-                Sync(MTE2, S);
+                SyncMTE2S();
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
                 auto y_float32 = output_y.template ReinterpretCast<float>();
                 AscendC::Cast(y_int32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
                 AscendC::Cast(y_float32, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 AscendC::Cast(y, y_float32, AscendC::RoundMode::CAST_TRUNC, _len_);
-                Sync(V, MTE3);
+                SyncVMTE3();
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], y, _len_*OUTPUT_Y_LW);
             }
         }

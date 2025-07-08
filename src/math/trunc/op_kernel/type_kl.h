@@ -12,22 +12,8 @@
 #ifndef TYPE_KUNLUN_H
 #define TYPE_KUNLUN_H
 
-/// @brief 判断REAL是否为NaN/Inf
-/// @param REAL 浮点数
-#define IS_NAN_INF(REAL) !(float(REAL)*0==0)
-
 /// @brief 判断T1是否为T2类型。(可在编译期给出结果)
 /// @param T1 类型 1
 /// @param T2 类型 2
 #define IS_TYPE(T1, T2) std::is_same<T1,T2>::value
-
-/// @brief 判断是否为浮点型。(可在编译期给出结果)
-/// @param T 类型
-#define IS_FLOAT(T) (IS_TYPE(T,half)||IS_TYPE(T,float)||IS_TYPE(T,double))
-
-/// @brief 判断是否为整型。(可在编译期给出结果)
-/// @param T 类型
-#define IS_INTEGER(T) (IS_TYPE(T,int8_t)||IS_TYPE(T,int16_t)||IS_TYPE(T,int32_t)||IS_TYPE(T,int64_t)||\
-                    IS_TYPE(T,uint8_t)||IS_TYPE(T,uint16_t)||IS_TYPE(T,uint32_t)||IS_TYPE(T,uint64_t))
-
 #endif// TYPE_KUNLUN_H
