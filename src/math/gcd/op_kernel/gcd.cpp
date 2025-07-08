@@ -13,8 +13,10 @@
  */
 #include "kernel_operator.h"
 
-#define MIN(x, y) ((x) < (y) ? (x) : (y))
-#define REP 50
+template<typename T>
+__aicore__ inline T MinVal(T a, T b) {
+    return (a < b) ? a : b;
+}
 
 template<typename T>
 __aicore__ inline T gcd_1(T a, T b) {
@@ -42,7 +44,6 @@ __aicore__ inline T gcd_2(T a, T b) {
     return a;
 }
 
-#define TILE_SIZE 4096
 
 using namespace AscendC;
 
@@ -50,6 +51,8 @@ template <typename T>
 class KernelGcd
 {
 public:
+    static constexpr int TILE_SIZE = 4096;
+    static constexpr int REP = 50;
     __aicore__ inline KernelGcd()
     {
     }
@@ -79,12 +82,12 @@ public:
 
         if constexpr(std::is_same<T, int16_t>::value) {
             pipe->InitBuffer(tBufNext, 2 * TILE_SIZE * sizeof(int16_t));
-            pipe->InitBuffer(tBufMask, 2 * TILE_SIZE * sizeof(uint8_t));
+            pipe->InitBuffer(tBufMask, TILE_SIZE * sizeof(uint8_t));
         }
 
         if constexpr(std::is_same<T, int32_t>::value) {
             pipe->InitBuffer(tBufNext, 2 * TILE_SIZE * sizeof(int32_t));
-            pipe->InitBuffer(tBufMask, 2 * TILE_SIZE * sizeof(uint8_t));
+            pipe->InitBuffer(tBufMask, TILE_SIZE * sizeof(uint8_t));
         }
 
         pipe->InitBuffer(inX1, 1, TILE_SIZE * sizeof(T));
@@ -92,7 +95,7 @@ public:
         pipe->InitBuffer(outY, 1, TILE_SIZE * sizeof(T));
     }
 
-    __aicore__ inline void CopyInX1(int64_t offset, int len) {
+    __aicore__ inline void CopyInX1(int offset, int len) {
         LocalTensor<T> x1 = inX1.AllocTensor<T>();
         DataCopyExtParams copyParamsX;
         copyParamsX.blockCount = 1;
@@ -104,7 +107,7 @@ public:
         inX1.EnQue(x1);
     }
 
-    __aicore__ inline void CopyInX2(int64_t offset, int len) {
+    __aicore__ inline void CopyInX2(int offset, int len) {
         LocalTensor<T> x2 = inX2.AllocTensor<T>();
         DataCopyExtParams copyParamsX;
         copyParamsX.blockCount = 1;
@@ -116,7 +119,7 @@ public:
         inX2.EnQue(x2);
     }
 
-    __aicore__ inline void CopyOut(int64_t offset, int len) {
+    __aicore__ inline void CopyOut(int offset, int len) {
         LocalTensor<T> y = outY.DeQue<T>();
         DataCopyExtParams copyParamsX;
         copyParamsX.blockCount = 1;
@@ -127,11 +130,10 @@ public:
         outY.FreeTensor(y);
     }
 
-    __aicore__ inline void GcdLikely16(const LocalTensor<int16_t>& c, const LocalTensor<int16_t>& a, const LocalTensor<int16_t>& b) {
+    __aicore__ inline void GcdLikely16(const LocalTensor<int16_t>& c, const LocalTensor<int16_t>& a, const LocalTensor<int16_t>& b, int len) {
         auto n_a = tBufNext.Get<int16_t>();
         auto n_b = tBufNext.Get<int16_t>()[TILE_SIZE];
         auto mask = tBufMask.Get<uint8_t>();
-        auto mask1 = tBufMask.Get<uint8_t>()[TILE_SIZE];
         auto a_h = a.ReinterpretCast<half>();
         auto b_h = b.ReinterpretCast<half>();
         auto n_a_h = n_a.ReinterpretCast<half>();
@@ -166,24 +168,17 @@ public:
 
         DataCopy(c, a, TILE_SIZE);
 
-        CompareScalar(mask, b_h, (half)0.0f, CMPMODE::EQ, TILE_SIZE);
-
-        for (int i = 0;i < TILE_SIZE;i+=8) {
-            uint8_t bit = mask.GetValue(i / 8);
-            if (bit == 0) continue;
-            for (int j = 0;j < 8;j++) {
-                if ((bit & (1<<j)) == 0) {
-                    c.SetValue(i + j, gcd_2(a.GetValue(i + j), b.GetValue(i + j)));
-                }
+        for (int i = 0; i < len; i++) {
+            if (b.GetValue(i) != 0) {
+                c.SetValue(i, gcd_2(a.GetValue(i), b.GetValue(i)));
             }
         }
     }
 
-    __aicore__ inline void GcdLikely32(const LocalTensor<int32_t>& c, const LocalTensor<int32_t>& a, const LocalTensor<int32_t>& b) {
+    __aicore__ inline void GcdLikely32(const LocalTensor<int32_t>& c, const LocalTensor<int32_t>& a, const LocalTensor<int32_t>& b, int len) {
         auto n_a = tBufNext.Get<int32_t>();
         auto n_b = tBufNext.Get<int32_t>()[TILE_SIZE];
         auto mask = tBufMask.Get<uint8_t>();
-        auto mask1 = tBufMask.Get<uint8_t>()[TILE_SIZE];
         auto a_h = a.ReinterpretCast<float>();
         auto b_h = b.ReinterpretCast<float>();
         auto n_a_h = n_a.ReinterpretCast<float>();
@@ -218,29 +213,23 @@ public:
 
         DataCopy(c, a, TILE_SIZE);
 
-        CompareScalar(mask, b_h, (float)0.0f, CMPMODE::EQ, TILE_SIZE);
-
-        for (int i = 0;i < TILE_SIZE;i+=8) {
-            uint8_t bit = mask.GetValue(i / 8);
-            if (bit == 0) continue;
-            for (int j = 0;j < 8;j++) {
-                if ((bit & (1<<j)) == 0) {
-                    c.SetValue(i + j, gcd_2(a.GetValue(i + j), b.GetValue(i + j)));
-                }
+        for (int i = 0; i < len; i++) {
+            if (b.GetValue(i) != 0) {
+                c.SetValue(i, gcd_2(a.GetValue(i), b.GetValue(i)));
             }
         }
     }
 
-    __aicore__ inline void Compute() {
+    __aicore__ inline void Compute(int len) {
         auto x1 = inX1.DeQue<T>();
         auto x2 = inX2.DeQue<T>();
         auto y = outY.AllocTensor<T>();
         if constexpr(std::is_same<T, int16_t>::value) {
-            GcdLikely16(y, x1, x2);
+            GcdLikely16(y, x1, x2, len);
         } else if constexpr(std::is_same<T, int32_t>::value) {
-            GcdLikely32(y, x1, x2);
+            GcdLikely32(y, x1, x2, len);
         } else {
-            for (int i = 0;i < TILE_SIZE;i++) {
+            for (int i = 0;i < len;i++) {
                 y.SetValue(i, gcd_1(x1.GetValue(i), x2.GetValue(i)));
             }
         }
@@ -252,20 +241,22 @@ public:
 
     __aicore__ inline void ProcessFast()
     {
-        for (int64_t i = GetBlockIdx() * TILE_SIZE;i < sizeX1;i+=TILE_SIZE * GetBlockNum()) {
-            CopyInX1(i, MIN(sizeX1 - i, TILE_SIZE));
-            CopyInX2(i, MIN(sizeX1 - i, TILE_SIZE));
-            Compute();
-            CopyOut(i, MIN(sizeX1 - i, TILE_SIZE));
+        for (int i = GetBlockIdx() * TILE_SIZE;i < sizeX1;i+=TILE_SIZE * GetBlockNum()) {
+            CopyInX1(i, MinVal(sizeX1 - i, TILE_SIZE));
+            CopyInX2(i, MinVal(sizeX1 - i, TILE_SIZE));
+            Compute(MinVal(sizeX1 - i, TILE_SIZE));
+            CopyOut(i, MinVal(sizeX1 - i, TILE_SIZE));
         }
     }
 
     __aicore__ inline void ProcessSlow()
     {
 
-        if (GetBlockIdx() != 0) return;
+        if (GetBlockIdx() != 0) {
+            return;
+        }
         // 预计算步长数组
-        int64_t y_stride[5], x2_stride[5];
+        int y_stride[5], x2_stride[5];
         y_stride[4] = 1;        // 最内层维度步长为1
         x2_stride[4] = 1;
 
@@ -281,14 +272,14 @@ public:
                     for (int i3 = 0; i3 < N[3]; i3++) {
                         for (int i4 = 0; i4 < N[4]; i4++) {
                             // 计算y的线性索引
-                            int64_t y_idx = i0*y_stride[0] 
+                            int y_idx = i0*y_stride[0] 
                                     + i1*y_stride[1]
                                     + i2*y_stride[2]
                                     + i3*y_stride[3]
                                     + i4*y_stride[4];
                             
                             // 计算x2的广播索引
-                            int64_t x2_idx = (M[0]>1?i0:0)*x2_stride[0]
+                            int x2_idx = (M[0]>1?i0:0)*x2_stride[0]
                                     + (M[1]>1?i1:0)*x2_stride[1]
                                     + (M[2]>1?i2:0)*x2_stride[2]
                                     + (M[3]>1?i3:0)*x2_stride[3]
@@ -317,7 +308,7 @@ public:
     TQue<QuePosition::VECOUT, 1> outY;
     TBuf<TPosition::VECCALC> tBufNext, tBufMask;
 
-    int64_t N[5], M[5], sizeX1, sizeX2;
+    int N[5], M[5], sizeX1, sizeX2;
     GlobalTensor<T> x1Gm, x2Gm, yGm;
 };
 
