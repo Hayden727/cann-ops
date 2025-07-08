@@ -51,6 +51,7 @@ private:
 
     uint64_t usedCoreNum {0};
     uint64_t m {0};
+    uint64_t n {0};
     uint64_t valueSize {0};
     uint64_t taskNum {0};
     uint64_t taskTail {0};
@@ -121,6 +122,7 @@ __aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::InitTi
     this->tilingDevice = tilingData;
     usedCoreNum = tilingDevice->usedCoreNum;
     m = tilingDevice->m;
+    n = tilingDevice->n;
     mByte = m * sizeof(idxType);
     valueSize = tilingDevice->valueSize;
     taskNum = tilingDevice->taskNum;
@@ -137,6 +139,11 @@ __aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::InitTi
 
 template <typename uIdxType, typename idxType, typename dataType>
 __aicore__ inline void KernelCoalesceSparse<uIdxType, idxType, dataType>::Process() {
+    dataType initValue = 0;
+    if (GetBlockIdx() == 0) {
+        InitOutput<dataType>(newValueGm, valueSize * n, initValue);
+    }
+    SyncAll();
     // taskAlign32
     for (uint64_t i = 0; i < coreTaskTimes; i++){
         CopyIn(i, moveOneSize);

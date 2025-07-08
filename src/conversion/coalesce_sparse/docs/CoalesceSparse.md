@@ -43,9 +43,9 @@ CoalesceSparse由DataCopyPad、SetAtomicAdd与SetAtomicNone操作组成。
 - **参数说明：**
   - uniqueLen（aclTensor\*，计算输入）：表示indices与values组成的sparseTensor经过flatten后的结果在unique后的唯一元素，公式中的uniqueLen，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持1维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - uniqueIndices（aclTensor\*，计算输入）：表示indices与values组成的sparseTensor经过flatten后的结果在uniqueLen中的索引，公式中的uniqueIndices，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持1维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - indices（aclTensor\*，计算输入）：表示原始输入indices，公式中的indices，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持2维，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - values（aclTensor\*，计算输入）：表示原始输入values，公式中的values，Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、INT32，维度支持1-8维，values.shape[0]需要与indices.shape[1]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
-  - newIndices（aclTensor\*，计算输出）：表示经过公式中的newIndices，Device侧的aclTensor，数据类型支持INT64、INT32，数据类型需要与indices一致，newIndices.shape[0]需要与indices.shape[0]一致，newIndices.shape[1]需要与uniqueLen.shape[0]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - indices（aclTensor\*，计算输入）：表示原始输入indices，公式中的indices，Device侧的aclTensor，数据类型支持INT64、INT32，维度支持2维且indices.shape[1]必须小于64，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - values（aclTensor\*，计算输入）：表示原始输入values，公式中的values，Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、INT32，维度支持1-8维，values.shape[0]需要与indices.shape[0]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
+  - newIndices（aclTensor\*，计算输出）：表示经过公式中的newIndices，Device侧的aclTensor，数据类型支持INT64、INT32，数据类型需要与indices一致，newIndices.shape[1]需要与indices.shape[1]一致，newIndices.shape[0]需要与uniqueLen.shape[0]一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - newValues（aclTensor\*，计算输出）：公式中的newValues，Device侧的aclTensor，数据类型支持FLOAT、FLOAT16、INT32，数据类型需要与values一致，newValues.shape[0]需要与uniqueLen.shape[0]一致，其余维度需要与values的对应维度一致，[数据格式](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.md)支持ND。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
@@ -74,7 +74,7 @@ CoalesceSparse由DataCopyPad、SetAtomicAdd与SetAtomicNone操作组成。
 
 ## 约束与限制
 
-无。
+假设indices的shape为[6,8], values的shape为[6, 8, 8], indices按dim=0做max的结果为[6, 6, 6, 5, 6, 6, 5, 6], 将该结果的倒序得到[6, 5, 6, 6, 5, 6, 6, 6], 然后将其视为shape，计算stride=[194400, 38880, 6480, 1080, 216, 36, 6, 1], 则对所有的$0 \le n \lt 6$都需要满足$\sum_{m=0}^{m=7} indices[n][m] * stride[m] \lt INT64\_MAX$。
 
 ## 算子原型
 
@@ -84,11 +84,11 @@ CoalesceSparse由DataCopyPad、SetAtomicAdd与SetAtomicNone操作组成。
 <tr><td rowspan="5" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
 <tr><td align="center">unique_len</td><td align="center">1D</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
 <tr><td align="center">unique_indices</td><td align="center">1D</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
-<tr><td align="center">indices</td><td align="center">2D, [m, n]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
+<tr><td align="center">indices</td><td align="center">2D, [n, m]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
 <tr><td align="center">values</td><td align="center">1D-8D, [n, a0, ...]</td><td align="center">float, float16, int32</td><td align="center">ND</td></tr>
 </tr>
 </tr>
-<tr><td rowspan="2" align="center">算子输出</td><td align="center">new_indices</td><td align="center">2D, [m, unique_len.shape[0]]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
+<tr><td rowspan="2" align="center">算子输出</td><td align="center">new_indices</td><td align="center">2D, [unique_len.shape[0], m]</td><td align="center">int64, int32</td><td align="center">ND</td></tr>
 <tr><td align="center">new_values</td><td align="center">1D-8D, [unique_len.shape[0], a0, ...]</td><td align="center">float, float16, int32</td><td align="center">ND</td></tr>
 </tr>
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">coalesce_sparse</td></tr>

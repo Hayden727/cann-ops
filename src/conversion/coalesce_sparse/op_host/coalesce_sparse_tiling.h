@@ -19,6 +19,7 @@ namespace optiling {
 BEGIN_TILING_DATA_DEF(CoalesceSparseTilingData)
 TILING_DATA_FIELD_DEF(uint64_t, usedCoreNum);
 TILING_DATA_FIELD_DEF(uint64_t, m);
+TILING_DATA_FIELD_DEF(uint64_t, n);
 TILING_DATA_FIELD_DEF(uint64_t, valueSize);
 TILING_DATA_FIELD_DEF(uint64_t, taskNum);
 TILING_DATA_FIELD_DEF(uint64_t, taskTail);
