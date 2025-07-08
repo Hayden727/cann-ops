@@ -9,6 +9,7 @@
  * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
  * for the full text of the License.
  */
+using namespace AscendC;
 class KernelTruncF32 {
 public:
     __aicore__ inline KernelTruncF32() {}
@@ -23,7 +24,6 @@ public:
         this->formerNum=formerNum;
         this->tailLen=tailLen;
          // 核内切分参数
-
          // 初始化GM Tensor 与 TQue
         input_xGM.SetGlobalBuffer((__gm__ float*)input_xAddr, totalLen);
         output_yGM.SetGlobalBuffer((__gm__ float*)output_yAddr, totalLen);
@@ -34,19 +34,19 @@ public:
     __aicore__ inline void Process()
     {
          // 读取变量
-        const uint32_t formerNum = this->formerNum, formerLen = this->formerLen, tailLen = this->tailLen;
+        const uint32_t formerNum32 = this->formerNum, formerLen32 = this->formerLen, tailLen32 = this->tailLen;
         {
             uint32_t t = 0;
-            for (; t < formerNum; ++t){  // 遍历大Tiling
+            for (; t < formerNum32; ++t){  // 遍历大Tiling
                 ProcessTrunc(
-                    t*formerLen,
-                    formerLen
+                    t*formerLen32,
+                    formerLen32
                 );
             }
-            if(tailLen) {  // 遍历小Tiling
+            if(tailLen32) {  // 遍历小Tiling
                 ProcessTrunc(
-                    t*formerLen,
-                    tailLen
+                    t*formerLen32,
+                    tailLen32
                 );
             }
         }
@@ -61,10 +61,10 @@ private:
         }
         auto x = input_x.template ReinterpretCast<float>();
         auto x_i32 = input_x.template ReinterpretCast<int32_t>();
-        Sync(MTE2, S)
+        Sync(MTE2, S);
         AscendC::Cast(x_i32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
         AscendC::Cast(x, x_i32, AscendC::RoundMode::CAST_NONE, _len_);
-        Sync(V, MTE3)
+        Sync(V, MTE3);
         DataCopySafe(output_yGM[_offset_], x, _len_);
         input_xQue.FreeTensor(input_x);
     }

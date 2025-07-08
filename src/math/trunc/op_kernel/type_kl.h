@@ -24,7 +24,7 @@
 /// @brief 判断VAR是否为TYPE类型。(可在编译期给出结果)
 /// @param VAR 变量
 /// @param T 类型
-#define IS_TYPE_VAR(VAR, T) _Generic(VAR,\
+#define IS_TYPE_VAR(VAR, T) _Generic((VAR),\
     T: true,\
     default: false\
 )

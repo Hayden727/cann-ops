@@ -11,6 +11,7 @@
  */
 constexpr uint32_t INPUT_X_LW = 1;
 constexpr uint32_t OUTPUT_Y_LW = 1;
+using namespace AscendC;
 template<typename TYPE_INPUT_X, typename TYPE_OUTPUT_Y> class KernelTrunc {
 public:
     __aicore__ inline KernelTrunc() {}
@@ -25,7 +26,6 @@ public:
         this->formerNum=formerNum;
         this->tailLen=tailLen;
          // 核内切分参数
-
          // 初始化GM Tensor 与 TQue
         input_xGM.SetGlobalBuffer((__gm__ TYPE_INPUT_X*)input_xAddr, totalLen*INPUT_X_LW);
         output_yGM.SetGlobalBuffer((__gm__ TYPE_OUTPUT_Y*)output_yAddr, totalLen*OUTPUT_Y_LW);
@@ -66,81 +66,61 @@ private:
         {
             DataCopySafe(input_x, input_xGM[_offset_*INPUT_X_LW], _len_*INPUT_X_LW);
         }
-
          // Compute
         LocalTensor<TYPE_OUTPUT_Y> output_y = output_yQue.AllocTensor<TYPE_OUTPUT_Y>();
         {  
             if constexpr(IS_TYPE(TYPE_INPUT_X, int8_t) ){
-                // auto x = input_x.template ReinterpretCast<int8_t>();
-
-                Sync(MTE2, MTE3)
+                Sync(MTE2, MTE3);
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, uint8_t)){
-                // auto x = input_x.template ReinterpretCast<uint8_t>();
-
-                Sync(MTE2, MTE3)
+                Sync(MTE2, MTE3);
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, int32_t)){
-                // auto x = input_x.template ReinterpretCast<int32_t>();
-
-                Sync(MTE2, MTE3)
+                Sync(MTE2, MTE3);
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, float)){
                 auto x = input_x.template ReinterpretCast<float>();
                 auto y = output_y.template ReinterpretCast<float>();
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
-                Sync(MTE2, S)
+                Sync(MTE2, S);
 
                 AscendC::Cast(y_int32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
 
                 AscendC::Cast(y, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (float)1, _len_);
-                Sync(V, MTE3)
+                Sync(V, MTE3);
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
-                
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, half)){
-
                 auto x = input_x.template ReinterpretCast<half>();
                 auto y = output_y.template ReinterpretCast<half>();
                 auto y_int16 = output_y.template ReinterpretCast<int16_t>();
-                Sync(MTE2, S)
-                
+                Sync(MTE2, S);
                 AscendC::Cast(y_int16, x, AscendC::RoundMode::CAST_TRUNC, _len_);
-
                 AscendC::Cast(y, y_int16, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (half)1, _len_);
-
-                Sync(V, MTE3)
+                Sync(V, MTE3);
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
             } else if constexpr(IS_TYPE(TYPE_INPUT_X, bfloat16_t)){
                 auto x = input_x.template ReinterpretCast<bfloat16_t>();
                 auto y = output_y.template ReinterpretCast<bfloat16_t>();
-                Sync(MTE2, S)
-
+                Sync(MTE2, S);
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
                 auto y_float32 = output_y.template ReinterpretCast<float>();
-                
                 AscendC::Cast(y_int32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
                 AscendC::Cast(y_float32, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 AscendC::Cast(y, y_float32, AscendC::RoundMode::CAST_TRUNC, _len_);
-
-                Sync(V, MTE3)
+                Sync(V, MTE3);
                 DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], y, _len_*OUTPUT_Y_LW);
             }
         }
-        
          // Free&Post Tensor
         input_xQue.FreeTensor(input_x);
         output_yQue.FreeTensor(output_y);
     }
-
 private:
     GlobalTensor<TYPE_INPUT_X> input_xGM;
     GlobalTensor<TYPE_OUTPUT_Y> output_yGM;
-    
     TQueBind<QuePosition::GM, QuePosition::VECIN, 2> input_xQue;
     TQueBind<QuePosition::VECOUT, QuePosition::GM, 2> output_yQue;
-    // TBuf<QuePosition::VECCALC> bf16Tmp;
-
     uint32_t formerLen, formerNum, tailLen;
 };

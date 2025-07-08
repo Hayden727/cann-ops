@@ -13,11 +13,10 @@
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-#include "tiling_kl.h"
-using kunlun::tiling::SimpleTilingStrategy;
 
 constexpr uint32_t BLOCK_SIZE = 32;
 constexpr uint32_t REPEAT_SIZE = 256;
+constexpr uint32_t DOUBLE_BUFFER = 2;
 
 namespace optiling {
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
@@ -30,44 +29,42 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     uint32_t CORE_NUM = 1; // 获取设备的核心数
     
-     // 简易核间&核内切分工具
-    SimpleTilingStrategy tilingStrategy(context, platform_ascendc::CoreMemType::UB);
+    // 获取输入shape信息
+    uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize(); //输入数量
+    uint32_t inputBytes = GetSizeByDataType(context->GetInputDesc(0)->GetDataType()); //输入类型
+    uint32_t inputLength = inputBytes * inputNum; //输入长度
+
+    // 可使用的ub空间 输入3输出1，手动考虑双缓存
+    uint32_t ubDataNumber = 6;//(inputBytes == 2) ? 10 : 6;
+
+    // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
+    uint32_t tileBlockNum = (ubSize / BLOCK_SIZE / DOUBLE_BUFFER) / ubDataNumber; //每个ub段可用的空间块数
+    uint32_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes; //每次处理的数据量
+
+    // Input data for 32B alignment
+    uint32_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE); //输入长度 对齐处理
+    // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
+    uint32_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE;// 输入数据需要多少空间块
+    
+    //  chunks are calculated and sliced several times using the number of data on each core
+    uint32_t CoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes; //对齐空间后的输入数量
+    uint32_t TileNum = everyCoreInputBlockNum / tileBlockNum;
+    uint32_t finalTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? TileNum : TileNum + 1; //需要循环处理几次
+    // Tail block calculation for  chunks of data
+    uint32_t TailDataNum = CoreDataNum - (tileDataNum * TileNum);
+    TailDataNum = TailDataNum == 0 ? tileDataNum : TailDataNum; //最后一次需要处理的数据量
+    printf("CoreDataNum:%d\n",CoreDataNum);
+    printf("TileNum:%d\n",TileNum);
+    printf("finalTileNum:%d\n",finalTileNum);
+    printf("TailDataNum:%d\n",TailDataNum);
     {
-        tilingStrategy.SetBlockDim(CORE_NUM); // 设置核心数
-         // 配置IO比重
-        auto& inputList = tilingStrategy.inputs;
-        auto& outputList = tilingStrategy.outputs;
-        inputList[0].lengthWeight = 1; // input_x
-        switch(context->GetInputDesc(0)->GetDataType()){  // 跟踪数据类型
-            case ge::DataType::DT_BF16:{
-                tilingStrategy.addCalc(2, 2);
-                outputList[0].lengthWeight = 1; // output_y
-                break;
-            }
-            case ge::DataType::DT_FLOAT:{
-                outputList.erase(outputList.begin()); // output_y
-                break;
-            }
-            default:{
-                outputList[0].lengthWeight = 1; // output_y
-            }
-        }
-         // 核间&核内一键切分
-        tilingStrategy.reTiling<DOUBLE_BUFFER_ENABLE>();
-         // 根据切分结果推测IO详情
-        tilingStrategy.autoInferQueueDetail();
+        // 核内切分数据
+        tiling.set_Len(CoreDataNum); // 对齐空间后的输入数量
+        tiling.set_fLen(TileNum); // 每次处理的数据量
+        tiling.set_fNum(finalTileNum); // 需要循环处理几次
+        tiling.set_tLen(TailDataNum); // 最后一次需要处理的数据量
     }
-    const auto& coreDetail = tilingStrategy.formerCore;
-    {
-         // 获取&设置 切分信息
-        const auto& strategyCoreDetail = tilingStrategy.formerCore;//const auto& coreDetail = tilingStrategy.formerCore;
-         // 核内切分数据
-        tiling.set_Len(strategyCoreDetail.batchPartitionLength); // length
-        tiling.set_fLen(strategyCoreDetail.formerTilePartitionLength); // former_tile-length <=> ub-partion-length
-        tiling.set_fNum(strategyCoreDetail.formerTileNum); // former_tile-num
-        tiling.set_tLen(strategyCoreDetail.tailTilePartitionLength); // tail_tile-length
-    }
-     // 保存Tiling数据
+    // 保存Tiling数据
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
     context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
 

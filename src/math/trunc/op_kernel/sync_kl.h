@@ -11,7 +11,6 @@
  */
 #ifndef SYNC_KUNLUN_H
 #define SYNC_KUNLUN_H
-
 /// 跨流水同步函数。通过阻塞DST_POS流水，保证PIPE_SRC的前序读写操作完成后，PIPE_DST上的操作才被执行。
 /// 支持的流水：MTE1, MTE2, MTE3, V, S, M
 /// @param PIPE_SRC 源流水
@@ -22,5 +21,4 @@
     queSync.SetFlag(eventID); \
     queSync.WaitFlag(eventID); \
 }
-
 #endif// SYNC_KUNLUN_H
