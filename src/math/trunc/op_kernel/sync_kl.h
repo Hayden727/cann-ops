@@ -15,22 +15,27 @@
 /// 支持的流水：MTE1, MTE2, MTE3, V, S, M
 /// @param PIPE_SRC 源流水
 /// @param PIPE_DST 目的流水
-#define SyncMTE2S() {\
-    int32_t eventID = static_cast<int32_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S)); \
-    TQueSync<PIPE_MTE2,PIPE_S> queSync; \
-    queSync.SetFlag(eventID); \
-    queSync.WaitFlag(eventID); \
-}
-#define SyncMTE2MTE3() {\
-    int32_t eventID = static_cast<int32_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_MTE3)); \
-    TQueSync<PIPE_MTE2,PIPE_MTE3> queSync; \
-    queSync.SetFlag(eventID); \
-    queSync.WaitFlag(eventID); \
-}
-#define SyncVMTE3() {\
-    int32_t eventID = static_cast<int32_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3)); \
-    TQueSync<PIPE_V,PIPE_MTE3> queSync; \
-    queSync.SetFlag(eventID); \
-    queSync.WaitFlag(eventID); \
+namespace kunlun{
+    using AscendC::HardEvent;
+    using AscendC::TQueSync;
+    using AscendC::TPipe;
+    __aicore__ inline void SyncVMTE3(){
+        int32_t eventID = static_cast<int32_t>(GetTPipePtr()->FetchEventID(HardEvent::V_MTE3));
+        TQueSync<PIPE_V, PIPE_MTE3> queSync;
+        queSync.SetFlag(eventID);
+        queSync.WaitFlag(eventID);
+    }
+    __aicore__ inline void SyncMTE2S(){
+        int32_t eventID = static_cast<int32_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_S));
+        TQueSync<PIPE_MTE2, PIPE_S> queSync;
+        queSync.SetFlag(eventID);
+        queSync.WaitFlag(eventID);
+    }
+    __aicore__ inline void SyncMTE2MTE3(){
+        int32_t eventID = static_cast<int32_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_MTE3));
+        TQueSync<PIPE_MTE2, PIPE_MTE3> queSync;
+        queSync.SetFlag(eventID);
+        queSync.WaitFlag(eventID);
+    }
 }
 #endif// SYNC_KUNLUN_H

@@ -9,6 +9,7 @@
  * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
  * for the full text of the License.
  */
+#include "sync_kl.h"
 using namespace AscendC;
 class KernelTruncF32 {
 public:
@@ -57,15 +58,15 @@ private:
          // CopyIn
         LocalTensor<float> input_x = input_xQue.AllocTensor<float>();
         {
-            DataCopySafe(input_x, input_xGM[_offset_], _len_);
+            kunlun::DataCopySafeImpl(input_x, input_xGM[_offset_], _len_);
         }
         auto x = input_x.template ReinterpretCast<float>();
         auto x_i32 = input_x.template ReinterpretCast<int32_t>();
-        SyncMTE2S();
+        kunlun::SyncMTE2S();
         AscendC::Cast(x_i32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
         AscendC::Cast(x, x_i32, AscendC::RoundMode::CAST_NONE, _len_);
-        SyncVMTE3();
-        DataCopySafe(output_yGM[_offset_], x, _len_);
+        kunlun::SyncVMTE3();
+        kunlun::DataCopySafeImpl(output_yGM[_offset_], x, _len_);
         input_xQue.FreeTensor(input_x);
     }
 private:

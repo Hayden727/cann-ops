@@ -39,6 +39,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
     uint32_t tileBlockNum = (ubSize / BLOCK_SIZE / DOUBLE_BUFFER) / ubDataNumber; //每个ub段可用的空间块数
+    if (inputBytes == 0){
+        return ge::GRAPH_FAILED;
+    }
     uint32_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes; //每次处理的数据量
 
     // Input data for 32B alignment
@@ -53,10 +56,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     // Tail block calculation for  chunks of data
     uint32_t TailDataNum = CoreDataNum - (tileDataNum * TileNum);
     TailDataNum = TailDataNum == 0 ? tileDataNum : TailDataNum; //最后一次需要处理的数据量
-    printf("CoreDataNum:%d\n",CoreDataNum);
-    printf("TileNum:%d\n",TileNum);
-    printf("finalTileNum:%d\n",finalTileNum);
-    printf("TailDataNum:%d\n",TailDataNum);
     {
         // 核内切分数据
         tiling.set_Len(CoreDataNum); // 对齐空间后的输入数量

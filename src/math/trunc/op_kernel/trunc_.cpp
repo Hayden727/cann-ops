@@ -9,6 +9,7 @@
  * FOR A PARTICULAR PURPOSE. See LICENSE in the root of the software repository
  * for the full text of the License.
  */
+#include "sync_kl.h"
 constexpr uint32_t INPUT_X_LW = 1;
 constexpr uint32_t OUTPUT_Y_LW = 1;
 using namespace AscendC;
@@ -31,7 +32,7 @@ public:
         output_yGM.SetGlobalBuffer((__gm__ TYPE_OUTPUT_Y*)output_yAddr, totalLen*OUTPUT_Y_LW);
         
         pipe->InitBuffer(input_xQue, 2, formerLen*INPUT_X_LW*sizeof(TYPE_INPUT_X));
-        if constexpr(IS_TYPE(TYPE_INPUT_X, bfloat16_t)){
+        if constexpr(std::is_same_v<TYPE_INPUT_X, bfloat16_t>){
             pipe->InitBuffer(output_yQue, 2, formerLen*OUTPUT_Y_LW*4);
         }else{
             pipe->InitBuffer(output_yQue, 2, formerLen*OUTPUT_Y_LW*sizeof(TYPE_OUTPUT_Y));
@@ -64,51 +65,51 @@ private:
          // CopyIn
         LocalTensor<TYPE_INPUT_X> input_x = input_xQue.AllocTensor<TYPE_INPUT_X>();
         {
-            DataCopySafe(input_x, input_xGM[_offset_*INPUT_X_LW], _len_*INPUT_X_LW);
+            kunlun::DataCopySafeImpl(input_x, input_xGM[_offset_*INPUT_X_LW], _len_*INPUT_X_LW);
         }
          // Compute
         LocalTensor<TYPE_OUTPUT_Y> output_y = output_yQue.AllocTensor<TYPE_OUTPUT_Y>();
         {  
-            if constexpr(IS_TYPE(TYPE_INPUT_X, int8_t) ){
-                SyncMTE2MTE3();
-                DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
-            } else if constexpr(IS_TYPE(TYPE_INPUT_X, uint8_t)){
-                SyncMTE2MTE3();
-                DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
-            } else if constexpr(IS_TYPE(TYPE_INPUT_X, int32_t)){
-                SyncMTE2MTE3();
-                DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
-            } else if constexpr(IS_TYPE(TYPE_INPUT_X, float)){
+            if constexpr(std::is_same_v<TYPE_INPUT_X, int8_t>){
+                kunlun::SyncMTE2MTE3();
+                kunlun::DataCopySafeImpl(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
+            } else if constexpr(std::is_same_v<TYPE_INPUT_X, uint8_t>){
+                kunlun::SyncMTE2MTE3();
+                kunlun::DataCopySafeImpl(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
+            } else if constexpr(std::is_same_v<TYPE_INPUT_X, int32_t>){
+                kunlun::SyncMTE2MTE3();
+                kunlun::DataCopySafeImpl(output_yGM[_offset_*OUTPUT_Y_LW], input_x, _len_*OUTPUT_Y_LW);
+            } else if constexpr(std::is_same_v<TYPE_INPUT_X, float>){
                 auto x = input_x.template ReinterpretCast<float>();
                 auto y = output_y.template ReinterpretCast<float>();
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
-                SyncMTE2S();
+                kunlun::SyncMTE2S();
                 AscendC::Cast(y_int32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
                 AscendC::Cast(y, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (float)1, _len_);
-                SyncVMTE3();
-                DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
-            } else if constexpr(IS_TYPE(TYPE_INPUT_X, half)){
+                kunlun::SyncVMTE3();
+                kunlun::DataCopySafeImpl(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
+            } else if constexpr(std::is_same_v<TYPE_INPUT_X, half>){
                 auto x = input_x.template ReinterpretCast<half>();
                 auto y = output_y.template ReinterpretCast<half>();
                 auto y_int16 = output_y.template ReinterpretCast<int16_t>();
-                SyncMTE2S();
+                kunlun::SyncMTE2S();
                 AscendC::Cast(y_int16, x, AscendC::RoundMode::CAST_TRUNC, _len_);
                 AscendC::Cast(y, y_int16, AscendC::RoundMode::CAST_NONE, _len_);
                 Muls(y, y, (half)1, _len_);
-                SyncVMTE3();
-                DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
-            } else if constexpr(IS_TYPE(TYPE_INPUT_X, bfloat16_t)){
+                kunlun::SyncVMTE3();
+                kunlun::DataCopySafeImpl(output_yGM[_offset_*OUTPUT_Y_LW], output_y, _len_*OUTPUT_Y_LW);
+            } else if constexpr(std::is_same_v<TYPE_INPUT_X, bfloat16_t>){
                 auto x = input_x.template ReinterpretCast<bfloat16_t>();
                 auto y = output_y.template ReinterpretCast<bfloat16_t>();
-                SyncMTE2S();
+                kunlun::SyncMTE2S();
                 auto y_int32 = output_y.template ReinterpretCast<int32_t>();
                 auto y_float32 = output_y.template ReinterpretCast<float>();
                 AscendC::Cast(y_int32, x, AscendC::RoundMode::CAST_TRUNC, _len_);
                 AscendC::Cast(y_float32, y_int32, AscendC::RoundMode::CAST_NONE, _len_);
                 AscendC::Cast(y, y_float32, AscendC::RoundMode::CAST_TRUNC, _len_);
-                SyncVMTE3();
-                DataCopySafe(output_yGM[_offset_*OUTPUT_Y_LW], y, _len_*OUTPUT_Y_LW);
+                kunlun::SyncVMTE3();
+                kunlun::DataCopySafeImpl(output_yGM[_offset_*OUTPUT_Y_LW], y, _len_*OUTPUT_Y_LW);
             }
         }
          // Free&Post Tensor

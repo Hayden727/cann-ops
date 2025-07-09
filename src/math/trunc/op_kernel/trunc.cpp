@@ -11,7 +11,6 @@
  */
 #include "kernel_operator.h"
 #include "copy_kl.h"
-#include "type_kl.h"
 #include "sync_kl.h"
 #include "trunc_.cpp"
 #include "trunc_f32.cpp"
@@ -31,7 +30,7 @@ extern "C" __global__ __aicore__ void trunc(GM_ADDR input_x, GM_ADDR output_y, G
     }
 
      // 初始化&计算
-    if constexpr(IS_TYPE(DTYPE_INPUT_X, float)){
+    if constexpr(std::is_same_v<DTYPE_INPUT_X, float>){
         KernelTruncF32 op;
         op.Init(&pipe,
             input_x, output_y, 

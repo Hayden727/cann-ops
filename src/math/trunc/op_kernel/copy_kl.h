@@ -13,13 +13,6 @@
 #define COPY_KUNLUN_H
 #include "kernel_operator.h"
 
-
-#ifdef TRACE_DCS_ENABLE
-#define DataCopySafe(dstTensor, srcTensor, calCount) kunlun::DataCopySafeImpl(dstTensor, srcTensor, calCount, __LINE__)
-#else 
-#define DataCopySafe(dstTensor, srcTensor, calCount) kunlun::DataCopySafeImpl(dstTensor, srcTensor, calCount)
-#endif
-
 namespace kunlun{
     using AscendC::DataCopy;
     using AscendC::DataCopyPad;
@@ -30,7 +23,6 @@ namespace kunlun{
     using AscendC::printf;
 
     #ifdef TRACE_DCS_ENABLE
-    // copyin
     template<typename T>
     __aicore__ inline void DataCopySafeImpl(const LocalTensor<T>& dstTensor, const GlobalTensor<T>& srcTensor, const uint32_t& calCount, const uint32_t& LINE){
         if(calCount*sizeof(T)%32 == 0){
@@ -43,7 +35,6 @@ namespace kunlun{
             printf("GM->UB: [len: %d, dtsize: %d, GmPos:%d, UbPos: %d, copySize: %d, Aligned: false, Line:%d]\n",calCount,sizeof(T),srcTensor.GetPhyAddr(),dstTensor.GetPhyAddr(),calCount*sizeof(T),LINE);
         }
     }
-    // copyout
     template<typename T>
     __aicore__ inline void DataCopySafeImpl(const GlobalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const uint32_t& calCount, const uint32_t& LINE){
         if(calCount*sizeof(T)%32 == 0){
@@ -56,7 +47,6 @@ namespace kunlun{
         }
     }
     #else
-    // copyin
     template<typename T>
     __aicore__ inline void DataCopySafeImpl(const LocalTensor<T>& dstTensor, const GlobalTensor<T>& srcTensor, const uint32_t& calCount){
         if(calCount*sizeof(T)%32 == 0){
@@ -67,7 +57,6 @@ namespace kunlun{
             DataCopyPad(dstTensor, srcTensor, copyParams, padParams); 
         }
     }
-    // copyout
     template<typename T>
     __aicore__ inline void DataCopySafeImpl(const GlobalTensor<T>& dstTensor, const LocalTensor<T>& srcTensor, const uint32_t& calCount){
         if(calCount*sizeof(T)%32 == 0){
