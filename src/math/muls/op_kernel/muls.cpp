@@ -23,14 +23,14 @@ public:
                                 uint32_t bigCoreDataNum, uint32_t ubPartDataNum,
                                 uint32_t smallCoreTailDataNum, uint32_t bigCoreTailDataNum,
                                 uint32_t smallCoreLoopNum, uint32_t bigCoreLoopNum,
-                                uint32_t tailBlockNum,bool IsExistBigCore)
+                                uint32_t tailBlockNum,uint32_t IsExistBigCore)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
         this->ubPartDataNum = ubPartDataNum;
         this->IsExistBigCore = IsExistBigCore;
-        if (IsExistBigCore) 
+        if (1==IsExistBigCore) 
         {
           if (coreNum < tailBlockNum) 
           { 
@@ -59,11 +59,16 @@ public:
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         this->value = valueGm.GetValue(0);
+        if constexpr(std::is_same_v<TYPE_X, float16_t>)
+        {
+            m_value=(half)this->value;
+        }
         //tmp1用于临时存储数据用，方便类型的转换，用于转换成float
-        if constexpr (std::is_same_v<TYPE_X, bfloat16_t>){
+        if constexpr (std::is_same_v<TYPE_X, bfloat16_t> || 
+                          std::is_same_v<TYPE_X, int16_t>|| 
+                         std::is_same_v<TYPE_X, int32_t> || 
+                          std::is_same_v<TYPE_X, int64_t>){
             pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(float32_t));
-        }else if constexpr (std::is_same_v<TYPE_X, int64_t>){
-            pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(int32_t));
         }
     }
     __aicore__ inline void Process()
@@ -71,7 +76,7 @@ public:
         //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->ubPartDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
             CopyIn(i);
             Compute(i);
@@ -93,24 +98,22 @@ private:
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         LocalTensor<TYPE_X> yLocal = outQueueY.AllocTensor<TYPE_X>();
-        if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
-        {
-            
+        if constexpr (std::is_same_v<TYPE_X, bfloat16_t> || 
+                          std::is_same_v<TYPE_X, int16_t>|| 
+                         std::is_same_v<TYPE_X, int32_t> || 
+                          std::is_same_v<TYPE_X, int64_t>){
             LocalTensor<float32_t> p1 = tmp1.Get<float32_t>();
             Cast(p1, xLocal, RoundMode::CAST_NONE, this->processDataNum);
             Muls(p1, p1,this->value , this->processDataNum);
             Cast(yLocal, p1, RoundMode::CAST_RINT, this->processDataNum);
         }
-        else if constexpr (std::is_same_v<TYPE_X, int64_t>)
+        else if constexpr(std::is_same_v<TYPE_X, float16_t>)
         {
-            LocalTensor<int32_t> p2 = tmp1.Get<int32_t>();
-            Cast(p2, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            Muls(p2, p2,(int32_t)this->value, this->processDataNum);
-            Cast(yLocal, p2, RoundMode::CAST_NONE, this->processDataNum);
+            Muls(yLocal, xLocal,this->m_value , this->processDataNum);
         }
-        else
+        else if constexpr(std::is_same_v<TYPE_X, float32_t>)
         {
-            Muls(yLocal, xLocal,(TYPE_X)this->value, this->processDataNum);
+            Muls(yLocal, xLocal,this->value , this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX.FreeTensor(xLocal);
@@ -134,10 +137,11 @@ private:
     uint32_t coreDataNum;
     uint32_t tileNum;
     uint32_t ubPartDataNum;
-    bool IsExistBigCore;
+    uint32_t IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
     float value;
+    TYPE_X m_value;
 };
 
 //在这里编写一个适配complex64类型的算子
@@ -150,14 +154,28 @@ public:
         uint32_t bigCoreDataNum, uint32_t ubPartDataNum,
         uint32_t smallCoreTailDataNum, uint32_t bigCoreTailDataNum,
         uint32_t smallCoreLoopNum, uint32_t bigCoreLoopNum,
-        uint32_t tailBlockNum,bool IsExistBigCore)
+        uint32_t tailBlockNum,uint32_t IsExistBigCore)
     {
         ASSERT(GetBlockNum() != 0 && "block dim can not be zero!");
         uint32_t coreNum = GetBlockIdx();
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
         this->ubPartDataNum = ubPartDataNum;
         this->IsExistBigCore = IsExistBigCore;
-        if (IsExistBigCore) 
+        /*AscendC::printf("this->coreNum is %ld \n",coreNum);
+        AscendC::printf("this->smallCoreDataNum is %ld \n",smallCoreDataNum);
+        AscendC::printf("this->bigCoreDataNum is %ld \n",bigCoreDataNum);
+        AscendC::printf("this->ubPartDataNum is %ld \n",ubPartDataNum);
+        AscendC::printf("this->smallCoreTailDataNum is %ld \n",smallCoreTailDataNum);
+        AscendC::printf("this->bigCoreTailDataNum is %ld \n",bigCoreTailDataNum);
+        AscendC::printf("this->smallCoreLoopNum is %ld \n",smallCoreLoopNum);
+        AscendC::printf("this->bigCoreLoopNum is %ld \n",bigCoreLoopNum);
+
+        AscendC::printf("this->tailBlockNum is %ld \n",tailBlockNum);
+        AscendC::printf("this->IsExistBigCore is %ld \n",IsExistBigCore);*/
+
+
+
+        if (1==IsExistBigCore) 
         {
           if (coreNum < tailBlockNum) 
           { 
@@ -180,10 +198,14 @@ public:
           this->tailDataNum = smallCoreTailDataNum;
           globalBufferIndex = smallCoreDataNum * AscendC::GetBlockIdx();
         }
+        //AscendC::printf("this->coreDataNum is %ld \n",this->coreDataNum);
+
         xGm.SetGlobalBuffer((__gm__ float *)x + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM); // 1 complex = 2 float
         yGm.SetGlobalBuffer((__gm__ float *)y + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
+        //AscendC::printf("this->ubPartDataNum is %ld \n",this->ubPartDataNum);
+
         valueGm.SetGlobalBuffer((__gm__ float *)value);
         this->value = valueGm.GetValue(0);
     }
@@ -192,13 +214,16 @@ public:
         //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->ubPartDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+        
+
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
         this->processDataNum = this->tailDataNum;
+
         CopyIn(loopCount-1);
         Compute(loopCount-1);
         CopyOut(loopCount-1);
@@ -216,7 +241,7 @@ private:
     {
         LocalTensor<float> xLocal = inQueueX.DeQue<float>();
         LocalTensor<float> yLocal = outQueueY.AllocTensor<float>();
-        Muls(yLocal, xLocal, this->value, this->processDataNum);
+        Muls(yLocal, xLocal, this->value, this->processDataNum* BUFFER_NUM);
         outQueueY.EnQue<float>(yLocal);
         inQueueX.FreeTensor(xLocal);
     }
@@ -236,7 +261,7 @@ private:
     uint32_t coreDataNum;
     uint32_t tileNum;
     uint32_t ubPartDataNum;
-    bool IsExistBigCore;
+    uint32_t IsExistBigCore;
     uint32_t tailDataNum;
     uint32_t processDataNum;
     float value;
@@ -299,12 +324,22 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
         op.Process();
     }
     else if(TILING_KEY_IS(6)){
+        //AscendC::printf("is me KernelMulsComplex64<float> op\n");
         KernelMulsComplex64<float> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
             tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
             tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
             tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
+        /*AscendC::printf("tiling_data.smallCoreDataNum is %ld \n",tiling_data.smallCoreDataNum);
+        AscendC::printf("tiling_data.bigCoreDataNum is %ld \n",tiling_data.bigCoreDataNum);
+        AscendC::printf("tiling_data.ubPartDataNum is %ld \n",tiling_data.ubPartDataNum);
+        AscendC::printf("tiling_data.smallCoreTailDataNum is %ld \n",tiling_data.smallCoreTailDataNum);
+        AscendC::printf("tiling_data.bigCoreTailDataNum is %ld \n",tiling_data.bigCoreTailDataNum);
+        AscendC::printf("tiling_data.smallCoreLoopNum is %ld \n",tiling_data.smallCoreLoopNum);
+        AscendC::printf("tiling_data.bigCoreLoopNum is %ld \n",tiling_data.bigCoreLoopNum);
+        AscendC::printf("tiling_data.tailBlockNum is %ld \n",tiling_data.tailBlockNum);
+        AscendC::printf("tiling_data.IsExistBigCore is %ld \n",tiling_data.IsExistBigCore);*/
         op.Process();
     }
 }
