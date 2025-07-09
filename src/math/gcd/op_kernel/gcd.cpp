@@ -47,12 +47,26 @@ __aicore__ inline T gcd_2(T a, T b) {
 
 using namespace AscendC;
 
+template<typename T>
+struct FpTypeHelper;
+
+template<>
+struct FpTypeHelper<int16_t> {
+    using type = half;
+};
+
+template<>
+struct FpTypeHelper<int32_t> {
+    using type = float;
+};
+
+
 template <typename T>
 class KernelGcd
 {
 public:
-    static constexpr int TILE_SIZE = 4096;
-    static constexpr int REP = 50;
+    static constexpr int TILE_SIZE = 8192 / sizeof(T);
+    static constexpr int TILE_SIZE_MASK = TILE_SIZE / 8;
     __aicore__ inline KernelGcd()
     {
     }
@@ -80,14 +94,14 @@ public:
         x2Gm.SetGlobalBuffer((__gm__ T *)x2, sizeX2 * sizeof(T));
         yGm.SetGlobalBuffer((__gm__ T *)y, sizeX1 * sizeof(T));
 
-        if constexpr(std::is_same<T, int16_t>::value) {
-            pipe->InitBuffer(tBufNext, 2 * TILE_SIZE * sizeof(int16_t));
-            pipe->InitBuffer(tBufMask, TILE_SIZE * sizeof(uint8_t));
-        }
+        if constexpr(std::is_same<T, int16_t>::value || std::is_same<T, int32_t>::value) {
+            pipe->InitBuffer(tBufNext, 9 * TILE_SIZE * sizeof(T));
+            pipe->InitBuffer(tBufMask, 10 * TILE_SIZE_MASK * sizeof(uint8_t));
+            auto zeros = tBufNext.Get<T>()[5 * TILE_SIZE];
+            Duplicate(zeros, (T) 0, TILE_SIZE);
 
-        if constexpr(std::is_same<T, int32_t>::value) {
-            pipe->InitBuffer(tBufNext, 2 * TILE_SIZE * sizeof(int32_t));
-            pipe->InitBuffer(tBufMask, TILE_SIZE * sizeof(uint8_t));
+            auto ones = tBufNext.Get<T>()[6 * TILE_SIZE];
+            Duplicate(ones, (T) 1, TILE_SIZE);
         }
 
         pipe->InitBuffer(inX1, 1, TILE_SIZE * sizeof(T));
@@ -130,93 +144,138 @@ public:
         outY.FreeTensor(y);
     }
 
-    __aicore__ inline void GcdLikely16(const LocalTensor<int16_t>& c, const LocalTensor<int16_t>& a, const LocalTensor<int16_t>& b, int len) {
-        auto n_a = tBufNext.Get<int16_t>();
-        auto n_b = tBufNext.Get<int16_t>()[TILE_SIZE];
-        auto mask = tBufMask.Get<uint8_t>();
-        auto a_h = a.ReinterpretCast<half>();
-        auto b_h = b.ReinterpretCast<half>();
-        auto n_a_h = n_a.ReinterpretCast<half>();
-        auto n_b_h = n_b.ReinterpretCast<half>();
+    template <typename U, int REP>
+    __aicore__ inline void BinaryGcd(LocalTensor<U>& c, LocalTensor<U>& a, LocalTensor<U>& b, int len) {
+        using FpT = typename FpTypeHelper<U>::type;
+    
+        constexpr int32_t num_uint16 = sizeof(U) / sizeof(uint16_t);
+    
+        auto a0 = tBufNext.Get<U>();
+        auto b0 = tBufNext.Get<U>()[1 * TILE_SIZE];
+        auto a_div2 = tBufNext.Get<U>()[2 * TILE_SIZE];
+        auto b_div2 = tBufNext.Get<U>()[3 * TILE_SIZE];
+        auto ab_diff = tBufNext.Get<U>()[4 * TILE_SIZE];
+        auto zeros = tBufNext.Get<U>()[5 * TILE_SIZE];
+        auto ones = tBufNext.Get<U>()[6 * TILE_SIZE];
+        auto c1 = tBufNext.Get<U>()[7 * TILE_SIZE];
+        auto c2 = tBufNext.Get<U>()[8 * TILE_SIZE];
+    
+        auto even_a = tBufMask.Get<uint8_t>();
+        auto even_b = tBufMask.Get<uint8_t>()[TILE_SIZE_MASK];
+        auto old_a = tBufMask.Get<uint8_t>()[2 * TILE_SIZE_MASK];
+        auto old_b = tBufMask.Get<uint8_t>()[3 * TILE_SIZE_MASK];
+        auto nonzero_a = tBufMask.Get<uint8_t>()[4 * TILE_SIZE_MASK];
+        auto zero_b = tBufMask.Get<uint8_t>()[5 * TILE_SIZE_MASK];
+        auto even_ab = tBufMask.Get<uint8_t>()[6 * TILE_SIZE_MASK];
+        auto old_ab = tBufMask.Get<uint8_t>()[7 * TILE_SIZE_MASK];
+        auto mask = tBufMask.Get<uint8_t>()[8 * TILE_SIZE_MASK];
+        auto mask_not = tBufMask.Get<uint8_t>()[9 * TILE_SIZE_MASK];
+    
+        auto a_u16 = a.template ReinterpretCast<uint16_t>();
+        auto b_u16 = b.template ReinterpretCast<uint16_t>();
+        auto c_fp = c.template ReinterpretCast<FpT>();
+        auto a_fp = a.template ReinterpretCast<FpT>();
+        auto b_fp = b.template ReinterpretCast<FpT>();
+    
+        auto a0_u16 = a0.template ReinterpretCast<uint16_t>();
+        auto b0_u16 = b0.template ReinterpretCast<uint16_t>();
+        auto a0_fp = a0.template ReinterpretCast<FpT>();
+        auto b0_fp = b0.template ReinterpretCast<FpT>();
+    
+        auto zeros_fp = zeros.template ReinterpretCast<FpT>();
+        auto ones_fp = ones.template ReinterpretCast<FpT>();
+        auto a_div2_fp = a_div2.template ReinterpretCast<FpT>();
+        auto b_div2_fp = b_div2.template ReinterpretCast<FpT>();
+        auto ab_diff_fp = ab_diff.template ReinterpretCast<FpT>();
+        auto ones_u16 = ones.template ReinterpretCast<uint16_t>();
+        
+        auto c1_fp = c1.template ReinterpretCast<FpT>();
+        auto c2_fp = c2.template ReinterpretCast<FpT>();
+    
+        auto even_a_u16 = even_a.template ReinterpretCast<uint16_t>();
+        auto even_b_u16 = even_b.template ReinterpretCast<uint16_t>();
+        auto old_a_u16 = old_a.template ReinterpretCast<uint16_t>();
+        auto old_b_u16 = old_b.template ReinterpretCast<uint16_t>();
+        auto nonzero_a_u16 = nonzero_a.template ReinterpretCast<uint16_t>();
+        auto nonzero_a_fp = nonzero_a.template ReinterpretCast<FpT>();
+        auto zero_b_u16 = zero_b.template ReinterpretCast<uint16_t>();
+        auto even_ab_u16 = even_ab.template ReinterpretCast<uint16_t>();
+        auto old_ab_u16 = old_ab.template ReinterpretCast<uint16_t>();
+        auto mask_u16 = mask.template ReinterpretCast<uint16_t>();
+        auto mask_not_u16 = mask_not.template ReinterpretCast<uint16_t>();
+    
+        Not(a0_u16, a_u16, num_uint16 * TILE_SIZE);
+        Not(b0_u16, b_u16, num_uint16 * TILE_SIZE);
+        Adds(a0, a0, (U)1, TILE_SIZE);
+        Adds(b0, b0, (U)1, TILE_SIZE);
+        Max(a, a, a0, TILE_SIZE);
+        Max(b, b, b0, TILE_SIZE);
+        
+        Max(a0, a, b, TILE_SIZE);
+        CompareScalar(nonzero_a, a0_fp, (FpT)0.0f, CMPMODE::NE, TILE_SIZE);
+        Select(c_fp, nonzero_a, ones_fp, zeros_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+        ReduceMax(c1_fp, a0_fp, c2_fp, len, false);
+        U max_val = c1.GetValue(0);
 
-        Not(n_a, a, TILE_SIZE);
-        Not(n_b, b, TILE_SIZE);
-        Adds(n_a, n_a, (int16_t) 1, TILE_SIZE);
-        Adds(n_b, n_b, (int16_t) 1, TILE_SIZE);
-        Max(a, a, n_a, TILE_SIZE);
-        Max(b, b, n_b, TILE_SIZE);
+        for (int i = 0; i < REP && (max_val >> (i / 2)) > 0; i++) {
+            Max(a0, a, b, TILE_SIZE);
+            Min(b0, a, b, TILE_SIZE);
 
-        for (int i = 0;i < REP;i++) {
-            Min(n_a, a, b, TILE_SIZE);
-            Max(n_b, a, b, TILE_SIZE);
-            Sub(n_b, n_b, n_a, TILE_SIZE);
-            CompareScalar(mask, b_h, (half)0.0f, CMPMODE::EQ, TILE_SIZE);
-            Select(a_h, mask, a_h, n_a_h, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
-            Select(b_h, mask, b_h, n_b_h, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
-        }
+            And(a_u16, a0_u16, ones_u16, num_uint16 * TILE_SIZE);
+            And(b_u16, b0_u16, ones_u16, num_uint16 * TILE_SIZE);
+    
+            ShiftRight(a_div2, a0, (U)1, TILE_SIZE);
+            ShiftRight(b_div2, b0, (U)1, TILE_SIZE);
+            Sub(ab_diff, a0, b0, TILE_SIZE);
+            ShiftRight(ab_diff, ab_diff, (U)1, TILE_SIZE);
+    
+            CompareScalar(even_a, a_fp, (FpT)0.0f, CMPMODE::EQ, TILE_SIZE);
+            CompareScalar(even_b, b_fp, (FpT)0.0f, CMPMODE::EQ, TILE_SIZE);
+            CompareScalar(nonzero_a, a0_fp, (FpT)0.0f, CMPMODE::NE, TILE_SIZE);
+            CompareScalar(zero_b, b0_fp, (FpT)0.0f, CMPMODE::EQ, TILE_SIZE);
+            
+            Mul(c1, c, a0, TILE_SIZE);
+            Muls(c2, c, (U)2, TILE_SIZE);
+    
+            Not(old_a_u16, even_a_u16, TILE_SIZE / 16);
+            Not(old_b_u16, even_b_u16, TILE_SIZE / 16);
+            And(even_ab_u16, even_a_u16, even_b_u16, TILE_SIZE / 16);
+            And(old_ab_u16, old_a_u16, old_b_u16, TILE_SIZE / 16);
+    
+            And(mask_u16, nonzero_a_u16, zero_b_u16, TILE_SIZE / 16);
 
-        Max(n_a, a, b, TILE_SIZE);
-        Min(n_b, a, b, TILE_SIZE);
-        DataCopy(a, n_a, TILE_SIZE);
-        DataCopy(b, n_b, TILE_SIZE);
+            // gcd(a, 0) = a
+            Select(a_fp, mask, zeros_fp, a0_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+            Select(b_fp, mask, zeros_fp, b0_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+            Select(c_fp, mask, c1_fp, c_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+    
+            Not(mask_u16, zero_b_u16, TILE_SIZE / 16);
+            And(mask_not_u16, mask_u16, nonzero_a_u16, TILE_SIZE / 16);
+            And(mask_u16, mask_not_u16, even_ab_u16, TILE_SIZE / 16);
+    
+            // gcd(2a, 2b) = 2 * gcd(a, b)
+            Select(a_fp, mask, a_div2_fp, a_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+            Select(b_fp, mask, b_div2_fp, b_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+            Select(c_fp, mask, c2_fp, c_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+    
+            Not(mask_u16, even_ab_u16, TILE_SIZE / 16);
+            And(mask_not_u16, mask_u16, mask_not_u16, TILE_SIZE / 16);
+            And(mask_u16, mask_not_u16, old_ab_u16, TILE_SIZE / 16);
+    
+            // gcd(a, b) = gcd((a - b) / 2, b)
+            Select(a_fp, mask, ab_diff_fp, a_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+    
+            Not(mask_u16, old_ab_u16, TILE_SIZE / 16);
+            And(mask_not_u16, mask_u16, mask_not_u16, TILE_SIZE / 16);
+            And(mask_u16, mask_not_u16, even_a_u16, TILE_SIZE / 16);
+    
+            // gcd(2a, b) = gcd(a, b)
+            Select(a_fp, mask, a_div2_fp, a_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
+    
+            And(mask_u16, old_a_u16, mask_not_u16, TILE_SIZE / 16);
 
-        int16_t tmp = 1;
-        half* tmp_h = (half*) &tmp;
-        CompareScalar(mask, b_h, *tmp_h, CMPMODE::NE, TILE_SIZE);
-        Select(a_h, mask, a_h, *tmp_h, AscendC::SELMODE::VSEL_TENSOR_SCALAR_MODE, TILE_SIZE);
-        Select(b_h, mask, b_h, (half)0.0f, AscendC::SELMODE::VSEL_TENSOR_SCALAR_MODE, TILE_SIZE);
-
-        DataCopy(c, a, TILE_SIZE);
-
-        for (int i = 0; i < len; i++) {
-            if (b.GetValue(i) != 0) {
-                c.SetValue(i, gcd_2(a.GetValue(i), b.GetValue(i)));
-            }
-        }
-    }
-
-    __aicore__ inline void GcdLikely32(const LocalTensor<int32_t>& c, const LocalTensor<int32_t>& a, const LocalTensor<int32_t>& b, int len) {
-        auto n_a = tBufNext.Get<int32_t>();
-        auto n_b = tBufNext.Get<int32_t>()[TILE_SIZE];
-        auto mask = tBufMask.Get<uint8_t>();
-        auto a_h = a.ReinterpretCast<float>();
-        auto b_h = b.ReinterpretCast<float>();
-        auto n_a_h = n_a.ReinterpretCast<float>();
-        auto n_b_h = n_b.ReinterpretCast<float>();
-
-        Not(n_a.ReinterpretCast<uint16_t>(), a.ReinterpretCast<uint16_t>(), 2 * TILE_SIZE);
-        Not(n_b.ReinterpretCast<uint16_t>(), b.ReinterpretCast<uint16_t>(), 2 * TILE_SIZE);
-        Adds(n_a, n_a, (int32_t) 1, TILE_SIZE);
-        Adds(n_b, n_b, (int32_t) 1, TILE_SIZE);
-        Max(a, a, n_a, TILE_SIZE);
-        Max(b, b, n_b, TILE_SIZE);
-
-        for (int i = 0;i < REP;i++) {
-            Min(n_a, a, b, TILE_SIZE);
-            Max(n_b, a, b, TILE_SIZE);
-            Sub(n_b, n_b, n_a, TILE_SIZE);
-            CompareScalar(mask, b_h, (float)0.0f, CMPMODE::EQ, TILE_SIZE);
-            Select(a_h, mask, a_h, n_a_h, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
-            Select(b_h, mask, b_h, n_b_h, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
-        }
-
-        Max(n_a, a, b, TILE_SIZE);
-        Min(n_b, a, b, TILE_SIZE);
-        DataCopy(a, n_a, TILE_SIZE);
-        DataCopy(b, n_b, TILE_SIZE);
-
-        int32_t tmp = 1;
-        float* tmp_h = (float*) &tmp;
-        CompareScalar(mask, b_h, *tmp_h, CMPMODE::NE, TILE_SIZE);
-        Select(a_h, mask, a_h, *tmp_h, AscendC::SELMODE::VSEL_TENSOR_SCALAR_MODE, TILE_SIZE);
-        Select(b_h, mask, b_h, (float)0.0f, AscendC::SELMODE::VSEL_TENSOR_SCALAR_MODE, TILE_SIZE);
-
-        DataCopy(c, a, TILE_SIZE);
-
-        for (int i = 0; i < len; i++) {
-            if (b.GetValue(i) != 0) {
-                c.SetValue(i, gcd_2(a.GetValue(i), b.GetValue(i)));
-            }
+             // gcd(a, 2b) = gcd(a, b)
+            Select(b_fp, mask_u16, b_div2_fp, b_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
         }
     }
 
@@ -225,9 +284,9 @@ public:
         auto x2 = inX2.DeQue<T>();
         auto y = outY.AllocTensor<T>();
         if constexpr(std::is_same<T, int16_t>::value) {
-            GcdLikely16(y, x1, x2, len);
+            BinaryGcd<int16_t, 30>(y, x1, x2, len);
         } else if constexpr(std::is_same<T, int32_t>::value) {
-            GcdLikely32(y, x1, x2, len);
+            BinaryGcd<int32_t, 62>(y, x1, x2, len);
         } else {
             for (int i = 0;i < len;i++) {
                 y.SetValue(i, gcd_1(x1.GetValue(i), x2.GetValue(i)));
@@ -265,32 +324,32 @@ public:
             x2_stride[i] = x2_stride[i+1] * M[i+1];
         }
 
-        // 五维循环
-        for (int i0 = 0; i0 < N[0]; i0++) {
-            for (int i1 = 0; i1 < N[1]; i1++) {
-                for (int i2 = 0; i2 < N[2]; i2++) {
-                    for (int i3 = 0; i3 < N[3]; i3++) {
-                        for (int i4 = 0; i4 < N[4]; i4++) {
-                            // 计算y的线性索引
-                            int y_idx = i0*y_stride[0] 
-                                    + i1*y_stride[1]
-                                    + i2*y_stride[2]
-                                    + i3*y_stride[3]
-                                    + i4*y_stride[4];
-                            
-                            // 计算x2的广播索引
-                            int x2_idx = (M[0]>1?i0:0)*x2_stride[0]
-                                    + (M[1]>1?i1:0)*x2_stride[1]
-                                    + (M[2]>1?i2:0)*x2_stride[2]
-                                    + (M[3]>1?i3:0)*x2_stride[3]
-                                    + (M[4]>1?i4:0)*x2_stride[4];
-                            
-                            // 计算并存储结果
-                            T x1_val = x1Gm.GetValue(y_idx);
-                            T x2_val = x2Gm.GetValue(x2_idx);
-                            yGm.SetValue(y_idx, gcd_1(x1_val, x2_val));
-                        }
-                    }
+        int i[5] = {0}; // i[0] to i[4]
+        int y_idx = 0;
+        int x2_idx = 0;
+
+        for (int k = 0; k < sizeX1; k++) {
+            T x1_val = x1Gm.GetValue(y_idx);
+            T x2_val = x2Gm.GetValue(x2_idx);
+            yGm.SetValue(y_idx, gcd_1(x1_val, x2_val));
+
+            // 下标计算
+            for (int d = 4; d >= 0; d--) {
+                i[d]++;
+
+                y_idx += y_stride[d];
+                if (M[d] > 1) {
+                    x2_idx += x2_stride[d];
+                }
+
+                if (i[d] < N[d]) {
+                    break; 
+                }
+                
+                i[d] = 0;
+                y_idx -= N[d] * y_stride[d]; 
+                if (M[d] > 1) {
+                    x2_idx -= N[d] * x2_stride[d];
                 }
             }
         }
