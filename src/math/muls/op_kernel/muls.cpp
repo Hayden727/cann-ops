@@ -161,20 +161,6 @@ public:
         uint32_t globalBufferIndex = bigCoreDataNum * GetBlockIdx();
         this->ubPartDataNum = ubPartDataNum;
         this->IsExistBigCore = IsExistBigCore;
-        /*AscendC::printf("this->coreNum is %ld \n",coreNum);
-        AscendC::printf("this->smallCoreDataNum is %ld \n",smallCoreDataNum);
-        AscendC::printf("this->bigCoreDataNum is %ld \n",bigCoreDataNum);
-        AscendC::printf("this->ubPartDataNum is %ld \n",ubPartDataNum);
-        AscendC::printf("this->smallCoreTailDataNum is %ld \n",smallCoreTailDataNum);
-        AscendC::printf("this->bigCoreTailDataNum is %ld \n",bigCoreTailDataNum);
-        AscendC::printf("this->smallCoreLoopNum is %ld \n",smallCoreLoopNum);
-        AscendC::printf("this->bigCoreLoopNum is %ld \n",bigCoreLoopNum);
-
-        AscendC::printf("this->tailBlockNum is %ld \n",tailBlockNum);
-        AscendC::printf("this->IsExistBigCore is %ld \n",IsExistBigCore);*/
-
-
-
         if (1==IsExistBigCore) 
         {
           if (coreNum < tailBlockNum) 
@@ -324,22 +310,12 @@ extern "C" __global__ __aicore__ void muls( GM_ADDR x,
         op.Process();
     }
     else if(TILING_KEY_IS(6)){
-        //AscendC::printf("is me KernelMulsComplex64<float> op\n");
         KernelMulsComplex64<float> op;
         op.Init(x,value, y, tiling_data.smallCoreDataNum,
             tiling_data.bigCoreDataNum, tiling_data.ubPartDataNum,
             tiling_data.smallCoreTailDataNum, tiling_data.bigCoreTailDataNum,
             tiling_data.smallCoreLoopNum, tiling_data.bigCoreLoopNum,
             tiling_data.tailBlockNum,tiling_data.IsExistBigCore);
-        /*AscendC::printf("tiling_data.smallCoreDataNum is %ld \n",tiling_data.smallCoreDataNum);
-        AscendC::printf("tiling_data.bigCoreDataNum is %ld \n",tiling_data.bigCoreDataNum);
-        AscendC::printf("tiling_data.ubPartDataNum is %ld \n",tiling_data.ubPartDataNum);
-        AscendC::printf("tiling_data.smallCoreTailDataNum is %ld \n",tiling_data.smallCoreTailDataNum);
-        AscendC::printf("tiling_data.bigCoreTailDataNum is %ld \n",tiling_data.bigCoreTailDataNum);
-        AscendC::printf("tiling_data.smallCoreLoopNum is %ld \n",tiling_data.smallCoreLoopNum);
-        AscendC::printf("tiling_data.bigCoreLoopNum is %ld \n",tiling_data.bigCoreLoopNum);
-        AscendC::printf("tiling_data.tailBlockNum is %ld \n",tiling_data.tailBlockNum);
-        AscendC::printf("tiling_data.IsExistBigCore is %ld \n",tiling_data.IsExistBigCore);*/
         op.Process();
     }
 }
