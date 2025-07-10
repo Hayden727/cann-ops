@@ -20,8 +20,8 @@ def gen_golden_data():
     shape = [1024, 1024]
     
     # 生成随机整数数据
-    input_x1 = np.random.randint(-10000, 10000, shape).astype(dtype)
-    input_x2 = np.random.randint(-10000, 10000, shape).astype(dtype)
+    input_x1 = np.random.randint(-10000000, 10000000, shape).astype(dtype)
+    input_x2 = np.random.randint(-10000000, 10000000, shape).astype(dtype)
     
     # 计算最大公约数
     golden = np.gcd(input_x1, input_x2).astype(dtype)

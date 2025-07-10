@@ -15,15 +15,28 @@ import numpy as np
 
 LOSS = 0
 
-def verify_result(real_result, golden):
+def verify_result(real_result_path, golden_path):
     dtype = np.int32
-    real_result = np.fromfile(real_result, dtype=dtype) # 从bin文件读取实际运算结果
-    golden = np.fromfile(golden, dtype=dtype) # 从bin文件读取预期运算结果
-    result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
-    result_atol = np.less_equal(result, LOSS) # 计算绝对误差
-    if not result_atol.all():
-        print("[ERROR] result error")
+    real = np.fromfile(real_result_path, dtype=dtype)
+    golden = np.fromfile(golden_path, dtype=dtype)
+
+    if len(real) != len(golden):
+        print(f"[ERROR] Length mismatch: real has {len(real)}, golden has {len(golden)}")
         return False
+
+    diff = np.abs(real - golden)
+    mismatch = np.where(diff > LOSS)[0]
+
+    if len(mismatch) > 0:
+        print("[ERROR] result error")
+        print("First 10 mismatches:")
+        for i in range(min(10, len(mismatch))):
+            idx = mismatch[i]
+            r_val = real[idx]
+            g_val = golden[idx]
+            print(f"Index: {idx}, Real: {r_val}, Golden: {g_val}")
+        return False
+
     print("test pass")
     return True
 
