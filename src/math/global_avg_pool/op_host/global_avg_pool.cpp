@@ -66,11 +66,7 @@ namespace optiling {
             }
 
             // 4. 输入向量满足32字节对齐
-            if (totalLength % ALIGN_NUM != 0) {  //不对齐，先32位对齐
-                totalLengthAligned = ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
-            } else {
-                totalLengthAligned = totalLength;
-            }
+            totalLengthAligned = ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
 
             // 5. Tiling参数计算
             uint32_t blockLength = 0;
@@ -122,11 +118,7 @@ namespace optiling {
 
             // 4. 数据对齐
             totalLength = dimLength;
-            if (totalLength % ALIGN_NUM != 0) {  //不对齐，先32位对齐
-                totalLengthAligned = ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
-            } else {
-                totalLengthAligned = totalLength;
-            }
+            totalLengthAligned = ((totalLength + ALIGN_NUM - 1) / ALIGN_NUM) * ALIGN_NUM;
             context->SetBlockDim(1);
 
             // 5. 计算tiling参数
