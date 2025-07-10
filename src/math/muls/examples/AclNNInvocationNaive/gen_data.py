@@ -10,10 +10,8 @@ def gen_golden_data_simple():
         [[-0.6401, -4.7422,  0.4966, -0.6470, -0.7964, -1.6963, -2.9531]],
         dtype=dtype
     )
-    print(input_x)
     input_value = np.array(1.2, dtype=dtype)  # 标量也转为 NumPy 类型
     golden = input_x * input_value
-    print(golden)
     os.system("mkdir -p input")
     os.system("mkdir -p output")
     input_x.tofile("./input/input_x.bin")

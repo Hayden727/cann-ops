@@ -6,7 +6,6 @@
 
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
-- Atlas 推理系列产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -39,9 +38,9 @@ Muls算子通过依次调用`Ascend C`的`API`接口：`Mul`，分步计算实�
 
 - **参数说明：**
 
-  - input（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入input，数据类型支持FLOAT32, FLOAT16，BF16，INT16,INT32, INT64, COMPLEX32,COMPLEX64，数据格式支持ND。
+  - input（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入input，数据类型支持FLOAT32, FLOAT16，BF16，INT16,INT32, INT64, COMPLEX64，数据格式支持ND。
   - value（float，标量）：必选参数，Device侧的attr，数据类型支持FLOAT，数据格式支持ND。
-  - output（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出output，数据类型支持FLOAT32, FLOAT16，BF16，INT16,INT32, INT64, COMPLEX32,COMPLEX64，数据格式支持ND，输出维度和数据类型与input一致。
+  - output（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出output，数据类型支持FLOAT32, FLOAT16，BF16，INT16,INT32, INT64, COMPLEX64，数据格式支持ND，输出维度和数据类型与input一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 - **返回值：**
@@ -68,7 +67,7 @@ Muls算子通过依次调用`Ascend C`的`API`接口：`Mul`，分步计算实�
 
 ## 约束与限制
 
-- input和output的数据类型分别支持支持FLOAT32, FLOAT16，BF16，INT16,INT32, INT64, COMPLEX32,COMPLEX64，数据格式只支持ND
+- input和output的数据类型分别支持支持FLOAT32, FLOAT16，BF16，INT16,INT32, INT64, COMPLEX64，数据格式只支持ND
 
 ## 算子原型
 
@@ -87,7 +86,7 @@ Muls算子通过依次调用`Ascend C`的`API`接口：`Mul`，分步计算实�
     <td rowspan="1" align="center">算子输入</td>
     <td align="center">Input</td>
     <td align="center">tensor</td>
-    <td align="center">float32, float16，bf16，int16,int32, int64, complex32,complex64</td>
+    <td align="center">float32, float16，bf16，int16,int32, int64, complex64</td>
     <td align="center">ND</td>
   </tr>
     <tr>
@@ -101,7 +100,7 @@ Muls算子通过依次调用`Ascend C`的`API`接口：`Mul`，分步计算实�
     <td rowspan="1" align="center">算子输出</td>
     <td align="center">output</td>
     <td align="center">tensor</td>
-    <td align="center">float32, float16，bf16，int16,int32, int64, complex32,complex64</td>
+    <td align="center">float32, float16，bf16，int16,int32, int64, complex64</td>
     <td align="center">ND</td>
   </tr>
   <tr>

@@ -26,13 +26,13 @@ $$
     <td rowspan="1" align="center">算子输入</td>
     <td align="center">Input</td>
     <td align="center">tensor</td>
-    <td align="center">float32, float16，bf16，int16,int32, int64, complex32,complex64</td>
+    <td align="center">float32, float16，bf16，int16,int32, int64,complex64</td>
     <td align="center">ND</td>
   </tr>
     <tr>
     <td rowspan="1" align="center">标量</td>
     <td align="center">value</td>
-    <td align="center">attr</td>
+    <td align="center">Scalar</td>
     <td align="center">float</td>
     <td align="center">ND</td>
   </tr>
@@ -40,7 +40,7 @@ $$
     <td rowspan="1" align="center">算子输出</td>
     <td align="center">output</td>
     <td align="center">tensor</td>
-    <td align="center">float32, float16，bf16，int16,int32, int64, complex32,complex64</td>
+    <td align="center">float32, float16，bf16，int16,int32, int64,complex64</td>
     <td align="center">ND</td>
   </tr>
   <tr>
@@ -55,7 +55,6 @@ $$
 本样例支持如下产品型号：
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
-- Atlas 推理系列产品
 
 
 ### 目录结构介绍
@@ -96,7 +95,7 @@ $$
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Lerp算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Muls算子。</td>
     </tr>
 </table>
 
