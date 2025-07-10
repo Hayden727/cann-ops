@@ -28,7 +28,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     const gert::StorageShape* x2_shape = context->GetInputShape(1);
     int N[5] = {1, 1, 1, 1, 1};
     int broadcast_mask = 0;
-    int offset = x1_shape->GetStorageShape().GetDimNum() - x2_shape->GetStorageShape().GetDimNum();
     const int dim = std::max(x1_shape->GetStorageShape().GetDimNum(), x2_shape->GetStorageShape().GetDimNum());
     const int offsetA = dim - x1_shape->GetStorageShape().GetDimNum();
     const int offsetB = dim - x2_shape->GetStorageShape().GetDimNum();
@@ -96,7 +95,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 

@@ -9,22 +9,24 @@
  */
 
 /**
- * @file gcd_tiling.h
+ * @file gcd_common.h
  */
-#ifndef GCD_TILING_H
-#define GCD_TILING_H
-#include "register/tilingdata_base.h"
+#ifndef GCD_COMMON_H
+#define GCD_COMMON_H
 
-namespace optiling {
-BEGIN_TILING_DATA_DEF(GcdTilingData)
-  TILING_DATA_FIELD_DEF(int, N0);
-  TILING_DATA_FIELD_DEF(int, N1);
-  TILING_DATA_FIELD_DEF(int, N2);
-  TILING_DATA_FIELD_DEF(int, N3);
-  TILING_DATA_FIELD_DEF(int, N4);
-  TILING_DATA_FIELD_DEF(int, broadcast_mask);
-END_TILING_DATA_DEF;
+#include "kernel_operator.h"
 
-REGISTER_TILING_DATA_CLASS(Gcd, GcdTilingData)
-}
-#endif // GCD_TILING_H
+template<typename T>
+struct FpTypeHelper;
+
+template<>
+struct FpTypeHelper<int16_t> {
+    using type = half;
+};
+
+template<>
+struct FpTypeHelper<int32_t> {
+    using type = float;
+};
+
+#endif // GCD_COMMON_H

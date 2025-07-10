@@ -11,7 +11,8 @@
 /**
  * @file gcd.cpp
  */
-#include "kernel_operator.h"
+
+#include "gcd_common.h"
 
 template<typename T>
 __aicore__ inline T MinVal(T a, T b) {
@@ -46,20 +47,6 @@ __aicore__ inline T gcd_2(T a, T b) {
 
 
 using namespace AscendC;
-
-template<typename T>
-struct FpTypeHelper;
-
-template<>
-struct FpTypeHelper<int16_t> {
-    using type = half;
-};
-
-template<>
-struct FpTypeHelper<int32_t> {
-    using type = float;
-};
-
 
 template <typename T>
 class KernelGcd
@@ -162,12 +149,12 @@ public:
     
         auto even_a = tBufMask.Get<uint8_t>();
         auto even_b = tBufMask.Get<uint8_t>()[TILE_SIZE_MASK];
-        auto old_a = tBufMask.Get<uint8_t>()[2 * TILE_SIZE_MASK];
-        auto old_b = tBufMask.Get<uint8_t>()[3 * TILE_SIZE_MASK];
+        auto odd_a = tBufMask.Get<uint8_t>()[2 * TILE_SIZE_MASK];
+        auto odd_b = tBufMask.Get<uint8_t>()[3 * TILE_SIZE_MASK];
         auto nonzero_a = tBufMask.Get<uint8_t>()[4 * TILE_SIZE_MASK];
         auto zero_b = tBufMask.Get<uint8_t>()[5 * TILE_SIZE_MASK];
         auto even_ab = tBufMask.Get<uint8_t>()[6 * TILE_SIZE_MASK];
-        auto old_ab = tBufMask.Get<uint8_t>()[7 * TILE_SIZE_MASK];
+        auto odd_ab = tBufMask.Get<uint8_t>()[7 * TILE_SIZE_MASK];
         auto mask = tBufMask.Get<uint8_t>()[8 * TILE_SIZE_MASK];
         auto mask_not = tBufMask.Get<uint8_t>()[9 * TILE_SIZE_MASK];
     
@@ -194,13 +181,13 @@ public:
     
         auto even_a_u16 = even_a.template ReinterpretCast<uint16_t>();
         auto even_b_u16 = even_b.template ReinterpretCast<uint16_t>();
-        auto old_a_u16 = old_a.template ReinterpretCast<uint16_t>();
-        auto old_b_u16 = old_b.template ReinterpretCast<uint16_t>();
+        auto odd_a_u16 = odd_a.template ReinterpretCast<uint16_t>();
+        auto odd_b_u16 = odd_b.template ReinterpretCast<uint16_t>();
         auto nonzero_a_u16 = nonzero_a.template ReinterpretCast<uint16_t>();
         auto nonzero_a_fp = nonzero_a.template ReinterpretCast<FpT>();
         auto zero_b_u16 = zero_b.template ReinterpretCast<uint16_t>();
         auto even_ab_u16 = even_ab.template ReinterpretCast<uint16_t>();
-        auto old_ab_u16 = old_ab.template ReinterpretCast<uint16_t>();
+        auto odd_ab_u16 = odd_ab.template ReinterpretCast<uint16_t>();
         auto mask_u16 = mask.template ReinterpretCast<uint16_t>();
         auto mask_not_u16 = mask_not.template ReinterpretCast<uint16_t>();
     
@@ -237,10 +224,10 @@ public:
             Mul(c1, c, a0, TILE_SIZE);
             Muls(c2, c, (U)2, TILE_SIZE);
     
-            Not(old_a_u16, even_a_u16, TILE_SIZE / 16);
-            Not(old_b_u16, even_b_u16, TILE_SIZE / 16);
+            Not(odd_a_u16, even_a_u16, TILE_SIZE / 16);
+            Not(odd_b_u16, even_b_u16, TILE_SIZE / 16);
             And(even_ab_u16, even_a_u16, even_b_u16, TILE_SIZE / 16);
-            And(old_ab_u16, old_a_u16, old_b_u16, TILE_SIZE / 16);
+            And(odd_ab_u16, odd_a_u16, odd_b_u16, TILE_SIZE / 16);
     
             And(mask_u16, nonzero_a_u16, zero_b_u16, TILE_SIZE / 16);
 
@@ -260,19 +247,19 @@ public:
     
             Not(mask_u16, even_ab_u16, TILE_SIZE / 16);
             And(mask_not_u16, mask_u16, mask_not_u16, TILE_SIZE / 16);
-            And(mask_u16, mask_not_u16, old_ab_u16, TILE_SIZE / 16);
+            And(mask_u16, mask_not_u16, odd_ab_u16, TILE_SIZE / 16);
     
             // gcd(a, b) = gcd((a - b) / 2, b)
             Select(a_fp, mask, ab_diff_fp, a_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
     
-            Not(mask_u16, old_ab_u16, TILE_SIZE / 16);
+            Not(mask_u16, odd_ab_u16, TILE_SIZE / 16);
             And(mask_not_u16, mask_u16, mask_not_u16, TILE_SIZE / 16);
             And(mask_u16, mask_not_u16, even_a_u16, TILE_SIZE / 16);
     
             // gcd(2a, b) = gcd(a, b)
             Select(a_fp, mask, a_div2_fp, a_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
     
-            And(mask_u16, old_a_u16, mask_not_u16, TILE_SIZE / 16);
+            And(mask_u16, odd_a_u16, mask_not_u16, TILE_SIZE / 16);
 
              // gcd(a, 2b) = gcd(a, b)
             Select(b_fp, mask_u16, b_div2_fp, b_fp, AscendC::SELMODE::VSEL_TENSOR_TENSOR_MODE, TILE_SIZE);
@@ -310,7 +297,6 @@ public:
 
     __aicore__ inline void ProcessSlow()
     {
-
         if (GetBlockIdx() != 0) {
             return;
         }

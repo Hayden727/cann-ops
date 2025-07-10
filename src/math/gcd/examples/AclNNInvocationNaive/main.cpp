@@ -129,7 +129,7 @@ int main(int argc, char **argv)
     std::vector<int64_t> inputX2Shape = {1024, 1024};
     std::vector<int64_t> outputYShape = {1024, 1024};
     
-    const size_t elementCount = (size_t) 1024 * 1024;
+    const size_t elementCount = 1024UL * 1024UL;
     const size_t dataSize = elementCount * sizeof(int32_t);
     
     std::vector<int32_t> inputX1HostData(elementCount);
