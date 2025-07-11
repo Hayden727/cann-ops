@@ -1,3 +1,16 @@
+/**
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This file is a part of the CANN Open Software.
+ * Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+/**
+ * @file main.cpp
+ */
 #include <algorithm>
 #include <cstdint>
 #include <iostream>
@@ -169,7 +182,6 @@ int main(int argc, char **argv)
     //这里也可以参考下另外一个程序的标量写法
     float scalarValue = 1.2f;
     value = aclCreateScalar(&scalarValue, ACL_FLOAT);
-    // float value = 1.2f;
     // 创建outputY aclTensor
     ret = CreateAclTensor(outputYHostData, outputYShape, &outputYDeviceAddr, aclDataType::ACL_FLOAT16, &outputY);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
@@ -180,7 +192,6 @@ int main(int argc, char **argv)
     // 计算workspace大小并申请内存
     
     ret = aclnnMulsGetWorkspaceSize(inputX, value, outputY, &workspaceSize, &executor);
-    // CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulsGetWorkspaceSize failed. ERROR: %d\n%s\n", ret, aclGetRecentErrMsg()); return
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMulsGetWorkspaceSize failed. ERROR: %d\n", ret); return FAILED);
     void *workspaceAddr = nullptr;
     if (workspaceSize > 0) {
@@ -189,7 +200,6 @@ int main(int argc, char **argv)
     }
     // 执行算子
     ret = aclnnMuls(workspaceAddr, workspaceSize, executor, stream);
-    // CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnLogicalNot failed. ERROR: %d\n%s\n", ret, aclGetRecentErrMsg()); return FAILED);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMuls failed. ERROR: %d\n%s\n", ret, aclGetRecentErrMsg()); return FAILED);
 
     // 4. （固定写法）同步等待任务执行结束

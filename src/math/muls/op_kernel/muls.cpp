@@ -117,7 +117,6 @@ private:
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX.FreeTensor(xLocal);
-
     }
     __aicore__ inline void CopyOut(int32_t progress)
     {
@@ -184,14 +183,10 @@ public:
           this->tailDataNum = smallCoreTailDataNum;
           globalBufferIndex = smallCoreDataNum * AscendC::GetBlockIdx();
         }
-        //AscendC::printf("this->coreDataNum is %ld \n",this->coreDataNum);
-
         xGm.SetGlobalBuffer((__gm__ float *)x + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM); // 1 complex = 2 float
         yGm.SetGlobalBuffer((__gm__ float *)y + globalBufferIndex * BUFFER_NUM, this->coreDataNum * BUFFER_NUM);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * BUFFER_NUM * sizeof(float));
-        //AscendC::printf("this->ubPartDataNum is %ld \n",this->ubPartDataNum);
-
         valueGm.SetGlobalBuffer((__gm__ float *)value);
         this->value = valueGm.GetValue(0);
     }
@@ -200,8 +195,6 @@ public:
         //在process侧实现分流，实现对复数类型和常规数据类型的处理
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->ubPartDataNum;
-        
-
         for (int32_t i = 0; i < loopCount-1; i++)
         {
             CopyIn(i);
@@ -218,9 +211,7 @@ private:
     __aicore__ inline void CopyIn(int32_t progress)
     {
         LocalTensor<float> xLocal = inQueueX.AllocTensor<float>();
-
         DataCopy(xLocal, xGm[progress * this->ubPartDataNum * BUFFER_NUM], this->processDataNum * BUFFER_NUM);
-
         inQueueX.EnQue(xLocal);
     }
     __aicore__ inline void Compute(int32_t progress)

@@ -30,11 +30,14 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
     auto coreNum = ascendcPlatform.GetCoreNum();
-    
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
     uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
+    if (coreNum == 0 || BLOCK_SIZE == 0) 
+    {
+        return ge::GRAPH_FAILED;
+    }
     uint64_t inputLength = inputDataNum * dataTypeLength;
     // There are a total of 3 shared UB spaces in the input and output. If it's bf16 and int64, there are 2 more TBUFs
     uint64_t dataType = context->GetInputDesc(0)->GetDataType();
@@ -153,7 +156,6 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend910b");
-
     }
 };
 OP_ADD(Muls);

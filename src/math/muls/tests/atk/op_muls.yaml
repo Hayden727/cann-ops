@@ -1,6 +1,19 @@
-# op_muls.yaml
+# !/usr/bin/python3
+# coding=utf-8
+#
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
+
+# op_less.yaml
 api: pytorch
-api_type: aclnn_cpu_muls #function
+api_type: aclnn_cpu_muls
+# aclnn_cpu_muls #function
 version: v2.1
 aclnn_name: Muls
 dtype_numbers: 200  #每个数据类型生成用例数量
@@ -14,12 +27,12 @@ inputs: #输入参数信息
     type: tensor
     required: true
     dtypes:
-      values: [fp16,fp32,bf16,int16,int32,int64,complex32,complex64]
+      values: [int16,int32,int64,fp16,fp32,bf16,complex64]
     ranges: #输入数据取值可选范围
       valid:
-        values:  [[1,2] ]
+        values:  [[5,10] ]
       invalid:
-        values:  [[1,2] ]
+        values:  [[5,10] ]
     shapes:
       dim_numbers:
         values: [1, 2]
@@ -31,14 +44,14 @@ inputs: #输入参数信息
       has_upper_border: true
       has_lower_border: true
   - name: value
-    type: attr
+    type: scalar
     required: true
     dtypes:
       values: [ float ]
     ranges:
       valid:
-        values: [ [1, 2] ]
+        values: [ [5, 10] ]
       invalid:
-        values: [ [1, 2] ]
+        values: [ [5, 10] ]
 
   
