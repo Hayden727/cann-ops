@@ -459,9 +459,6 @@ aclnnStatus aclStftGetWorkspaceSize(const aclTensor* self, const aclTensor* wind
   auto uniqueExecutor = CREATE_EXECUTOR();
   CHECK_RET(uniqueExecutor.get() != nullptr, ACLNN_ERR_INNER_CREATE_EXECUTOR);
 
-  bool result = CheckPlatform();
-  CHECK_RET(result == true, ACLNN_ERR_PARAM_INVALID);
-
   // 固定写法，参数检查
   auto ret = CheckParams(self, out, windowOptional, hopLength, winLength, nFft, onesided, returnComplex);
   CHECK_RET(ret == ACLNN_SUCCESS, ret);
