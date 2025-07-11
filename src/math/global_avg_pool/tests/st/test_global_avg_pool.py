@@ -34,6 +34,7 @@ def gen_onnx_model_fp32(shape_x, shape_y):
 
     model = helper.make_model(graph, producer_name="onnx-GlobalAveragePool_test")
     model.opset_import[0].version = 11
+    model.ir_version = 6
     onnx.save(model, "./test_GlobalAveragePool_v11.onnx")
 
 
@@ -53,6 +54,7 @@ def gen_onnx_model_fp16(shape_x, shape_y):
 
     model = helper.make_model(graph, producer_name="onnx-GlobalAveragePool_test")
     model.opset_import[0].version = 11
+    model.ir_version = 6
     onnx.save(model, "./test_GlobalAveragePool_v11_fp16.onnx")
 
 
