@@ -26,7 +26,7 @@ def gen_onnx_model(shape_x, shape_y):
                                 )
     graph = helper.make_graph(
         [node_def],
-        "test_GlobalAveragePool_case_1",
+        "test_GlobalAveragePool_case_0",
         [x],
         [y]
     )

@@ -78,7 +78,7 @@ namespace optiling {
             if (tile_num == 0) {    // 不足一个ub的情况
                 tile_num = 1;
                 tileLength = blockLength;
-                lasttileLength = tileLength;
+                lasttileLength = blockLength;
             } else if((blockLength / ALIGN_NUM) % ub_block_num == 0){   // 核内能均分
                 tileLength = ub_block_num * ALIGN_NUM;
                 lasttileLength = tileLength;
