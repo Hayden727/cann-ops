@@ -26,7 +26,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint64_t bigCoreDataNum = 0;
     uint64_t bigCoreLoopNum = 0;
     uint64_t bigCoreTailDataNum = 0;
-    std::cout<<"is me muls"<<std::endl;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
     auto coreNum = ascendcPlatform.GetCoreNum();
@@ -83,11 +82,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         bigCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum ) == 0 ? bigCoreLoopNum : bigCoreLoopNum + 1;
         bigCoreTailDataNum = bigCoreDataNum - ubPartDataNum * (bigCoreDataNum / ubPartDataNum);
         bigCoreTailDataNum = bigCoreTailDataNum == 0 ? ubPartDataNum : bigCoreTailDataNum;
-        std::cout<<"0 != tailBlockNum"<<std::endl;
         IsExistBigCore = 1;
     }
     else{
-        std::cout<<"0 == tailBlockNum"<<std::endl;
         IsExistBigCore = 0;
     }
     if (dataType == ge::DT_BF16) {
