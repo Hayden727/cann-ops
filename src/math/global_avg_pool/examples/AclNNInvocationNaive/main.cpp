@@ -157,16 +157,16 @@ int main(int argc, char **argv)
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
     std::vector<int64_t> inputXShape = {3, 4, 24, 32};
-    std::vector<int64_t> outputYShape = {3, 4};
+    std::vector<int64_t> outputYShape = {3, 4, 1, 1};
     void *inputXDeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     aclTensor *inputX = nullptr;
     aclTensor *outputY = nullptr;
     size_t inputXShapeSize_1 = inputXShape[0] * inputXShape[1] * inputXShape[2] * inputXShape[3];
-    size_t outputYShapeSize_1 = inputXShape[0] * inputXShape[1];
+    size_t outputYShapeSize_1 = outputYShape[0] * outputYShape[1] * outputYShape[2] * outputYShape[3];
     size_t dataType = 4;
     std::vector<float> inputXHostData(inputXShape[0] * inputXShape[1] * inputXShape[2] * inputXShape[3]);
-    std::vector<float> outputYHostData(outputYShape[0] * outputYShape[1]);
+    std::vector<float> outputYHostData(outputYShape[0] * outputYShape[1] * outputYShape[2] * outputYShape[3]);
 
     size_t fileSize = 0;
     void** input1 = (void**)(&inputXHostData);
