@@ -171,10 +171,9 @@ int main(int argc, char **argv)
     std::vector<aclFloat16> outputYHostData(outputYShape[0] * outputYShape[1]);
 
     size_t fileSize = 0;
-    void ** input1=(void **)(&inputXHostData);
-    void ** input2=(void **)(&outputYHostData);
+    void ** input=(void **)(&inputXHostData);
     //读取数据
-    ReadFile("../input/input_x.bin", fileSize, *input1, inputXShapeSize_1*dataType);
+    ReadFile("../input/input_x.bin", fileSize, *input, inputXShapeSize_1*dataType);
     INFO_LOG("Set input success");
     // 创建input aclTensor
     ret = CreateAclTensor(inputXHostData, inputXShape, &inputXDeviceAddr, aclDataType::ACL_FLOAT16, &inputX);
