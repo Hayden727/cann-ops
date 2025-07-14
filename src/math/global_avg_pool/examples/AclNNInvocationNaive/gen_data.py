@@ -52,7 +52,7 @@ def run_mode(x):
 
 
 def gen_golden_data_simple():
-    shape_x = [3, 4, 64, 32]
+    shape_x = [3, 4, 24, 32]
     shape_y = [3, 4, 1, 1]
     input_x = np.random.uniform(-1000, 1000, shape_x).astype(np.float32)
     gen_onnx_model(shape_x, shape_y)
