@@ -45,7 +45,7 @@ namespace optiling {
         uint32_t typeKey; // typeKey 处理不同shape的标志
         if (dt == ge::DT_FLOAT16) { // half
             sizeofdatatype = HALF_SIZE;
-        }else if (dt == ge::DT_FLOAT16) { // float
+        }else if (dt == ge::DT_FLOAT) { // float
             sizeofdatatype = FLOAT_SIZE;
         }
         uint32_t ALIGN_NUM = BLOCK_SIZE / sizeofdatatype;
