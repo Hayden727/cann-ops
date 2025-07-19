@@ -15,6 +15,7 @@ import numpy as np
 
 LOSS = 0
 
+
 def verify_result(real_result_path, golden_path):
     dtype = np.int32
     real = np.fromfile(real_result_path, dtype=dtype)

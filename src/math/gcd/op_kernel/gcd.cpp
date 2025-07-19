@@ -52,7 +52,8 @@ template <typename T>
 class KernelGcd
 {
 public:
-    static constexpr int TILE_SIZE = 8192 / sizeof(T);
+    static constexpr int TILE_SIZE = GcdConfig<T>::TILE_SIZE;
+    using FpT = typename GcdConfig<T>::FpType;
     static constexpr int TILE_SIZE_MASK = TILE_SIZE / 8;
     __aicore__ inline KernelGcd()
     {
@@ -133,8 +134,6 @@ public:
 
     template <typename U, int REP>
     __aicore__ inline void BinaryGcd(LocalTensor<U>& c, LocalTensor<U>& a, LocalTensor<U>& b, int len) {
-        using FpT = typename FpTypeHelper<U>::type;
-    
         constexpr int32_t num_uint16 = sizeof(U) / sizeof(uint16_t);
     
         auto a0 = tBufNext.Get<U>();

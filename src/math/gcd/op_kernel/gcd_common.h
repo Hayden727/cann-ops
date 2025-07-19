@@ -17,16 +17,21 @@
 #include "kernel_operator.h"
 
 template<typename T>
-struct FpTypeHelper;
-
-template<>
-struct FpTypeHelper<int16_t> {
-    using type = half;
+struct GcdConfig {
+    using FpType = T;
+    static constexpr int TILE_SIZE = 1024;
 };
 
 template<>
-struct FpTypeHelper<int32_t> {
-    using type = float;
+struct GcdConfig<int16_t> {
+    using FpType = half;
+    static constexpr int TILE_SIZE = 4096;
+};
+
+template<>
+struct GcdConfig<int32_t> {
+    using FpType = float;
+    static constexpr int TILE_SIZE = 2048;
 };
 
 #endif // GCD_COMMON_H
