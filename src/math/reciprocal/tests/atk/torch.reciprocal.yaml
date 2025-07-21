@@ -40,7 +40,7 @@ api: pytorch
 api_type: function
 version: v2.1
 name: torch.reciprocal
-aclnn_name: reciprocal
+aclnn_name: Reciprocal
 dtype_numbers: 200
 extra_numbers: all
 generate: reduce
