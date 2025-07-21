@@ -2,7 +2,7 @@
   {
     "id": 0,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -41,7 +41,7 @@
   {
     "id": 1,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -80,7 +80,7 @@
   {
     "id": 2,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -119,7 +119,7 @@
   {
     "id": 3,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -159,7 +159,7 @@
   {
     "id": 4,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -198,7 +198,7 @@
   {
     "id": 5,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -237,7 +237,7 @@
   {
     "id": 6,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -276,7 +276,7 @@
   {
     "id": 7,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -315,7 +315,7 @@
   {
     "id": 8,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -354,7 +354,7 @@
   {
     "id": 9,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -393,7 +393,7 @@
   {
     "id": 10,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -432,7 +432,7 @@
   {
     "id": 11,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -471,7 +471,7 @@
   {
     "id": 12,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -512,7 +512,7 @@
   {
     "id": 13,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -551,7 +551,7 @@
   {
     "id": 14,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -590,7 +590,7 @@
   {
     "id": 15,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -629,7 +629,7 @@
   {
     "id": 16,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -669,7 +669,7 @@
   {
     "id": 17,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -708,7 +708,7 @@
   {
     "id": 18,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -747,7 +747,7 @@
   {
     "id": 19,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -786,7 +786,7 @@
   {
     "id": 20,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -825,7 +825,7 @@
   {
     "id": 21,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -864,7 +864,7 @@
   {
     "id": 22,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -904,7 +904,7 @@
   {
     "id": 23,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -943,7 +943,7 @@
   {
     "id": 24,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -982,7 +982,7 @@
   {
     "id": 25,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1021,7 +1021,7 @@
   {
     "id": 26,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1060,7 +1060,7 @@
   {
     "id": 27,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1100,7 +1100,7 @@
   {
     "id": 28,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1140,7 +1140,7 @@
   {
     "id": 29,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1182,7 +1182,7 @@
   {
     "id": 30,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1221,7 +1221,7 @@
   {
     "id": 31,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1260,7 +1260,7 @@
   {
     "id": 32,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1300,7 +1300,7 @@
   {
     "id": 33,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1339,7 +1339,7 @@
   {
     "id": 34,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1380,7 +1380,7 @@
   {
     "id": 35,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1419,7 +1419,7 @@
   {
     "id": 36,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1458,7 +1458,7 @@
   {
     "id": 37,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1498,7 +1498,7 @@
   {
     "id": 38,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1538,7 +1538,7 @@
   {
     "id": 39,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1577,7 +1577,7 @@
   {
     "id": 40,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1616,7 +1616,7 @@
   {
     "id": 41,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1655,7 +1655,7 @@
   {
     "id": 42,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1694,7 +1694,7 @@
   {
     "id": 43,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1733,7 +1733,7 @@
   {
     "id": 44,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1772,7 +1772,7 @@
   {
     "id": 45,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1811,7 +1811,7 @@
   {
     "id": 46,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1850,7 +1850,7 @@
   {
     "id": 47,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1890,7 +1890,7 @@
   {
     "id": 48,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1929,7 +1929,7 @@
   {
     "id": 49,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -1969,7 +1969,7 @@
   {
     "id": 50,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2010,7 +2010,7 @@
   {
     "id": 51,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2049,7 +2049,7 @@
   {
     "id": 52,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2088,7 +2088,7 @@
   {
     "id": 53,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2127,7 +2127,7 @@
   {
     "id": 54,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2166,7 +2166,7 @@
   {
     "id": 55,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2205,7 +2205,7 @@
   {
     "id": 56,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2244,7 +2244,7 @@
   {
     "id": 57,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2283,7 +2283,7 @@
   {
     "id": 58,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2322,7 +2322,7 @@
   {
     "id": 59,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2361,7 +2361,7 @@
   {
     "id": 60,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2400,7 +2400,7 @@
   {
     "id": 61,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2439,7 +2439,7 @@
   {
     "id": 62,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2479,7 +2479,7 @@
   {
     "id": 63,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2518,7 +2518,7 @@
   {
     "id": 64,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2558,7 +2558,7 @@
   {
     "id": 65,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2598,7 +2598,7 @@
   {
     "id": 66,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2638,7 +2638,7 @@
   {
     "id": 67,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2679,7 +2679,7 @@
   {
     "id": 68,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2719,7 +2719,7 @@
   {
     "id": 69,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2759,7 +2759,7 @@
   {
     "id": 70,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2799,7 +2799,7 @@
   {
     "id": 71,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2839,7 +2839,7 @@
   {
     "id": 72,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2879,7 +2879,7 @@
   {
     "id": 73,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2919,7 +2919,7 @@
   {
     "id": 74,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2959,7 +2959,7 @@
   {
     "id": 75,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -2999,7 +2999,7 @@
   {
     "id": 76,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3039,7 +3039,7 @@
   {
     "id": 77,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3080,7 +3080,7 @@
   {
     "id": 78,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3120,7 +3120,7 @@
   {
     "id": 79,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3161,7 +3161,7 @@
   {
     "id": 80,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3201,7 +3201,7 @@
   {
     "id": 81,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3241,7 +3241,7 @@
   {
     "id": 82,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3281,7 +3281,7 @@
   {
     "id": 83,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3321,7 +3321,7 @@
   {
     "id": 84,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3361,7 +3361,7 @@
   {
     "id": 85,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3401,7 +3401,7 @@
   {
     "id": 86,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3441,7 +3441,7 @@
   {
     "id": 87,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3481,7 +3481,7 @@
   {
     "id": 88,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3521,7 +3521,7 @@
   {
     "id": 89,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3561,7 +3561,7 @@
   {
     "id": 90,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3602,7 +3602,7 @@
   {
     "id": 91,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3641,7 +3641,7 @@
   {
     "id": 92,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3680,7 +3680,7 @@
   {
     "id": 93,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3719,7 +3719,7 @@
   {
     "id": 94,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3758,7 +3758,7 @@
   {
     "id": 95,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3798,7 +3798,7 @@
   {
     "id": 96,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3839,7 +3839,7 @@
   {
     "id": 97,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3878,7 +3878,7 @@
   {
     "id": 98,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3917,7 +3917,7 @@
   {
     "id": 99,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3956,7 +3956,7 @@
   {
     "id": 100,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -3996,7 +3996,7 @@
   {
     "id": 101,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4035,7 +4035,7 @@
   {
     "id": 102,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4074,7 +4074,7 @@
   {
     "id": 103,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4114,7 +4114,7 @@
   {
     "id": 104,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4153,7 +4153,7 @@
   {
     "id": 105,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4193,7 +4193,7 @@
   {
     "id": 106,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4233,7 +4233,7 @@
   {
     "id": 107,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4274,7 +4274,7 @@
   {
     "id": 108,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4316,7 +4316,7 @@
   {
     "id": 109,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4358,7 +4358,7 @@
   {
     "id": 110,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4400,7 +4400,7 @@
   {
     "id": 111,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4440,7 +4440,7 @@
   {
     "id": 112,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4481,7 +4481,7 @@
   {
     "id": 113,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4521,7 +4521,7 @@
   {
     "id": 114,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4563,7 +4563,7 @@
   {
     "id": 115,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4603,7 +4603,7 @@
   {
     "id": 116,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4644,7 +4644,7 @@
   {
     "id": 117,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4685,7 +4685,7 @@
   {
     "id": 118,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4726,7 +4726,7 @@
   {
     "id": 119,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4770,7 +4770,7 @@
   {
     "id": 120,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4813,7 +4813,7 @@
   {
     "id": 121,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4857,7 +4857,7 @@
   {
     "id": 122,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4899,7 +4899,7 @@
   {
     "id": 123,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4942,7 +4942,7 @@
   {
     "id": 124,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -4983,7 +4983,7 @@
   {
     "id": 125,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5024,7 +5024,7 @@
   {
     "id": 126,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5066,7 +5066,7 @@
   {
     "id": 127,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5108,7 +5108,7 @@
   {
     "id": 128,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5149,7 +5149,7 @@
   {
     "id": 129,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5192,7 +5192,7 @@
   {
     "id": 130,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5232,7 +5232,7 @@
   {
     "id": 131,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5273,7 +5273,7 @@
   {
     "id": 132,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5314,7 +5314,7 @@
   {
     "id": 133,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5355,7 +5355,7 @@
   {
     "id": 134,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5395,7 +5395,7 @@
   {
     "id": 135,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5437,7 +5437,7 @@
   {
     "id": 136,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5478,7 +5478,7 @@
   {
     "id": 137,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5519,7 +5519,7 @@
   {
     "id": 138,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5562,7 +5562,7 @@
   {
     "id": 139,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5605,7 +5605,7 @@
   {
     "id": 140,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5647,7 +5647,7 @@
   {
     "id": 141,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5689,7 +5689,7 @@
   {
     "id": 142,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5730,7 +5730,7 @@
   {
     "id": 143,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5771,7 +5771,7 @@
   {
     "id": 144,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5812,7 +5812,7 @@
   {
     "id": 145,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5853,7 +5853,7 @@
   {
     "id": 146,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5895,7 +5895,7 @@
   {
     "id": 147,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5937,7 +5937,7 @@
   {
     "id": 148,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -5978,7 +5978,7 @@
   {
     "id": 149,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6022,7 +6022,7 @@
   {
     "id": 150,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6062,7 +6062,7 @@
   {
     "id": 151,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6102,7 +6102,7 @@
   {
     "id": 152,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6143,7 +6143,7 @@
   {
     "id": 153,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6183,7 +6183,7 @@
   {
     "id": 154,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6224,7 +6224,7 @@
   {
     "id": 155,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6264,7 +6264,7 @@
   {
     "id": 156,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6304,7 +6304,7 @@
   {
     "id": 157,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6345,7 +6345,7 @@
   {
     "id": 158,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6387,7 +6387,7 @@
   {
     "id": 159,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6428,7 +6428,7 @@
   {
     "id": 160,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6468,7 +6468,7 @@
   {
     "id": 161,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6509,7 +6509,7 @@
   {
     "id": 162,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6550,7 +6550,7 @@
   {
     "id": 163,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6590,7 +6590,7 @@
   {
     "id": 164,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6630,7 +6630,7 @@
   {
     "id": 165,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6670,7 +6670,7 @@
   {
     "id": 166,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6712,7 +6712,7 @@
   {
     "id": 167,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6753,7 +6753,7 @@
   {
     "id": 168,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6795,7 +6795,7 @@
   {
     "id": 169,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6837,7 +6837,7 @@
   {
     "id": 170,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6880,7 +6880,7 @@
   {
     "id": 171,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6921,7 +6921,7 @@
   {
     "id": 172,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -6962,7 +6962,7 @@
   {
     "id": 173,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7003,7 +7003,7 @@
   {
     "id": 174,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7045,7 +7045,7 @@
   {
     "id": 175,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7088,7 +7088,7 @@
   {
     "id": 176,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7131,7 +7131,7 @@
   {
     "id": 177,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7173,7 +7173,7 @@
   {
     "id": 178,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7215,7 +7215,7 @@
   {
     "id": 179,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7259,7 +7259,7 @@
   {
     "id": 180,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7302,7 +7302,7 @@
   {
     "id": 181,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7345,7 +7345,7 @@
   {
     "id": 182,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7387,7 +7387,7 @@
   {
     "id": 183,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7429,7 +7429,7 @@
   {
     "id": 184,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7471,7 +7471,7 @@
   {
     "id": 185,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7513,7 +7513,7 @@
   {
     "id": 186,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7556,7 +7556,7 @@
   {
     "id": 187,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7600,7 +7600,7 @@
   {
     "id": 188,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7643,7 +7643,7 @@
   {
     "id": 189,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7685,7 +7685,7 @@
   {
     "id": 190,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7728,7 +7728,7 @@
   {
     "id": 191,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7769,7 +7769,7 @@
   {
     "id": 192,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7812,7 +7812,7 @@
   {
     "id": 193,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7854,7 +7854,7 @@
   {
     "id": 194,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7898,7 +7898,7 @@
   {
     "id": 195,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7940,7 +7940,7 @@
   {
     "id": 196,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -7983,7 +7983,7 @@
   {
     "id": 197,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8025,7 +8025,7 @@
   {
     "id": 198,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8066,7 +8066,7 @@
   {
     "id": 199,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8108,7 +8108,7 @@
   {
     "id": 200,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8150,7 +8150,7 @@
   {
     "id": 201,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8193,7 +8193,7 @@
   {
     "id": 202,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8236,7 +8236,7 @@
   {
     "id": 203,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8279,7 +8279,7 @@
   {
     "id": 204,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8322,7 +8322,7 @@
   {
     "id": 205,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8368,7 +8368,7 @@
   {
     "id": 206,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8409,7 +8409,7 @@
   {
     "id": 207,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8452,7 +8452,7 @@
   {
     "id": 208,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8495,7 +8495,7 @@
   {
     "id": 209,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8540,7 +8540,7 @@
   {
     "id": 210,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8582,7 +8582,7 @@
   {
     "id": 211,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8624,7 +8624,7 @@
   {
     "id": 212,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8667,7 +8667,7 @@
   {
     "id": 213,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8709,7 +8709,7 @@
   {
     "id": 214,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8754,7 +8754,7 @@
   {
     "id": 215,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8795,7 +8795,7 @@
   {
     "id": 216,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8840,7 +8840,7 @@
   {
     "id": 217,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8883,7 +8883,7 @@
   {
     "id": 218,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8927,7 +8927,7 @@
   {
     "id": 219,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -8970,7 +8970,7 @@
   {
     "id": 220,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9014,7 +9014,7 @@
   {
     "id": 221,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9058,7 +9058,7 @@
   {
     "id": 222,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9099,7 +9099,7 @@
   {
     "id": 223,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9141,7 +9141,7 @@
   {
     "id": 224,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9186,7 +9186,7 @@
   {
     "id": 225,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9229,7 +9229,7 @@
   {
     "id": 226,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9271,7 +9271,7 @@
   {
     "id": 227,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9314,7 +9314,7 @@
   {
     "id": 228,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9356,7 +9356,7 @@
   {
     "id": 229,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9399,7 +9399,7 @@
   {
     "id": 230,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9440,7 +9440,7 @@
   {
     "id": 231,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9482,7 +9482,7 @@
   {
     "id": 232,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9524,7 +9524,7 @@
   {
     "id": 233,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9569,7 +9569,7 @@
   {
     "id": 234,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9610,7 +9610,7 @@
   {
     "id": 235,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9651,7 +9651,7 @@
   {
     "id": 236,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9693,7 +9693,7 @@
   {
     "id": 237,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9734,7 +9734,7 @@
   {
     "id": 238,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9775,7 +9775,7 @@
   {
     "id": 239,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9817,7 +9817,7 @@
   {
     "id": 240,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9858,7 +9858,7 @@
   {
     "id": 241,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9901,7 +9901,7 @@
   {
     "id": 242,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9944,7 +9944,7 @@
   {
     "id": 243,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -9987,7 +9987,7 @@
   {
     "id": 244,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10028,7 +10028,7 @@
   {
     "id": 245,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10070,7 +10070,7 @@
   {
     "id": 246,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10112,7 +10112,7 @@
   {
     "id": 247,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10153,7 +10153,7 @@
   {
     "id": 248,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10195,7 +10195,7 @@
   {
     "id": 249,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10234,7 +10234,7 @@
   {
     "id": 250,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10273,7 +10273,7 @@
   {
     "id": 251,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10312,7 +10312,7 @@
   {
     "id": 252,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10352,7 +10352,7 @@
   {
     "id": 253,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10391,7 +10391,7 @@
   {
     "id": 254,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10431,7 +10431,7 @@
   {
     "id": 255,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10474,7 +10474,7 @@
   {
     "id": 256,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10518,7 +10518,7 @@
   {
     "id": 257,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10561,7 +10561,7 @@
   {
     "id": 258,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10607,7 +10607,7 @@
   {
     "id": 259,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10650,7 +10650,7 @@
   {
     "id": 260,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10693,7 +10693,7 @@
   {
     "id": 261,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10738,7 +10738,7 @@
   {
     "id": 262,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10782,7 +10782,7 @@
   {
     "id": 263,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10827,7 +10827,7 @@
   {
     "id": 264,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10869,7 +10869,7 @@
   {
     "id": 265,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10915,7 +10915,7 @@
   {
     "id": 266,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -10960,7 +10960,7 @@
   {
     "id": 267,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11004,7 +11004,7 @@
   {
     "id": 268,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11048,7 +11048,7 @@
   {
     "id": 269,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11092,7 +11092,7 @@
   {
     "id": 270,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11137,7 +11137,7 @@
   {
     "id": 271,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11180,7 +11180,7 @@
   {
     "id": 272,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11226,7 +11226,7 @@
   {
     "id": 273,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11270,7 +11270,7 @@
   {
     "id": 274,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11312,7 +11312,7 @@
   {
     "id": 275,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11354,7 +11354,7 @@
   {
     "id": 276,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11397,7 +11397,7 @@
   {
     "id": 277,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11439,7 +11439,7 @@
   {
     "id": 278,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11482,7 +11482,7 @@
   {
     "id": 279,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11526,7 +11526,7 @@
   {
     "id": 280,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11569,7 +11569,7 @@
   {
     "id": 281,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11612,7 +11612,7 @@
   {
     "id": 282,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11656,7 +11656,7 @@
   {
     "id": 283,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11700,7 +11700,7 @@
   {
     "id": 284,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11742,7 +11742,7 @@
   {
     "id": 285,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11788,7 +11788,7 @@
   {
     "id": 286,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11833,7 +11833,7 @@
   {
     "id": 287,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11877,7 +11877,7 @@
   {
     "id": 288,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11920,7 +11920,7 @@
   {
     "id": 289,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -11961,7 +11961,7 @@
   {
     "id": 290,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12004,7 +12004,7 @@
   {
     "id": 291,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12050,7 +12050,7 @@
   {
     "id": 292,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12092,7 +12092,7 @@
   {
     "id": 293,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12137,7 +12137,7 @@
   {
     "id": 294,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12180,7 +12180,7 @@
   {
     "id": 295,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12223,7 +12223,7 @@
   {
     "id": 296,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12267,7 +12267,7 @@
   {
     "id": 297,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12311,7 +12311,7 @@
   {
     "id": 298,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12354,7 +12354,7 @@
   {
     "id": 299,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12397,7 +12397,7 @@
   {
     "id": 300,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12442,7 +12442,7 @@
   {
     "id": 301,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12486,7 +12486,7 @@
   {
     "id": 302,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12528,7 +12528,7 @@
   {
     "id": 303,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12571,7 +12571,7 @@
   {
     "id": 304,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12617,7 +12617,7 @@
   {
     "id": 305,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12661,7 +12661,7 @@
   {
     "id": 306,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12705,7 +12705,7 @@
   {
     "id": 307,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12748,7 +12748,7 @@
   {
     "id": 308,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12790,7 +12790,7 @@
   {
     "id": 309,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12833,7 +12833,7 @@
   {
     "id": 310,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12876,7 +12876,7 @@
   {
     "id": 311,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12918,7 +12918,7 @@
   {
     "id": 312,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -12962,7 +12962,7 @@
   {
     "id": 313,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13004,7 +13004,7 @@
   {
     "id": 314,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13048,7 +13048,7 @@
   {
     "id": 315,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13091,7 +13091,7 @@
   {
     "id": 316,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13132,7 +13132,7 @@
   {
     "id": 317,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13172,7 +13172,7 @@
   {
     "id": 318,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13212,7 +13212,7 @@
   {
     "id": 319,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13258,7 +13258,7 @@
   {
     "id": 320,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13299,7 +13299,7 @@
   {
     "id": 321,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13342,7 +13342,7 @@
   {
     "id": 322,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13385,7 +13385,7 @@
   {
     "id": 323,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13425,7 +13425,7 @@
   {
     "id": 324,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13467,7 +13467,7 @@
   {
     "id": 325,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13508,7 +13508,7 @@
   {
     "id": 326,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13553,7 +13553,7 @@
   {
     "id": 327,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13593,7 +13593,7 @@
   {
     "id": 328,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13636,7 +13636,7 @@
   {
     "id": 329,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13676,7 +13676,7 @@
   {
     "id": 330,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13716,7 +13716,7 @@
   {
     "id": 331,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13762,7 +13762,7 @@
   {
     "id": 332,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13805,7 +13805,7 @@
   {
     "id": 333,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13848,7 +13848,7 @@
   {
     "id": 334,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13890,7 +13890,7 @@
   {
     "id": 335,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13935,7 +13935,7 @@
   {
     "id": 336,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -13981,7 +13981,7 @@
   {
     "id": 337,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14027,7 +14027,7 @@
   {
     "id": 338,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14072,7 +14072,7 @@
   {
     "id": 339,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14116,7 +14116,7 @@
   {
     "id": 340,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14161,7 +14161,7 @@
   {
     "id": 341,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14204,7 +14204,7 @@
   {
     "id": 342,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14246,7 +14246,7 @@
   {
     "id": 343,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14290,7 +14290,7 @@
   {
     "id": 344,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14336,7 +14336,7 @@
   {
     "id": 345,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14380,7 +14380,7 @@
   {
     "id": 346,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14423,7 +14423,7 @@
   {
     "id": 347,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14465,7 +14465,7 @@
   {
     "id": 348,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14510,7 +14510,7 @@
   {
     "id": 349,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14554,7 +14554,7 @@
   {
     "id": 350,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14594,7 +14594,7 @@
   {
     "id": 351,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14634,7 +14634,7 @@
   {
     "id": 352,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14675,7 +14675,7 @@
   {
     "id": 353,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14717,7 +14717,7 @@
   {
     "id": 354,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14760,7 +14760,7 @@
   {
     "id": 355,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14804,7 +14804,7 @@
   {
     "id": 356,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14850,7 +14850,7 @@
   {
     "id": 357,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14894,7 +14894,7 @@
   {
     "id": 358,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14940,7 +14940,7 @@
   {
     "id": 359,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -14980,7 +14980,7 @@
   {
     "id": 360,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15020,7 +15020,7 @@
   {
     "id": 361,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15060,7 +15060,7 @@
   {
     "id": 362,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15100,7 +15100,7 @@
   {
     "id": 363,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15141,7 +15141,7 @@
   {
     "id": 364,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15184,7 +15184,7 @@
   {
     "id": 365,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15224,7 +15224,7 @@
   {
     "id": 366,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15266,7 +15266,7 @@
   {
     "id": 367,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15311,7 +15311,7 @@
   {
     "id": 368,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15351,7 +15351,7 @@
   {
     "id": 369,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15392,7 +15392,7 @@
   {
     "id": 370,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15436,7 +15436,7 @@
   {
     "id": 371,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15480,7 +15480,7 @@
   {
     "id": 372,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15526,7 +15526,7 @@
   {
     "id": 373,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15572,7 +15572,7 @@
   {
     "id": 374,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15617,7 +15617,7 @@
   {
     "id": 375,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15661,7 +15661,7 @@
   {
     "id": 376,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15705,7 +15705,7 @@
   {
     "id": 377,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15751,7 +15751,7 @@
   {
     "id": 378,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15797,7 +15797,7 @@
   {
     "id": 379,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15842,7 +15842,7 @@
   {
     "id": 380,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15887,7 +15887,7 @@
   {
     "id": 381,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15930,7 +15930,7 @@
   {
     "id": 382,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -15976,7 +15976,7 @@
   {
     "id": 383,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16019,7 +16019,7 @@
   {
     "id": 384,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16063,7 +16063,7 @@
   {
     "id": 385,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16107,7 +16107,7 @@
   {
     "id": 386,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16153,7 +16153,7 @@
   {
     "id": 387,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16198,7 +16198,7 @@
   {
     "id": 388,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16241,7 +16241,7 @@
   {
     "id": 389,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16286,7 +16286,7 @@
   {
     "id": 390,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16331,7 +16331,7 @@
   {
     "id": 391,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16376,7 +16376,7 @@
   {
     "id": 392,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16421,7 +16421,7 @@
   {
     "id": 393,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16464,7 +16464,7 @@
   {
     "id": 394,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16508,7 +16508,7 @@
   {
     "id": 395,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16554,7 +16554,7 @@
   {
     "id": 396,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16598,7 +16598,7 @@
   {
     "id": 397,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16644,7 +16644,7 @@
   {
     "id": 398,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16688,7 +16688,7 @@
   {
     "id": 399,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16731,7 +16731,7 @@
   {
     "id": 400,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16777,7 +16777,7 @@
   {
     "id": 401,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16821,7 +16821,7 @@
   {
     "id": 402,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16866,7 +16866,7 @@
   {
     "id": 403,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16910,7 +16910,7 @@
   {
     "id": 404,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16956,7 +16956,7 @@
   {
     "id": 405,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -16997,7 +16997,7 @@
   {
     "id": 406,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17038,7 +17038,7 @@
   {
     "id": 407,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17081,7 +17081,7 @@
   {
     "id": 408,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17127,7 +17127,7 @@
   {
     "id": 409,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17173,7 +17173,7 @@
   {
     "id": 410,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17218,7 +17218,7 @@
   {
     "id": 411,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17260,7 +17260,7 @@
   {
     "id": 412,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17306,7 +17306,7 @@
   {
     "id": 413,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17352,7 +17352,7 @@
   {
     "id": 414,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17395,7 +17395,7 @@
   {
     "id": 415,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17441,7 +17441,7 @@
   {
     "id": 416,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17486,7 +17486,7 @@
   {
     "id": 417,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17532,7 +17532,7 @@
   {
     "id": 418,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17573,7 +17573,7 @@
   {
     "id": 419,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17616,7 +17616,7 @@
   {
     "id": 420,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17660,7 +17660,7 @@
   {
     "id": 421,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17706,7 +17706,7 @@
   {
     "id": 422,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17752,7 +17752,7 @@
   {
     "id": 423,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17798,7 +17798,7 @@
   {
     "id": 424,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17843,7 +17843,7 @@
   {
     "id": 425,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17886,7 +17886,7 @@
   {
     "id": 426,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17930,7 +17930,7 @@
   {
     "id": 427,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -17976,7 +17976,7 @@
   {
     "id": 428,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18021,7 +18021,7 @@
   {
     "id": 429,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18065,7 +18065,7 @@
   {
     "id": 430,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18110,7 +18110,7 @@
   {
     "id": 431,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18154,7 +18154,7 @@
   {
     "id": 432,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18198,7 +18198,7 @@
   {
     "id": 433,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18244,7 +18244,7 @@
   {
     "id": 434,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18290,7 +18290,7 @@
   {
     "id": 435,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18331,7 +18331,7 @@
   {
     "id": 436,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18374,7 +18374,7 @@
   {
     "id": 437,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18418,7 +18418,7 @@
   {
     "id": 438,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18463,7 +18463,7 @@
   {
     "id": 439,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18504,7 +18504,7 @@
   {
     "id": 440,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18549,7 +18549,7 @@
   {
     "id": 441,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18592,7 +18592,7 @@
   {
     "id": 442,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18636,7 +18636,7 @@
   {
     "id": 443,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18680,7 +18680,7 @@
   {
     "id": 444,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18724,7 +18724,7 @@
   {
     "id": 445,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18765,7 +18765,7 @@
   {
     "id": 446,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18808,7 +18808,7 @@
   {
     "id": 447,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18849,7 +18849,7 @@
   {
     "id": 448,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18892,7 +18892,7 @@
   {
     "id": 449,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18937,7 +18937,7 @@
   {
     "id": 450,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -18982,7 +18982,7 @@
   {
     "id": 451,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19023,7 +19023,7 @@
   {
     "id": 452,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19065,7 +19065,7 @@
   {
     "id": 453,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19107,7 +19107,7 @@
   {
     "id": 454,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19153,7 +19153,7 @@
   {
     "id": 455,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19194,7 +19194,7 @@
   {
     "id": 456,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19237,7 +19237,7 @@
   {
     "id": 457,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19283,7 +19283,7 @@
   {
     "id": 458,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19326,7 +19326,7 @@
   {
     "id": 459,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19368,7 +19368,7 @@
   {
     "id": 460,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19411,7 +19411,7 @@
   {
     "id": 461,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19457,7 +19457,7 @@
   {
     "id": 462,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19503,7 +19503,7 @@
   {
     "id": 463,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19545,7 +19545,7 @@
   {
     "id": 464,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19588,7 +19588,7 @@
   {
     "id": 465,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19631,7 +19631,7 @@
   {
     "id": 466,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19674,7 +19674,7 @@
   {
     "id": 467,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19718,7 +19718,7 @@
   {
     "id": 468,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19762,7 +19762,7 @@
   {
     "id": 469,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19808,7 +19808,7 @@
   {
     "id": 470,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19851,7 +19851,7 @@
   {
     "id": 471,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19896,7 +19896,7 @@
   {
     "id": 472,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19939,7 +19939,7 @@
   {
     "id": 473,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -19984,7 +19984,7 @@
   {
     "id": 474,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20029,7 +20029,7 @@
   {
     "id": 475,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20075,7 +20075,7 @@
   {
     "id": 476,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20120,7 +20120,7 @@
   {
     "id": 477,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20166,7 +20166,7 @@
   {
     "id": 478,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20210,7 +20210,7 @@
   {
     "id": 479,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20255,7 +20255,7 @@
   {
     "id": 480,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20301,7 +20301,7 @@
   {
     "id": 481,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20341,7 +20341,7 @@
   {
     "id": 482,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20381,7 +20381,7 @@
   {
     "id": 483,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20421,7 +20421,7 @@
   {
     "id": 484,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20461,7 +20461,7 @@
   {
     "id": 485,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20502,7 +20502,7 @@
   {
     "id": 486,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20542,7 +20542,7 @@
   {
     "id": 487,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20588,7 +20588,7 @@
   {
     "id": 488,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20633,7 +20633,7 @@
   {
     "id": 489,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20674,7 +20674,7 @@
   {
     "id": 490,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20715,7 +20715,7 @@
   {
     "id": 491,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20757,7 +20757,7 @@
   {
     "id": 492,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20802,7 +20802,7 @@
   {
     "id": 493,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20846,7 +20846,7 @@
   {
     "id": 494,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20891,7 +20891,7 @@
   {
     "id": 495,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20936,7 +20936,7 @@
   {
     "id": 496,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -20981,7 +20981,7 @@
   {
     "id": 497,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21027,7 +21027,7 @@
   {
     "id": 498,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21073,7 +21073,7 @@
   {
     "id": 499,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21115,7 +21115,7 @@
   {
     "id": 500,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21158,7 +21158,7 @@
   {
     "id": 501,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21202,7 +21202,7 @@
   {
     "id": 502,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21247,7 +21247,7 @@
   {
     "id": 503,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21293,7 +21293,7 @@
   {
     "id": 504,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21339,7 +21339,7 @@
   {
     "id": 505,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21381,7 +21381,7 @@
   {
     "id": 506,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21422,7 +21422,7 @@
   {
     "id": 507,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21468,7 +21468,7 @@
   {
     "id": 508,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21513,7 +21513,7 @@
   {
     "id": 509,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21558,7 +21558,7 @@
   {
     "id": 510,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21602,7 +21602,7 @@
   {
     "id": 511,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21647,7 +21647,7 @@
   {
     "id": 512,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21692,7 +21692,7 @@
   {
     "id": 513,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21738,7 +21738,7 @@
   {
     "id": 514,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21784,7 +21784,7 @@
   {
     "id": 515,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21830,7 +21830,7 @@
   {
     "id": 516,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21876,7 +21876,7 @@
   {
     "id": 517,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21922,7 +21922,7 @@
   {
     "id": 518,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -21967,7 +21967,7 @@
   {
     "id": 519,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22012,7 +22012,7 @@
   {
     "id": 520,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22057,7 +22057,7 @@
   {
     "id": 521,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22100,7 +22100,7 @@
   {
     "id": 522,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22144,7 +22144,7 @@
   {
     "id": 523,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22190,7 +22190,7 @@
   {
     "id": 524,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22234,7 +22234,7 @@
   {
     "id": 525,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22280,7 +22280,7 @@
   {
     "id": 526,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22326,7 +22326,7 @@
   {
     "id": 527,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22371,7 +22371,7 @@
   {
     "id": 528,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22417,7 +22417,7 @@
   {
     "id": 529,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22461,7 +22461,7 @@
   {
     "id": 530,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22507,7 +22507,7 @@
   {
     "id": 531,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22552,7 +22552,7 @@
   {
     "id": 532,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22597,7 +22597,7 @@
   {
     "id": 533,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22642,7 +22642,7 @@
   {
     "id": 534,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22687,7 +22687,7 @@
   {
     "id": 535,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22730,7 +22730,7 @@
   {
     "id": 536,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22775,7 +22775,7 @@
   {
     "id": 537,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22820,7 +22820,7 @@
   {
     "id": 538,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22866,7 +22866,7 @@
   {
     "id": 539,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22911,7 +22911,7 @@
   {
     "id": 540,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -22956,7 +22956,7 @@
   {
     "id": 541,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23000,7 +23000,7 @@
   {
     "id": 542,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23045,7 +23045,7 @@
   {
     "id": 543,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23089,7 +23089,7 @@
   {
     "id": 544,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23134,7 +23134,7 @@
   {
     "id": 545,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23179,7 +23179,7 @@
   {
     "id": 546,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23225,7 +23225,7 @@
   {
     "id": 547,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23267,7 +23267,7 @@
   {
     "id": 548,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23311,7 +23311,7 @@
   {
     "id": 549,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23357,7 +23357,7 @@
   {
     "id": 550,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23403,7 +23403,7 @@
   {
     "id": 551,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23449,7 +23449,7 @@
   {
     "id": 552,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23493,7 +23493,7 @@
   {
     "id": 553,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23537,7 +23537,7 @@
   {
     "id": 554,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23583,7 +23583,7 @@
   {
     "id": 555,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23624,7 +23624,7 @@
   {
     "id": 556,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23669,7 +23669,7 @@
   {
     "id": 557,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23712,7 +23712,7 @@
   {
     "id": 558,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23755,7 +23755,7 @@
   {
     "id": 559,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23800,7 +23800,7 @@
   {
     "id": 560,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23844,7 +23844,7 @@
   {
     "id": 561,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23887,7 +23887,7 @@
   {
     "id": 562,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23928,7 +23928,7 @@
   {
     "id": 563,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -23974,7 +23974,7 @@
   {
     "id": 564,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24020,7 +24020,7 @@
   {
     "id": 565,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24065,7 +24065,7 @@
   {
     "id": 566,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24110,7 +24110,7 @@
   {
     "id": 567,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24156,7 +24156,7 @@
   {
     "id": 568,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24202,7 +24202,7 @@
   {
     "id": 569,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24246,7 +24246,7 @@
   {
     "id": 570,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24291,7 +24291,7 @@
   {
     "id": 571,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24336,7 +24336,7 @@
   {
     "id": 572,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24379,7 +24379,7 @@
   {
     "id": 573,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24424,7 +24424,7 @@
   {
     "id": 574,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24469,7 +24469,7 @@
   {
     "id": 575,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24512,7 +24512,7 @@
   {
     "id": 576,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24554,7 +24554,7 @@
   {
     "id": 577,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24598,7 +24598,7 @@
   {
     "id": 578,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24644,7 +24644,7 @@
   {
     "id": 579,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24687,7 +24687,7 @@
   {
     "id": 580,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24731,7 +24731,7 @@
   {
     "id": 581,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24773,7 +24773,7 @@
   {
     "id": 582,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24819,7 +24819,7 @@
   {
     "id": 583,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24865,7 +24865,7 @@
   {
     "id": 584,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24906,7 +24906,7 @@
   {
     "id": 585,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24949,7 +24949,7 @@
   {
     "id": 586,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -24990,7 +24990,7 @@
   {
     "id": 587,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25035,7 +25035,7 @@
   {
     "id": 588,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25077,7 +25077,7 @@
   {
     "id": 589,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25123,7 +25123,7 @@
   {
     "id": 590,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25169,7 +25169,7 @@
   {
     "id": 591,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25211,7 +25211,7 @@
   {
     "id": 592,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25255,7 +25255,7 @@
   {
     "id": 593,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25298,7 +25298,7 @@
   {
     "id": 594,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25344,7 +25344,7 @@
   {
     "id": 595,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25388,7 +25388,7 @@
   {
     "id": 596,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25433,7 +25433,7 @@
   {
     "id": 597,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25478,7 +25478,7 @@
   {
     "id": 598,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25524,7 +25524,7 @@
   {
     "id": 599,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25570,7 +25570,7 @@
   {
     "id": 600,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25613,7 +25613,7 @@
   {
     "id": 601,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25654,7 +25654,7 @@
   {
     "id": 602,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25692,7 +25692,7 @@
   {
     "id": 603,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25734,7 +25734,7 @@
   {
     "id": 604,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25776,7 +25776,7 @@
   {
     "id": 605,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25816,7 +25816,7 @@
   {
     "id": 606,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25852,7 +25852,7 @@
   {
     "id": 607,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25891,7 +25891,7 @@
   {
     "id": 608,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25932,7 +25932,7 @@
   {
     "id": 609,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -25973,7 +25973,7 @@
   {
     "id": 610,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26015,7 +26015,7 @@
   {
     "id": 611,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26056,7 +26056,7 @@
   {
     "id": 612,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26097,7 +26097,7 @@
   {
     "id": 613,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26136,7 +26136,7 @@
   {
     "id": 614,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26176,7 +26176,7 @@
   {
     "id": 615,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26219,7 +26219,7 @@
   {
     "id": 616,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26262,7 +26262,7 @@
   {
     "id": 617,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26305,7 +26305,7 @@
   {
     "id": 618,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26345,7 +26345,7 @@
   {
     "id": 619,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26384,7 +26384,7 @@
   {
     "id": 620,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26421,7 +26421,7 @@
   {
     "id": 621,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26463,7 +26463,7 @@
   {
     "id": 622,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26500,7 +26500,7 @@
   {
     "id": 623,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26540,7 +26540,7 @@
   {
     "id": 624,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26578,7 +26578,7 @@
   {
     "id": 625,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26621,7 +26621,7 @@
   {
     "id": 626,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26660,7 +26660,7 @@
   {
     "id": 627,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26698,7 +26698,7 @@
   {
     "id": 628,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26741,7 +26741,7 @@
   {
     "id": 629,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26784,7 +26784,7 @@
   {
     "id": 630,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26825,7 +26825,7 @@
   {
     "id": 631,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26867,7 +26867,7 @@
   {
     "id": 632,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26909,7 +26909,7 @@
   {
     "id": 633,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26951,7 +26951,7 @@
   {
     "id": 634,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -26994,7 +26994,7 @@
   {
     "id": 635,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27034,7 +27034,7 @@
   {
     "id": 636,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27071,7 +27071,7 @@
   {
     "id": 637,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27108,7 +27108,7 @@
   {
     "id": 638,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27145,7 +27145,7 @@
   {
     "id": 639,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27186,7 +27186,7 @@
   {
     "id": 640,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27226,7 +27226,7 @@
   {
     "id": 641,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27269,7 +27269,7 @@
   {
     "id": 642,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27314,7 +27314,7 @@
   {
     "id": 643,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27355,7 +27355,7 @@
   {
     "id": 644,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27401,7 +27401,7 @@
   {
     "id": 645,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27447,7 +27447,7 @@
   {
     "id": 646,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27491,7 +27491,7 @@
   {
     "id": 647,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27531,7 +27531,7 @@
   {
     "id": 648,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27574,7 +27574,7 @@
   {
     "id": 649,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27619,7 +27619,7 @@
   {
     "id": 650,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27663,7 +27663,7 @@
   {
     "id": 651,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27703,7 +27703,7 @@
   {
     "id": 652,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27748,7 +27748,7 @@
   {
     "id": 653,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27787,7 +27787,7 @@
   {
     "id": 654,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27826,7 +27826,7 @@
   {
     "id": 655,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27865,7 +27865,7 @@
   {
     "id": 656,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27909,7 +27909,7 @@
   {
     "id": 657,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27955,7 +27955,7 @@
   {
     "id": 658,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -27998,7 +27998,7 @@
   {
     "id": 659,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28040,7 +28040,7 @@
   {
     "id": 660,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28082,7 +28082,7 @@
   {
     "id": 661,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28124,7 +28124,7 @@
   {
     "id": 662,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28165,7 +28165,7 @@
   {
     "id": 663,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28205,7 +28205,7 @@
   {
     "id": 664,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28248,7 +28248,7 @@
   {
     "id": 665,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28288,7 +28288,7 @@
   {
     "id": 666,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28324,7 +28324,7 @@
   {
     "id": 667,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28366,7 +28366,7 @@
   {
     "id": 668,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28412,7 +28412,7 @@
   {
     "id": 669,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28457,7 +28457,7 @@
   {
     "id": 670,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28503,7 +28503,7 @@
   {
     "id": 671,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28547,7 +28547,7 @@
   {
     "id": 672,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28589,7 +28589,7 @@
   {
     "id": 673,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28635,7 +28635,7 @@
   {
     "id": 674,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28680,7 +28680,7 @@
   {
     "id": 675,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28725,7 +28725,7 @@
   {
     "id": 676,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28769,7 +28769,7 @@
   {
     "id": 677,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28814,7 +28814,7 @@
   {
     "id": 678,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28859,7 +28859,7 @@
   {
     "id": 679,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28904,7 +28904,7 @@
   {
     "id": 680,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28943,7 +28943,7 @@
   {
     "id": 681,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -28984,7 +28984,7 @@
   {
     "id": 682,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29026,7 +29026,7 @@
   {
     "id": 683,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29066,7 +29066,7 @@
   {
     "id": 684,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29112,7 +29112,7 @@
   {
     "id": 685,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29155,7 +29155,7 @@
   {
     "id": 686,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29201,7 +29201,7 @@
   {
     "id": 687,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29245,7 +29245,7 @@
   {
     "id": 688,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29285,7 +29285,7 @@
   {
     "id": 689,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29329,7 +29329,7 @@
   {
     "id": 690,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29373,7 +29373,7 @@
   {
     "id": 691,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29414,7 +29414,7 @@
   {
     "id": 692,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29457,7 +29457,7 @@
   {
     "id": 693,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29503,7 +29503,7 @@
   {
     "id": 694,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29546,7 +29546,7 @@
   {
     "id": 695,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29587,7 +29587,7 @@
   {
     "id": 696,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29633,7 +29633,7 @@
   {
     "id": 697,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29675,7 +29675,7 @@
   {
     "id": 698,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29718,7 +29718,7 @@
   {
     "id": 699,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29762,7 +29762,7 @@
   {
     "id": 700,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29807,7 +29807,7 @@
   {
     "id": 701,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29850,7 +29850,7 @@
   {
     "id": 702,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
@@ -29896,7 +29896,7 @@
   {
     "id": 703,
     "name": "torch.reciprocal",
-    "aclnn_name": "Reciprocal",
+    "aclnn_name": "reciprocal",
     "version": "v2.1",
     "expected_error_msg": null,
     "api": "pytorch",
