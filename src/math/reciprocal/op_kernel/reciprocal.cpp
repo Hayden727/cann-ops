@@ -96,7 +96,7 @@ private:
     __aicore__ inline void CopyIn(int32_t progress)
     {
         AscendC::LocalTensor<TYPE_X> xLocal = inQueueX.AllocTensor<TYPE_X>();
-        DataCopy(xLocal, xGm[progress * this->tileDataNum], this->processDataNum);
+        DataCopy(xLocal, xGm[progress * this->ubPartDataNum], this->processDataNum);
         inQueueX.EnQue(xLocal);
     }
     __aicore__ inline void Compute(int32_t progress)
@@ -109,13 +109,11 @@ private:
             // Cast(xLocal, yLocal, RoundMode::CAST_RINT, this->processDataNum);
             Duplicate(yLocal, 1.0f, this->processDataNum);
             // print("f32Dup");
-            // AscendC::DumpTensor(yLocal,1, 32);
             // Div(yLocal, xLocal, xLocal, this->processDataNum);
             // LocalTensor<float> oneTensor = 1.0f;
             
             Div(yLocal, yLocal, xLocal, this->processDataNum);
             // print("f32Div");
-            // AscendC::DumpTensor(yLocal,2, 32);
             // Div(yLocal, 1.0f, xLocal, this->processDataNum);
         }
         else if constexpr ( std::is_same_v< DTYPE_X, float16_t>)
@@ -123,12 +121,9 @@ private:
             // Cast(xLocal, yLocal, RoundMode::CAST_RINT, this->processDataNum);
             Duplicate(yLocal, static_cast<half>(1.0f), this->processDataNum);
             // print("f16Dup");
-            // AscendC::DumpTensor(yLocal,3, 32);
             // Div(yLocal, xLocal, xLocal, this->processDataNum);
             // LocalTensor<float> oneTensor = 1.0f;
-            
             Div(yLocal, yLocal, xLocal, this->processDataNum);
-            // AscendC::DumpTensor(yLocal,4, 32);
             // Div(yLocal, 1.0f, xLocal, this->processDataNum);
         }
         else
@@ -137,10 +132,7 @@ private:
             AscendC::LocalTensor<float> p2 = tmp2.Get<float>();
             Cast(p1, xLocal, RoundMode::CAST_NONE, this->processDataNum);
             Duplicate(p2, 1.0f, this->processDataNum);
-
-            // AscendC::DumpTensor(yLocal,6, 32);
             Div(p1, p2, p1, this->processDataNum);
-
             Cast(yLocal, p1, RoundMode::CAST_RINT, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_Y>(yLocal);
@@ -150,9 +142,7 @@ private:
     __aicore__ inline void CopyOut(int32_t progress)
     {
         AscendC::LocalTensor<TYPE_Y> yLocal = outQueueY.DeQue<TYPE_Y>();
-        DataCopy(yGm[progress * this->tileDataNum], yLocal, this->processDataNum);
-        // AscendC::DumpTensor(yLocal,7, 32);
-        // AscendC::DumpTensor(yGm[progress * this->tileDataNum],8, 32);
+        DataCopy(yGm[progress * this->ubPartDataNum], yLocal, this->processDataNum);
         outQueueY.FreeTensor(yLocal);
         
     }
@@ -169,7 +159,6 @@ private:
     uint64_t coreDataNum;
     uint64_t tileNum;
     uint64_t ubPartDataNum;
-    uint32_t tileDataNum;
     uint64_t tailDataNum;
     uint64_t processDataNum;
 };

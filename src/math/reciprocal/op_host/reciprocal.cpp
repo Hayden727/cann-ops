@@ -71,7 +71,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint32_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
     smallCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
     // Tail block calculation for small chunks of data
-    uint32_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreDataNum / ubPartDataNum);
+    uint32_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
     smallCoreTailDataNum = smallCoreTailDataNum == 0 ? ubPartDataNum : smallCoreTailDataNum;
 
     if(0 != tailBlockNum)
@@ -80,7 +80,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
         bigCoreLoopNum = bigCoreDataNum / ubPartDataNum;
         bigCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum) == 0 ? bigCoreLoopNum : bigCoreLoopNum + 1;
-        bigCoreTailDataNum = bigCoreDataNum - ubPartDataNum * (bigCoreDataNum / ubPartDataNum);
+        bigCoreTailDataNum = bigCoreDataNum - ubPartDataNum * (bigCoreLoopNum-1);
         bigCoreTailDataNum = bigCoreTailDataNum == 0 ? ubPartDataNum : bigCoreTailDataNum;
         context->SetTilingKey(1);
     }
@@ -105,7 +105,16 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     currentWorkspace[0] = 0;
     return ge::GRAPH_SUCCESS;
 }
+
+// static graphStatus InferDataType(gert::InferDataTypeContext* context)
+// {
+//     const auto inputDataType = context->GetInputDataType(0);
+//     context->SetOutputDataType(0, inputDataType);
+//     return ge::GRAPH_SUCCESS;
+// }
 }
+
+
 
 namespace ge {
     static ge::graphStatus InferShape(gert::InferShapeContext* context)
@@ -134,6 +143,7 @@ public:
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_NCHW, ge::FORMAT_NCHW, ge::FORMAT_NCHW, ge::FORMAT_NHWC, ge::FORMAT_NHWC, ge::FORMAT_NHWC});
 
         this->SetInferShape(ge::InferShape);
+        // this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 
         this->AICore()
             .SetTiling(optiling::TilingFunc);
