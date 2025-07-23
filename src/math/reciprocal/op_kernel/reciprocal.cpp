@@ -106,25 +106,14 @@ private:
         
         if constexpr ( std::is_same_v< DTYPE_X, float32_t>)
         {   
-            // Cast(xLocal, yLocal, RoundMode::CAST_RINT, this->processDataNum);
-            Duplicate(yLocal, 1.0f, this->processDataNum);
-            // print("f32Dup");
-            // Div(yLocal, xLocal, xLocal, this->processDataNum);
-            // LocalTensor<float> oneTensor = 1.0f;
             
+            Duplicate(yLocal, 1.0f, this->processDataNum);
             Div(yLocal, yLocal, xLocal, this->processDataNum);
-            // print("f32Div");
-            // Div(yLocal, 1.0f, xLocal, this->processDataNum);
         }
         else if constexpr ( std::is_same_v< DTYPE_X, float16_t>)
         {   
-            // Cast(xLocal, yLocal, RoundMode::CAST_RINT, this->processDataNum);
             Duplicate(yLocal, static_cast<half>(1.0f), this->processDataNum);
-            // print("f16Dup");
-            // Div(yLocal, xLocal, xLocal, this->processDataNum);
-            // LocalTensor<float> oneTensor = 1.0f;
             Div(yLocal, yLocal, xLocal, this->processDataNum);
-            // Div(yLocal, 1.0f, xLocal, this->processDataNum);
         }
         else
         {   
@@ -150,7 +139,7 @@ private:
 private:
     AscendC::TPipe pipe;
     AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> inQueueX;
-    AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> outQueueY;
+    AscendC::TQue<AscendC::QuePosition::VECOUT, BUFFER_NUM> outQueueY;
     AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp1;
     AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp2;
     AscendC::GlobalTensor<TYPE_X> xGm;

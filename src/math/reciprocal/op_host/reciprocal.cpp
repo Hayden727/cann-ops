@@ -19,39 +19,39 @@
 
 
 namespace optiling {
-    const uint32_t BLOCK_SIZE = 32;
-    const uint32_t BUFFER_NUM = 2;  
+    const uint64_t BLOCK_SIZE = 32;
+    const uint64_t BUFFER_NUM = 2;  
 
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
     TilingData tiling;
     uint64_t ubLength = 0;
-    uint32_t bigCoreDataNum = 0;
-    uint32_t bigCoreLoopNum = 0;
-    uint32_t bigCoreTailDataNum = 0;
+    uint64_t bigCoreDataNum = 0;
+    uint64_t bigCoreLoopNum = 0;
+    uint64_t bigCoreTailDataNum = 0;
     
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
     auto coreNum = ascendcPlatform.GetCoreNum();
     
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
-    uint32_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+    uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
-    uint32_t inputLength = inputDataNum * dataTypeLength;
+    uint64_t inputLength = inputDataNum * dataTypeLength;
 
 
-    uint32_t totalLength = context->GetInputTensor(0)->GetShapeSize();
+    uint64_t totalLength = context->GetInputTensor(0)->GetShapeSize();
     auto dt = context->GetInputTensor(0)->GetDataType();
     // There are a total of 3 shared UB spaces in the input and output. If it's int8, there are 2 more TBUFs
-    uint32_t ubPartNum = (dt == ge:: DT_BF16 ) ? 4 : 2;
-    uint32_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
+    uint64_t ubPartNum = (dt == ge:: DT_BF16 ) ? 4 : 2;
+    uint64_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
     // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
-    uint32_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
-    uint32_t ubPartDataNum = (ubPartBlockNum * BLOCK_SIZE) / dataTypeLength;
+    uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
+    uint64_t ubPartDataNum = (ubPartBlockNum * BLOCK_SIZE) / dataTypeLength;
 
     // Input data for 32B alignment
-    uint32_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+    uint64_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
     
     if(ubPartDataNum >= inputDataNum)
     {
@@ -63,15 +63,15 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
     }
     
-    uint32_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
-    uint32_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
+    uint64_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
+    uint64_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
     
     // Small chunks are calculated and sliced several times using the number of data on each core
-    uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
-    uint32_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
+    uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
+    uint64_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
     smallCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
     // Tail block calculation for small chunks of data
-    uint32_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
+    uint64_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
     smallCoreTailDataNum = smallCoreTailDataNum == 0 ? ubPartDataNum : smallCoreTailDataNum;
 
     if(0 != tailBlockNum)
@@ -106,12 +106,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     return ge::GRAPH_SUCCESS;
 }
 
-// static graphStatus InferDataType(gert::InferDataTypeContext* context)
-// {
-//     const auto inputDataType = context->GetInputDataType(0);
-//     context->SetOutputDataType(0, inputDataType);
-//     return ge::GRAPH_SUCCESS;
-// }
 }
 
 
@@ -143,12 +137,11 @@ public:
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_ND, ge::FORMAT_NCHW, ge::FORMAT_NCHW, ge::FORMAT_NCHW, ge::FORMAT_NHWC, ge::FORMAT_NHWC, ge::FORMAT_NHWC});
 
         this->SetInferShape(ge::InferShape);
-        // this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
 
         this->AICore()
             .SetTiling(optiling::TilingFunc);
             this->AICore().AddConfig("ascend910b");
-            // this->AICore().AddConfig("ascend910b").AddConfig("ascend310b");
+            
 
     }
 };
