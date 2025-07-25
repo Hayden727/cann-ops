@@ -14,6 +14,7 @@ src  // 算子源码目录
   ├── common        // 公共目录
   ├── conv          // 卷积类算子
   ├── conversion    // 张量变换类算子
+  ├── contrib       // 社区贡献算子目录✨
   ├── foreach       // foreach类算子
   ├── image         // 图像处理类算子
   ├── index         // 索引计算类算子
@@ -29,7 +30,11 @@ src  // 算子源码目录
   └── rnn           // 循环神经网络类算子
 ```
 
-仓库中各个算子的目录结构类似，可以看做一个[msopgen](https://www.hiascend.com/document/detail/zh/mindstudio/80RC1/ODtools/Operatordevelopmenttools/atlasopdev_16_0018.html)算子工程。以`add_custom`为例，其目录结构如下：
+上面各分类目录中存放了昇腾对外开源的AscendC算子，用户可以在CANN软件包中使用。
+
+`社区贡献算子目录✨`用来存放实验性算子和社区开源贡献的算子，内部的算子目录结构与上面各算子分类相同。当开源贡献算子成熟后会被纳入CANN软件包管理并移动到外层对应分类目录。
+
+各分类下每个算子的目录结构类似，可以看做一个[msopgen](https://www.hiascend.com/document/detail/zh/mindstudio/80RC1/ODtools/Operatordevelopmenttools/atlasopdev_16_0018.html)算子工程。以`add_custom`为例，其目录结构如下：
 
 ```
 add_custom/
