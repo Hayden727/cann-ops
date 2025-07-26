@@ -99,7 +99,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     float norm = sqrtf(qRel[0]*qRel[0] + qRel[1]*qRel[1] +
                       qRel[2]*qRel[2] + qRel[3]*qRel[3]);
-    if(norm == 0.0f){
+    if(norm == 0){
         return ge::GRAPH_FAILED;
     }
     if (std::fabs(norm) > std::numeric_limits<float>::epsilon()) {
@@ -114,7 +114,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     d_sign = (d >= 0.0f) ? 1.0f : -1.0f;
     theta = std::acos(abs_d);
     sin_theta = std::sin(theta);
-    if(sin_theta == 0.0f){
+    if(sin_theta == 0){
         return ge::GRAPH_FAILED;
     }
     if (std::fabs(sin_theta) > std::numeric_limits<float>::epsilon()){
