@@ -96,7 +96,6 @@ public:
         pipe->InitBuffer(tmp4Buf, this->tileDataNum * 4);
         pipe->InitBuffer(tmp5Buf, this->tileDataNum * 4);
         pipe->InitBuffer(tmp6Buf, this->tileDataNum * 4);
-
     }
 
     __aicore__ inline void Process(){

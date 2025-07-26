@@ -22,13 +22,6 @@ def verify_result(real_result, golden):
     golden = np.nan_to_num(golden, nan=0.0)
     real_result = np.nan_to_num(real_result, nan=0.0)
     result = np.abs(real_result - golden) # 计算运算结果和预期结果偏差
-    # index = np.where(result > LOSS)[0]
-    # points = np.fromfile("input/input_points.bin", dtype=dtype)
-    # print(index)
-    # print(index.shape, golden.shape)
-    # print(golden[index[:10]])
-    # print(real_result[index[:10]])
-    # print(points[index[:10]])
     
     deno = np.maximum(np.abs(real_result), np.abs(golden))  # 获取最大值并组成新数组
     result_atol = np.less_equal(result, LOSS) # 计算绝对误差

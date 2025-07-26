@@ -178,7 +178,7 @@ int main(int argc, char **argv)
     std::vector<int64_t> scalar4Shape   = {4};
 
     size_t fileSize = 0;
-    ReadFile("../input/input_points.bin",    sizeof(float)    * ndim * N, pointsHost.data(),    sizeof(float)    * ndim * N);
+    ReadFile("../input/input_points.bin",    sizeof(float) * ndim * N, pointsHost.data(),    sizeof(float) * ndim * N);
     ReadFile("../input/input_timestamps.bin", sizeof(uint64_t) * N,       timestampsHost.data(), sizeof(uint64_t) * N);
     ReadFile("../input/input_timestamp_min.bin", sizeof(int64_t),       &timestampMin,        sizeof(int64_t));
     ReadFile("../input/input_timestamp_max.bin", sizeof(int64_t),       &timestampMax,        sizeof(int64_t));
@@ -235,7 +235,7 @@ int main(int argc, char **argv)
     ret = aclrtSynchronizeStream(stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return FAILED);
 
-    const size_t outPointsSize = ndim * N * sizeof(float);
+    const size_t outPointsSize = ndim * N * 4;
 
     std::vector<float>    outPointsHost(ndim * N);
 

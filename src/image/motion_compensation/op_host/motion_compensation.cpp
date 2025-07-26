@@ -11,18 +11,17 @@
 /**
  * @file motion_compensation.cpp
  */
+#include <cmath>
 #include "motion_compensation_tiling.h"
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "graph/utils/type_utils.h"
-#include <cmath>
 
 namespace optiling {
 const uint32_t BLOCK_SIZE = 256;
 const uint32_t BUFFER_NUM = 2;
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
-
     MotionCompensationTilingData tiling;
     uint64_t ubSize;
     auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
@@ -48,15 +47,15 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     
     f = (tMax != tMin) ? (1.0f / (tMax - tMin)) : 0.0f;
 
-    const float * transMin = attr->GetListFloat(2)->GetData();
-    const float * transMax = attr->GetListFloat(3)->GetData();
+    const float *transMin = attr->GetListFloat(2)->GetData();
+    const float *transMax = attr->GetListFloat(3)->GetData();
     
     float transX = transMin[0] - transMax[0];
     float transY = transMin[1] - transMax[1];
     float transZ = transMin[2] - transMax[2];
     
-    const float * qMin = attr->GetListFloat(4)->GetData();
-    const float * qMax = attr->GetListFloat(5)->GetData();
+    const float *qMin = attr->GetListFloat(4)->GetData();
+    const float *qMax = attr->GetListFloat(5)->GetData();
     
     float qMaxW = qMax[0];
     float qMaxX = qMax[1];
@@ -98,7 +97,7 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     qRel[2] = qMaxConjW*qMinY - qMaxConjX*qMinZ + qMaxConjY*qMinW + qMaxConjZ*qMinX;
     qRel[3] = qMaxConjW*qMinZ + qMaxConjX*qMinY - qMaxConjY*qMinX + qMaxConjZ*qMinW;
 
-    float norm = sqrt(qRel[0]*qRel[0] + qRel[1]*qRel[1] +
+    float norm = sqrtf(qRel[0]*qRel[0] + qRel[1]*qRel[1] +
                       qRel[2]*qRel[2] + qRel[3]*qRel[3]);
     if (norm > 0.0f) {
         float inv = 1.0f / norm;
@@ -112,10 +111,11 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     d_sign = (d >= 0.0f) ? 1.0f : -1.0f;
     theta = std::acos(abs_d);
     sin_theta = std::sin(theta);
+    sin_theta = 1.0f / sin_theta;
 
     tiling.set_f(f);
     tiling.set_theta(theta);
-    tiling.set_r_sin_theta(1.0f / sin_theta);
+    tiling.set_r_sin_theta(sin_theta);
     tiling.set_d_sign(d_sign);
     tiling.set_doRotation(doRotation);
     tiling.set_trans(trans);
@@ -242,9 +242,7 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
         this->AICore().AddConfig("ascend310p").AddConfig("ascend910b");
-
     }
 };
-
 OP_ADD(MotionCompensation);
 }
