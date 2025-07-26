@@ -43,9 +43,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     auto attr = context->GetAttrs();
     int64_t tMin = *attr->GetInt(0);
     int64_t tMax = *attr->GetInt(1);
-    int32_t tMaxLow32 = tMax & 0xFFFFFFFF;
+    int32_t tMaxLow32 = static_cast<int32_t>(tMax & 0xFFFFFFFF);
     
-    f = (tMax != tMin) ? (1.0f / (tMax - tMin)) : 0.0f;
+    f = (tMax != tMin) ? (1.0f / static_cast<float>(tMax - tMin)) : 0.0f;
 
     const float *transMin = attr->GetListFloat(2)->GetData();
     const float *transMax = attr->GetListFloat(3)->GetData();
@@ -99,6 +99,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 
     float norm = sqrtf(qRel[0]*qRel[0] + qRel[1]*qRel[1] +
                       qRel[2]*qRel[2] + qRel[3]*qRel[3]);
+    if(norm == 0.0f){
+        return ge::GRAPH_FAILED;
+    }
     if (std::fabs(norm) > std::numeric_limits<float>::epsilon()) {
         float inv = 1.0f / norm;
         qRel[0] *= inv; qRel[1] *= inv; qRel[2] *= inv; qRel[3] *= inv;
@@ -111,6 +114,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     d_sign = (d >= 0.0f) ? 1.0f : -1.0f;
     theta = std::acos(abs_d);
     sin_theta = std::sin(theta);
+    if(sin_theta == 0.0f){
+        return ge::GRAPH_FAILED;
+    }
     if (std::fabs(sin_theta) > std::numeric_limits<float>::epsilon()){
         sin_theta = 1.0f / sin_theta;
     }

@@ -73,8 +73,8 @@ def motion_compensation(
     # 原来的实现保持不变，仅把形参替换为结构体字段
     translation_min = pose_range.translation_min
     translation_max = pose_range.translation_max
-    quaternion_min  = pose_range.quaternion_min
-    quaternion_max  = pose_range.quaternion_max
+    quaternion_min = pose_range.quaternion_min
+    quaternion_max = pose_range.quaternion_max
     t_min = time_range.min
     t_max = time_range.max
     f = 1.0 / (t_max - t_min) if t_max != t_min else 0.0

@@ -235,7 +235,7 @@ int main(int argc, char **argv)
     ret = aclrtSynchronizeStream(stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return FAILED);
 
-    const size_t outPointsSize = ndim * N * 4;
+    const size_t outPointsSize = static_cast<size_t>(ndim * N * 4);
 
     std::vector<float>    outPointsHost(ndim * N);
 
