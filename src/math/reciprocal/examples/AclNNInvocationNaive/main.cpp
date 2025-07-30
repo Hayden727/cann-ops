@@ -161,8 +161,6 @@ int main(int argc, char **argv)
 
     size_t fileSize = 0;
     void ** input1=(void **)(&inputXHostData);
-    void ** input2=(void **)(&outputYHostData);
-
     ReadFile("../input/input_x.bin", fileSize, *input1, inputXShapeSize_1*dataType);
     INFO_LOG("Set input success");
     ret = CreateAclTensor(inputXHostData, inputXShape, &inputXDeviceAddr, aclDataType::ACL_FLOAT16, &inputX);

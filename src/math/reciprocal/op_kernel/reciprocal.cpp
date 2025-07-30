@@ -24,7 +24,6 @@ using namespace AscendC;
                 tiling_data.tailBlockNum);                                          \
       op.Process();                                                                 \
   }while(0)
-// tensor num for each queue
 constexpr int32_t BUFFER_NUM = 2;
 constexpr int16_t Shift = 8;
 template<typename TYPE_X, typename TYPE_Y ,bool IsExistBigCore> class KernelReciprocal {
@@ -75,7 +74,6 @@ public:
           pipe.InitBuffer(tmp2, this->ubPartDataNum * sizeof(float));
         }
     }
-    
     __aicore__ inline void Process()
     {
         int32_t loopCount = this->tileNum;
@@ -133,9 +131,7 @@ private:
         AscendC::LocalTensor<TYPE_Y> yLocal = outQueueY.DeQue<TYPE_Y>();
         DataCopy(yGm[progress * this->ubPartDataNum], yLocal, this->processDataNum);
         outQueueY.FreeTensor(yLocal);
-        
     }
-
 private:
     AscendC::TPipe pipe;
     AscendC::TQue<AscendC::QuePosition::VECIN, BUFFER_NUM> inQueueX;
@@ -144,14 +140,12 @@ private:
     AscendC::TBuf<AscendC::QuePosition::VECCALC> tmp2;
     AscendC::GlobalTensor<TYPE_X> xGm;
     AscendC::GlobalTensor<TYPE_Y> yGm;
- 
     uint64_t coreDataNum;
     uint64_t tileNum;
     uint64_t ubPartDataNum;
     uint64_t tailDataNum;
     uint64_t processDataNum;
 };
-
 extern "C" __global__ __aicore__ void reciprocal(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling)
 {
     if(TILING_KEY_IS(1))
@@ -164,7 +158,6 @@ extern "C" __global__ __aicore__ void reciprocal(GM_ADDR x, GM_ADDR y, GM_ADDR w
     }
 }
 #ifndef ASCENDC_CPU_DEBUG
-// call of kernel function
 void reciprocal_do(uint32_t blockDim, void* l2ctrl, void* stream, uint8_t* x, uint8_t* y,
     uint8_t* workspace, uint8_t* tiling)
 {

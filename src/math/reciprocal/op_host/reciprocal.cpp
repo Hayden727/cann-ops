@@ -34,23 +34,17 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubLength);
     auto coreNum = ascendcPlatform.GetCoreNum();
     
-    // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
     uint64_t inputDataNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t dataTypeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), dataTypeLength);
     uint64_t inputLength = inputDataNum * dataTypeLength;
-
-
     uint64_t totalLength = context->GetInputTensor(0)->GetShapeSize();
     auto dt = context->GetInputTensor(0)->GetDataType();
-    // There are a total of 3 shared UB spaces in the input and output. If it's int8, there are 2 more TBUFs
     uint64_t ubPartNum = (dt == ge:: DT_BF16 ) ? 4 : 2;
     uint64_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
-    // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
     uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;
     uint64_t ubPartDataNum = (ubPartBlockNum * BLOCK_SIZE) / dataTypeLength;
 
-    // Input data for 32B alignment
     uint64_t inputLengthAlign32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
     
     if(ubPartDataNum >= inputDataNum)
@@ -59,18 +53,16 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     }
     else
     {
-        // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
         coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
     }
-    
+    if(BLOCK_SIZE == 0 || coreNum == 0) return;
+	else{
     uint64_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
     uint64_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;
-    
-    // Small chunks are calculated and sliced several times using the number of data on each core
+    }
     uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / dataTypeLength;
     uint64_t smallCoreLoopNum = smallCoreDataNum / ubPartDataNum;
     smallCoreLoopNum = (everyCoreInputBlockNum % ubPartBlockNum) == 0 ? smallCoreLoopNum : smallCoreLoopNum + 1;
-    // Tail block calculation for small chunks of data
     uint64_t smallCoreTailDataNum = smallCoreDataNum - ubPartDataNum * (smallCoreLoopNum-1);
     smallCoreTailDataNum = smallCoreTailDataNum == 0 ? ubPartDataNum : smallCoreTailDataNum;
 
@@ -107,9 +99,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
 }
 
 }
-
-
-
 namespace ge {
     static ge::graphStatus InferShape(gert::InferShapeContext* context)
     {
@@ -147,10 +136,7 @@ public:
         this->AICore()
             .SetTiling(optiling::TilingFunc);
             this->AICore().AddConfig("ascend910b");
-            
-
     }
 };
-
 OP_ADD(Reciprocal);
 }
