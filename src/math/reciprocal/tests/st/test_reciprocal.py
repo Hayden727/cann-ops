@@ -11,6 +11,8 @@
 # ======================================================================================================================
 import tensorflow as tf
 import numpy as np
+
+
 def reciprocal_test(x):
     tensor = tf.convert_to_tensor(x)
     result = tf.math.reciprocal(tensor)
