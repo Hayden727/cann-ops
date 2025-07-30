@@ -12,7 +12,7 @@ import os
 import sys
 import numpy as np
 
-loss = 1e-3 
+LOSS = 1e-3 
 MINIMUM = 10e-10
 
 def verify_result(real_result, golden):
@@ -20,10 +20,10 @@ def verify_result(real_result, golden):
     golden = np.fromfile(golden, dtype=np.float16) 
     result = np.abs(real_result - golden) 
     deno = np.maximum(np.abs(real_result), np.abs(golden)) 
-    result_atol = np.less_equal(result, loss) 
-    result_rtol = np.less_equal(result / np.add(deno, MINIMUM), loss) 
+    result_atol = np.less_equal(result, LOSS) 
+    result_rtol = np.less_equal(result / np.add(deno, MINIMUM), LOSS) 
     if not result_rtol.all() and not result_atol.all():
-        if np.sum(result_rtol == False) > real_result.size * loss and np.sum(result_atol == False) > real_result.size * loss: # 误差超出预期时返回打印错误，返回对比失败
+        if np.sum(result_rtol == False) > real_result.size * LOSS and np.sum(result_atol == False) > real_result.size * loss: # 误差超出预期时返回打印错误，返回对比失败
             print("[ERROR] result error")
             return False
     print("test pass")

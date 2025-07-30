@@ -203,7 +203,6 @@ int main(int argc, char **argv)
     aclrtDestroyStream(stream);
     aclrtResetDevice(deviceId);
     aclFinalize();
-
     return SUCCESS;
 }
 

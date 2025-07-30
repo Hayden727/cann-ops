@@ -15,13 +15,9 @@
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-
-
-
 namespace optiling {
     const uint64_t BLOCK_SIZE = 32;
     const uint64_t BUFFER_NUM = 2;  
-
 static ge::graphStatus TilingFunc(gert::TilingContext* context)
 {
     TilingData tiling;
@@ -55,7 +51,9 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     {
         coreNum = (coreNum <  inputLengthAlign32 / BLOCK_SIZE) ? coreNum : inputLengthAlign32 / BLOCK_SIZE;
     }
-    if(BLOCK_SIZE == 0 || coreNum == 0) return;
+    if(BLOCK_SIZE == 0 || coreNum == 0){
+		return;
+	}
 	else{
     uint64_t everyCoreInputBlockNum = inputLengthAlign32 / BLOCK_SIZE / coreNum;
     uint64_t tailBlockNum = (inputLengthAlign32 / BLOCK_SIZE) % coreNum;

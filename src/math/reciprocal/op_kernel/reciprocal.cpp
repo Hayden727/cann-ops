@@ -63,7 +63,6 @@ public:
           this->tailDataNum = smallCoreTailDataNum;
           globalBufferIndex = smallCoreDataNum * AscendC::GetBlockIdx();
         }
-          
         xGm.SetGlobalBuffer((__gm__ TYPE_X*)x + globalBufferIndex, this->coreDataNum);
         yGm.SetGlobalBuffer((__gm__ TYPE_Y*)y + globalBufferIndex, this->coreDataNum);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
@@ -89,7 +88,6 @@ public:
         Compute(loopCount-1);
         CopyOut(loopCount-1);
     }
-
 private:
     __aicore__ inline void CopyIn(int32_t progress)
     {
@@ -101,10 +99,8 @@ private:
     {
         AscendC::LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         AscendC::LocalTensor<TYPE_Y> yLocal = outQueueY.AllocTensor<TYPE_Y>();
-        
         if constexpr ( std::is_same_v< DTYPE_X, float32_t>)
         {   
-            
             Duplicate(yLocal, 1.0f, this->processDataNum);
             Div(yLocal, yLocal, xLocal, this->processDataNum);
         }
@@ -124,7 +120,6 @@ private:
         }
         outQueueY.EnQue<TYPE_Y>(yLocal);
         inQueueX.FreeTensor(xLocal);
-        
     }
     __aicore__ inline void CopyOut(int32_t progress)
     {
