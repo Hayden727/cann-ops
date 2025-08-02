@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME FakeQuantAffineCachemask
+        OP_NAME CTCLossV3Grad
         OPTIONS --cce-auto-sync=off
                 -Wno-deprecated-declarations
                 -Werror

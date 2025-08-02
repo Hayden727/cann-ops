@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME MseLossGrad
+        OP_NAME MseLossGradV1
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror

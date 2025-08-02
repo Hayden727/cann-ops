@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME AddCustom
+        OP_NAME Conv3DV2
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
