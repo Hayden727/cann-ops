@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME CrossEntropyLoss
+        OP_NAME CrossEntropyLossGrad
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror

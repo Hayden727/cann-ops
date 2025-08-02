@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME AddCustom
+        OP_NAME MoeInitRoutingV2
         OPTIONS --cce-auto-sync=off
                 -Wno-deprecated-declarations
                 -Werror

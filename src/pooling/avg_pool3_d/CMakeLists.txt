@@ -8,7 +8,7 @@
 # ======================================================================================================================
 
 add_ops_compile_options(
-        OP_NAME Avg_pool3_d
+        OP_NAME AvgPool3D
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror

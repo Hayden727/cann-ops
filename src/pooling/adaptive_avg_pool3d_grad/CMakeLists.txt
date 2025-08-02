@@ -8,7 +8,7 @@
 # ======================================================================================================================
 
 add_ops_compile_options(
-        OP_NAME Adaptive_avg_pool3d_grad
+        OP_NAME AdaptiveAvgPool3dGrad
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
