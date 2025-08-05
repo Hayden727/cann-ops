@@ -1,8 +1,8 @@
-## Reciprocal自定义算子样例说明 
-本样例通过`Ascend C`编程语言实现了`Reciprocal`算子。
+## Exp自定义算子样例说明 
+本样例通过`Ascend C`编程语言实现了`Exp`算子。
 
 ### 算子描述
-`Reciprocal`算子将数据进行开方并取倒数运算。
+`Exp`算子将数据进行开方并取倒数运算。
 
 
 
@@ -48,9 +48,10 @@
 <table>
     <th>目录</th><th>描述</th>
     <tr>
-        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Reciprocal算子。</td>
+        <td><a href="./examples/AclNNInvocationNaive"> AclNNInvocationNaive</td><td>通过aclnn调用的方式调用Exp算子。</td>
     </tr>
 </table>
+
 
 
 ## 更新说明
