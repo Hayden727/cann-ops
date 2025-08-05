@@ -13,194 +13,115 @@
  */
 #include "equal_tiling.h"
 #include "register/op_def_registry.h"
+#include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-
-constexpr uint32_t DATA_SIZE_4 = 4;
-constexpr uint32_t DATA_SIZE_2 = 2;
-constexpr uint32_t DATA_SIZE_1 = 1;
-constexpr uint32_t BLOCK_SIZE = 32;
 
 namespace optiling
 {
-
-  static ge::graphStatus TilingFunc(gert::TilingContext *context)
-  {
-    EqualTilingData tiling;
-    uint64_t ubSize;
-    uint32_t bufferNum = 16;
-    auto ascendcPlatform =
-        platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
-    ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
-    uint32_t dataType = context->GetInputDesc(0)->GetDataType();
-    uint32_t totalLength = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-    auto coreNum = ascendcPlatform.GetCoreNumAiv();
-    uint32_t dataSize = 0;
-    switch (dataType)
+    const uint64_t BLOCK_SIZE = 32;
+    static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
-    case ge::DT_FLOAT:
-      dataSize = DATA_SIZE_4;
-      break;
-    case ge::DT_FLOAT16:
-      dataSize = DATA_SIZE_2;
-      break;
-    case ge::DT_INT8:
-      dataSize = DATA_SIZE_1;
-      break;
-    case ge::DT_UINT8:
-      dataSize = DATA_SIZE_1;
-      break;
-    case ge::DT_INT32:
-      dataSize = DATA_SIZE_4;
-      break;
-    case ge::DT_UINT32:
-      dataSize = DATA_SIZE_4;
-      break;
-    default:
-      dataSize = DATA_SIZE_4;
-      break;
-    }
+        EqualTilingData tiling;
+        uint64_t ubSize;
+        uint32_t bigprocessDataNum_computes=0;
+        uint32_t tailbigprocessDataNum_computes=0;
+        auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
+        ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
+        auto coreNum = ascendcPlatform.GetCoreNum();
+        auto socVersion = ascendcPlatform.GetSocVersion();
+        std::cout<<"is me new_code1"<<std::endl;
+        if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
+            return ge::GRAPH_FAILED;
+        }
 
-    uint32_t pad32 = BLOCK_SIZE;
-    uint32_t padMax = (ubSize / bufferNum / dataSize) / (2 * BLOCK_SIZE) * (2 * BLOCK_SIZE);
+        uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
 
-    if (totalLength < pad32 * coreNum)
-    {
-      coreNum =
-          totalLength % pad32 ? totalLength / pad32 + 1 : totalLength / pad32;
-    }
-    context->SetBlockDim(coreNum);
-    tiling.set_totalLength(totalLength);
+        uint32_t typeLength = 0;
+        ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
+        uint64_t inputLength = inputNum * typeLength;
+        uint64_t inputBytes = inputLength / inputNum;
 
-    uint32_t tileNumMean = 0;
-    uint32_t tileNumEnd = 0;
-    uint32_t tileLengthMean = 0;
-    uint32_t tileLengthEnd = 0;
-    uint32_t blockLengthMean = 0;
-    uint32_t blockLengthEnd = 0;
-    // 如果总数据比32B还小，直接当尾数处理
-    if (totalLength < pad32)
-    {
-      blockLengthMean = pad32;
-      blockLengthEnd = totalLength;
-      tileNumMean = 1;
-      tileNumEnd = 1;
-      tileLengthMean = totalLength;
-      tileLengthEnd = totalLength;
-    }
-    else
-    { // 总数据至少比32B大时
-      // 总数据至少比32B大时
-      uint32_t realTotalLength =
-          totalLength % (pad32 * coreNum)
-              ? // 补足totalLength到32B倍核心数的整数倍
-              ((totalLength / (pad32 * coreNum)) + 1) * (pad32 * coreNum)
-              : totalLength;
-      if (coreNum == 0)
-      {
-        return ge::GRAPH_FAILED;
-      }
-      uint32_t maxBlockLength = realTotalLength / coreNum;
-      if (realTotalLength - totalLength > maxBlockLength)
-      {
-        maxBlockLength = totalLength / coreNum;
-      }
-
-      if (maxBlockLength >
-          padMax)
-      { // maxBlockLength大于padMax时对maxBlockLength进行判定
-        uint32_t padTemp = 0;
-        for (uint32_t i = padMax / 2; i <= padMax; i += pad32)
+        uint64_t ubDataNumber = 6;
+        if(context->GetInputDesc(0)->GetDataType() == ge::DT_INT8 || context->GetInputDesc(0)->GetDataType() == ge::DT_UINT8)
         {
-          padTemp = maxBlockLength % i == 0 ? i : padTemp;
+            ubDataNumber=12;
         }
-        if (padTemp)
-        { // 如果maxBlockLength可以被PadTemp整除，那么padTemp就是tilelength
-          blockLengthMean = maxBlockLength;
-          blockLengthEnd = totalLength - blockLengthMean * (coreNum - 1);
-          tileNumMean = blockLengthMean / padTemp;
-          tileNumEnd = tileNumMean;
-          tileLengthMean = padTemp;
-          tileLengthEnd = blockLengthEnd - padTemp * (tileNumEnd - 1);
+        
+        if(context->GetInputDesc(0)->GetDataType() == ge::DT_INT32 || context->GetInputDesc(0)->GetDataType() == ge::DT_UINT32 || context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT)
+        {
+            ubDataNumber=5;
+            ubSize=ubSize-256*7-8*1024;
         }
-        else
-        { // 如果maxBlockLength不能被PadTemp整除，那么padMax就是tilelength
-          blockLengthMean = maxBlockLength - maxBlockLength % padMax;
-          blockLengthEnd = totalLength - blockLengthMean * (coreNum - 1);
-          tileNumMean = blockLengthMean / padMax;
-          tileNumEnd = blockLengthEnd % padMax
-                           ? blockLengthEnd / padMax + 1
-                           : (blockLengthEnd /
-                              padMax); // 计算最后一个核心会不会多一个尾数块
-          if (padMax >= blockLengthEnd)
-          {
-            tileNumEnd = 1;
-          }
-          tileLengthMean = padMax;
-          tileLengthEnd =
-              blockLengthEnd -
-              padMax * (tileNumEnd - 1); // 计算最后一个核心的尾数块长度
-        }
-      }
-      else
-      { // maxBlockLength小于padMax时直接取maxBlockLength中的最大Pad32倍数
-        if (maxBlockLength >= pad32)
-        { // maxBlockLength大于pad32时
-          blockLengthMean = maxBlockLength - maxBlockLength % pad32;
-          blockLengthEnd = totalLength - blockLengthMean * (coreNum - 1);
-          tileNumMean = 1; // 只有一个tileNum
-          tileNumEnd =
-              blockLengthEnd % pad32
-                  ? blockLengthEnd / blockLengthMean + 1
-                  : blockLengthEnd /
-                        blockLengthMean; // 如果尾块不能32B对齐则多分配一个尾块
-          if (blockLengthMean >= blockLengthEnd)
-          {
-            tileNumEnd = 1;
-          }
-          tileLengthMean = blockLengthMean;
-          tileLengthEnd =
-              blockLengthEnd -
-              tileLengthMean *
-                  (tileNumEnd - 1); // 将尾数彻底分给最后一个核心的最后一个tile
+         
+        ubSize=ubSize/typeLength;
+        uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
+        uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE);
+        
+
+        uint64_t inputLengthAlgin32 = (((inputNum + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+
+        if(tileDataNum >= inputNum)
+        {
+            coreNum=1;
         }
         else
-        { // maxBlockLength小于pad32时，前面的block优先分配32B数据
-          blockLengthMean = pad32;
-          blockLengthEnd = totalLength - pad32 * (coreNum - 1);
-          tileNumMean = 1;
-          tileNumEnd = 1;
-          tileLengthMean = pad32;
-          tileLengthEnd = blockLengthEnd;
+        {
+            // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
+            coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
         }
-      }
+        
+        uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
+        uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
+
+        uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE ;
+        uint64_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
+        uint64_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
+        uint64_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
+        smallTailDataNum = smallTailDataNum == 0 ? tileDataNum : smallTailDataNum;
+        uint32_t smallprocessDataNum_computes= (((tileDataNum*typeLength + 256 - 1) / 256) * 256)/typeLength;//计算函数 256字节对齐
+        uint32_t tailsmallprocessDataNum_computes= (((smallTailDataNum*typeLength + 256 - 1) / 256) * 256)/typeLength;//尾块计算函数 256字节对齐
+    
+        everyCoreInputBlockNum += 1;
+        uint64_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE ;
+        uint64_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
+        uint64_t finalBigTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? bigTileNum : bigTileNum + 1;
+        uint64_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
+        bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum; 
+        bigprocessDataNum_computes= (((tileDataNum*typeLength + 256 - 1) / 256) * 256)/typeLength;//计算函数 256字节对齐
+        tailbigprocessDataNum_computes= (((bigTailDataNum*typeLength + 256 - 1) / 256) * 256)/typeLength;//尾块计算函数 256字节对齐
+        
+        tiling.set_smallCoreDataNum((uint32_t)smallCoreDataNum);
+        tiling.set_bigCoreDataNum((uint32_t)bigCoreDataNum);
+        tiling.set_tileDataNum((uint32_t)tileDataNum);
+        tiling.set_smallTailDataNum((uint32_t)smallTailDataNum);
+        tiling.set_bigTailDataNum((uint32_t)bigTailDataNum);
+        tiling.set_finalSmallTileNum((uint32_t)finalSmallTileNum);
+        tiling.set_finalBigTileNum((uint32_t)finalBigTileNum);
+        tiling.set_tailBlockNum((uint32_t)tailBlockNum);
+        tiling.set_bigprocessDataNum_computes(bigprocessDataNum_computes);
+        tiling.set_smallprocessDataNum_computes(smallprocessDataNum_computes);
+        tiling.set_tailbigprocessDataNum_computes(tailbigprocessDataNum_computes);
+        tiling.set_tailsmallprocessDataNum_computes(tailsmallprocessDataNum_computes);
+    
+        context->SetBlockDim(coreNum);
+        tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
+        context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
+        size_t *currentWorkspace = context->GetWorkspaceSizes(1);
+        currentWorkspace[0] = 0;
+        return ge::GRAPH_SUCCESS;
     }
-    tiling.set_totalLength(totalLength);
-    tiling.set_tileNumMean(tileNumMean);
-    tiling.set_tileNumEnd(tileNumEnd);
-    tiling.set_tileLengthMean(tileLengthMean);
-    tiling.set_tileLengthEnd(tileLengthEnd);
-    tiling.set_blockLengthMean(blockLengthMean);
-    tiling.set_blockLengthEnd(blockLengthEnd);
-    tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
-                        context->GetRawTilingData()->GetCapacity());
-    context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-    size_t *currentWorkspace = context->GetWorkspaceSizes(1);
-    currentWorkspace[0] = 0;
-    return ge::GRAPH_SUCCESS;
-  }
 }
 
-
-namespace ge {
-static ge::graphStatus InferShape(gert::InferShapeContext* context)
+namespace ge
 {
-    const gert::Shape* x1_shape = context->GetInputShape(0);
-    gert::Shape* y_shape = context->GetOutputShape(0);
-    *y_shape = *x1_shape;
-    return GRAPH_SUCCESS;
+    static ge::graphStatus InferShape(gert::InferShapeContext *context)
+    {
+        const gert::Shape *x1_shape = context->GetInputShape(0);
+        gert::Shape *y_shape = context->GetOutputShape(0);
+        *y_shape = *x1_shape;
+        return GRAPH_SUCCESS;
+    }
 }
-}
-
 
 namespace ops {
 class Equal : public OpDef {
