@@ -1596,24 +1596,6 @@ static aclnnStatus CheckConvTbcParams(ConvEngine &engine) {
   return ACLNN_SUCCESS;
 }
 
-static aclnnStatus CheckConvDepthwise2dKernelSize(ConvEngine &engine, const aclIntArray *kernelSize)
-{
-    if (engine.meta.weight.format == op::Format::FORMAT_NCL) {
-        return ACLNN_SUCCESS;
-    }
-    int64_t weightH = engine.meta.weight.H();
-    int64_t weightW = engine.meta.weight.W();
-    int64_t kernelH = static_cast<int64_t>((*kernelSize)[0]);
-    int64_t kernelW = static_cast<int64_t>((*kernelSize)[1]);
-    if (kernelH != weightH || kernelW != weightW) {
-        OP_LOGE(ACLNN_ERR_PARAM_INVALID,
-            "Expect weight's [H, W] = kernelSize, get weight's [H, W] [%ld, %ld], kernelSize: [%ld, %ld].",
-            weightH, weightW, kernelH, kernelW);
-        return ACLNN_ERR_PARAM_INVALID;
-    }
-    return ACLNN_SUCCESS;
-}
-
 static aclnnStatus CheckConvDepthwise2dParams(ConvEngine &engine) {
   std::vector<unique_ptr<ConvolutionChecker>> checkList;
   // math level check
