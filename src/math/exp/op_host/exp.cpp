@@ -41,7 +41,7 @@ namespace optiling
             return ge::GRAPH_FAILED;
         } 
         auto dt = context->GetInputTensor(0)->GetDataType();
-        uint64_t ubPartNum = (dt == ge:: DT_FLOAT ) ? 2 : 4;
+        uint64_t ubPartNum = (dt == ge:: DT_BF16) ? 3 : 2;
         uint64_t ubPartLength = ubLength / ubPartNum / BUFFER_NUM;
         // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
         uint64_t ubPartBlockNum = ubPartLength / BLOCK_SIZE;

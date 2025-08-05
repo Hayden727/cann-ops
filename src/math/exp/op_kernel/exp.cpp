@@ -69,10 +69,10 @@ public:
         yGm.SetGlobalBuffer((__gm__ TYPE_Y*)y + globalBufferIndex, this->coreDataNum);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->ubPartDataNum * sizeof(TYPE_Y));
-        if constexpr (!std::is_same_v<DTYPE_X, float>) 
+        if constexpr (std::is_same_v<DTYPE_X, bfloat16_t>) 
         {
           pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(float));
-          pipe.InitBuffer(tmp2, this->ubPartDataNum * sizeof(float));
+          // pipe.InitBuffer(tmp2, this->ubPartDataNum * sizeof(float));
         }
     }
     __aicore__ inline void Process()
@@ -103,52 +103,33 @@ private:
     {
         AscendC::LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         AscendC::LocalTensor<TYPE_Y> yLocal = outQueueY.AllocTensor<TYPE_Y>();
-        if constexpr ( std::is_same_v< DTYPE_X, float32_t>)
+        if constexpr ( std::is_same_v< DTYPE_X, float32_t> || std::is_same_v<TYPE_X, float16_t>)
         {   
             Muls(yLocal, xLocal, (DTYPE_X)this->scale, this->processDataNum);
             Adds(yLocal, yLocal, (DTYPE_X)this->shift, this->processDataNum);
             Muls(yLocal, yLocal, (DTYPE_X)this->base, this->processDataNum);
             Exp(yLocal, yLocal, this->processDataNum);
-        }
-        else // 非 FP32 类型处理
+        } 
+        else 
         {
             LocalTensor<float> xLocalFp32 = tmp1.Get<float>();
-            LocalTensor<float> yLocalFp32 = tmp2.Get<float>();
+            // LocalTensor<float> yLocalFp32 = tmp2.Get<float>();
             Cast(xLocalFp32, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            Muls(yLocalFp32, xLocalFp32, this->scale, this->processDataNum);
-            Adds(yLocalFp32, yLocalFp32, this->shift, this->processDataNum);
-            Muls(yLocalFp32, yLocalFp32, this->base, this->processDataNum);
-            Exp(yLocalFp32, yLocalFp32, this->processDataNum);
-            if constexpr (std::is_same_v<TYPE_X, float16_t>) {
-                Cast(yLocal, yLocalFp32, RoundMode::CAST_NONE, this->processDataNum);
-            } else {
-                Cast(yLocal, yLocalFp32, RoundMode::CAST_RINT, this->processDataNum);
-            }
+            Muls(xLocalFp32, xLocalFp32, this->scale, this->processDataNum);
+            Adds(xLocalFp32, xLocalFp32, this->shift, this->processDataNum);
+            Muls(xLocalFp32, xLocalFp32, this->base, this->processDataNum);
+            Exp(xLocalFp32, xLocalFp32, this->processDataNum);
+            Cast(yLocal, xLocalFp32, RoundMode::CAST_RINT, this->processDataNum);
+            
+            // Cast(xLocalFp32, xLocal, RoundMode::CAST_NONE, this->processDataNum);
+            // Muls(yLocalFp32, xLocalFp32, this->scale, this->processDataNum);
+            // Adds(yLocalFp32, yLocalFp32, this->shift, this->processDataNum);
+            // Muls(yLocalFp32, yLocalFp32, this->base, this->processDataNum);
+            // Exp(yLocalFp32, yLocalFp32, this->processDataNum);
+            // Cast(yLocal, yLocalFp32, RoundMode::CAST_RINT, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_Y>(yLocal);
         inQueueX.FreeTensor(xLocal);
-
-
-// #if defined(HIGH_PERFORMANCE) && HIGH_PERFORMANCE == 1
-//             // 高性能模式直接计算
-//             Muls(yLocal, xLocal, static_cast<DTYPE_X>(this->scale), this->processDataNum);
-//             Adds(yLocal, yLocal, static_cast<DTYPE_X>(this->shift), this->processDataNum);
-//             Muls(yLocal, yLocal, this->base, this->processDataNum);
-//             Exp(yLocal, yLocal, this->processDataNum);
-// #else
-//             // 常规模式：转 FP32 计算
-//             LocalTensor<float> xLocalFp32 = tmp1.Get<float>();
-//             LocalTensor<float> yLocalFp32 = tmp2.Get<float>();
-//             Cast(xLocalFp32, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-//             Muls(yLocalFp32, xLocalFp32, this->scale, this->processDataNum);
-//             Adds(yLocalFp32, yLocalFp32, this->shift, this->processDataNum);
-//             Muls(yLocalFp32, yLocalFp32, this->base, this->processDataNum);
-//             Exp(yLocalFp32, yLocalFp32, this->processDataNum);
-//             Cast(yLocal, yLocalFp32, RoundMode::CAST_NONE, this->processDataNum);
-// #endif
-//         }
-//         outQueueY.EnQue<TYPE_Y>(yLocal);
-//         inQueueX.FreeTensor(xLocal);
     }
     __aicore__ inline void CopyOut(int32_t progress)
     {

@@ -16,7 +16,7 @@ import math
 
 
 def exp(x, scale: float = 1.0, shift: float = 0.0, base: float = -1.0):
-    x = x.astype(np.float32)
+    # x = x.astype(np.float32)
     # 计算线性组合
     exponent = x * scale + shift
     
