@@ -22,7 +22,7 @@ namespace optiling
     const uint64_t BUFFER_NUM = 2;
     static ge::graphStatus TilingFunc(gert::TilingContext *context)
     {
-        TilingData tiling;
+        ExpTilingData tiling;
         uint64_t ubLength = 0;
         uint64_t bigCoreDataNum = 0;
         uint64_t bigCoreLoopNum = 0;

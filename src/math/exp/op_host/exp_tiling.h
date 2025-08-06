@@ -19,7 +19,7 @@
 #include "register/tilingdata_base.h"
 
 namespace optiling {
-BEGIN_TILING_DATA_DEF(TilingData)
+BEGIN_TILING_DATA_DEF(ExpTilingData)
   TILING_DATA_FIELD_DEF(uint64_t, smallCoreDataNum);
   TILING_DATA_FIELD_DEF(uint64_t, bigCoreDataNum);
   TILING_DATA_FIELD_DEF(uint64_t, ubPartDataNum);
@@ -33,6 +33,6 @@ BEGIN_TILING_DATA_DEF(TilingData)
   TILING_DATA_FIELD_DEF(float, shift);
 END_TILING_DATA_DEF;
 
-REGISTER_TILING_DATA_CLASS(Exp, TilingData)
+REGISTER_TILING_DATA_CLASS(Exp, ExpTilingData)
 }
 #endif // EXP_TILING_H
