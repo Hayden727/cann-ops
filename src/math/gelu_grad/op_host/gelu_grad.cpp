@@ -83,8 +83,6 @@ namespace optiling
         uint64_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
         bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum;
 
-        
-
         tiling.set_smallCoreDataNum((uint32_t)smallCoreDataNum);
         // 一个小核数据个数
         tiling.set_bigCoreDataNum((uint32_t)bigCoreDataNum);
