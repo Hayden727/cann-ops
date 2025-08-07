@@ -98,7 +98,6 @@ public:
             pipe.InitBuffer(calc_buf_2, this->ubPartDataNum * sizeof(float));
             pipe.InitBuffer(calc_buf_3, this->ubPartDataNum * sizeof(half));
         }
-        
     }
     
     __aicore__ inline void Process()
