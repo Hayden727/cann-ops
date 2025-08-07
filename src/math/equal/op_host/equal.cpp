@@ -39,6 +39,9 @@ namespace optiling
         uint32_t typeLength = 0;
         ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
         uint64_t inputLength = inputNum * typeLength;
+        if(inputNum == 0){
+            return;
+        }
         uint64_t inputBytes = inputLength / inputNum;
 
         uint64_t ubDataNumber = 6;
@@ -56,7 +59,6 @@ namespace optiling
         ubSize=ubSize/typeLength;
         uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
         uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE);
-        
 
         uint64_t inputLengthAlgin32 = (((inputNum + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
 
@@ -69,7 +71,9 @@ namespace optiling
             // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
             coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
         }
-        
+        if(coreNum == 0){
+            return;
+        }
         uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
         uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
 
