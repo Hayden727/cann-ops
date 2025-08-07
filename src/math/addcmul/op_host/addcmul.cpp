@@ -159,6 +159,5 @@ namespace ops
             this->AICore().AddConfig("ascend910b").AddConfig("ascend310b");
         }
     };
-
     OP_ADD(Addcmul);
 }
