@@ -60,7 +60,6 @@ public:
         {
             this->m_value=valueGm.GetValue(0);
         }
-        
     }
     __aicore__ inline void Process()
     {
