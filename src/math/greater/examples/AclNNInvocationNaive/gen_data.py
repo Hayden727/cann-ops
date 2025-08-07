@@ -1,14 +1,21 @@
-# !/usr/bin/python3
+#!/usr/bin/python3
 # -*- coding:utf-8 -*-
-# Copyright 2025 Huawei Technologies Co., Ltd
+# Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
+
 import os
 import numpy as np
 
 def gen_golden_data_simple():
-    dtype = np.float32
-    np.random.seed(0)
-    input_x1 = np.random.uniform(-100, 100, [8, 17, 7, 19, 16]).astype(dtype)
-    input_x2 = np.random.uniform(-100, 100, [8, 17, 7, 19, 16]).astype(dtype)
+    dtype = np.float16
+    input_x1 = np.random.uniform(-10, 10, [32]).astype(dtype)
+    input_x2 = np.random.uniform(-10, 10, [32]).astype(dtype)
     golden = np.greater(input_x1, input_x2).astype(np.bool_)
     os.system("mkdir -p input")
     os.system("mkdir -p output")

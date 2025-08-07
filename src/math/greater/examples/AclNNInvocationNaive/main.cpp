@@ -153,23 +153,23 @@ int main(int argc, char **argv)
     CHECK_RET(ret == 0, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return FAILED);
 
     // 2. 构造输入与输出，需要根据API的接口自定义构造
-    std::vector<int64_t> inputX1Shape = {8, 17, 7, 19, 16};
-    std::vector<int64_t> inputX2Shape = {8, 17, 7, 19, 16};
-    std::vector<int64_t> outputYShape = {8, 17, 7, 19, 16};
+    std::vector<int64_t> inputX1Shape = {32};
+    std::vector<int64_t> inputX2Shape = {32};
+    std::vector<int64_t> outputYShape = {32};
     void *inputX1DeviceAddr = nullptr;
     void *inputX2DeviceAddr = nullptr;
     void *outputYDeviceAddr = nullptr;
     aclTensor *inputX1 = nullptr;
     aclTensor *inputX2 = nullptr;
     aclTensor *outputY = nullptr;
-    size_t inputX1ShapeSize_1=inputX1Shape[0] * inputX1Shape[1]* inputX1Shape[2]* inputX1Shape[3]* inputX1Shape[4];
-    size_t inputX2ShapeSize_1=inputX2Shape[0] * inputX2Shape[1]* inputX2Shape[2]* inputX2Shape[3]* inputX2Shape[4];
-    size_t outputYShapeSize_1=outputYShape[0] * outputYShape[1]* outputYShape[2]* outputYShape[3]* outputYShape[4];
-    size_t dataType=8;
+    size_t inputX1ShapeSize_1=inputX1Shape[0];
+    size_t inputX2ShapeSize_1=inputX2Shape[0];
+    size_t outputYShapeSize_1=outputYShape[0];
+    size_t dataType=2;
     size_t outDataType=1;
-    std::vector<float> inputX1HostData(inputX1Shape[0] * inputX1Shape[1]* inputX1Shape[2]* inputX1Shape[3]* inputX1Shape[4]);
-    std::vector<float> inputX2HostData(inputX2Shape[0] * inputX2Shape[1]* inputX2Shape[2]* inputX2Shape[3]* inputX2Shape[4]);
-    std::vector<uint8_t> outputYHostData(outputYShape[0] * outputYShape[1]* outputYShape[2]* outputYShape[3]* outputYShape[4]);
+    std::vector<aclFloat16> inputX1HostData(inputX1Shape[0]);
+    std::vector<aclFloat16> inputX2HostData(inputX2Shape[0]);
+    std::vector<uint8_t> outputYHostData(outputYShape[0]);
     size_t fileSize = 0;
     void** input1=(void**)(&inputX1HostData);
     void** input2=(void**)(&inputX2HostData);
@@ -178,9 +178,9 @@ int main(int argc, char **argv)
     ReadFile("../input/input_x2.bin", fileSize, *input2, inputX2ShapeSize_1*dataType);
     INFO_LOG("Set input success");
     // 创建input aclTensor
-    ret = CreateAclTensor(inputX1HostData, inputX1Shape, &inputX1DeviceAddr, aclDataType::ACL_FLOAT, &inputX1);
+    ret = CreateAclTensor(inputX1HostData, inputX1Shape, &inputX1DeviceAddr, aclDataType::ACL_FLOAT16, &inputX1);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
-    ret = CreateAclTensor(inputX2HostData, inputX2Shape, &inputX2DeviceAddr, aclDataType::ACL_FLOAT, &inputX2);
+    ret = CreateAclTensor(inputX2HostData, inputX2Shape, &inputX2DeviceAddr, aclDataType::ACL_FLOAT16, &inputX2);
     CHECK_RET(ret == ACL_SUCCESS, return FAILED);
     // 创建outputY aclTensor
     ret = CreateAclTensor(outputYHostData, outputYShape, &outputYDeviceAddr, aclDataType::ACL_BOOL, &outputY);
