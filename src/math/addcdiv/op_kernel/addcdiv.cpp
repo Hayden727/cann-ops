@@ -49,23 +49,27 @@ public:
         pipe.InitBuffer(inQueueX2, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(inQueueINPUT_DATA, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
+
+        if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
+        {
         pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
         pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+        }
     }
     __aicore__ inline void Process()
     {
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 
 private:
