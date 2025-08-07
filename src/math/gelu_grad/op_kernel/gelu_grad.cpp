@@ -88,10 +88,8 @@ public:
             else
             {
                 pipe.InitBuffer(tmpBuffer, this->tileDataNum * sizeof(float));
-
             }
-        }
-        
+        }      
     }
     __aicore__ inline void Process()
     {
