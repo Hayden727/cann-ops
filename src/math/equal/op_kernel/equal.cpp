@@ -75,7 +75,6 @@ public:
         if constexpr (std::is_same_v<DTYPE_X1, half> || std::is_same_v<DTYPE_X1, bfloat16_t>)
         {
             pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(half));
-            //AscendC::printf("(std::is_same_v<DTYPE_X1, half> || std::is_same_v<DTYPE_X1, bfloat16_t>)\n");
         }
         else if constexpr (std::is_same_v<DTYPE_X1, float>)
         {
@@ -96,7 +95,6 @@ public:
     {
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
-        //AscendC::printf("this->processDataNum is  %ld \n",this->processDataNum);
         for (int32_t i = 0; i < loopCount-1; i++)
         {
             CopyIn(i);
@@ -105,9 +103,6 @@ public:
         }
         this->processDataNum = this->tailDataNum;
         this->processDataNum_computes=this->tailprocessDataNum_computes;
-
-        //AscendC::printf("this->processDataNum is  %ld \n",this->processDataNum);
-        //AscendC::printf("this->tileNum is  %ld \n",this->tileNum);
 
         CopyIn(loopCount-1);
         Compute(loopCount-1);
@@ -125,16 +120,11 @@ private:
         inQueueX1.EnQue(x1Local);
         inQueueX2.EnQue(x2Local);
     }
-
     
     __aicore__ inline void Compute(int32_t progress)
     {
         if constexpr (std::is_same_v<DTYPE_X1, half> || std::is_same_v<DTYPE_X1, bfloat16_t>)
         {
-            //AscendC::printf("Compute progress is  %d \n",progress);
-            /*int32_t eventIDSToMTE3 = static_cast<int32_t>(GetTPipePtr()->FetchEventID(AscendC::HardEvent::MTE2_V));
-            AscendC::SetFlag<AscendC::HardEvent::MTE2_V>(eventIDSToMTE3);
-            AscendC::WaitFlag<AscendC::HardEvent::MTE2_V>(eventIDSToMTE3);*/
             LocalTensor<half> x1_local = inQueueX1.DeQue<half>();
             LocalTensor<half> x2_local = inQueueX2.DeQue<half>();
             LocalTensor<int8_t> y_local = outQueueY.AllocTensor<int8_t>();
