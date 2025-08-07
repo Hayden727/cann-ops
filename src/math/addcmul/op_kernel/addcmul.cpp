@@ -112,18 +112,9 @@ private:
         }
         else
         {
-            /*AscendC::DumpTensor(x1Local,1, 16);
-            AscendC::DumpTensor(x2Local,2, 16);*/
-
             Mul(x1Local, x1Local, x2Local, this->processDataNum);
-            //AscendC::DumpTensor(x1Local,3, 16);
-            
             Muls(x1Local, x1Local, this->m_value, this->processDataNum);
-           // AscendC::DumpTensor(x1Local,4, 16);
-
             Add(yLocal, x1Local, input_dataLocal, this->processDataNum);
-            //AscendC::DumpTensor(yLocal,5, 16);
-
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
         inQueueX1.FreeTensor(x1Local);
