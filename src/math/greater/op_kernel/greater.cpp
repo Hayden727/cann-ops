@@ -29,8 +29,6 @@
 // tensor num for each queue
 constexpr int32_t BUFFER_NUM = 2;
 constexpr float POSITIVE_ONE_FP32 = 1.0F;
-constexpr int32_t POSITIVE_ONE_I32 = 1;
-constexpr float MIN_ACCURACY_FP16 = 0.00000005960464477539063F;
 constexpr float MAX_MUL_FP16 = 4096;
 constexpr float MIN_ACCURACY_FP32 = 1.1754943508222875e-38;
 constexpr float MAX_MUL_1_FP32 = 1125899906842624;
