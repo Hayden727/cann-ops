@@ -37,13 +37,11 @@ namespace optiling
         {
             context->SetTilingKey(0);
             std::cout<<"valueSize == 1"<<std::endl;
-
         }
         else
         {
             context->SetTilingKey(1);
             std::cout<<"valueSize != 1"<<std::endl;
-
         }
         
         uint64_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() != ge::DT_BF16) ? 4 : 6;
