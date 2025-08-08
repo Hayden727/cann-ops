@@ -23,7 +23,7 @@ Greater算子通过依次调用`Ascend C`的`API`接口：`Sub`、`Mins`、`Maxs
 
 每个算子分为两段式接口，必须先调用“aclnnGreaterGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnGreater”接口执行计算。
 
-* `aclnnStatus aclnnGreaterGetWorkspaceSize(const aclTensor *start, const aclTensor *end, const aclTensor *weight, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`;
+* `aclnnStatus aclnnGreaterGetWorkspaceSize(const aclTensor *x1, const aclTensor *x2, const aclTensor *y, uint64_t workspaceSize, aclOpExecutor **executor)`;
 * `aclnnStatus aclnnGreater(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
