@@ -27,7 +27,7 @@
   </table>
 
 ## 约束与限制
-- x1，x2，y，out的数据类型只支持bool，数据格式只支持ND
+- x1，x2，y，x1和x2的数据类型只支持float32,float16,bfloat16,int8,uint8,int32,int64，数据格式只支持ND，y的数据类型只支持bool，数据格式只支持ND
 
 ## 算子使用
 使用该算子前，请参考[《CANN软件安装指南》](https://hiascend.com/document/redirect/CannCommunityInstSoftware)完成开发运行环境的部署。
