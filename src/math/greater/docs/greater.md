@@ -74,13 +74,10 @@ Greater算子通过依次调用`Ascend C`的`API`接口：`Sub`、`Mins`、`Maxs
     <tr><th align="center">算子类型(OpType)</th><th colspan="4" align="center">Greater</th></tr> 
     <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
     <tr><td rowspan="4" align="center">算子输入</td>
-     
     <tr><td align="center">x1</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16,int8,uint8,int32,int64</td><td align="center">ND</td><tr>  
     <tr><td align="center">x2</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16,int8,uint8,int32,int64</td><td align="center">ND</td><tr></tr> 
-    
     <tr><td rowspan="1" align="center">算子输出</td>
     <td align="center">y</td><td align="center">tensor</td><td align="center">bool</td><td align="center">ND</td></tr>  
-    
     <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">greater</td></tr>  
 </table>
 
