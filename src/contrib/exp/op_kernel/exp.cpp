@@ -11,6 +11,7 @@
 /**
  * @file exp.cpp
  */
+ 
 #include "kernel_operator.h"
 using namespace AscendC;
 #define GENERAL_OP_IMPL(templateClass,...)                                          \
@@ -25,7 +26,6 @@ using namespace AscendC;
       op.Process();                                                                 \
   }while(0)
 constexpr int32_t BUFFER_NUM = 2;
-//constexpr int16_t Shift = 8;
 template<typename TYPE_X, typename TYPE_Y ,bool IsExistBigCore> class KernelExp {
 public:
     __aicore__ inline KernelExp() {}
@@ -72,7 +72,6 @@ public:
         if constexpr (std::is_same_v<DTYPE_X, bfloat16_t>) 
         {
           pipe.InitBuffer(tmp1, this->ubPartDataNum * sizeof(float));
-          // pipe.InitBuffer(tmp2, this->ubPartDataNum * sizeof(float));
         }
     }
     __aicore__ inline void Process()
@@ -90,7 +89,6 @@ public:
         Compute(loopCount-1);
         CopyOut(loopCount-1);
     }
-
 
 private:
     __aicore__ inline void CopyIn(int32_t progress)
@@ -113,20 +111,12 @@ private:
         else 
         {
             LocalTensor<float> xLocalFp32 = tmp1.Get<float>();
-            // LocalTensor<float> yLocalFp32 = tmp2.Get<float>();
             Cast(xLocalFp32, xLocal, RoundMode::CAST_NONE, this->processDataNum);
             Muls(xLocalFp32, xLocalFp32, this->scale, this->processDataNum);
             Adds(xLocalFp32, xLocalFp32, this->shift, this->processDataNum);
             Muls(xLocalFp32, xLocalFp32, this->base, this->processDataNum);
             Exp(xLocalFp32, xLocalFp32, this->processDataNum);
             Cast(yLocal, xLocalFp32, RoundMode::CAST_RINT, this->processDataNum);
-            
-            // Cast(xLocalFp32, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            // Muls(yLocalFp32, xLocalFp32, this->scale, this->processDataNum);
-            // Adds(yLocalFp32, yLocalFp32, this->shift, this->processDataNum);
-            // Muls(yLocalFp32, yLocalFp32, this->base, this->processDataNum);
-            // Exp(yLocalFp32, yLocalFp32, this->processDataNum);
-            // Cast(yLocal, yLocalFp32, RoundMode::CAST_RINT, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_Y>(yLocal);
         inQueueX.FreeTensor(xLocal);

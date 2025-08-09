@@ -11,24 +11,17 @@
 
 import os
 import numpy as np
-import math
-
-
 
 def exp(x, scale: float = 1.0, shift: float = 0.0, base: float = -1.0):
-    # x = x.astype(np.float32)
-    # 计算线性组合
     exponent = x * scale + shift
-    
-    # 底数处理逻辑
-    if base != -1.0:
+    EPSILON = 1e-15
+    if abs(base - (-1.0)) > EPSILON:
         base = math.log(base)
         print(f"base,scale,shift: {base,scale,shift}")
-        exponent *= base  # 转换为自然对数基底
+        exponent *= base  
     print(f"exponent: {exponent}")
-    # 指数运算
-    return np.exp(exponent)
 
+    return np.exp(exponent)
 
 def gen_golden_data_simple():
     dtype = np.float16
@@ -39,7 +32,6 @@ def gen_golden_data_simple():
     os.system("mkdir -p output")
     input_x.tofile("./input/input_x.bin")
     golden.tofile("./output/golden.bin")
-
 
 if __name__ == "__main__":
     gen_golden_data_simple()
