@@ -16,25 +16,17 @@
 #include "register/tilingdata_base.h"
 
 namespace optiling {
-  BEGIN_TILING_DATA_DEF(LerpTilingData)
-  TILING_DATA_FIELD_DEF(uint32_t, total_length);
-  TILING_DATA_FIELD_DEF(uint32_t, start_length);
-  TILING_DATA_FIELD_DEF(uint32_t, end_length);
-  TILING_DATA_FIELD_DEF(uint32_t, weight_length);
-  TILING_DATA_FIELD_DEF(uint32_t, ALIGN_NUM);
-  TILING_DATA_FIELD_DEF(uint32_t, tiling_size);
-  TILING_DATA_FIELD_DEF(uint32_t, block_size);
-  TILING_DATA_FIELD_DEF(uint32_t, core_size);
-  TILING_DATA_FIELD_DEF(uint32_t, core_remain);
-  TILING_DATA_FIELD_DEF(uint32_t, mode);
-  TILING_DATA_FIELD_DEF_ARR(uint32_t, 20, shape);
-  TILING_DATA_FIELD_DEF_ARR(uint32_t, 20, reduce1);
-  TILING_DATA_FIELD_DEF_ARR(uint32_t, 20, reduce2);
-  TILING_DATA_FIELD_DEF_ARR(uint32_t, 20, reduce3);
-  TILING_DATA_FIELD_DEF(uint32_t, dim);
-
+BEGIN_TILING_DATA_DEF(TilingData)
+  TILING_DATA_FIELD_DEF(uint64_t, smallCoreDataNum);
+  TILING_DATA_FIELD_DEF(uint64_t, bigCoreDataNum);
+  TILING_DATA_FIELD_DEF(uint64_t, ubPartDataNum);
+  TILING_DATA_FIELD_DEF(uint64_t, smallCoreTailDataNum);
+  TILING_DATA_FIELD_DEF(uint64_t, bigCoreTailDataNum);
+  TILING_DATA_FIELD_DEF(uint64_t, smallCoreLoopNum);
+  TILING_DATA_FIELD_DEF(uint64_t, bigCoreLoopNum);
+  TILING_DATA_FIELD_DEF(uint64_t, tailBlockNum);
 END_TILING_DATA_DEF;
 
-REGISTER_TILING_DATA_CLASS(Lerp, LerpTilingData)
+REGISTER_TILING_DATA_CLASS(Lerp, TilingData)
 }
 #endif // LERP_TILING_H

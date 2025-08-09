@@ -23,7 +23,6 @@
 
 #include "aclnn/aclnn_base.h"
 #include "aclnn_kernels/common/op_error_check.h"
-// #include "external/exe_graph/runtime/tensor.h"
 #include "opdev/data_type_utils.h"
 #include "opdev/format_utils.h"
 #include "opdev/op_dfx.h"
@@ -1597,24 +1596,6 @@ static aclnnStatus CheckConvTbcParams(ConvEngine &engine) {
   return ACLNN_SUCCESS;
 }
 
-static aclnnStatus CheckConvDepthwise2dKernelSize(ConvEngine &engine, const aclIntArray *kernelSize)
-{
-    if (engine.meta.weight.format == op::Format::FORMAT_NCL) {
-        return ACLNN_SUCCESS;
-    }
-    int64_t weightH = engine.meta.weight.H();
-    int64_t weightW = engine.meta.weight.W();
-    int64_t kernelH = static_cast<int64_t>((*kernelSize)[0]);
-    int64_t kernelW = static_cast<int64_t>((*kernelSize)[1]);
-    if (kernelH != weightH || kernelW != weightW) {
-        OP_LOGE(ACLNN_ERR_PARAM_INVALID,
-            "Expect weight's [H, W] = kernelSize, get weight's [H, W] [%ld, %ld], kernelSize: [%ld, %ld].",
-            weightH, weightW, kernelH, kernelW);
-        return ACLNN_ERR_PARAM_INVALID;
-    }
-    return ACLNN_SUCCESS;
-}
-
 static aclnnStatus CheckConvDepthwise2dParams(ConvEngine &engine) {
   std::vector<unique_ptr<ConvolutionChecker>> checkList;
   // math level check
@@ -2971,143 +2952,9 @@ aclnnStatus aclnnConvolutionGetWorkspaceSize(const aclTensor *input, const aclTe
   return ACLNN_SUCCESS;
 }
 
-aclnnStatus aclnnConvTbcGetWorkspaceSize(const aclTensor *self, const aclTensor *weight, const aclTensor *bias,
-                                         const int64_t pad, aclTensor *output, int8_t cubeMathType,
-                                         uint64_t *workspaceSize, aclOpExecutor **executor) {
-  L2_DFX_PHASE_1(aclnnConvTbc, DFX_IN(self, weight, bias, pad, cubeMathType), DFX_OUT(output));
-
-  // 创建OpExecutor
-  auto uniqueExecutor = CREATE_EXECUTOR();
-  CHECK_RET(uniqueExecutor.get() != nullptr, ACLNN_ERR_INNER_CREATE_EXECUTOR);
-
-  auto ret = CheckParamsNullptrTbc(self, weight, bias, output);
-  CHECK_RET(ret == ACLNN_SUCCESS, ret);
-
-  if (!output->IsEmpty()) {
-    if (self->IsEmpty() || weight->IsEmpty()) {
-      ret = CheckParamsEmpty(output, bias);
-      CHECK_RET(ret == ACLNN_SUCCESS, ret);
-      auto biasContiguous = l0op::Contiguous(bias, uniqueExecutor.get());
-      op::FVector<int64_t, op::MAX_DIM_NUM> broadcastDims = op::ToShapeVector(output->GetViewShape());
-      auto shapes = (uniqueExecutor.get())->AllocIntArray(broadcastDims.data(), output->GetViewShape().GetDimNum());
-      CHECK_RET(shapes != nullptr, ACLNN_ERR_INNER_NULLPTR);
-      auto out = l0op::BroadcastTo(biasContiguous, shapes, uniqueExecutor.get());
-      auto outCast = l0op::Cast(out, output->GetDataType(), uniqueExecutor.get());
-      auto viewCopyOut = l0op::ViewCopy(outCast, output, uniqueExecutor.get());
-      CHECK_RET(viewCopyOut != nullptr, ACLNN_ERR_INNER_NULLPTR);
-    } else {
-      // 创建对应TBC的padding, stride, dilation
-      aclIntArray *padding = ViewValueAs1d(pad, uniqueExecutor.get());  // [pad]
-      CHECK_RET(padding != nullptr, ACLNN_ERR_INNER_NULLPTR);
-      // 1: 单位步长值
-      FVector<int64_t> unitValue {1};
-      const aclIntArray *strideArray = (uniqueExecutor.get())->AllocIntArray(unitValue.data(), 1);  // [1]
-      const aclIntArray *dilationArray = (uniqueExecutor.get())->AllocIntArray(unitValue.data(), 1);  // [1]
-      CHECK_RET(strideArray != nullptr && dilationArray != nullptr, ACLNN_ERR_INNER_NULLPTR);
-      // permute & unsqueeze input, weight, output
-      FVector<int64_t> permuteDimsAll {1, 2, 0};
-      FVector<int64_t> permuteDimsWeight {2, 1, 0};
-      auto *permuteInput = Permute(self, permuteDimsAll, uniqueExecutor.get());
-      auto *permuteOutput = Permute(output, permuteDimsAll, uniqueExecutor.get());
-      auto *permuteWeight = Permute(weight, permuteDimsWeight, uniqueExecutor.get());
-      auto permuteOutputT = const_cast<aclTensor *>(permuteOutput);
-      // construct param and convolution engine
-      ConvParams params = {permuteInput, permuteWeight, bias, strideArray, padding,
-                           dilationArray, false, nullptr, 1, permuteOutputT, cubeMathType, workspaceSize, executor};
-      ConvEngine convEngine(params);
-      // conv_tbc param check
-      ret = CheckConvTbcParams(convEngine);
-      CHECK_RET(ret == ACLNN_SUCCESS, ret);
-
-      // convTbcImplement
-      ConvolutionImpl *convImpl = CreateConvolutionImpl(permuteInput, permuteWeight, bias, strideArray, padding,
-        dilationArray, false, true, nullptr, 1, cubeMathType, output, uniqueExecutor.get());
-
-      CHECK_RET_RELEASE(convImpl != nullptr, convImpl, ACLNN_ERR_INNER);
-
-      ret = convImpl->PreProcess();
-      CHECK_RET_RELEASE(ret == ACLNN_SUCCESS, convImpl, ret);
-
-      ret = convImpl->Impl();
-      CHECK_RET_RELEASE(ret == ACLNN_SUCCESS, convImpl, ret);
-
-      ret = convImpl->PostProcess();
-      CHECK_RET_RELEASE(ret == ACLNN_SUCCESS, convImpl, ret);
-
-      delete convImpl;
-    }
-  }
-  *workspaceSize = (uniqueExecutor.get())->GetWorkspaceSize();
-  uniqueExecutor.ReleaseTo(executor);
-  return ACLNN_SUCCESS;
-}
-
 aclnnStatus aclnnConvolution(void *workspace, const uint64_t workspaceSize, aclOpExecutor *executor,
                              aclrtStream stream) {
   L2_DFX_PHASE_2(aclnnConvolution);
-  return CommonOpExecutorRun(workspace, workspaceSize, executor, stream);
-}
-
-aclnnStatus aclnnConvTbc(void *workspace, const uint64_t workspaceSize, aclOpExecutor *executor, aclrtStream stream) {
-  L2_DFX_PHASE_2(aclnnConvTbc);
-  return CommonOpExecutorRun(workspace, workspaceSize, executor, stream);
-}
-
-aclnnStatus aclnnConvDepthwise2dGetWorkspaceSize(const aclTensor *self, const aclTensor *weight,
-                                                 const aclIntArray *kernelSize, const aclTensor *bias,
-                                                 const aclIntArray *stride, const aclIntArray *padding,
-                                                 const aclIntArray *dilation, aclTensor *out, int8_t cubeMathType,
-                                                 uint64_t *workspaceSize, aclOpExecutor **executor) {
-  L2_DFX_PHASE_1(
-      aclnnConvDepthwise2d,
-      DFX_IN(self, weight, kernelSize, bias, stride, padding, dilation, cubeMathType),
-      DFX_OUT(out));
-  int64_t groups = 1;
-  // construct param and convolution engine
-  ConvParams params = {self, weight, bias, stride, padding, dilation, false,
-                       nullptr, groups, out, cubeMathType, workspaceSize, executor};
-  ConvEngine convEngine(params);
-  // check param
-  auto ret = CheckConvDepthwise2dKernelSize(convEngine, kernelSize);
-  CHECK_RET_CODE(ret, "Check kernelSize failed");
-  ret = CheckConvDepthwise2dParams(convEngine);
-  CHECK_RET_CODE(ret, "Check Param failed");
-
-  auto uniqueExecutor = CREATE_EXECUTOR();
-  // 创建OpExecutor
-  CHECK_RET(uniqueExecutor.get() != nullptr, ACLNN_ERR_INNER_CREATE_EXECUTOR);
-
-  // 空tensor的情况，由于外部已经将output的shape,type,format设置好，故不需要做任何操作，直接返回
-  if (!EmptyTensor(self, out)) {
-    groups = self->GetViewShape().GetDim(1);
-    if (self->GetViewFormat() == op::Format::FORMAT_NHWC) {
-      groups = self->GetViewShape().GetDim(3);
-    }
-    ConvolutionImpl *convImpl =
-        CreateConvolutionImpl(self, weight, bias, stride, padding, dilation, false, false, nullptr,
-                              groups, cubeMathType, out, uniqueExecutor.get());
-
-    CHECK_RET_RELEASE(convImpl != nullptr, convImpl, ACLNN_ERR_INNER);
-
-    ret = convImpl->PreProcess();
-    CHECK_RET_RELEASE(ret == ACLNN_SUCCESS, convImpl, ret);
-
-    ret = convImpl->Impl();
-    CHECK_RET_RELEASE(ret == ACLNN_SUCCESS, convImpl, ret);
-
-    ret = convImpl->PostProcess();
-    CHECK_RET_RELEASE(ret == ACLNN_SUCCESS, convImpl, ret);
-
-    delete convImpl;
-  }
-  *workspaceSize = (uniqueExecutor.get())->GetWorkspaceSize();
-  uniqueExecutor.ReleaseTo(executor);
-  return ACLNN_SUCCESS;
-}
-
-aclnnStatus aclnnConvDepthwise2d(void *workspace, const uint64_t workspaceSize, aclOpExecutor *executor,
-                                 aclrtStream stream) {
-  L2_DFX_PHASE_2(aclnnConvDepthwise2d);
   return CommonOpExecutorRun(workspace, workspaceSize, executor, stream);
 }
 

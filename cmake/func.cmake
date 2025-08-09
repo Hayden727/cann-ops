@@ -91,6 +91,22 @@ function(op_add_subdirectory OP_LIST OP_DIR_LIST)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/optim
         ${CMAKE_CURRENT_SOURCE_DIR}/src/conversion
         ${CMAKE_CURRENT_SOURCE_DIR}/src/norm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/activation
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/conv
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/conversion
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/foreach
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/image
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/index
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/loss
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/math
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/matmul
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/norm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/objdetect
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/optim
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/pooling
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/quant
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/random
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/contrib/rnn
     )
     # 遍历每个待扫描的目录
     foreach(scan_dir ${SCAN_DIRS})

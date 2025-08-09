@@ -139,16 +139,16 @@ git rebase upstream/master
 
 ```
 git add .
-git commit -m "提交原因"
+git commit -m "提交内容描述"
 ```
 
 您可能会在前次提交的基础上，继续编辑构建并测试更多内容，可以使用 `commit --amend` 继续添加提交。
 
 
 
-### 6. 将变更推送到你的远端目录
+### 6. 将变更推送到您的远端目录
 
-准备进行审查（或只是建立工作的异地备份）时，将分支推到你在`gitee.com`的fork分支:
+准备进行审查（或只是建立工作的异地备份）时，将分支推到您在`gitee.com`的fork分支:
 
 ```
 git push -f origin myfeature
@@ -157,26 +157,41 @@ git push -f origin myfeature
 
 ### 7. 在Gitee上创建一个 pull request
 
-1. 访问你在 `https://gitee.com/$user/$repository_name` 的页面，单击 `+Pull Request`。
+1. 访问您在 `https://gitee.com/$user/$repository_name` 的页面，单击 `+Pull Request`。
+   
+   ![新建PR](../images/create-pr.png)
 
 2. 在创建新 PR 的界面，确认源分支和目标分支，选择创建。
 
    提交 PR 是对项目主分支的一次合并，为保证合并的质量，请谨慎操作。
 
 
+### 8. 将pull request与处理的Issue进行关联
+
+1. 访问仓库的`Issue`列表，进入您本次pull request所处理的对应Issue页面。
+
+   ![Issue列表](../images/issue-list.png)
+
+2. 在Issue右侧的`Pull Requests`中选择您提交的 PR 进行关联。完成关联后，当PR被合并时，关联的Issue将被自动关闭。
+   
+   ![Issue关联PR](../images/issue-link-pr.png)
 
 
-
-### 8. 查看门禁状态以及代码检视意见
+### 9. 查看门禁状态以及代码检视意见
 
 - 查看门禁状态
 
   PR提交后，请输入“/compile”触发门禁检查，检查时间每个仓库有所不同，请关注检查状态，并及时修改问题。
 
+  当页面显示“CI任务执行 成功”，且右上角标签显示`ci-pipeline-passed`时，既表示门禁检查通过。
+
+  ![门禁状态](../images/access-control.png)
+
+  如果门禁检查任务中有任务失败，可以点击对应的`日志详情`中的`点击跳转`查看日志中的失败原因对代码进行调整。
 
 - 查看代码检视意见
 
-   门禁检查通过后，你提交PR申请后，PR被分配给一个或多个检视者。这些检视者将进行彻底的代码检视，以确保提交的正确性，不仅包括代码的正确，也包括注释和文档等。
+   门禁检查通过后，您提交PR申请后，PR被分配给一个或多个检视者。这些检视者将进行彻底的代码检视，以确保提交的正确性，不仅包括代码的正确，也包括注释和文档等。
 
    您可以在PR列表内找到您提交的PR，并看到对该PR的评论和评审意见。
 
@@ -188,7 +203,7 @@ git push -f origin myfeature
 
 #### 回退一个提交
 
-如果你想回退提交，请采用下面的方式
+如果您想回退提交，请采用下面的方式
 
 *如果您具有上游写访问权限*，请不要使用`Revert`Gitee UI中的按钮创建PR，因为Gitee会在主存储库而不是您的fork中创建PR分支。
 
@@ -250,7 +265,7 @@ git push ${your_remote_name} myrevert
    git rebase master
    ```
 
-3. 此时您可以在git上看到冲突的提示，你可以通过vi等工具查看冲突
+3. 此时您可以在git上看到冲突的提示，您可以通过vi等工具查看冲突
 
 4. 解决冲突以后，再把修改提交上去
 
@@ -280,7 +295,7 @@ git push ${your_remote_name} myrevert
 
    把需求压缩的日志前面的pick都改成s，s是squash的缩写。注意必须保留一个pick，如果将所有的pick都改成了s就没有合并的目标了，会发生错误。
 
-3. 修改完成以后，按ESC键，再输入`:wq`，会跳出一个界面，问你是否进入编辑提交备注的页面，输入e以后，进入合并提交备注的页面。请把需要合并的备注都删掉，只保留合并目标的备注，再按ESC键，输入`:wq`保存退出即可。
+3. 修改完成以后，按ESC键，再输入`:wq`，会跳出一个界面，问您是否进入编辑提交备注的页面，输入e以后，进入合并提交备注的页面。请把需要合并的备注都删掉，只保留合并目标的备注，再按ESC键，输入`:wq`保存退出即可。
 
 4. 最后完成提交
 

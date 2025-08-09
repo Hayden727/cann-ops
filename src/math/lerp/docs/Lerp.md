@@ -1,12 +1,9 @@
-声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
-
 # Lerp
 
 ## 支持的产品型号
 
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
-- Atlas 200I/500 A2推理产品
 
 产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
@@ -41,10 +38,10 @@ Lerp算子通过依次调用`Ascend C`的`API`接口：`Sub`、`Mul`、`Add`，�
 
 - **参数说明：**
 
-  - start（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入start，数据类型支持FLOAT16、FLOAT32，数据格式支持ND。
-  - end（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入end，数据类型支持FLOAT16、FLOAT32，数据格式支持ND。
-  - weight（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入weight，数据类型支持FLOAT16、FLOAT32，数据格式支持ND。
-  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、FLOAT32，数据格式支持ND，输出维度与x一致。
+  - start（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入start，数据类型支持FLOAT16、FLOAT32,BFLOAT16，数据格式支持ND。
+  - end（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入end，数据类型支持FLOAT16、FLOAT32,BFLOAT16，数据格式支持ND。
+  - weight（aclTensor\*，计算输入）：必选参数，Device侧的aclTensor，公式中的输入weight，数据类型支持FLOAT16、FLOAT32,BFLOAT16，数据格式支持ND。
+  - out（aclTensor\*，计算输出）：Device侧的aclTensor，公式中的输出y，数据类型支持FLOAT16、FLOAT32,BFLOAT16，数据格式支持ND，输出维度与x一致。
   - workspaceSize（uint64\_t\*，出参）：返回用户需要在Device侧申请的workspace大小。
   - executor（aclOpExecutor\*\*，出参）：返回op执行器，包含了算子计算流程。
 
@@ -74,7 +71,7 @@ Lerp算子通过依次调用`Ascend C`的`API`接口：`Sub`、`Mul`、`Add`，�
 
 ## 约束与限制
 
-- start、end、weight的数据类型支持FLOAT16、FLOAT32，数据格式只支持ND
+- start、end、weight的数据类型支持FLOAT16、FLOAT32,BFLOAT16，数据格式只支持ND
 
 ## 算子原型
 
@@ -83,12 +80,12 @@ Lerp算子通过依次调用`Ascend C`的`API`接口：`Sub`、`Mul`、`Add`，�
 <tr><td align="center"> </td><td align="center">name</td><td align="center">Type</td><td align="center">data type</td><td align="center">format</td></tr>  
 <tr><td rowspan="4" align="center">算子输入</td>
  
-<tr><td align="center">start</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
-<tr><td align="center">end</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
-<tr><td align="center">weight</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
+<tr><td align="center">start</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
+<tr><td align="center">end</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
+<tr><td align="center">weight</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="1" align="center">算子输出</td>
-<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16</td><td align="center">ND</td></tr>  
+<td align="center">y</td><td align="center">tensor</td><td align="center">float32,float16,bfloat16</td><td align="center">ND</td></tr>  
 
 <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">lerp</td></tr>  
 </table>

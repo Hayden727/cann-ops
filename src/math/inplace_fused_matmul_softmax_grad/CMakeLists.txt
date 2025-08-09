@@ -1,5 +1,5 @@
 add_ops_compile_options(
-        OP_NAME inplace_fused_matmul_softmax_grad
+        OP_NAME InplaceFusedMatmulSoftmaxGrad
         OPTIONS --cce-auto-sync=on
                 -Wno-deprecated-declarations
                 -Werror
