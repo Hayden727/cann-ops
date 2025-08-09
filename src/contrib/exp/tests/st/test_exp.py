@@ -24,5 +24,8 @@ def exp_test(x, base, scale, shift):
 
 
 def calc_expect_func( x, base = 2.0, scale = 1.0, shift = 2.0 ): 
+    """
+    calc_expect_func
+    """
     res = exp_test(x["x"], base, scale, shift)
     return [res]
