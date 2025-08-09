@@ -65,6 +65,10 @@ while [[ $# -gt 0 ]]; do
         ASCEND_COMPUTE_UNIT="$2"
         shift 2
         ;;
+    --ascend-op-name)
+        ASCEND_OP_NAME="$2"
+        shift 2
+        ;;
     --op_debug_config)
         OP_DEBUG_CONFIG="$2"
         shift 2
@@ -116,7 +120,8 @@ function build() {
         -DOPS_COMPILE_OPTIONS="${CONVERT_OPS_COMPILE_OPTIONS}" \
         -DASCEND_COMPUTE_UNIT=${CONVERT_ASCEND_COMPUTE_UNIT} \
         -DOP_DEBUG_CONFIG=${OP_DEBUG_CONFIG} \
-        -DASCEND_THIRD_LIB_PATH=${THIRD_LIB_PATH}
+        -DASCEND_THIRD_LIB_PATH=${THIRD_LIB_PATH} \
+        -DASCEND_OP_NAME=${ASCEND_OP_NAME}
 
     make ${JOB_NUM} prepare_build
 }
