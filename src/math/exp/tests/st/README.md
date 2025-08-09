@@ -1,7 +1,7 @@
 ## 目录结构介绍
 ```
 ├── msopst.ini                  // st测试配置文件 
-├── Reciprocal_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
+├── Exp_case_alltype.json     // 测试用例定义文件示例(8.0.RC3.alpha003版本生成)
 └── test_reciprocal.py               // 算子期望数据生成脚本
 ```
 
@@ -27,7 +27,7 @@
   - 进入到测试用例目录
 
     ```bash
-    cd ${git_clone_path}/cann-ops/src/math/reciprocal/tests/st
+    cd ${git_clone_path}/cann-ops/src/math/Exp/tests/st
     ```
 
   - 根据执行机器的架构修改msopst.ini中的atc_singleop_advance_option和HOST_ARCH

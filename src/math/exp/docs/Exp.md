@@ -1,6 +1,6 @@
 声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
 
-# Reciprocal
+# Exp
 
 ## 支持的产品型号
 
@@ -11,32 +11,40 @@
 
 ## 功能描述
 
-- 算子功能：该Reciprocal算子提供平方根的倒数的计算功能。Reciprocal算子的主要功能是计算给定数值的平方根的倒数，即1/x。在数学和工程领域中，平方根的倒数运算是一种基础且重要的操作，它被广泛应用于图像处理、信号处理、物理模拟等多个领域。Reciprocal算子能够高效地处理批量数值的平方根的倒数计算，支持浮点数的输入。
+- 算子功能：该Exp 算子提供指数函数的计算功能。其主要功能是计算给定数值的自然指数幂，即(e^x\)。
+
+- 在数学和工程领域中，自然指数运算具有广泛且关键的应用：
+
+  - 在概率论与统计学中，常用于描述正态分布、指数分布等概率模型；
+  - 在信号处理中，可用于求解微分方程、处理衰减或增长信号；
+  - 在机器学习中，是 softmax 函数、激活函数（如指数线性单元 ELU）的核心组成部分；
+  - 在物理模拟中，可用于刻画放射性衰变、种群增长等自然过程。
+  - Exp 算子能够高效处理批量数值的自然指数计算，支持整数、浮点数等多种数值类型的输入，且在实现中通常会针对边界情况（如极大或极小输入值）进行优化，以保证计算的准确性和稳定性。
 
 - 计算公式：
 
   $$
-  y = 1 / {x}
+  y = e^x
   $$
 
 ## 实现原理
 
-调用`Ascend C`的`API`接口Reciprocal和`Div`进行实现。对于16位的数据类型将其通过`Cast`接口转换为32位浮点数进行计算。
+调用`Ascend C`的`API`接口Exp、`Muls`和Adds进行实现。对于16位的数据类型将其通过`Cast`接口转换为32位浮点数进行计算。
 
 
 ## 算子执行接口
 
-每个算子分为两段式接口，必须先调用“aclnnReciprocalGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnReciprocal”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnExpGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnExp”接口执行计算。
 
-* `aclnnStatus aclnnReciprocalGetWorkspaceSize(const aclTensor *x, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
-* `aclnnStatus aclnnReciprocal(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
+* `aclnnStatus aclnnExpGetWorkspaceSize(const aclTensor *x, const aclTensor *out, uint64_t workspaceSize, aclOpExecutor **executor)`
+* `aclnnStatus aclnnExp(void *workspace, int64_t workspaceSize, aclOpExecutor **executor, aclrtStream stream)`
 
 **说明**：
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
 - 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
 
-### aclnnRsqrtGetWorkspaceSize
+### aclnnExpGetWorkspaceSize
 
 - **参数说明：**
 
@@ -54,7 +62,7 @@
   - 返回161002（ACLNN_ERR_PARAM_INVALID）：x、out的数据类型和数据格式不在支持的范围内。
   ```
 
-### aclnnRsqrt
+### aclnnExp
 
 - **参数说明：**
 
@@ -68,7 +76,7 @@
 
 ## 约束与限制
 
-- x，y的数据类型支持FLOAT16，FLOAT32，BFLOAT16，数据格式只支持ND,NCHW,NHWC
+- x，y的数据类型支持FLOAT16，FLOAT32，BFLOAT16，数据格式只支持ND
 
 ## 
 
