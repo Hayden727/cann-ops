@@ -226,7 +226,7 @@ function(add_ops_info_target)
             ${OPS_INFO_EXCLUDE_INI}
             ${OPS_INFO_JSON}
             COMMAND mkdir -p ${CUSTOM_OPS_INFO_DIR}
-            COMMAND cp -f ${OPS_INFO_JSON} ${CUSTOM_OPS_INFO_DIR}
+            COMMAND cp -f ${OPS_INFO_JSON} ${CUSTOM_OPS_INFO_DIR} || true
     )
 
     add_custom_target(${OPS_INFO_TARGET} ALL
