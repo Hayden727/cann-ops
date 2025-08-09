@@ -23,7 +23,7 @@ def exp_test(x, base, scale, shift):
     return y.numpy()
 
 
-def calc_expect_func( x, base = 2.0, scale = 1.0, shift = 2.0 ): 
+def calc_expect_func(x, base=2.0, scale=1.0, shift=2.0): 
     """
     calc_expect_func
     """
