@@ -11,12 +11,12 @@
 /**
  * @file exp.cpp
  */
- 
+
+#include <cmath>
 #include "exp_tiling.h"
 #include "register/op_def_registry.h"
 #include "graph/utils/type_utils.h"
 #include "tiling/platform/platform_ascendc.h"
-#include <cmath>
 namespace optiling
 {
     const uint64_t BLOCK_SIZE = 32;

@@ -12,16 +12,18 @@
 import os
 import numpy as np
 
+
 def exp(x, scale: float = 1.0, shift: float = 0.0, base: float = -1.0):
     exponent = x * scale + shift
-    EPSILON = 1e-15
-    if abs(base - (-1.0)) > EPSILON:
+    epsilon = 1e-15
+    if abs(base - (-1.0)) > epsilon:
         base = math.log(base)
         print(f"base,scale,shift: {base,scale,shift}")
         exponent *= base  
     print(f"exponent: {exponent}")
 
     return np.exp(exponent)
+
 
 def gen_golden_data_simple():
     dtype = np.float16
