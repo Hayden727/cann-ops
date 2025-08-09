@@ -13,7 +13,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def exp_test(x,base,scale,shift): 
+def exp_test(x, base, scale, shift): 
     x = tf.convert_to_tensor(x)
     y = x * scale + shift
     if base != -1.0: 
@@ -23,6 +23,6 @@ def exp_test(x,base,scale,shift):
     return y.numpy()
 
 
-def calc_expect_func(x,base = 2.0,scale = 1.0,shift = 2.0): 
-    res = exp_test(x["x"],base,scale,shift)
+def calc_expect_func(x, base = 2.0, scale = 1.0, shift = 2.0): 
+    res = exp_test(x["x"], base, scale, shift)
     return [res]
