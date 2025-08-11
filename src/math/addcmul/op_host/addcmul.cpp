@@ -25,7 +25,6 @@ namespace optiling
         ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
         auto coreNum = ascendcPlatform.GetCoreNum();
         auto socVersion = ascendcPlatform.GetSocVersion();
-        std::cout<<"is me addcmul"<<std::endl;
         // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
         uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
         uint32_t typeLength = 0;
@@ -36,14 +35,11 @@ namespace optiling
         if (valueSize == 1)
         {
             context->SetTilingKey(0);
-            std::cout<<"valueSize == 1"<<std::endl;
         }
         else
         {
             context->SetTilingKey(1);
-            std::cout<<"valueSize != 1"<<std::endl;
-        }
-        
+        }  
         uint64_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() != ge::DT_BF16) ? 4 : 6;
         // The number of 32B data blocks that can be used for each data. DOUBLE BUFFER is already counted here
         uint64_t tileBlockNum = (ubSize / BLOCK_SIZE / BUFFER_NUM) / ubDataNumber;
