@@ -40,6 +40,7 @@ public:
             this->tailDataNum = smallTailDataNum;
             globalBufferIndex -= (bigCoreDataNum - smallCoreDataNum) * (GetBlockIdx() - tailBlockNum);
         }
+        
         input_dataGm.SetGlobalBuffer((__gm__ TYPE_X *)input_data + globalBufferIndex, this->coreDataNum);
         x1Gm.SetGlobalBuffer((__gm__ TYPE_X *)x1 + globalBufferIndex, this->coreDataNum);
         x2Gm.SetGlobalBuffer((__gm__ TYPE_X *)x2 + globalBufferIndex, this->coreDataNum);
@@ -49,23 +50,31 @@ public:
         pipe.InitBuffer(inQueueX2, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(inQueueINPUT_DATA, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
-        pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+        if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
+        {
+            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+            pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+            this->f_value = ToFloat(valueGm.GetValue(0));
+        }
+        else
+        {
+            this->m_value = valueGm.GetValue(0);
+        }
     }
     __aicore__ inline void Process()
     {
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 
 private:
@@ -94,15 +103,16 @@ private:
             Cast(p1, x1Local, RoundMode::CAST_NONE, this->processDataNum);
             Cast(p2, x2Local, RoundMode::CAST_NONE, this->processDataNum);
             Mul(p1, p1, p2, this->processDataNum);
-            Muls(p1, p1, ToFloat(valueGm.GetValue(0)), this->processDataNum);
+            Muls(p1, p1, this->f_value, this->processDataNum);
             Cast(p2, input_dataLocal, RoundMode::CAST_NONE, this->processDataNum);
             Add(p2, p1, p2, this->processDataNum);
+
             Cast(yLocal, p2, RoundMode::CAST_RINT, this->processDataNum);
         }
         else
         {
             Mul(x1Local, x1Local, x2Local, this->processDataNum);
-            Muls(x1Local, x1Local, valueGm.GetValue(0), this->processDataNum);
+            Muls(x1Local, x1Local, this->m_value, this->processDataNum);
             Add(yLocal, x1Local, input_dataLocal, this->processDataNum);
         }
         outQueueY.EnQue<TYPE_X>(yLocal);
@@ -127,6 +137,8 @@ private:
     GlobalTensor<TYPE_X> x2Gm;
     GlobalTensor<TYPE_X> valueGm;
     GlobalTensor<TYPE_X> yGm;
+    TYPE_X m_value;
+    float f_value;
     uint32_t coreDataNum;
     uint32_t tileNum;
     uint32_t tileDataNum;
