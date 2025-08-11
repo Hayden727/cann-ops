@@ -33,7 +33,7 @@ namespace optiling
         {
             return ge::GRAPH_FAILED;
         }
-        uint64_t versionNum = 0;
+        uint64_t versionNum = 0; // 型号标识，决定计算方式
         context->SetTilingKey(0);
         if (socVersion == platform_ascendc::SocVersion::ASCEND310B)
         {
