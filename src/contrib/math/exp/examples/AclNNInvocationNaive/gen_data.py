@@ -9,9 +9,9 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ==========================================================================================================
 
+import math
 import os
 import numpy as np
-import math
 
 
 def exp(x, scale: float = 1.0, shift: float = 0.0, base: float = -1.0):
