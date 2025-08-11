@@ -25,7 +25,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     auto coreNum = ascendcPlatform.GetCoreNum();
     auto socVersion = ascendcPlatform.GetSocVersion();
-    std::cout<<"is me addcdiv"<<std::endl;
     // Based on the input length and the number of inputs, the number of bytes of the input data type is obtained
     uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t typeLength = 0;
