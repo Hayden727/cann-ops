@@ -18,8 +18,8 @@
 
 namespace optiling
 {
-    const uint32_t BLOCK_SIZE = 32;
-    const uint32_t BUFFER_NUM = 2;
+    const uint64_t BLOCK_SIZE = 32;
+    const uint64_t BUFFER_NUM = 2;
 
     static ge::graphStatus TilingFunc(gert::TilingContext *context) // Tiling函数实现
     {
@@ -33,59 +33,71 @@ namespace optiling
         {
             return ge::GRAPH_FAILED;
         }
-
-        uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
-        uint32_t typeLength = 0;
-        ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
-        uint32_t inputLength = inputNum * typeLength;
-        uint32_t inputBytes = inputLength / inputNum;
-
-        uint32_t ubDataNumber = 10;
-        uint32_t tileBlockNum = (ubSize / BLOCK_SIZE / BUFFER_NUM) / ubDataNumber;
-        uint32_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
-
-        uint32_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
-        coreNum = (coreNum < inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
-        coreNum = (coreNum >= 1) ? coreNum : 1;
-        uint32_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
-        uint32_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
-
-        uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
-        uint32_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
-        uint32_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
-        uint32_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
-        smallTailDataNum = smallTailDataNum == 0 ? tileDataNum : smallTailDataNum;
-
-        everyCoreInputBlockNum += 1;
-        uint32_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
-        uint32_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
-        uint32_t finalBigTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? bigTileNum : bigTileNum + 1;
-        uint32_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
-        bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum;
-
-        uint32_t versionNum = 0;
+        uint64_t versionNum = 0; // 型号标识，决定计算方式
+        context->SetTilingKey(0);
         if (socVersion == platform_ascendc::SocVersion::ASCEND310B)
         {
             versionNum = 1;
+            context->SetTilingKey(1);
+        }
+        uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+        uint32_t typeLength = 0;
+        ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
+        uint64_t inputLength = inputNum * typeLength;
+        uint64_t inputBytes = inputLength / inputNum;
+
+        uint64_t ubDataNumber = 16;
+        if(typeLength == 4)
+        {
+            ubDataNumber = 8 + versionNum;
+        }
+        uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
+        uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
+
+        uint64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+        if(tileDataNum >= inputNum)
+        {
+            coreNum=1;
+        }
+        else
+        {
+            // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
+            coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
         }
 
-        tiling.set_smallCoreDataNum(smallCoreDataNum);
+        uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
+        uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
+
+        uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
+        uint64_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
+        uint64_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
+        uint64_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
+        smallTailDataNum = smallTailDataNum == 0 ? tileDataNum : smallTailDataNum;
+
+        everyCoreInputBlockNum += 1;
+        uint64_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
+        uint64_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
+        uint64_t finalBigTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? bigTileNum : bigTileNum + 1;
+        uint64_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
+        bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum;
+
+        tiling.set_smallCoreDataNum((uint32_t)smallCoreDataNum);
         // 一个小核数据个数
-        tiling.set_bigCoreDataNum(bigCoreDataNum);
+        tiling.set_bigCoreDataNum((uint32_t)bigCoreDataNum);
         // 一个大核数据个数
-        tiling.set_tileDataNum(tileDataNum);
+        tiling.set_tileDataNum((uint32_t)tileDataNum);
         // 一次搬运的数据个数
-        tiling.set_smallTailDataNum(smallTailDataNum);
+        tiling.set_smallTailDataNum((uint32_t)smallTailDataNum);
         // 小核尾块数据个数
-        tiling.set_bigTailDataNum(bigTailDataNum);
+        tiling.set_bigTailDataNum((uint32_t)bigTailDataNum);
         // 大核尾块数据个数
-        tiling.set_finalSmallTileNum(finalSmallTileNum);
+        tiling.set_finalSmallTileNum((uint32_t)finalSmallTileNum);
         // 小核搬运次数
-        tiling.set_finalBigTileNum(finalBigTileNum);
+        tiling.set_finalBigTileNum((uint32_t)finalBigTileNum);
         // 大核搬运次数
-        tiling.set_tailBlockNum(tailBlockNum);
+        tiling.set_tailBlockNum((uint32_t)tailBlockNum);
         // 大核数
-        tiling.set_versionNum(versionNum);
+        tiling.set_versionNum((uint32_t)versionNum);
 
         context->SetBlockDim(coreNum);
         tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());

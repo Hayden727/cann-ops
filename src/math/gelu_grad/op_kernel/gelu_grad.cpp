@@ -13,10 +13,21 @@
  */
 
 #include "kernel_operator.h"
+#define GENERAL_OP_IMPL(templateClass,...)                                          \
+  do{                                                                               \
+      GET_TILING_DATA(tiling_data, tiling);                                         \
+      templateClass<__VA_ARGS__>op;                                                 \
+      op.Init(dy, x, y, z, tiling_data.smallCoreDataNum,                               \
+            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,                    \
+            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,                     \
+            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,                   \
+            tiling_data.tailBlockNum, tiling_data.versionNum);                       \
+      op.Process();                                                                 \
+  }while(0)
 using namespace AscendC;
 constexpr int32_t BUFFER_NUM = 2;
 
-template <typename TYPE_DY, typename TYPE_X, typename TYPE_Z>
+template <typename TYPE_DY, typename TYPE_X, typename TYPE_Z,bool Is0versionNum>
 class KernelGeluGrad
 {
     using T = TYPE_X;
@@ -50,29 +61,50 @@ public:
         dyGm.SetGlobalBuffer((__gm__ TYPE_DY *)dy + globalBufferIndex, this->coreDataNum);
         xGm.SetGlobalBuffer((__gm__ TYPE_X *)x + globalBufferIndex, this->coreDataNum);
         zGm.SetGlobalBuffer((__gm__ TYPE_Z *)z + globalBufferIndex, this->coreDataNum);
+
         pipe.InitBuffer(inQueueDY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_DY));
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueZ, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_Z));
+
         pipe.InitBuffer(tmpBuffer, this->tileDataNum * sizeof(float));
         pipe.InitBuffer(funBuffer, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp3, this->tileDataNum * sizeof(float));
+        if constexpr(Is0versionNum)
+        {
+            if constexpr (!std::is_same_v<T, float32_t>)
+            {
+                pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+                pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+                pipe.InitBuffer(tmp3, this->tileDataNum * sizeof(float));
+            }
+        }
+        else
+        {
+            if constexpr (!std::is_same_v<T, float32_t>)
+            {
+                pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+                pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+                pipe.InitBuffer(tmp3, this->tileDataNum * sizeof(float));
+            }
+            else
+            {
+                pipe.InitBuffer(tmpBuffer, this->tileDataNum * sizeof(float));
+            }
+        }      
     }
     __aicore__ inline void Process()
     {
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 
 private:
@@ -92,7 +124,7 @@ private:
         LocalTensor<TYPE_Z> zLocal = outQueueZ.AllocTensor<TYPE_Z>();
         LocalTensor<float> fun = funBuffer.Get<float>();
         LocalTensor<float> tmp = tmpBuffer.Get<float>();
-        if (this->versionNum == 0)
+        if constexpr(Is0versionNum)
         {
             const float COEFF0 = -0.0713548162726002527220f;
             const float COEFF1 = -1.595769121605730711759f;
@@ -255,13 +287,12 @@ private:
 
 extern "C" __global__ __aicore__ void gelu_grad(GM_ADDR dy, GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
 {
-    GET_TILING_DATA(tiling_data, tiling);
-
-    KernelGeluGrad<DTYPE_DY, DTYPE_X, DTYPE_Z> op;
-    op.Init(dy, x, y, z, tiling_data.smallCoreDataNum,
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
-            tiling_data.tailBlockNum, tiling_data.versionNum);
-    op.Process();
+    if(TILING_KEY_IS(0))
+    {
+      GENERAL_OP_IMPL(KernelGeluGrad,DTYPE_DY, DTYPE_X, DTYPE_Z,true);
+    }
+     else if(TILING_KEY_IS(1))
+    {
+      GENERAL_OP_IMPL(KernelGeluGrad,DTYPE_DY, DTYPE_X, DTYPE_Z,false);
+    }
 }
