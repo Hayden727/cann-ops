@@ -52,8 +52,8 @@ public:
 
         if constexpr (std::is_same_v<TYPE_X, bfloat16_t>)
         {
-        pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+            pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
         }
     }
     __aicore__ inline void Process()
