@@ -47,7 +47,8 @@ namespace optiling
         uint64_t inputBytes = inputLength / inputNum;
 
         uint64_t ubDataNumber = 16;
-        if(typeLength==4) {
+        if(typeLength == 4)
+        {
             ubDataNumber = 8 + versionNum;
         }
         uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
