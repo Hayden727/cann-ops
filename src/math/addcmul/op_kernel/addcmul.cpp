@@ -54,11 +54,11 @@ public:
         {
             pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
             pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
-            this->f_value=ToFloat(valueGm.GetValue(0));
+            this->f_value = ToFloat(valueGm.GetValue(0));
         }
         else
         {
-            this->m_value=valueGm.GetValue(0);
+            this->m_value = valueGm.GetValue(0);
         }
     }
     __aicore__ inline void Process()
