@@ -25,7 +25,7 @@
   - 进入到仓库目录
 
     ```bash
-    cd ${git_clone_path}/cann-ops/src/contrib/greater/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/cann-ops/src/contrib/math/greater/examples/AclNNInvocationNaive
     ```
 
   - 环境变量配置
