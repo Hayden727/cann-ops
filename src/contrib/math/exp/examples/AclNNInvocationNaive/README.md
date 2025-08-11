@@ -27,7 +27,7 @@
   - 进入样例代码所在路径
   
     ```bash
-    cd ${git_clone_path}/cann-ops/src/math/exp/examples/AclNNInvocationNaive
+    cd ${git_clone_path}/cann-ops/src/contrib/math/exp/examples/AclNNInvocationNaive
     ```
   
   - 环境变量配置
