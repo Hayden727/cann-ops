@@ -64,8 +64,6 @@ namespace optiling
             coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
         }
 
-        /*coreNum = (coreNum < inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
-        coreNum = (coreNum >= 1) ? coreNum : 1;*/
         uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
         uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
 
