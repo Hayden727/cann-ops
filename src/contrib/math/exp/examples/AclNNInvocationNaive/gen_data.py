@@ -11,6 +11,7 @@
 
 import os
 import numpy as np
+import math
 
 
 def exp(x, scale: float = 1.0, shift: float = 0.0, base: float = -1.0):
