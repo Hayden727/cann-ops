@@ -33,7 +33,6 @@ namespace optiling
         {
             return ge::GRAPH_FAILED;
         }
-        std::cout<<"is me gelugrad  new1"<<std::endl;
         uint64_t versionNum = 0;
         context->SetTilingKey(0);
         if (socVersion == platform_ascendc::SocVersion::ASCEND310B)
@@ -48,8 +47,8 @@ namespace optiling
         uint64_t inputBytes = inputLength / inputNum;
 
         uint64_t ubDataNumber = 16;
-        if(typeLength==4){
-            ubDataNumber=8+versionNum;
+        if(typeLength==4) {
+            ubDataNumber = 8 + versionNum;
         }
         uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
         uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
