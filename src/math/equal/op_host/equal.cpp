@@ -45,7 +45,6 @@ namespace optiling
         }
         uint64_t inputBytes = inputLength / inputNum;
 
-
         uint64_t ubDataNumber = 6;
         if(context->GetInputDesc(0)->GetDataType() == ge::DT_INT8 || context->GetInputDesc(0)->GetDataType() == ge::DT_UINT8)
         {
