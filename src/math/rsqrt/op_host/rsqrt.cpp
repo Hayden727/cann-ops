@@ -39,7 +39,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
     uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
     
-
     uint64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
 
     if(tileDataNum >= inputNum)
