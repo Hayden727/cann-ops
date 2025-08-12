@@ -2,15 +2,18 @@
     {
         "case_name": "Test_Log_001", 
         "op": "Log", 
+        "calc_expect_func_file": "./test_log.py:calc_expect_func",
         "input_desc": [ 
             {
                 "format": [
                     "ND"
                 ],
                 "type": [
-                    "float16"
+                    "float",
+                    "float16",
+                    "bfloat16"
                 ],
-                "shape": [8,2048],
+                "shape": [100],
                 "data_distribute": [ 
                     "uniform"
                 ],
@@ -29,10 +32,29 @@
                     "ND"
                 ],
                 "type": [
-                    "float16"
+                    "float",
+                    "float16",
+                    "bfloat16"
                 ],
-                "shape": [8,2048],
+                "shape": [100],
                 "name": "y"
+            }
+        ],
+        "attr": [
+            {
+                "name": "base",
+                "type": "float",
+                "value": 2.0
+            },
+            {
+                "name": "scale",
+                "type": "float",
+                "value": 1.0
+            },
+            {
+                "name": "shift",
+                "type": "float",
+                "value": 2.0
             }
         ]
     }
