@@ -1,0 +1,39 @@
+[
+    {
+        "case_name": "Test_Log_001", 
+        "op": "Log", 
+        "input_desc": [ 
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float16"
+                ],
+                "shape": [8,2048],
+                "data_distribute": [ 
+                    "uniform"
+                ],
+                "value_range": [ 
+                    [
+                        0.1,
+                        1.0
+                    ]
+                ],
+                "name": "x"
+            }
+        ],
+        "output_desc": [
+            {
+                "format": [
+                    "ND"
+                ],
+                "type": [
+                    "float16"
+                ],
+                "shape": [8,2048],
+                "name": "y"
+            }
+        ]
+    }
+]
