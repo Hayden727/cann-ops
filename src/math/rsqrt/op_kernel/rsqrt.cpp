@@ -50,7 +50,6 @@ public:
             pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
             pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
         }
-
         
     }
     __aicore__ inline void Process()
