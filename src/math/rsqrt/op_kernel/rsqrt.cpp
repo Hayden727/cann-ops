@@ -42,25 +42,33 @@ public:
         }
         xGm.SetGlobalBuffer((__gm__ TYPE_X *)x + globalBufferIndex, this->coreDataNum);
         yGm.SetGlobalBuffer((__gm__ TYPE_X *)y + globalBufferIndex, this->coreDataNum);
+
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
-        pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
-        pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+        if constexpr (!std::is_same_v<T, float32_t>)
+        {
+            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+            pipe.InitBuffer(tmp2, this->tileDataNum * sizeof(float));
+        }
+
+        
     }
     __aicore__ inline void Process()
     {
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+       
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 
 private:
@@ -68,25 +76,26 @@ private:
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.AllocTensor<TYPE_X>();
         DataCopy(xLocal, xGm[progress * this->tileDataNum], this->processDataNum);
+
         inQueueX.EnQue(xLocal);
     }
     __aicore__ inline void Compute(int32_t progress)
     {
         LocalTensor<TYPE_X> xLocal = inQueueX.DeQue<TYPE_X>();
         LocalTensor<TYPE_X> yLocal = outQueueY.AllocTensor<TYPE_X>();
-        if constexpr ( ! std::is_same_v<T, float32_t>)
+        if constexpr ( !std::is_same_v<T, float32_t>)
         {
             LocalTensor<float> p1 = tmp1.Get<float>();
             LocalTensor<float> p2 = tmp2.Get<float>();
             Cast(p1, xLocal, RoundMode::CAST_NONE, this->processDataNum);
-            Duplicate(p2, 1.0f, this->processDataNum);
+            Duplicate<float>(p2, 1.0f, this->processDataNum);
             Sqrt(p1, p1, this->processDataNum);
             Div(p1, p2, p1, this->processDataNum);
             Cast(yLocal, p1, RoundMode::CAST_RINT, this->processDataNum);
         }
         else
         {
-            Duplicate(yLocal, 1.0f, this->processDataNum);
+            Duplicate<float>(yLocal, 1.0f, this->processDataNum);
             Sqrt(xLocal, xLocal, this->processDataNum);
             Div(yLocal, yLocal, xLocal, this->processDataNum);
         }
