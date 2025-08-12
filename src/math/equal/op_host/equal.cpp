@@ -40,7 +40,12 @@ namespace optiling
         ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
         uint64_t inputLength = inputNum * typeLength;
 
+        if (inputNum == 0){
+            return ge:GRAPH_FAILED;
+        }
+
         uint64_t inputBytes = inputLength / inputNum;
+
 
         uint64_t ubDataNumber = 6;
         if(context->GetInputDesc(0)->GetDataType() == ge::DT_INT8 || context->GetInputDesc(0)->GetDataType() == ge::DT_UINT8)
@@ -70,6 +75,9 @@ namespace optiling
             coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
         }
 
+       if (BLOCK_SIZE == 0 || coreNum == 0){
+            return ge:GRAPH_FAILED;
+        }
         uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
         uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
 
