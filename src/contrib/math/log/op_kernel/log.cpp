@@ -173,7 +173,6 @@ extern "C" __global__ __aicore__ void log(GM_ADDR x, GM_ADDR y, GM_ADDR workspac
 }
 
 #ifndef ASCENDC_CPU_DEBUG
-// 非调试模式下的调用函数
 void log_do(uint32_t blockDim, void* l2ctrl, void* stream, uint8_t* x, uint8_t* y, 
             uint8_t* workspace, uint8_t* tiling) {
     log<<<blockDim, l2ctrl, stream>>>(x, y, workspace, tiling);

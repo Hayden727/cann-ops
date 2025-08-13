@@ -10,14 +10,15 @@
 # ======================================================================================================================
 
 import os
-import numpy as np
 import math
+import numpy as np
 
 
 def log(x, base: float = -1.0, scale: float = 1.0, shift: float = 0.0):
     # 转换为 PyTorch 张量
     exponent = x * scale + shift
-    if base != -1.0:
+    epsilon = 1e-15
+    if abs(base - (-1.0)) > epsilon:
         return np.log(exponent) / math.log(base)
     return np.log(exponent)
 

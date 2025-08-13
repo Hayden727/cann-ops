@@ -1,13 +1,9 @@
-声明：本文使用[Creative Commons License version 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)许可协议，转载、引用或修改等操作请遵循此许可协议。
-
 # Log
 
 ## 支持的产品型号
 
 - Atlas A2 训练系列产品
 - Atlas 800I A2推理产品
-
-产品形态详细说明请参见[昇腾产品形态说明](https://www.hiascend.com/document/redirect/CannCommunityProductForm)。
 
 
 ## 功能描述
@@ -34,7 +30,7 @@ Log算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Log`、`Muls`，
 **说明**：
 
 - 算子执行接口对外屏蔽了算子内部实现逻辑以及不同代际NPU的差异，且开发者无需编译算子，实现了算子的精简调用。
-- 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子，详细调用方法可参见《应用开发指南》的[单算子调用 > 单算子模型执行](https://hiascend.com/document/redirect/CannCommunityCppOpcall)章节。
+- 若开发者不使用算子执行接口的调用算子，也可以定义基于Ascend IR的算子描述文件，通过ATC工具编译获得算子om文件，然后加载模型文件执行算子。
 
 ### aclnnLogGetWorkspaceSize
 
@@ -52,7 +48,7 @@ Log算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Log`、`Muls`，
 
 - **返回值：**
   
-  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
+  返回aclnnStatus状态码。
   
   ```
   第一段接口完成入参校验，若出现以下错误码，则对应原因为：
@@ -70,7 +66,7 @@ Log算子通过依次调用`Ascend C`的`API`接口：`Muls`、`Log`、`Muls`，
   - stream（aclrtStream，入参）：指定执行任务的AscendCL stream流。
 - **返回值：**
 
-  返回aclnnStatus状态码，具体参见[aclnn返回码](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha003/apiref/aolapi/context/common/aclnn%E8%BF%94%E5%9B%9E%E7%A0%81_fuse.md)。
+  返回aclnnStatus状态码。
 
 ## 约束与限制
 
