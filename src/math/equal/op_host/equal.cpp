@@ -29,7 +29,6 @@ namespace optiling
         ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
         auto coreNum = ascendcPlatform.GetCoreNum();
         auto socVersion = ascendcPlatform.GetSocVersion();
-        std::cout<<"is me new_code1"<<std::endl;
         if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
             return ge::GRAPH_FAILED;
         }
