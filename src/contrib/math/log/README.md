@@ -56,7 +56,7 @@
     <td rowspan="1" align="center">算子输出</td>
     <td align="center">y</td>
     <td align="center">tensor</td>
-    <td align="center">float</td>
+    <td align="center">bfloat16,float32,float16</td>
     <td align="center">ND</td>
   </tr>
   
@@ -67,7 +67,7 @@
 </table>
 
 ## 约束与限制
-- x，y，out的数据类型只支持bfloat16,float32,float16，数据格式只支持ND
+- x，y的数据类型只支持bfloat16,float32,float16，数据格式只支持ND
 - base,scale,shift的数据类型只支持float
 
 ## 算子使用
