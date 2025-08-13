@@ -24,48 +24,55 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     auto coreNum = ascendcPlatform.GetCoreNum();
     auto socVersion = ascendcPlatform.GetSocVersion();
-
     if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
         return ge::GRAPH_FAILED;
     }
 
-    uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
+    uint64_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
     uint32_t typeLength = 0;
     ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
-    uint32_t inputLength = inputNum * typeLength;
-    uint32_t inputBytes = inputLength / inputNum;
+    uint64_t inputLength = inputNum * typeLength;
+    uint64_t inputBytes = inputLength / inputNum;
 
-    uint32_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT) ? 3 : 5;
-    uint32_t tileBlockNum = (ubSize / BLOCK_SIZE / BUFFER_NUM) / ubDataNumber;
-    uint32_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
+    uint64_t ubDataNumber = (context->GetInputDesc(0)->GetDataType() == ge::DT_FLOAT) ? 4 : 8;
+    uint64_t tileBlockNum = (ubSize / BLOCK_SIZE ) / ubDataNumber;
+    uint64_t tileDataNum = (tileBlockNum * BLOCK_SIZE) / inputBytes;
+    
+    uint64_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
 
-    uint32_t inputLengthAlgin32 = (((inputLength + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
-    coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
-    coreNum = (coreNum >= 1) ? coreNum : 1;
-    uint32_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
-    uint32_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
+    if(tileDataNum >= inputNum)
+    {
+        coreNum=1;
+    }
+    else
+    {
+        // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
+        coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
+    }
+    uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
+    uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
 
-    uint32_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
-    uint32_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
-    uint32_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
-    uint32_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
+    uint64_t smallCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
+    uint64_t smallTileNum = everyCoreInputBlockNum / tileBlockNum;
+    uint64_t finalSmallTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? smallTileNum : smallTileNum + 1;
+    uint64_t smallTailDataNum = smallCoreDataNum - (tileDataNum * smallTileNum);
     smallTailDataNum = smallTailDataNum == 0 ? tileDataNum : smallTailDataNum;
 
     everyCoreInputBlockNum += 1;
-    uint32_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
-    uint32_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
-    uint32_t finalBigTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? bigTileNum : bigTileNum + 1;
-    uint32_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
+    uint64_t bigCoreDataNum = everyCoreInputBlockNum * BLOCK_SIZE / inputBytes;
+    uint64_t bigTileNum = everyCoreInputBlockNum / tileBlockNum;
+    uint64_t finalBigTileNum = (everyCoreInputBlockNum % tileBlockNum) == 0 ? bigTileNum : bigTileNum + 1;
+    uint64_t bigTailDataNum = bigCoreDataNum - tileDataNum * bigTileNum;
     bigTailDataNum = bigTailDataNum == 0 ? tileDataNum : bigTailDataNum; 
     
-    tiling.set_smallCoreDataNum(smallCoreDataNum);
-    tiling.set_bigCoreDataNum(bigCoreDataNum);
-    tiling.set_tileDataNum(tileDataNum);
-    tiling.set_smallTailDataNum(smallTailDataNum);
-    tiling.set_bigTailDataNum(bigTailDataNum);
-    tiling.set_finalSmallTileNum(finalSmallTileNum);
-    tiling.set_finalBigTileNum(finalBigTileNum);
-    tiling.set_tailBlockNum(tailBlockNum);
+    tiling.set_smallCoreDataNum((uint32_t)smallCoreDataNum);
+    tiling.set_bigCoreDataNum((uint32_t)bigCoreDataNum);
+    tiling.set_tileDataNum((uint32_t)tileDataNum);
+    tiling.set_smallTailDataNum((uint32_t)smallTailDataNum);
+    tiling.set_bigTailDataNum((uint32_t)bigTailDataNum);
+    tiling.set_finalSmallTileNum((uint32_t)finalSmallTileNum);
+    tiling.set_finalBigTileNum((uint32_t)finalBigTileNum);
+    tiling.set_tailBlockNum((uint32_t)tailBlockNum);
     
     context->SetBlockDim(coreNum);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());

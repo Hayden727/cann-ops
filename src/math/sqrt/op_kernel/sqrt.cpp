@@ -48,22 +48,25 @@ public:
         yGm.SetGlobalBuffer((__gm__ TYPE_Y *)y + globalBufferIndex, this->coreDataNum);
         pipe.InitBuffer(inQueueX, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_X));
         pipe.InitBuffer(outQueueY, BUFFER_NUM, this->tileDataNum * sizeof(TYPE_Y));
-        pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+        if constexpr ( ! std::is_same_v<T, float32_t>)
+        {
+            pipe.InitBuffer(tmp1, this->tileDataNum * sizeof(float));
+        }
     }
     __aicore__ inline void Process()
     {
         int32_t loopCount = this->tileNum;
         this->processDataNum = this->tileDataNum;
-        for (int32_t i = 0; i < loopCount; i++)
+        for (int32_t i = 0; i < loopCount-1; i++)
         {
-            if (i == this->tileNum - 1)
-            {
-                this->processDataNum = this->tailDataNum;
-            }
             CopyIn(i);
             Compute(i);
             CopyOut(i);
         }
+        this->processDataNum = this->tailDataNum;
+        CopyIn(loopCount-1);
+        Compute(loopCount-1);
+        CopyOut(loopCount-1);
     }
 
 private:
