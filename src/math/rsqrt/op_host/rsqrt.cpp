@@ -24,7 +24,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, ubSize);
     auto coreNum = ascendcPlatform.GetCoreNum();
     auto socVersion = ascendcPlatform.GetSocVersion();
-    std::cout<<"is me rsqrt"<<std::endl;
     if (socVersion != platform_ascendc::SocVersion::ASCEND910B && socVersion != platform_ascendc::SocVersion::ASCEND310B && context->GetInputDesc(0)->GetDataType() == ge::DT_BF16) {
         return ge::GRAPH_FAILED;
     }
@@ -50,8 +49,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
         // There is at least 32B of data on each core, satisfying several settings for several cores. The maximum number of audits is the actual number of audits
         coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
     }
-    /*coreNum = (coreNum <  inputLengthAlgin32 / BLOCK_SIZE) ? coreNum : inputLengthAlgin32 / BLOCK_SIZE;
-    coreNum = (coreNum >= 1) ? coreNum : 1;*/
     uint64_t everyCoreInputBlockNum = inputLengthAlgin32 / BLOCK_SIZE / coreNum;
     uint64_t tailBlockNum = (inputLengthAlgin32 / BLOCK_SIZE) % coreNum;
 
@@ -76,15 +73,6 @@ static ge::graphStatus TilingFunc(gert::TilingContext* context)
     tiling.set_finalSmallTileNum((uint32_t)finalSmallTileNum);
     tiling.set_finalBigTileNum((uint32_t)finalBigTileNum);
     tiling.set_tailBlockNum((uint32_t)tailBlockNum);
-
-    std::cout << "smallCoreDataNum: " << smallCoreDataNum << std::endl;
-    std::cout << "bigCoreDataNum: " << bigCoreDataNum << std::endl;
-    std::cout << "tileDataNum: " << tileDataNum << std::endl;
-    std::cout << "smallTailDataNum: " << smallTailDataNum << std::endl;
-    std::cout << "bigTailDataNum: " << bigTailDataNum << std::endl;
-    std::cout << "finalSmallTileNum: " << finalSmallTileNum << std::endl;
-    std::cout << "finalBigTileNum: " << finalBigTileNum << std::endl;
-    std::cout << "tailBlockNum: " << tailBlockNum << std::endl;
     
     context->SetBlockDim(coreNum);
     tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());
