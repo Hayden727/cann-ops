@@ -231,7 +231,7 @@ if (BUILD_OPEN_PROJECT)
                 --ascend-compute_unit ${EP_ASCEND_COMPUTE_UNIT}
                 --op_debug_config ${OP_DEBUG_CONFIG}
                 --third_lib_path ${THIRD_LIB_PATH}
-                --ascend-op-name ${ASCEND_OP_NAME}
+                --ascend-op-name "${ASCEND_OP_NAME}"
                 RESULT_VARIABLE result
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 OUTPUT_VARIABLE PREPARE_BUILD_OUTPUT_VARIABLE)
