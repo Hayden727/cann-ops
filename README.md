@@ -59,7 +59,7 @@ cann-ops仓关键目录如下所示：
 
 ## ⭐️ 贡献者
 我们非常欢迎您为CANN贡献代码，也非常感谢您的反馈。<br>
-![贡献者榜单-0729](https://obs-9be7.obs.cn-east-2.myhuaweicloud.com/cann_ops/contributor-0729.png)
+![贡献者榜单-0815](https://obs-9be7.obs.cn-east-2.myhuaweicloud.com/cann_ops/contributor-0815.png)
 
 ## 📌 贡献指南
 cann-ops仓欢迎广大开发者体验并参与贡献，在参与社区贡献之前。请参见[Contributing](docs/Contributing.md)了解行为准则，进行CLA协议签署，以及参与源码仓贡献的详细流程。<br>
