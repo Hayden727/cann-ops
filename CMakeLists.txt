@@ -147,6 +147,7 @@ target_link_libraries(opsproto PRIVATE
         ascendalog
         error_manager
         platform
+        tiling_api
         -Wl,--as-needed
         c_sec
 )
