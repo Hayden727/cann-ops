@@ -21,6 +21,7 @@
 #include <memory>
 #include <string>
 #include <cstdlib>
+#include <nlohmann/json.hpp>
 #include "platform/platform_infos_def.h"
 
 namespace optiling {
@@ -68,6 +69,10 @@ bool g_##optype##_TilingEntry(const TeOpParas& para, const OpCompileInfo& cinfo,
     }                                                                                                                 \
     const std::string& cinfo_str = cinfo.str;                                                                         \
     {                                                                                                                 \
+        if (!nlohmann::json::accept(cinfo_str)) {                                                                     \
+            OP_LOGW(#optype, "nlohmann::json::parse the compile info failed, ret will return false!");                \
+            return false;                                                                                             \
+        }                                                                                                             \
         std::shared_ptr<nlohmann::json> parsed_object_cinfo = std::make_shared<nlohmann::json>(                       \
             nlohmann::json::parse(cinfo_str));                                                                        \
         if (!hash_key.empty()) {                                                                                      \
@@ -134,6 +139,10 @@ bool g_##optype##_TilingEntry_V2(const ge::Operator& para, const optiling::utils
         return res_v2;                                                                                                \
     }                                                                                                                 \
     const auto& cinfo_str = cinfo.GetValue();                                                                         \
+    if (!nlohmann::json::accept(cinfo_str.GetString())) {                                                             \
+        OP_LOGW(#optype, "nlohmann::json::parse the compile info failed, ret_v2 will return false!");                 \
+        return false;                                                                                                 \
+    }                                                                                                                 \
     std::shared_ptr<nlohmann::json> parsed_object_cinfo_v2 = std::make_shared<nlohmann::json>(                        \
         nlohmann::json::parse(cinfo_str.GetString()));                                                                \
     if (hash_key.GetString() != nullptr) {                                                                            \
