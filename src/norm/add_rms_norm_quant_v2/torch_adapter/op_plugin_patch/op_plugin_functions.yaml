@@ -1,0 +1,2 @@
+  - func: add_rms_norm_quant_v2(Tensor x1, Tensor x2, Tensor gamma, Tensor scales1, Tensor? scales2=None, Tensor? zero_points1=None, Tensor? zero_points2=None, Tensor? bias=None, int axis=-1, float epsilon=1e-06, bool div_mode=True) -> (Tensor, Tensor, Tensor)
+    op_api: all_version
