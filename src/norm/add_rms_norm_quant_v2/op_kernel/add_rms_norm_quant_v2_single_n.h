@@ -160,21 +160,25 @@ private:
     PipeBarrier<PIPE_V>();
     Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
     PipeBarrier<PIPE_V>();
-
+    // DumpTensor(xFp32Local, 165, 32); // 这里加DumpTensor阻塞流水能确保结果一致，加V_MTE2或者V_S都不可以，待确认到底加什么流水
     // 在RMSNorm之后、Quantization之前，执行 bias 加法
+
     if (this->hasBias) {
       // 复用x1Local作为bias的UB缓存
       LocalTensor<TX> biasLocal = x1Local;
       DataCopy(biasLocal, biasGm, numCol);
+
+      event_t eventMte2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
+      SetFlag<HardEvent::MTE2_V>(eventMte2V2);
+      WaitFlag<HardEvent::MTE2_V>(eventMte2V2);
+
       // 将bias转换为float32进行计算
       LocalTensor<float> biasFp32 =
           sqxLocal; // 复用sqxLocal作为biasFp32的UB缓存
       Cast(biasFp32, biasLocal, RoundMode::CAST_NONE, numCol);
-      PipeBarrier<PIPE_V>();
       Add(xFp32Local, xFp32Local, biasFp32, numCol);
-      PipeBarrier<PIPE_V>();
+      PipeBarrier<PIPE_ALL>();
     }
-
     WaitFlag<HardEvent::MTE2_V>(eventMTE2V3);
     Div(xFp32Local, xFp32Local, tmpLocal, numCol);
     PipeBarrier<PIPE_V>();
@@ -290,21 +294,21 @@ private:
     Mul(xFp32Local, xFp32Local, sqxLocal, numCol);
     PipeBarrier<PIPE_V>();
 
-    // 在RMSNorm之后、Quantization之前，执行 bias 加法
     if (this->hasBias) {
       // 复用x2Local作为bias的UB缓存
       LocalTensor<TX> biasLocal = x2Local;
       DataCopy(biasLocal, biasGm, numCol);
+      event_t eventMte2V2 = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::MTE2_V));
+      SetFlag<HardEvent::MTE2_V>(eventMte2V2);
+      WaitFlag<HardEvent::MTE2_V>(eventMte2V2);
       // 将bias转换为float32进行计算
       LocalTensor<float> biasFp32 =
           sqxLocal; // 复用sqxLocal作为biasFp32的UB缓存
       Cast(biasFp32, biasLocal, RoundMode::CAST_NONE, numCol);
-      PipeBarrier<PIPE_V>();
       // 执行加法
       Add(xFp32Local, xFp32Local, biasFp32, numCol);
-      PipeBarrier<PIPE_V>();
+      PipeBarrier<PIPE_ALL>();
     }
-
     SetFlag<HardEvent::V_MTE2>(eventVMTE2);
     WaitFlag<HardEvent::MTE2_V>(eventMTE2V3);
     if constexpr (IsSame<TScale, bfloat16_t>::value) {
@@ -312,6 +316,7 @@ private:
            RoundMode::CAST_NONE, numCol);
       PipeBarrier<PIPE_V>();
     }
+    
     Div(xFp32Local, xFp32Local, tmpLocal, numCol);
     PipeBarrier<PIPE_V>();
     WaitFlag<HardEvent::V_MTE2>(eventVMTE2);
