@@ -178,8 +178,7 @@ private:
       Add(xFp32Local, xFp32Local, biasFp32, numCol);
       PipeBarrier<PIPE_ALL>();
     }
-    
-    
+
     Div(xFp32Local, xFp32Local, tmpLocal, numCol);
     PipeBarrier<PIPE_V>();
     WaitFlag<HardEvent::S_MTE2>(eventSMTE2);
