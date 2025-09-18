@@ -160,9 +160,8 @@ private:
     PipeBarrier<PIPE_V>();
     Cast(xFp32Local, x1Local, RoundMode::CAST_NONE, numCol);
     PipeBarrier<PIPE_V>();
-    // DumpTensor(xFp32Local, 165, 32); // 这里加DumpTensor阻塞流水能确保结果一致，加V_MTE2或者V_S都不可以，待确认到底加什么流水
     // 在RMSNorm之后、Quantization之前，执行 bias 加法
-
+    WaitFlag<HardEvent::MTE2_V>(eventMTE2V3);
     if (this->hasBias) {
       // 复用x1Local作为bias的UB缓存
       LocalTensor<TX> biasLocal = x1Local;
@@ -179,7 +178,7 @@ private:
       Add(xFp32Local, xFp32Local, biasFp32, numCol);
       PipeBarrier<PIPE_ALL>();
     }
-    WaitFlag<HardEvent::MTE2_V>(eventMTE2V3);
+
     Div(xFp32Local, xFp32Local, tmpLocal, numCol);
     PipeBarrier<PIPE_V>();
     WaitFlag<HardEvent::S_MTE2>(eventSMTE2);
